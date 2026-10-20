@@ -137,10 +137,7 @@ export default function HomePage() {
     <>
       <ServoHero />
 
-      <section
-        aria-labelledby="crew-title"
-        className="overflow-hidden border-t-2 border-foreground px-4 py-24"
-      >
+      <section aria-labelledby="crew-title" className="overflow-hidden px-4 py-24">
         <DecalSheet decals={SERVICES.map(({ id, short, tag }) => ({ id, short, tag }))} />
       </section>
 
