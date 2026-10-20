@@ -27,37 +27,38 @@ export function PlaneApartStage({
   return (
     <ApartContext.Provider value={control}>
       <section ref={track} aria-label="The RC plane, taken apart" className="relative h-[240vh]">
-        <div className="sticky top-16 mx-auto grid min-h-[calc(100dvh-4rem)] max-w-7xl content-center gap-6 px-4 py-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.25fr)] lg:items-center lg:gap-10">
-          <div>
-            {intro}
-            <ol
-              className="mt-6 hidden gap-1 lg:grid"
-              aria-label="Assemblies, in the order they come off"
-            >
-              {STAGGER.map((asm, index) => (
-                <li key={asm}>
-                  <button
-                    type="button"
-                    aria-pressed={selected === asm}
-                    onPointerEnter={() => select(asm)}
-                    onPointerLeave={() => select(null)}
-                    onFocus={() => select(asm)}
-                    onBlur={() => select(null)}
-                    className={cn(
-                      "flex w-full items-baseline gap-3 rounded-md px-2 py-1 text-left font-semibold",
-                      selected === asm ? "bg-primary" : "hover:bg-panel",
-                    )}
-                  >
-                    <span className="w-6 text-sm font-black font-wide tabular-nums">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    {NAMES[asm].name}
-                  </button>
-                </li>
-              ))}
-            </ol>
-          </div>
-          <div>{figure}</div>
+        <div className="sticky top-16 mx-auto flex min-h-[calc(100dvh-4rem)] max-w-7xl flex-col items-center justify-center px-4 py-6 text-center">
+          {intro}
+          {/* The figure's width follows the screen's height, so title, plane and list always fit. */}
+          <div className="mt-2 w-full max-w-[min(60rem,66dvh)]">{figure}</div>
+          <ol
+            className="mt-4 hidden flex-wrap justify-center gap-0.5 lg:flex"
+            aria-label="Assemblies, in the order they come off"
+          >
+            {STAGGER.map((asm, index) => (
+              <li key={asm}>
+                <button
+                  type="button"
+                  aria-pressed={selected === asm}
+                  onPointerEnter={() => select(asm)}
+                  onPointerLeave={() => select(null)}
+                  onFocus={() => select(asm)}
+                  onBlur={() => select(null)}
+                  className={cn(
+                    "flex items-baseline gap-1.5 rounded-md border-2 px-2 py-1 text-sm font-semibold transition-colors",
+                    selected === asm
+                      ? "border-foreground bg-primary"
+                      : "border-transparent hover:border-foreground",
+                  )}
+                >
+                  <span className="text-xs font-black font-wide tabular-nums">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  {NAMES[asm].name}
+                </button>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
     </ApartContext.Provider>

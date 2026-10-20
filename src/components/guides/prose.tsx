@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 export function Prose({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={cn("mx-auto max-w-7xl px-4", className)}>
-      <div className="max-w-[68ch] text-lg leading-relaxed text-pretty [&_a]:font-semibold [&_a]:underline [&_a]:underline-offset-4 [&_p+p]:mt-5 [&_strong]:font-bold">
+      <div className="mx-auto max-w-[68ch] text-lg leading-relaxed text-pretty [&_a]:font-semibold [&_a]:underline [&_a]:underline-offset-4 [&_p+p]:mt-5 [&_strong]:font-bold">
         {children}
       </div>
     </div>

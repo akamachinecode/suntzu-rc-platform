@@ -181,44 +181,42 @@
 
 /*
  * Anatomy figures (src/components/iso, src/components/figures).
- * The kit's light theme, framed like every other Servo card: ink border, hard shadow,
- * Archivo instead of a monospace, and XT60 yellow as the one lit accent.
+ * Drawn straight onto the page: the kit's light theme retuned to primer grey, so every
+ * fill matches the page, tops sit a little lighter and sides a little darker.
+ * XT60 yellow is the one lit accent. The frame around each figure is FigureFrame.
  */
 .iso.servo-figure,
 .iso.servo-figure[data-theme="light"] {
   --anatomy-mono: var(--font-archivo);
-  --anatomy-card: var(--panel);
+  --anatomy-page: var(--background);
+  --anatomy-card: var(--background);
+  --anatomy-paper: var(--background);
   --anatomy-text: var(--foreground);
+  --anatomy-strong: var(--foreground);
   --anatomy-muted: var(--muted-foreground);
+  --anatomy-face: #eeeeea;
+  --anatomy-top: #f2f2ee;
+  --anatomy-shade-0: #c8c8c2;
+  --anatomy-shade-1: #d0d0ca;
+  --anatomy-shade-2: #d7d7d1;
+  --anatomy-shade-3: #dededa;
+  --anatomy-hi: #1c1c1e;
+  --anatomy-mid: #75756f;
+  --anatomy-lo: #9e9e98;
+  --anatomy-faint: #c2c2bc;
+  --anatomy-dot: #2a2a2c;
+  --anatomy-halo: #6f6f66;
+  --anatomy-halo-opacity: 0.35;
   --anatomy-lit: #000000;
   --anatomy-lit-top: #ffc629;
   --anatomy-lit-shade: #f0b414;
-}
-.servo-figure .iso-figure {
   margin: 0;
 }
-.servo-figure .iso-plate {
-  border: 2px solid var(--foreground);
-  border-radius: 0.75rem;
-  box-shadow: var(--shadow-hard-lg);
-}
-.servo-figure .iso-plate .iso-plate-corner {
-  font-size: 12px;
-  text-transform: none;
-  letter-spacing: 0;
-}
-.servo-figure .iso-plate .iso-plate-corner[data-corner="fig"],
-.servo-figure .iso-plate .iso-plate-corner[data-corner="title"] {
-  font-weight: 700;
-  color: var(--foreground);
-}
-.servo-figure .iso-figure .iso-legend {
-  margin-top: 1.25rem;
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
-}
-.servo-figure .iso-caption {
-  max-width: 68ch;
+.servo-figure .servo-plate {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
 }
 .servo-figure .tte {
   cursor: ew-resize;
@@ -252,15 +250,6 @@
   stroke: var(--anatomy-hi);
   stroke-width: 0.5;
   opacity: 1;
-}
-@media (max-width: 640px) {
-  .servo-figure .tte {
-    overflow: hidden;
-  }
-  .servo-figure .iso-plate .tte .iso-svg {
-    width: 124%;
-    margin: -2% -12% -2%;
-  }
 }
 
 /* Plane explorer (src/components/guides/plane-explorer.tsx): ink outlines, the part being read in XT60 yellow. */
@@ -328,15 +317,6 @@
 .servo-figure .pla[data-focus] g:not([data-on]) .iso-line[data-tone="mid"] {
   stroke: var(--anatomy-lo);
 }
-@media (max-width: 640px) {
-  .servo-figure .pla {
-    overflow: hidden;
-  }
-  .servo-figure .iso-plate .pla .iso-svg {
-    width: 122%;
-    margin: -4% -11% -2%;
-  }
-}
 
 /* Thrust stand (src/components/figures/thrust-stand). */
 .servo-figure .tsd {
@@ -371,15 +351,6 @@
 .servo-figure .tsd-lcd-big {
   font-size: 8px;
 }
-@media (max-width: 640px) {
-  .servo-figure .tsd {
-    overflow: hidden;
-  }
-  .servo-figure .iso-plate .tsd .iso-svg {
-    width: 120%;
-    margin: -3% -10% -2%;
-  }
-}
 
 /* Balance beam (src/components/figures/balance). */
 .servo-figure .blc {
@@ -394,13 +365,4 @@
 }
 .servo-figure .blc-needle {
   stroke-width: 1.1;
-}
-@media (max-width: 640px) {
-  .servo-figure .blc {
-    overflow: hidden;
-  }
-  .servo-figure .iso-plate .blc .iso-svg {
-    width: 106%;
-    margin: -2% -3% -1%;
-  }
 }

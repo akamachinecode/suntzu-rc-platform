@@ -159,16 +159,16 @@ export default function RcPlanesGuide() {
     <article>
       <PlaneApartStage
         intro={
-          <header>
+          <header className="flex flex-col items-center">
             <p className="font-semibold">
               <Link href="/guides" className="underline underline-offset-4">
                 Guides
               </Link>
             </p>
-            <h1 className="mt-4 max-w-3xl text-5xl leading-[0.9] font-black tracking-tight text-balance font-wide sm:text-6xl xl:text-7xl">
+            <h1 className="mt-3 max-w-4xl text-4xl leading-[0.92] font-black tracking-tight text-balance font-wide sm:text-6xl">
               The RC plane, taken apart.
             </h1>
-            <p className="mt-5 max-w-[48ch] text-lg text-pretty">
+            <p className="mt-4 max-w-[66ch] text-base text-pretty sm:text-lg">
               More than 120 years of radio, balsa and lithium, every part of a modern trainer, and
               benches you can drive yourself. By the Servo crew, about 15 minutes.
             </p>
@@ -196,7 +196,7 @@ export default function RcPlanesGuide() {
       >
         <Wide>
           <SectionTitle id="history">Where it started</SectionTitle>
-          <p className="mt-5 max-w-[60ch] text-lg text-pretty">
+          <p className="mx-auto mt-5 max-w-[60ch] text-center text-lg text-pretty">
             Scroll through the milestones. Each one links to where we checked it.
           </p>
           <div className="mt-14">
@@ -223,7 +223,9 @@ export default function RcPlanesGuide() {
           </p>
         </Prose>
         <Wide className="mt-12">
-          <ThumbToElevatorFigure fig="Fig 2" />
+          <div className="mx-auto max-w-5xl">
+            <ThumbToElevatorFigure fig="Fig 2" />
+          </div>
         </Wide>
         <Prose className="mt-12">
           <p>
@@ -247,7 +249,7 @@ export default function RcPlanesGuide() {
       <section aria-labelledby="parts" className="border-y-2 border-foreground bg-background py-20">
         <Wide>
           <SectionTitle id="parts">Every part, and what it does</SectionTitle>
-          <p className="mt-5 max-w-[60ch] text-lg text-pretty">
+          <p className="mx-auto mt-5 max-w-[60ch] text-center text-lg text-pretty">
             A typical electric trainer, from the wingtips in. Scroll and watch the part light up on
             the plane.
           </p>
@@ -274,7 +276,9 @@ export default function RcPlanesGuide() {
           </p>
         </Prose>
         <Wide className="mt-12">
-          <BalanceFigure fig="Fig 3" />
+          <div className="mx-auto max-w-5xl">
+            <BalanceFigure fig="Fig 3" />
+          </div>
         </Wide>
         <Prose className="mt-12">
           <p>
@@ -304,7 +308,9 @@ export default function RcPlanesGuide() {
           </p>
         </Prose>
         <Wide className="mt-12">
-          <ThrustStandFigure fig="Fig 4" />
+          <div className="mx-auto max-w-5xl">
+            <ThrustStandFigure fig="Fig 4" />
+          </div>
         </Wide>
         <Prose className="mt-12">
           <p>
@@ -326,7 +332,7 @@ export default function RcPlanesGuide() {
       <section aria-labelledby="then-now" className="py-20">
         <Wide>
           <SectionTitle id="then-now">Then and now</SectionTitle>
-          <p className="mt-5 max-w-[60ch] text-lg text-pretty">
+          <p className="mx-auto mt-5 max-w-[60ch] text-center text-lg text-pretty">
             A club trainer from the seventies and one you could buy this weekend do the same job.
             Almost everything else changed.
           </p>
@@ -378,7 +384,7 @@ export default function RcPlanesGuide() {
             Or let us walk you through it. We&apos;ll help pick the trainer, set it up on the bench
             exactly like Fig 2, and stand next to you with a buddy box for the first flight.
           </p>
-          <div className="mt-8 flex flex-wrap gap-4">
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Button asChild size="lg">
               <Link href="/contact?topic=lessons">Book a first flight</Link>
             </Button>

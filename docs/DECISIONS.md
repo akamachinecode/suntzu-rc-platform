@@ -12,6 +12,12 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-20 — Figures drawn on the page, centred frame
+
+- **What:** Anatomy figures no longer sit in a white card. `FigureFrame` (`src/components/figures/figure-frame.tsx`) replaces the kit's `Plate` for site use: figure number and title centred above, the live readout (a pill) and the hint centred below, then legend and caption. The kit's light tokens are retuned to the primer-grey page in `globals.css` (`.servo-figure`). The RC plane guide is now a centred, symmetric layout, including the hero.
+- **Why:** the figures should read as part of the article, not as embedded widgets.
+- **Impact:** none functional; the readout keeps the kit's `.iso-plate [data-readout]` contract. On phones figures bleed edge to edge instead of being cropped.
+
 ## 2026-10-20 — More Anatomy figures in "The RC plane, taken apart"
 
 - **What:** four figures now carry the guide, all in `src/components/figures/`: `plane-apart` (hero, Fig 1: a trainer on its stand that comes apart into 9 assemblies as the page scrolls, with a numbered assembly list that highlights each one), `thumb-to-elevator` (Fig 2), `balance` (Fig 3: a beam balance for the CG, 25–33% of chord) and `thrust-stand` (Fig 4: 1000 KV motor, 10 × 7 prop, 3S pack, servo tester, wattmeter and load cell).
