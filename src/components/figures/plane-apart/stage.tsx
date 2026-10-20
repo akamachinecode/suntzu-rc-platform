@@ -2,21 +2,16 @@
 
 import { useScroll, useTransform } from "motion/react";
 import { useMemo, useRef, useState } from "react";
+import { COLUMN } from "@/components/guides/prose";
 import { cn } from "@/lib/utils";
 import { ApartContext } from "./context";
 import { NAMES, STAGGER, type Assembly } from "./model";
 
 /**
- * The article opener: the headline and the assembly list stay pinned while the
- * page scrolls, and the scroll takes the plane apart.
+ * The article opener: the plane and its assembly list stay pinned in the article
+ * column while the page scrolls, and the scroll takes the plane apart.
  */
-export function PlaneApartStage({
-  intro,
-  figure,
-}: {
-  intro: React.ReactNode;
-  figure: React.ReactNode;
-}) {
+export function PlaneApartStage({ figure }: { figure: React.ReactNode }) {
   const track = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: track, offset: ["start start", "end end"] });
   // Hold assembled for the first bit of scroll and fully apart for the last bit.
@@ -26,13 +21,11 @@ export function PlaneApartStage({
 
   return (
     <ApartContext.Provider value={control}>
-      <section ref={track} aria-label="The RC plane, taken apart" className="relative h-[240vh]">
-        <div className="sticky top-16 mx-auto flex min-h-[calc(100dvh-4rem)] max-w-7xl flex-col items-center justify-center px-4 py-6 text-center">
-          {intro}
-          {/* The figure's width follows the screen's height, so title, plane and list always fit. */}
-          <div className="mt-2 w-full max-w-[min(60rem,66dvh)]">{figure}</div>
+      <section ref={track} aria-label="The trainer, coming apart" className="relative h-[220vh]">
+        <div className={cn(COLUMN, "sticky top-16 flex flex-col pt-2 pb-6")}>
+          {figure}
           <ol
-            className="mt-4 hidden flex-wrap justify-center gap-0.5 lg:flex"
+            className="mt-5 hidden flex-wrap justify-center gap-0.5 lg:flex"
             aria-label="Assemblies, in the order they come off"
           >
             {STAGGER.map((asm, index) => (

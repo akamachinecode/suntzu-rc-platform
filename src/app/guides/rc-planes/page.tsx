@@ -16,7 +16,7 @@ import {
   throwOf,
 } from "@/components/figures/thumb-to-elevator/model";
 import { PlaneExplorer, type PlanePart } from "@/components/guides/plane-explorer";
-import { Prose, SectionTitle, Wide } from "@/components/guides/prose";
+import { COLUMN, Column, Prose, SectionTitle } from "@/components/guides/prose";
 import { Timeline } from "@/components/guides/timeline";
 import { Button } from "@/components/ui/button";
 import { PLANE_HISTORY } from "@/content/history";
@@ -157,25 +157,22 @@ const minutesAt = (amps: number) => Math.round(((2.2 * 0.8) / amps) * 60);
 export default function RcPlanesGuide() {
   return (
     <article>
-      <PlaneApartStage
-        intro={
-          <header className="flex flex-col items-center">
-            <p className="font-semibold">
-              <Link href="/guides" className="underline underline-offset-4">
-                Guides
-              </Link>
-            </p>
-            <h1 className="mt-3 max-w-4xl text-4xl leading-[0.92] font-black tracking-tight text-balance font-wide sm:text-6xl">
-              The RC plane, taken apart.
-            </h1>
-            <p className="mt-4 max-w-[66ch] text-base text-pretty sm:text-lg">
-              More than 120 years of radio, balsa and lithium, every part of a modern trainer, and
-              benches you can drive yourself. By the Servo crew, about 15 minutes.
-            </p>
-          </header>
-        }
-        figure={<PlaneApartFigure />}
-      />
+      <header className={`${COLUMN} pt-10 text-center sm:pt-14`}>
+        <p className="font-semibold">
+          <Link href="/guides" className="underline underline-offset-4">
+            Guides
+          </Link>
+        </p>
+        <h1 className="mt-4 text-4xl leading-[0.92] font-black tracking-tight text-balance font-wide sm:text-6xl">
+          The RC plane, taken apart.
+        </h1>
+        <p className="mt-5 text-lg text-pretty">
+          More than 120 years of radio, balsa and lithium, every part of a modern trainer, and
+          benches you can drive yourself. By the Servo crew, about 15 minutes.
+        </p>
+      </header>
+
+      <PlaneApartStage figure={<PlaneApartFigure />} />
 
       <Prose className="pb-20">
         <p>
@@ -194,7 +191,7 @@ export default function RcPlanesGuide() {
         aria-labelledby="history"
         className="border-y-2 border-foreground bg-background py-20"
       >
-        <Wide>
+        <Column>
           <SectionTitle id="history">Where it started</SectionTitle>
           <p className="mx-auto mt-5 max-w-[60ch] text-center text-lg text-pretty">
             Scroll through the milestones. Each one links to where we checked it.
@@ -202,13 +199,13 @@ export default function RcPlanesGuide() {
           <div className="mt-14">
             <Timeline items={PLANE_HISTORY} label="Milestones in radio-controlled flight" />
           </div>
-        </Wide>
+        </Column>
       </section>
 
       <section aria-labelledby="chain" className="py-20">
-        <Wide>
+        <Column>
           <SectionTitle id="chain">From thumb to elevator</SectionTitle>
-        </Wide>
+        </Column>
         <Prose className="mt-8">
           <p>
             Move the stick and the transmitter measures where it is. The receiver turns that into a
@@ -222,11 +219,9 @@ export default function RcPlanesGuide() {
             with real dimensions. Move across it, or tab to it and use the arrow keys.
           </p>
         </Prose>
-        <Wide className="mt-12">
-          <div className="mx-auto max-w-5xl">
-            <ThumbToElevatorFigure fig="Fig 2" />
-          </div>
-        </Wide>
+        <Column className="mt-12">
+          <ThumbToElevatorFigure fig="Fig 2" />
+        </Column>
         <Prose className="mt-12">
           <p>
             Look at the readout on Fig 2 at full stick. The servo turns {SERVO_TRAVEL}°, but the
@@ -247,7 +242,7 @@ export default function RcPlanesGuide() {
       </section>
 
       <section aria-labelledby="parts" className="border-y-2 border-foreground bg-background py-20">
-        <Wide>
+        <Column>
           <SectionTitle id="parts">Every part, and what it does</SectionTitle>
           <p className="mx-auto mt-5 max-w-[60ch] text-center text-lg text-pretty">
             A typical electric trainer, from the wingtips in. Scroll and watch the part light up on
@@ -256,13 +251,13 @@ export default function RcPlanesGuide() {
           <div className="mt-14">
             <PlaneExplorer parts={PARTS} />
           </div>
-        </Wide>
+        </Column>
       </section>
 
       <section aria-labelledby="balance" className="py-20">
-        <Wide>
+        <Column>
           <SectionTitle id="balance">Finding the balance point</SectionTitle>
-        </Wide>
+        </Column>
         <Prose className="mt-8">
           <p>
             Every manual marks a spot under the wing where the plane should balance. Rest it there
@@ -275,11 +270,9 @@ export default function RcPlanesGuide() {
             beam settles.
           </p>
         </Prose>
-        <Wide className="mt-12">
-          <div className="mx-auto max-w-5xl">
-            <BalanceFigure fig="Fig 3" />
-          </div>
-        </Wide>
+        <Column className="mt-12">
+          <BalanceFigure fig="Fig 3" />
+        </Column>
         <Prose className="mt-12">
           <p>
             The {BATTERY.grams} g pack weighs about a sixth of the {AIRFRAME.grams} g airframe, so
@@ -297,9 +290,9 @@ export default function RcPlanesGuide() {
       </section>
 
       <section aria-labelledby="power" className="py-20">
-        <Wide>
+        <Column>
           <SectionTitle id="power">Power, on the bench</SectionTitle>
-        </Wide>
+        </Column>
         <Prose className="mt-8">
           <p>
             Before a new motor and prop go in a plane, they go on a thrust stand. The motor sits on
@@ -307,11 +300,9 @@ export default function RcPlanesGuide() {
             controller, and a servo tester stands in for your throttle stick. Try it.
           </p>
         </Prose>
-        <Wide className="mt-12">
-          <div className="mx-auto max-w-5xl">
-            <ThrustStandFigure fig="Fig 4" />
-          </div>
-        </Wide>
+        <Column className="mt-12">
+          <ThrustStandFigure fig="Fig 4" />
+        </Column>
         <Prose className="mt-12">
           <p>
             Half throttle doesn&apos;t mean half the thrust. From half to full, the rpm goes up
@@ -330,7 +321,7 @@ export default function RcPlanesGuide() {
       </section>
 
       <section aria-labelledby="then-now" className="py-20">
-        <Wide>
+        <Column>
           <SectionTitle id="then-now">Then and now</SectionTitle>
           <p className="mx-auto mt-5 max-w-[60ch] text-center text-lg text-pretty">
             A club trainer from the seventies and one you could buy this weekend do the same job.
@@ -365,7 +356,7 @@ export default function RcPlanesGuide() {
               </tbody>
             </table>
           </div>
-        </Wide>
+        </Column>
       </section>
 
       <section aria-labelledby="florida" className="pb-24">

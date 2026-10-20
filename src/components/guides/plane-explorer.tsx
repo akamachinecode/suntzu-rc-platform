@@ -87,16 +87,16 @@ export function PlaneExplorer({ parts }: { parts: PlanePart[] }) {
   const current = parts.find((part) => part.id === active);
 
   return (
-    <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-16">
+    <div className="grid gap-8">
       {/* Pinned on every screen size: on phones it shrinks to a strip under the header. */}
-      <div className="sticky top-[4.5rem] z-10 self-start md:top-24">
-        <div className="flex items-center gap-4 rounded-xl border-2 border-foreground bg-panel p-3 shadow-hard md:block md:p-6 md:shadow-hard-lg">
-          <div className="w-36 shrink-0 md:w-full">
+      <div className="sticky top-[4.5rem] z-10">
+        <div className="flex items-center justify-center gap-6 rounded-xl border-2 border-foreground bg-panel p-3 shadow-hard sm:gap-10 sm:p-4">
+          <div className="w-32 shrink-0 sm:w-44">
             <Planform active={active} />
           </div>
           <p
             aria-live="polite"
-            className="text-lg leading-tight font-black font-wide md:mt-2 md:text-center md:text-xl"
+            className="w-[12ch] text-lg leading-tight font-black font-wide sm:text-2xl"
           >
             {current?.name}
           </p>
