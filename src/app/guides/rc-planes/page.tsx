@@ -329,7 +329,9 @@ export default function RcPlanesGuide() {
             A club trainer from the seventies and one you could buy this weekend do the same job.
             Almost everything else changed.
           </p>
-          <div className="mt-12 overflow-x-auto rounded-xl border-2 border-foreground bg-panel shadow-hard-lg">
+        </Column>
+        <Wide className="mt-12">
+          <div className="overflow-x-auto rounded-xl border-2 border-foreground bg-panel shadow-hard-lg">
             <table className="w-full min-w-[40rem] border-collapse text-left">
               <caption className="sr-only">A 1970s trainer compared with a trainer today</caption>
               <thead>
@@ -358,12 +360,15 @@ export default function RcPlanesGuide() {
               </tbody>
             </table>
           </div>
-        </Column>
+        </Wide>
       </section>
 
       <section aria-labelledby="florida" className="pb-24">
         <Prose>
-          <h2 id="florida" className="text-3xl font-black text-balance font-wide sm:text-4xl">
+          <h2
+            id="florida"
+            className="text-center text-3xl font-black text-balance font-wide sm:text-4xl"
+          >
             Flying one in South Florida
           </h2>
           <p className="mt-5">

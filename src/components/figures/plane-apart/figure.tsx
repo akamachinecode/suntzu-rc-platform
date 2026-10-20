@@ -10,7 +10,6 @@ export function PlaneApartFigure({ fig = "Fig 1" }: { fig?: string }) {
       fig={fig}
       heading={false}
       title="Taken apart"
-      hint="Scroll to take it apart"
       readout={`assembled · ${STAGGER.length} assemblies · ${PART_COUNT} parts`}
     >
       <PlaneApartArt />

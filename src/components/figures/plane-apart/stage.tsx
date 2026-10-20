@@ -1,28 +1,42 @@
 "use client";
 
 import { useScroll, useTransform } from "motion/react";
-import { useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { COLUMN } from "@/components/guides/prose";
 import { cn } from "@/lib/utils";
 import { ApartContext } from "./context";
 import { NAMES, STAGGER, type Assembly } from "./model";
 
+const HEADER = 72; // the sticky site header plus a little air
+
 /**
- * The article opener: the plane and its assembly list stay pinned in the article
- * column while the page scrolls, and the scroll takes the plane apart.
+ * The article opener. Nothing is pinned: the plane comes apart during the first
+ * scroll, while it rises from under the title to the top of the screen, and the
+ * article text follows straight after it.
  */
 export function PlaneApartStage({ figure }: { figure: React.ReactNode }) {
   const track = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: track, offset: ["start start", "end end"] });
-  // Hold assembled for the first bit of scroll and fully apart for the last bit.
-  const progress = useTransform(scrollYProgress, [0.06, 0.82], [0, 1], { clamp: true });
+  // 0 at the top of the page, 1 once the plane's top reaches the header: the first scroll.
+  const { scrollY } = useScroll();
+  const travel = useRef(1);
+  useLayoutEffect(() => {
+    const measure = () => {
+      const node = track.current;
+      if (node)
+        travel.current = Math.max(1, node.getBoundingClientRect().top + window.scrollY - HEADER);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+  const progress = useTransform(scrollY, (y) => Math.min(1, Math.max(0, y / travel.current)));
   const [selected, select] = useState<Assembly | null>(null);
   const control = useMemo(() => ({ progress, selected, select }), [progress, selected]);
 
   return (
     <ApartContext.Provider value={control}>
-      <section ref={track} aria-label="The trainer, coming apart" className="relative h-[220vh]">
-        <div className={cn(COLUMN, "sticky top-16 flex flex-col pt-2 pb-6")}>
+      <section ref={track} aria-label="The trainer, coming apart">
+        <div className={cn(COLUMN, "flex flex-col pt-2 pb-12")}>
           {figure}
           <ol
             className="mt-5 hidden flex-wrap justify-center gap-0.5 lg:flex"
