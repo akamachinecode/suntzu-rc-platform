@@ -42,7 +42,8 @@ export function EventList({ events }: { events: RcEvent[] }) {
         {shown.map((event) => (
           <li
             key={event.id}
-            className="grid gap-5 rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard md:grid-cols-[13rem_1fr_auto] md:items-start md:gap-8"
+            id={event.id}
+            className="grid scroll-mt-24 gap-5 rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard md:grid-cols-[13rem_1fr_auto] md:items-start md:gap-8"
           >
             <div>
               <p className="text-xl leading-tight font-black font-wide">{event.when}</p>

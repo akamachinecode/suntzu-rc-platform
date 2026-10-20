@@ -25,7 +25,6 @@ const TRAVEL = 30; // how far a stick tip moves from centre
 const RX = { aerial: [-30, -8] as Point, ch1: [100, 20] as Point, ch3: [100, 42] as Point };
 const SERVO = { lead: [0, 60] as Point, pivot: [48, 40] as Point };
 const ESC = { signal: [0, 12] as Point, battery: [-62, 38] as Point, motor: [150, 27] as Point };
-const BATTERY = { lead: [230, 30] as Point };
 const HORN = 45; // degrees either side
 const MAX_RPM = 11_100; // a 1000 KV motor on a 3S pack
 
@@ -36,6 +35,8 @@ interface Layout {
   prop: number;
   /** Where the motor wires enter, from the motor's centre. */
   motorPort: Point;
+  /** Where the battery's main lead leaves the pack, in the pack's own coordinates. */
+  batteryPort: Point;
   /** Cable handles: how each cable leaves its start and arrives at its end. */
   bends: Record<"air" | "servo" | "esc" | "battery" | "motor", readonly [Point, Point]>;
   /** Masking-tape labels on wide screens, number badges on narrow ones. */
@@ -43,35 +44,38 @@ interface Layout {
   labels: Record<PartId, Placed>;
 }
 
+// Symmetric about the centre line: receiver and battery sit on it, with the transmitter
+// on one side and the motor on the other, so the readout and button below line up.
 const WIDE: Layout = {
   width: 1200,
   height: 600,
   at: {
     tx: [60, 200],
-    rx: [480, 200],
-    servo: [720, 80],
-    esc: [730, 330],
-    motor: [1030, 357],
-    battery: [410, 420],
+    rx: [550, 200],
+    servo: [770, 70],
+    esc: [700, 330],
+    motor: [1010, 357],
+    battery: [485, 440],
   },
-  prop: 140,
+  prop: 130,
   motorPort: [-52, 0],
+  batteryPort: [150, 0],
   bends: {
     air: [
       [60, 10],
       [-60, -10],
     ],
     servo: [
-      [70, 0],
-      [-70, 0],
+      [60, 0],
+      [-60, 0],
     ],
     esc: [
-      [70, 0],
-      [-70, 0],
+      [40, 0],
+      [-40, 0],
     ],
     battery: [
-      [50, 0],
-      [-50, 0],
+      [0, -40],
+      [-40, 0],
     ],
     motor: [
       [30, 0],
@@ -81,11 +85,11 @@ const WIDE: Layout = {
   tapes: true,
   labels: {
     tx: [119, 420, -2],
-    rx: [463, 285, 2],
-    servo: [905, 96, 2],
-    esc: [690, 412, -2],
-    motor: [977, 522, 1],
-    battery: [462, 532, 1],
+    rx: [526, 276, 2],
+    servo: [962, 86, 2],
+    esc: [670, 400, -2],
+    motor: [957, 505, 1],
+    battery: [538, 548, 1],
   },
 };
 
@@ -102,6 +106,7 @@ const NARROW: Layout = {
   },
   prop: 90,
   motorPort: [0, -52],
+  batteryPort: [230, 30],
   bends: {
     // round the transmitter's left side instead of passing under it
     air: [
@@ -327,7 +332,7 @@ export function SignalBench() {
     escBattery: add(at.esc, ESC.battery),
     escMotor: add(at.esc, ESC.motor),
     motor: add(at.motor, layout.motorPort),
-    battery: add(at.battery, BATTERY.lead),
+    battery: add(at.battery, layout.batteryPort),
   };
 
   return (

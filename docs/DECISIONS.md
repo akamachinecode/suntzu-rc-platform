@@ -12,6 +12,13 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-20 — Two more colours; guides and events get their own sections
+
+- **What:** the palette opens slightly, using fireship.dev as a reference for colour but deliberately using fewer colours: `--sky` (`#4DA3F0`, the sky planes fly in) and `--lead` (`#F0553C`, a LiPo's red lead) join XT60 yellow and cutting-mat green as accents (`bg-sky`, `bg-lead`). Both pass AA with black text (7.8:1 and 6.1:1).
+- **What:** "From the bench" and "Next on the calendar" were one two-column section that made a guide and three events look like the same kind of thing. They are now two sections, each opened by a `SectionTag` (the title on a block of colour): guides are kit assembly-manual covers (`manual-cover.tsx`: stapled spine, manual number, an exploded-view drawing, plus a dashed "in the works" draft), and upcoming events are pit passes hanging on a workshop pegboard (`pit-passes.tsx`, `bg-pegboard` in `globals.css`) whose lanyard colour gives the kind (fly-in sky, competition lead, show yellow). Each pass links to its entry on `/events`, which now carries an `id` per event.
+- **What:** the bench's wide layout is now symmetric about the centre line so the title, readout and button read as one column.
+- **Impact:** no new dependencies. `GUIDES` entries gained a `cover` field.
+
 ## 2026-10-20 — The cutting-mat section is a working bench
 
 - **What:** the home's "Same six parts" cards (KV, amps, cell voltage, channels) are replaced by `src/components/home/signal-bench.tsx`: the six parts of any RC model (transmitter, receiver, servo, speed controller, motor, battery) drawn top-down on the cutting mat and wired up. The transmitter's sticks are real sliders (pointer and keyboard): the left one sets power and spins the propeller, the right one turns the servo horn and springs back to centre. Until someone touches them the bench runs a slow demo. Wide screens label parts with masking tape; narrow screens use numbered badges and a list.

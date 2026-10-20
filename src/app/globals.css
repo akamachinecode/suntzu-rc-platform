@@ -20,6 +20,8 @@
   --color-mat-foreground: var(--mat-foreground);
   --color-mat-grid: var(--mat-grid);
   --color-panel: var(--panel);
+  --color-sky: var(--sky);
+  --color-lead: var(--lead);
   --shadow-hard-sm: 3px 3px 0 0 var(--foreground);
   --shadow-hard: 5px 5px 0 0 var(--foreground);
   --shadow-hard-lg: 10px 10px 0 0 var(--foreground);
@@ -82,6 +84,9 @@
   --mat: #2e6a4e;
   --mat-foreground: #f4f7f2;
   --mat-grid: #4b8a6c;
+  /* Two more hobby colours, used sparingly: the sky planes fly in, and a LiPo's red lead. */
+  --sky: #4da3f0;
+  --lead: #f0553c;
   --border: #000000;
   --input: #000000;
   --ring: #000000;
@@ -178,6 +183,18 @@
     32px 32px,
     32px 32px;
   /* Offset so no grid line lands on the section's edge and reads as a divider. */
+  background-position: 16px 16px;
+}
+
+/* A workshop pegboard: the wall the event passes hang on. */
+@utility bg-pegboard {
+  background-color: var(--muted);
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--foreground) 16%, var(--muted)) 3px,
+    transparent 4px
+  );
+  background-size: 32px 32px;
   background-position: 16px 16px;
 }
 

@@ -3,10 +3,13 @@ import Link from "next/link";
 import { DriftWord } from "@/components/home/drift-word";
 import { ServoHero } from "@/components/home/servo-hero";
 import { DecalSheet } from "@/components/home/decal-sheet";
+import { DraftCover, ManualCover } from "@/components/home/manual-cover";
+import { PitPasses } from "@/components/home/pit-passes";
+import { SectionTag } from "@/components/home/section-tag";
 import { SignalBench } from "@/components/home/signal-bench";
 import { Button } from "@/components/ui/button";
-import { EVENTS, KINDS, byDate } from "@/content/events";
-import { GUIDES } from "@/content/guides";
+import { EVENTS, byDate } from "@/content/events";
+import { GUIDES, IN_THE_WORKS } from "@/content/guides";
 import { SERVICES } from "@/content/services";
 import { SITE } from "@/lib/site";
 
@@ -157,52 +160,37 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section aria-labelledby="bench-title" className="mx-auto max-w-7xl px-4 py-24">
-        <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr]">
-          <div>
-            <h2
-              id="bench-title"
-              className="text-4xl leading-[0.95] font-black text-balance font-wide sm:text-6xl"
-            >
-              From the bench
-            </h2>
-            <Link
-              href={GUIDES[0].href}
-              className="group mt-8 block rounded-xl border-2 border-foreground bg-primary p-8 shadow-hard-lg transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 motion-reduce:transform-none sm:p-10"
-            >
-              <h3 className="text-3xl leading-tight font-black text-balance font-wide sm:text-4xl">
-                {GUIDES[0].title}
-              </h3>
-              <p className="mt-4 max-w-[52ch] text-lg text-pretty">{GUIDES[0].dek}</p>
-              <p className="mt-8 font-semibold underline underline-offset-4 group-hover:decoration-2">
-                Read the guide
-              </p>
-            </Link>
-          </div>
-          <div>
-            <h2 className="text-2xl font-black font-wide sm:text-3xl">Next on the calendar</h2>
-            <ul className="mt-6 grid gap-4">
-              {upcoming.map((event) => (
-                <li
-                  key={event.id}
-                  className="rounded-lg border-2 border-foreground bg-panel p-5 shadow-hard-sm"
-                >
-                  <p className="text-lg font-black font-wide">{event.when}</p>
-                  <p className="mt-1 text-lg font-bold">{event.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {KINDS[event.kind].label}, {event.place}
-                  </p>
-                </li>
-              ))}
-            </ul>
-            <Link
-              href="/events"
-              className="mt-6 inline-block font-semibold underline underline-offset-4"
-            >
-              The whole calendar
-            </Link>
-          </div>
-        </div>
+      <section aria-labelledby="guides-title" className="px-4 py-24 text-center">
+        <SectionTag id="guides-title" tone="sky">
+          From the bench
+        </SectionTag>
+        <p className="mt-6 text-lg">Guides that take the machines apart.</p>
+        <ul className="mx-auto mt-12 grid max-w-6xl gap-8 md:grid-cols-3">
+          {GUIDES.map((guide, index) => (
+            <li key={guide.href}>
+              <ManualCover no={index + 1} {...guide} />
+            </li>
+          ))}
+          <li>
+            <DraftCover titles={IN_THE_WORKS} />
+          </li>
+        </ul>
+      </section>
+
+      <section
+        aria-labelledby="calendar-title"
+        className="overflow-x-clip bg-pegboard px-4 py-24 text-center"
+      >
+        <SectionTag id="calendar-title" tone="lead">
+          On the calendar
+        </SectionTag>
+        <p className="mt-6 text-lg">Fly-ins, races and shows worth the drive.</p>
+        <PitPasses events={upcoming} />
+        <p className="mt-14">
+          <Button asChild size="lg">
+            <Link href="/events">The whole calendar</Link>
+          </Button>
+        </p>
       </section>
 
       <section id="start" aria-labelledby="start-title" className="scroll-mt-16">
