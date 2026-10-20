@@ -9,12 +9,12 @@ type Point = readonly [number, number];
 type Placed = readonly [number, number, number]; // x, y, rotation
 
 const PARTS = [
-  { id: "tx", name: "Transmitter", role: "the remote in your hands" },
-  { id: "rx", name: "Receiver", role: "catches the signal" },
-  { id: "servo", name: "Servo", role: "moves flaps or steering" },
-  { id: "esc", name: "Speed controller", role: "feeds the motor power" },
-  { id: "motor", name: "Motor", role: "spins the propeller" },
-  { id: "battery", name: "Battery", role: "powers everything" },
+  { id: "tx", name: "Transmitter" },
+  { id: "rx", name: "Receiver" },
+  { id: "servo", name: "Servo" },
+  { id: "esc", name: "Speed controller" },
+  { id: "motor", name: "Motor" },
+  { id: "battery", name: "Battery" },
 ] as const;
 type PartId = (typeof PARTS)[number]["id"];
 
@@ -80,12 +80,12 @@ const WIDE: Layout = {
   },
   tapes: true,
   labels: {
-    tx: [90, 420, -2],
-    rx: [425, 285, 2],
+    tx: [119, 420, -2],
+    rx: [463, 285, 2],
     servo: [905, 96, 2],
-    esc: [676, 412, -2],
-    motor: [935, 522, 1],
-    battery: [420, 532, 1],
+    esc: [690, 412, -2],
+    motor: [977, 522, 1],
+    battery: [462, 532, 1],
   },
 };
 
@@ -331,7 +331,7 @@ export function SignalBench() {
   };
 
   return (
-    <div ref={root} className="mx-auto mt-12 max-w-6xl">
+    <div ref={root} className="mx-auto mt-6 max-w-6xl">
       <div className="relative">
         <svg
           viewBox={`0 0 ${W} ${H}`}
@@ -443,21 +443,19 @@ export function SignalBench() {
       </div>
 
       {/* On narrow screens the numbers on the drawing point here. */}
-      <ol className="mx-auto mt-8 grid max-w-md grid-cols-2 gap-x-4 gap-y-4 md:hidden">
+      <ol className="mx-auto mt-8 grid max-w-md grid-cols-2 gap-x-4 gap-y-3 md:hidden">
         {PARTS.map((part, index) => (
-          <li key={part.id} className="flex items-start gap-2">
+          <li key={part.id} className="flex items-center gap-2 font-bold">
             <span className="grid size-6 shrink-0 place-items-center rounded-full bg-foreground text-xs font-black text-primary">
               {index + 1}
             </span>
-            <span>
-              <span className="block leading-tight font-bold">{part.name}</span>
-              <span className="text-sm opacity-80">{part.role}</span>
-            </span>
+            {part.name}
           </li>
         ))}
       </ol>
 
-      <dl className="mt-10 flex flex-wrap justify-center gap-3">
+      {/* A transmitter-style screen: one readout, three equal cells */}
+      <dl className="mx-auto mt-10 grid w-full max-w-md grid-cols-3 rounded-xl bg-foreground py-3 text-center">
         {(
           [
             ["Power", "out-power", describe.power(START.throttle)],
@@ -465,12 +463,11 @@ export function SignalBench() {
             ["Motor", "out-rpm", describe.rpm(START.throttle)],
           ] as const
         ).map(([term, name, initial]) => (
-          <div
-            key={name}
-            className="flex items-baseline gap-2 rounded-md border-2 border-foreground bg-panel px-3 py-1.5 text-foreground shadow-hard-sm"
-          >
-            <dt className="text-sm text-muted-foreground">{term}</dt>
-            <dd data-bench={name} className="min-w-[9ch] font-bold tabular-nums">
+          <div key={name} className="grid gap-0.5 px-2">
+            <dt className="text-xs font-semibold tracking-wide text-mat-foreground/70 uppercase">
+              {term}
+            </dt>
+            <dd data-bench={name} className="font-bold text-primary tabular-nums sm:text-lg">
               {initial}
             </dd>
           </div>
@@ -770,10 +767,10 @@ function Battery({ at }: { at: Point }) {
   );
 }
 
-const TAPE = { w: 222, h: 50, tooth: 5, steps: 8 };
+const TAPE = { h: 38, tooth: 5, steps: 6 };
 /** A strip of masking tape, torn at both ends. */
-const TAPE_PATH = (() => {
-  const { w, h, tooth, steps } = TAPE;
+const tapePath = (w: number) => {
+  const { h, tooth, steps } = TAPE;
   const right = Array.from(
     { length: steps },
     (_, i) => `L ${i % 2 === 0 ? w - tooth : w} ${((i + 1) * h) / steps}`,
@@ -783,38 +780,27 @@ const TAPE_PATH = (() => {
     (_, i) => `L ${i % 2 === 0 ? tooth : 0} ${h - ((i + 1) * h) / steps}`,
   );
   return `M 0 0 H ${w} ${right.join(" ")} H 0 ${left.join(" ")} Z`;
-})();
+};
 
-function Tape({
-  place: [x, y, rotation],
-  n,
-  name,
-  role,
-}: {
-  place: Placed;
-  n: number;
-  name: string;
-  role: string;
-}) {
+function Tape({ place: [x, y, rotation], n, name }: { place: Placed; n: number; name: string }) {
+  // Wide-cut Archivo at this size runs about 9.3 units a letter.
+  const width = Math.round(60 + name.length * 9.3);
   return (
     <g transform={`translate(${x} ${y}) rotate(${rotation})`}>
-      <path d={TAPE_PATH} fill="var(--panel)" fillOpacity={0.94} />
-      <circle cx={24} cy={25} r={12} fill="var(--foreground)" />
-      <text x={24} y={30} textAnchor="middle" fontSize={14} fontWeight={900} fill="var(--primary)">
+      <path d={tapePath(width)} fill="var(--panel)" fillOpacity={0.94} />
+      <circle cx={22} cy={19} r={11} fill="var(--foreground)" />
+      <text x={22} y={24} textAnchor="middle" fontSize={13} fontWeight={900} fill="var(--primary)">
         {n}
       </text>
       <text
-        x={44}
-        y={22}
-        fontSize={15}
+        x={42}
+        y={25}
+        fontSize={16}
         fontWeight={900}
         fill="var(--foreground)"
         style={{ fontStretch: "125%" }}
       >
         {name}
-      </text>
-      <text x={44} y={39} fontSize={13} fill="var(--muted-foreground)">
-        {role}
       </text>
     </g>
   );

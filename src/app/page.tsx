@@ -148,13 +148,9 @@ export default function HomePage() {
             <br />
             <span className="text-primary">Six parts do the rest.</span>
           </h2>
-          <p className="mx-auto mt-5 max-w-[42ch] text-center text-lg text-pretty">
-            The same six sit inside every plane, helicopter and car. Here they are on our bench,
-            wired up.
-          </p>
           <SignalBench />
           <p className="mt-10 text-center">
-            <Button asChild size="lg" variant="outline">
+            <Button asChild size="lg">
               <Link href="/guides/rc-planes#parts">See them inside a real plane</Link>
             </Button>
           </p>
