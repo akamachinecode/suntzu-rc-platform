@@ -4,7 +4,7 @@ Instructions for AI coding agents (Claude Code, Cursor, GitHub Copilot, Codex, G
 
 ## Project
 
-- **Name:** Rc Landing
+- **Name:** Servo (working brand name)
 - **Stack:** `web-app` — Itaca Technologies standard stack (details below)
 - **Hosting:** AWS (`sst`) with Cloudflare in front (DNS, CDN, WAF)
 - **Code:** GitHub `ITACA-TECHNOLOGIES/rc-landing`
@@ -32,6 +32,12 @@ The person prompting you may not be a developer (sales, operations, a client). S
 8. **Accessible and indexable by default:** semantic HTML, one `<h1>` per page, `alt` on images, a `<label>` for every input, keyboard-usable controls, a page `title` and `description`.
 9. **Finish every task with `pnpm check`** (format, lint, types, build) and fix what fails. Run `pnpm format` for formatting. Never disable lint rules or type checks to make it pass.
 10. **Record decisions.** New dependency, environment variable, external service, data model or route structure change → add a dated entry to `docs/DECISIONS.md`. Itaca engineers read it when they take over.
+
+## Servo project notes
+
+- **Content** is typed data in `src/content/` (services, events, places, rules, history, guides). Every factual item carries a source link; keep it that way and re-check dates before editing.
+- **Anatomy figures**: use the project skill in `.claude/skills/anatomy` (read its `SKILL.md`). The kit is vendored in `src/components/iso/`; figures live in `src/components/figures/<name>/` following `references/react.md` (model, view, geometry, frame, art, live, figure). Light theme only, XT60 yellow is the single lit accent (see `.servo-figure` in `globals.css`). Run the line check before shipping a figure.
+- **Forms** (`/contact`, `/community`) validate with Zod but don't deliver messages yet (see `docs/DECISIONS.md`).
 
 ## Commands
 
