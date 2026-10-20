@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, VT323 } from "next/font/google";
+import { Archivo } from "next/font/google";
 import Link from "next/link";
 import { MobileNav } from "@/components/mobile-nav";
 import { SmoothScroll } from "@/components/smooth-scroll";
@@ -7,9 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Wordmark } from "@/components/wordmark";
 import { SITE } from "@/lib/site";
 import "./globals.css";
-
-// Pixel face for the transmitter's LCD on the home page.
-const lcd = VT323({ variable: "--font-vt323", subsets: ["latin"], weight: "400" });
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -28,7 +25,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang={SITE.lang} className={`${archivo.variable} ${lcd.variable} antialiased`}>
+    <html lang={SITE.lang} className={`${archivo.variable} antialiased`}>
       <body className="flex min-h-dvh flex-col">
         <SmoothScroll>
           <header className="sticky top-0 z-50 border-b-2 border-foreground bg-background">

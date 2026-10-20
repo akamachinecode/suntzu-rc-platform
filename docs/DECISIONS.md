@@ -12,12 +12,12 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
-## 2026-10-20 — The crew section is a transmitter
+## 2026-10-20 — The crew section is a decal sheet
 
-- **What:** the home page's "Three of us" section shows the five services as switches on a simple RC transmitter (`src/components/home/transmitter.tsx`). Flipping a switch puts the service on the backlit LCD and shows its call to action below; the sticks follow the mouse or run a pre-flight control check on their own.
-- **What:** added the VT323 pixel font through `next/font/google` (no new package) for the LCD only, and transmitter colour tokens (`--tx`, `--tx-raised`, `--tx-edge`, `--lcd`, `--lcd-ink`) plus an `lcd-pixels` utility in `globals.css`.
-- **Why:** a more crafted, industry-specific and playful home page, with less text and one clear idea.
-- **Impact:** none functional. Services gained `short` (switch label) and `cta` fields in `src/content/services.ts`.
+- **What:** the home page's "Three of us" section is a kit's decal sheet (`src/components/home/decal-sheet.tsx`): the headline as vinyl lettering with a die-cut edge, the five services as stickers in different die-cut shapes that slap onto the sheet when it scrolls into view and peel a corner on hover, and the Servo logo decal. It replaced a transmitter version that repeated the hero's two-column layout on black.
+- **What:** the VT323 pixel font, transmitter tokens and `lcd-pixels` utility added for the transmitter are no longer used and were removed.
+- **Why:** a change of rhythm after the hero, playful and specific to the hobby, with very little text.
+- **Impact:** none functional. Services carry `short` and `tag` fields in `src/content/services.ts`.
 
 ## 2026-10-20 — Figures drawn on the page, centred frame
 

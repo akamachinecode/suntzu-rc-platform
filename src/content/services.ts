@@ -15,7 +15,7 @@ export type Topic = (typeof TOPICS)[number]["value"];
 export const SERVICES = [
   {
     id: "lessons",
-    cta: "Book a lesson",
+    tag: "at the field",
     short: "Lessons",
     title: "Lessons at the field",
     lead: "One-on-one, on a real field or track, with your model or ours.",
@@ -27,7 +27,7 @@ export const SERVICES = [
   },
   {
     id: "first-model",
-    cta: "Help me pick a model",
+    tag: "chosen right",
     short: "First model",
     title: "Your first model, chosen right",
     lead: "Tell us your budget and where you'll run it. We'll shortlist, then set it up with you.",
@@ -39,7 +39,7 @@ export const SERVICES = [
   },
   {
     id: "advanced",
-    cta: "Ask about a course",
+    tag: "level up",
     short: "Advanced",
     title: "Advanced courses",
     lead: "For when the basics are boring and you want the next thing.",
@@ -51,7 +51,7 @@ export const SERVICES = [
   },
   {
     id: "connect",
-    cta: "Introduce me to the scene",
+    tag: "shops, clubs, tracks",
     short: "The scene",
     title: "Plugged into the scene",
     lead: "We know the shops, clubs and tracks from Palm Beach to the Keys.",
@@ -63,7 +63,7 @@ export const SERVICES = [
   },
   {
     id: "rules",
-    cta: "Help me with the rules",
+    tag: "fly legal",
     short: "Rules",
     title: "Rules and permits, sorted",
     lead: "South Florida has a lot of busy airspace. We'll help you fly legally and stay welcome.",

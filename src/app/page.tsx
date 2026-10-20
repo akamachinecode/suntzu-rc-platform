@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DriftWord } from "@/components/home/drift-word";
 import { ServoHero } from "@/components/home/servo-hero";
-import { Transmitter } from "@/components/home/transmitter";
+import { DecalSheet } from "@/components/home/decal-sheet";
 import { Button } from "@/components/ui/button";
 import { EVENTS, KINDS, byDate } from "@/content/events";
 import { GUIDES } from "@/content/guides";
@@ -139,28 +139,9 @@ export default function HomePage() {
 
       <section
         aria-labelledby="crew-title"
-        className="border-t-2 border-foreground bg-foreground text-background"
+        className="overflow-hidden border-t-2 border-foreground px-4 py-24"
       >
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 pt-28 pb-20 lg:grid-cols-[1fr_1.3fr]">
-          <div>
-            <h2
-              id="crew-title"
-              className="text-4xl leading-[0.95] font-black text-balance text-primary font-wide sm:text-5xl"
-            >
-              Three of us. One very loud hobby.
-            </h2>
-            <p className="mt-5 max-w-[36ch] text-lg text-pretty">
-              We teach, we make introductions, and we take the machines apart.
-            </p>
-            {/* On black, the hard shadow and border switch to paper so the button still lifts. */}
-            <div className="mt-8 [--foreground:var(--panel)]">
-              <Button asChild size="lg">
-                <Link href="/learn">See what we offer</Link>
-              </Button>
-            </div>
-          </div>
-          <Transmitter services={SERVICES.map(({ id, short, cta }) => ({ id, short, cta }))} />
-        </div>
+        <DecalSheet decals={SERVICES.map(({ id, short, tag }) => ({ id, short, tag }))} />
       </section>
 
       <section aria-labelledby="disciplines-title" className="border-t-2 border-foreground">

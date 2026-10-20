@@ -16,12 +16,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-archivo);
   --font-heading: var(--font-archivo);
-  --font-lcd: var(--font-vt323);
-  --color-tx: var(--tx);
-  --color-tx-raised: var(--tx-raised);
-  --color-tx-edge: var(--tx-edge);
-  --color-lcd: var(--lcd);
-  --color-lcd-ink: var(--lcd-ink);
   --color-mat: var(--mat);
   --color-mat-foreground: var(--mat-foreground);
   --color-mat-grid: var(--mat-grid);
@@ -88,12 +82,6 @@
   --mat: #2e6a4e;
   --mat-foreground: #f4f7f2;
   --mat-grid: #4b8a6c;
-  /* The transmitter on the home page: moulded case, raised parts, edges, backlit LCD. */
-  --tx: #1e1e20;
-  --tx-raised: #2b2b2e;
-  --tx-edge: #48484d;
-  --lcd: #ffd65c;
-  --lcd-ink: #2a2208;
   --border: #000000;
   --input: #000000;
   --ring: #000000;
@@ -170,14 +158,6 @@
 
 @utility font-narrow {
   font-stretch: 75%;
-}
-
-/* The faint pixel grid of a backlit LCD. */
-@utility lcd-pixels {
-  background-image:
-    linear-gradient(color-mix(in oklab, var(--lcd-ink) 7%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in oklab, var(--lcd-ink) 7%, transparent) 1px, transparent 1px);
-  background-size: 4px 4px;
 }
 
 /* Self-healing cutting mat: 1 cm grid with a heavier line every 5 cm. */
