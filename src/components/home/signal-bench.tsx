@@ -752,16 +752,13 @@ function Battery({ at }: { at: Point }) {
       <rect x={14} y={14} width={12} height={64} fill="var(--primary)" />
       <text
         x={38}
-        y={47}
+        y={55}
         fontSize={24}
         fontWeight={900}
         fill="var(--foreground)"
         style={{ fontStretch: "125%" }}
       >
         LiPo
-      </text>
-      <text x={38} y={66} fontSize={11.5} fill="var(--muted-foreground)">
-        3S · 11.1 V · 2200 mAh
       </text>
     </g>
   );
