@@ -2,7 +2,7 @@
 
 import { motion, useMotionValueEvent, useScroll, useTransform } from "motion/react";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 
 // A standard servo reads a pulse every 20 ms: 1000 µs is one end, 2000 µs the other.
@@ -26,6 +26,27 @@ export function ServoHero() {
   useEffect(() => {
     rotateHorn(angle.get());
   });
+  // The pinned box is a screen tall and centres its content, so it ends with empty space
+  // that depends on the screen. Pull the next section up over it: the page's own section
+  // padding is then the only gap after the hero.
+  const pinned = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const box = pinned.current;
+    if (!box || !track.current) return;
+    const fit = () => {
+      const bottom = Math.max(
+        ...Array.from(box.children, (child) => {
+          const el = child as HTMLElement;
+          return el.offsetTop + el.offsetHeight;
+        }),
+      );
+      if (track.current) track.current.style.marginBottom = `${bottom - box.clientHeight}px`;
+    };
+    const observer = new ResizeObserver(fit);
+    observer.observe(box);
+    for (const child of box.children) observer.observe(child);
+    return () => observer.disconnect();
+  }, []);
   const pulseText = useTransform(pulse, (p) => Math.round(p).toString());
   const angleText = useTransform(angle, (a) => `${a > 0.5 ? "+" : ""}${Math.round(a)}°`);
   // Waveform window shows the first 3 ms of the frame: 100 px per millisecond.
@@ -36,7 +57,10 @@ export function ServoHero() {
 
   return (
     <section ref={track} aria-labelledby="hero-title" className="relative h-[260vh]">
-      <div className="sticky top-16 mx-auto grid h-[calc(100dvh-4rem)] max-w-7xl content-center gap-8 px-4 py-6 md:grid-cols-[1.1fr_1fr] md:items-center md:gap-12">
+      <div
+        ref={pinned}
+        className="sticky top-16 mx-auto grid h-[calc(100dvh-4rem)] max-w-7xl content-center gap-8 px-4 py-6 md:grid-cols-[1.1fr_1fr] md:items-center md:gap-12"
+      >
         <div className="flex flex-col items-start gap-5 md:gap-7">
           <h1
             id="hero-title"

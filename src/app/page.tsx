@@ -137,7 +137,12 @@ export default function HomePage() {
     <>
       <ServoHero />
 
-      <section aria-labelledby="crew-title" className="overflow-hidden px-4 py-24">
+      {/* Hero, sheet and "Air" sit the same distance apart: the bottom padding plus the
+          drift word's own top padding equals the top padding. */}
+      <section
+        aria-labelledby="crew-title"
+        className="overflow-hidden px-4 pt-20 pb-10 sm:pt-28 sm:pb-18"
+      >
         <DecalSheet decals={SERVICES.map(({ id, short, tag }) => ({ id, short, tag }))} />
       </section>
 
