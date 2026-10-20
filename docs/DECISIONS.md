@@ -12,6 +12,13 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-20 — The crew section is a transmitter
+
+- **What:** the home page's "Three of us" section shows the five services as switches (SA–SE) on an RC transmitter (`src/components/home/transmitter.tsx`). The LCD shows the chosen service and a per-service call to action; the sticks follow the mouse or run a pre-flight control check, and a channel monitor shows each stick as a 1000–2000 µs pulse.
+- **What:** added the VT323 pixel font through `next/font/google` (no new package) for the LCD only, and transmitter colour tokens (`--tx`, `--tx-raised`, `--tx-edge`, `--lcd`, `--lcd-ink`) plus `grip-ridges` and `lcd-pixels` utilities in `globals.css`.
+- **Why:** a more crafted, industry-specific and playful home page.
+- **Impact:** none functional. Services gained `short` (switch label) and `cta` fields in `src/content/services.ts`.
+
 ## 2026-10-20 — Figures drawn on the page, centred frame
 
 - **What:** Anatomy figures no longer sit in a white card. `FigureFrame` (`src/components/figures/figure-frame.tsx`) replaces the kit's `Plate` for site use: figure number and title centred above, the live readout (a pill) and the hint centred below, then legend and caption. The kit's light tokens are retuned to the primer-grey page in `globals.css` (`.servo-figure`). The RC plane guide is now a centred, symmetric layout, including the hero.

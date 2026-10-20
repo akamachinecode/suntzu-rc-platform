@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DriftWord } from "@/components/home/drift-word";
 import { ServoHero } from "@/components/home/servo-hero";
+import { Transmitter } from "@/components/home/transmitter";
 import { Button } from "@/components/ui/button";
 import { EVENTS, KINDS, byDate } from "@/content/events";
 import { GUIDES } from "@/content/guides";
@@ -140,7 +141,7 @@ export default function HomePage() {
         aria-labelledby="crew-title"
         className="border-t-2 border-foreground bg-foreground text-background"
       >
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-20 md:grid-cols-[1fr_1.4fr]">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 pt-28 pb-20 lg:grid-cols-[1fr_1.3fr]">
           <div>
             <h2
               id="crew-title"
@@ -160,21 +161,15 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
-          <ul className="grid gap-x-10 gap-y-8 sm:grid-cols-2">
-            {SERVICES.map((service) => (
-              <li key={service.id} className="border-t-2 border-primary pt-4">
-                <h3 className="text-xl font-bold">
-                  <Link
-                    href={`/learn#${service.id}`}
-                    className="hover:underline hover:underline-offset-4"
-                  >
-                    {service.title}
-                  </Link>
-                </h3>
-                <p className="mt-2 text-pretty text-background/80">{service.lead}</p>
-              </li>
-            ))}
-          </ul>
+          <Transmitter
+            services={SERVICES.map(({ id, short, cta, title, lead }) => ({
+              id,
+              short,
+              cta,
+              title,
+              lead,
+            }))}
+          />
         </div>
       </section>
 
