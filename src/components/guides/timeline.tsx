@@ -23,9 +23,9 @@ export function Timeline({ items, label }: { items: Milestone[]; label: string }
   const year = items[active]?.year ?? "";
 
   return (
-    <div className="grid gap-8">
-      <div className="sticky top-[4.5rem] z-10" aria-hidden="true">
-        <div className="relative flex items-center gap-5 overflow-hidden rounded-xl border-2 border-foreground bg-foreground px-5 py-4 text-primary shadow-[6px_6px_0_0_var(--primary)] sm:gap-8 sm:px-8 sm:py-5">
+    <div className="grid gap-8 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:gap-16">
+      <div className="sticky top-[4.5rem] z-10 self-start md:top-24" aria-hidden="true">
+        <div className="relative flex items-center gap-5 overflow-hidden rounded-xl border-2 border-foreground bg-foreground px-5 py-4 text-primary shadow-[6px_6px_0_0_var(--primary)] sm:gap-8 sm:px-8 sm:py-5 md:flex-col md:items-start md:gap-0 md:px-6 md:py-8 md:shadow-[10px_10px_0_0_var(--primary)]">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.p
               key={year}
@@ -33,16 +33,16 @@ export function Timeline({ items, label }: { items: Milestone[]; label: string }
               animate={{ y: 0, opacity: 1 }}
               exit={reduce ? undefined : { y: "-60%", opacity: 0 }}
               transition={{ type: "spring", stiffness: 260, damping: 28 }}
-              className="shrink-0 text-5xl leading-none font-black font-wide tabular-nums sm:text-7xl"
+              className="shrink-0 text-5xl leading-none font-black font-wide tabular-nums sm:text-7xl md:text-8xl lg:text-9xl"
             >
               {year}
             </motion.p>
           </AnimatePresence>
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 md:mt-4 md:w-full">
             <p className="text-sm font-semibold text-background sm:text-base">
               {items[active]?.title}
             </p>
-            <div className="mt-3 h-2 rounded-full bg-background/20">
+            <div className="mt-3 h-2 rounded-full bg-background/20 md:mt-6">
               <motion.div
                 style={{ scaleX: progress }}
                 className="h-full origin-left rounded-full bg-primary"

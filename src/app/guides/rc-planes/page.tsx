@@ -16,7 +16,7 @@ import {
   throwOf,
 } from "@/components/figures/thumb-to-elevator/model";
 import { PlaneExplorer, type PlanePart } from "@/components/guides/plane-explorer";
-import { COLUMN, Column, Prose, SectionTitle } from "@/components/guides/prose";
+import { COLUMN, Column, Prose, SectionTitle, Wide } from "@/components/guides/prose";
 import { Timeline } from "@/components/guides/timeline";
 import { Button } from "@/components/ui/button";
 import { PLANE_HISTORY } from "@/content/history";
@@ -196,10 +196,11 @@ export default function RcPlanesGuide() {
           <p className="mx-auto mt-5 max-w-[60ch] text-center text-lg text-pretty">
             Scroll through the milestones. Each one links to where we checked it.
           </p>
-          <div className="mt-14">
-            <Timeline items={PLANE_HISTORY} label="Milestones in radio-controlled flight" />
-          </div>
         </Column>
+        {/* The scroll-driven pieces get the wide two-column layout on desktop. */}
+        <Wide className="mt-14">
+          <Timeline items={PLANE_HISTORY} label="Milestones in radio-controlled flight" />
+        </Wide>
       </section>
 
       <section aria-labelledby="chain" className="py-20">
@@ -248,10 +249,11 @@ export default function RcPlanesGuide() {
             A typical electric trainer, from the wingtips in. Scroll and watch the part light up on
             the plane.
           </p>
-          <div className="mt-14">
-            <PlaneExplorer parts={PARTS} />
-          </div>
         </Column>
+        {/* The scroll-driven pieces get the wide two-column layout on desktop. */}
+        <Wide className="mt-14">
+          <PlaneExplorer parts={PARTS} />
+        </Wide>
       </section>
 
       <section aria-labelledby="balance" className="py-20">
