@@ -95,17 +95,6 @@ export function ServoHero() {
             <circle cx="404" cy="268" r="9" fill="var(--panel)" />
             {/* case */}
             <rect x="120" y="196" width="260" height="146" rx="14" fill="#000" />
-            <rect x="140" y="300" width="104" height="26" rx="4" fill="var(--primary)" />
-            <text
-              x="192"
-              y="319"
-              textAnchor="middle"
-              fontSize="17"
-              fontWeight="900"
-              style={{ fontStretch: "125%" }}
-            >
-              servo
-            </text>
             {/* output spline boss */}
             <circle cx={PIVOT.x} cy={PIVOT.y} r="40" fill="#3a3a37" />
             {/* horn */}

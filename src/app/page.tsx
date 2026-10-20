@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DriftWord } from "@/components/home/drift-word";
 import { ServoHero } from "@/components/home/servo-hero";
 import { DecalSheet } from "@/components/home/decal-sheet";
+import { SignalBench } from "@/components/home/signal-bench";
 import { Button } from "@/components/ui/button";
 import { EVENTS, KINDS, byDate } from "@/content/events";
 import { GUIDES } from "@/content/guides";
@@ -50,54 +51,6 @@ const disciplines = [
       ["Basher top speed", "50 km/h and up"],
       ["Crawler run time", "Often over an hour"],
     ],
-  },
-] as const;
-
-const parts = [
-  {
-    name: "Brushless motor",
-    role: "Spins the prop, rotor or wheels.",
-    figure: "KV rating",
-    detail: "rpm per volt, unloaded. 1000 KV on 11.1 V is about 11,100 rpm.",
-    tilt: "-rotate-2",
-  },
-  {
-    name: "ESC",
-    role: "Turns battery power into three-phase pulses the motor can use.",
-    figure: "Amps",
-    detail:
-      "Pick one rated above your motor's peak draw. Most include a BEC to power the receiver.",
-    tilt: "rotate-1",
-  },
-  {
-    name: "LiPo battery",
-    role: "Light, punchy and unforgiving if mistreated.",
-    figure: "3.7 V per cell",
-    detail:
-      "4.2 V full, never below 3.0 V, around 3.8 to 3.9 V for storage. Always balance charge.",
-    tilt: "rotate-2",
-  },
-  {
-    name: "Receiver",
-    role: "Listens to your transmitter on 2.4 GHz.",
-    figure: "Channels",
-    detail: "One per thing you control. A plane needs four, a heli needs six.",
-    tilt: "-rotate-1",
-  },
-  {
-    name: "Servo",
-    role: "Moves a control surface or linkage to an exact angle.",
-    figure: "1000 to 2000 µs",
-    detail: "The pulse width it reads every 20 ms. Torque is quoted in kg·cm.",
-    tilt: "rotate-1",
-  },
-  {
-    name: "Gyro",
-    role: "Holds the model steady faster than your thumbs can.",
-    figure: "3 axes",
-    detail:
-      "Roll, pitch and yaw. Essential on helicopters, helpful on planes, and it keeps cars straight.",
-    tilt: "-rotate-2",
   },
 ] as const;
 
@@ -184,34 +137,27 @@ export default function HomePage() {
       <section
         id="inside"
         aria-labelledby="inside-title"
-        className="scroll-mt-16 bg-cutting-mat text-mat-foreground"
+        className="scroll-mt-16 overflow-hidden bg-cutting-mat text-mat-foreground"
       >
         <div className="mx-auto max-w-7xl px-4 py-24">
           <h2
             id="inside-title"
-            className="max-w-3xl text-4xl leading-[0.95] font-black text-balance font-wide sm:text-6xl"
+            className="text-center text-5xl leading-[0.95] font-black text-balance font-wide sm:text-7xl"
           >
-            Same six parts in every one of them.
+            You move a stick.
+            <br />
+            <span className="text-primary">Six parts do the rest.</span>
           </h2>
-          <p className="mt-5 max-w-[52ch] text-lg text-pretty">
-            Plane, heli or truck, the electronics are close cousins. Learn these once and you can
-            work on anything.
+          <p className="mx-auto mt-5 max-w-[42ch] text-center text-lg text-pretty">
+            The same six sit inside every plane, helicopter and car. Here they are on our bench,
+            wired up.
           </p>
-          <ul className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {parts.map((p) => (
-              <li
-                key={p.name}
-                className={`${p.tilt} rounded-lg border-2 border-foreground bg-panel p-6 text-foreground shadow-hard motion-reduce:rotate-0`}
-              >
-                <h3 className="text-xl font-black font-wide">{p.name}</h3>
-                <p className="mt-1 text-sm">{p.role}</p>
-                <p className="mt-5 inline-block rounded-md border-2 border-foreground bg-primary px-2.5 py-1 text-lg font-bold">
-                  {p.figure}
-                </p>
-                <p className="mt-3 text-sm text-pretty text-muted-foreground">{p.detail}</p>
-              </li>
-            ))}
-          </ul>
+          <SignalBench />
+          <p className="mt-10 text-center">
+            <Button asChild size="lg" variant="outline">
+              <Link href="/guides/rc-planes#parts">See them inside a real plane</Link>
+            </Button>
+          </p>
         </div>
       </section>
 

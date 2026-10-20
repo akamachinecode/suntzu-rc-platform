@@ -12,6 +12,12 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-20 — The cutting-mat section is a working bench
+
+- **What:** the home's "Same six parts" cards (KV, amps, cell voltage, channels) are replaced by `src/components/home/signal-bench.tsx`: the six parts of any RC model (transmitter, receiver, servo, speed controller, motor, battery) drawn top-down on the cutting mat and wired up. The transmitter's sticks are real sliders (pointer and keyboard): the left one sets power and spins the propeller, the right one turns the servo horn and springs back to centre. Until someone touches them the bench runs a slow demo. Wide screens label parts with masking tape; narrow screens use numbered badges and a list.
+- **Why:** the old cards assumed you already knew the hobby. The bench answers the outsider's first question, "how does a remote-control model work?", with less text.
+- **Impact:** no new dependencies (Motion and lucide-react). Animation pauses off screen and under `prefers-reduced-motion`. The hero servo lost its "servo" label.
+
 ## 2026-10-20 — The crew section is a decal sheet
 
 - **What:** the home page's "Three of us" section is a kit's decal sheet (`src/components/home/decal-sheet.tsx`): the headline as vinyl lettering with a die-cut edge, the five services as stickers in different die-cut shapes that slap onto the sheet when it scrolls into view and peel a corner on hover, and the Servo logo decal. It replaced a transmitter version that repeated the hero's two-column layout on black.
