@@ -1,0 +1,27 @@
+# pnpm settings. Since pnpm 11 they live here, not in .npmrc.
+# Supply-chain protections below are part of the Itaca standard:
+# don't relax them without Itaca engineering approval.
+
+# Only install versions published at least 1 day ago (minutes).
+# A malicious release is usually detected and pulled within hours.
+minimumReleaseAge: 1440
+
+# Refuse a version whose publishing trust (e.g. npm provenance) is weaker
+# than earlier versions of the same package — a sign of a hijacked account.
+# Only checked for versions published in the last 30 days (minutes), where
+# takeovers happen; older versions have already been vetted by the ecosystem.
+trustPolicy: no-downgrade
+trustPolicyIgnoreAfter: 43200
+
+# Dependencies of dependencies may not come from git repos or tarball URLs.
+blockExoticSubdeps: true
+
+# Install scripts are blocked unless the package is listed below with `true`.
+# Packages listed with `false` were reviewed: they work without their script.
+strictDepBuilds: true
+allowBuilds:
+  sharp: false
+  unrs-resolver: false
+
+# Pin exact versions when adding dependencies (`pnpm add`).
+saveExact: true

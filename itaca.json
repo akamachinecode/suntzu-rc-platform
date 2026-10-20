@@ -1,0 +1,9 @@
+{
+  "stack": "web-app",
+  "deploy": "sst",
+  "domain": "example.com",
+  "awsRegion": "us-east-1",
+  "github": "ITACA-TECHNOLOGIES/rc-landing",
+  "createdWith": "create-itaca@0.1.0",
+  "createdAt": "2026-10-20"
+}

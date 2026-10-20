@@ -1,0 +1,35 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+build/
+out/
+.next/
+.astro/
+.open-next/
+.sst/
+*.tsbuildinfo
+next-env.d.ts
+
+# environment — only .env.example is committed
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# other package managers' lockfiles (this project uses pnpm)
+package-lock.json
+yarn.lock
+bun.lock
+bun.lockb
+
+# OS / editors
+.DS_Store
+.idea/
+*.pem

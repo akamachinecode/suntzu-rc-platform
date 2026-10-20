@@ -1,0 +1,8 @@
+.next/
+out/
+pnpm-lock.yaml
+next-env.d.ts
+src/components/ui/
+.sst/
+sst-env.d.ts
+.open-next/
