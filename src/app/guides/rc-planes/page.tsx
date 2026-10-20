@@ -187,10 +187,7 @@ export default function RcPlanesGuide() {
         </p>
       </Prose>
 
-      <section
-        aria-labelledby="history"
-        className="border-y-2 border-foreground bg-background py-20"
-      >
+      <section aria-labelledby="history" className="bg-background py-20">
         <Column>
           <SectionTitle id="history">Where it started</SectionTitle>
           <p className="mx-auto mt-5 max-w-[60ch] text-center text-lg text-pretty">
@@ -242,7 +239,7 @@ export default function RcPlanesGuide() {
         </Prose>
       </section>
 
-      <section aria-labelledby="parts" className="border-y-2 border-foreground bg-background py-20">
+      <section aria-labelledby="parts" className="bg-background py-20">
         <Column>
           <SectionTitle id="parts">Every part, and what it does</SectionTitle>
           <p className="mx-auto mt-5 max-w-[60ch] text-center text-lg text-pretty">

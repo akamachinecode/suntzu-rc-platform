@@ -177,6 +177,8 @@
     160px 160px,
     32px 32px,
     32px 32px;
+  /* Offset so no grid line lands on the section's edge and reads as a divider. */
+  background-position: 16px 16px;
 }
 
 /*

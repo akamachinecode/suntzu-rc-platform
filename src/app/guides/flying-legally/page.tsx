@@ -46,7 +46,7 @@ export default function FlyingLegallyPage() {
         <SectionTitle id="faa">The FAA basics</SectionTitle>
         <RuleList rules={FAA_RULES} />
       </Wide>
-      <section className="border-y-2 border-foreground bg-panel py-20">
+      <section className="bg-panel py-20">
         <Wide>
           <SectionTitle id="florida">Florida law</SectionTitle>
           <p className="mt-5 max-w-[60ch] text-lg text-pretty">

@@ -141,7 +141,7 @@ export default function HomePage() {
         <DecalSheet decals={SERVICES.map(({ id, short, tag }) => ({ id, short, tag }))} />
       </section>
 
-      <section aria-labelledby="disciplines-title" className="border-t-2 border-foreground">
+      <section aria-labelledby="disciplines-title">
         <h2 id="disciplines-title" className="sr-only">
           Three ways to play
         </h2>
@@ -179,7 +179,7 @@ export default function HomePage() {
       <section
         id="inside"
         aria-labelledby="inside-title"
-        className="scroll-mt-16 border-y-2 border-foreground bg-cutting-mat text-mat-foreground"
+        className="scroll-mt-16 bg-cutting-mat text-mat-foreground"
       >
         <div className="mx-auto max-w-7xl px-4 py-24">
           <h2

@@ -19,10 +19,7 @@ export default function CommunityPage() {
         lead="Clubs give you instructors, insured fields and someone to help when a servo strips on the flight line. Here's where South Florida flies and races, and a place to show us what you've built."
       />
 
-      <section
-        aria-labelledby="places-title"
-        className="border-y-2 border-foreground bg-cutting-mat text-mat-foreground"
-      >
+      <section aria-labelledby="places-title" className="bg-cutting-mat text-mat-foreground">
         <div className="mx-auto max-w-7xl px-4 py-20">
           <h2 id="places-title" className="text-3xl font-black font-wide sm:text-5xl">
             Clubs, fields and tracks

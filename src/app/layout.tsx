@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Archivo } from "next/font/google";
 import Link from "next/link";
 import { MobileNav } from "@/components/mobile-nav";
-import { SiteHeader } from "@/components/site-header";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { Button } from "@/components/ui/button";
 import { Wordmark } from "@/components/wordmark";
@@ -29,7 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang={SITE.lang} className={`${archivo.variable} antialiased`}>
       <body className="flex min-h-dvh flex-col">
         <SmoothScroll>
-          <SiteHeader>
+          <header className="sticky top-0 z-50 bg-background">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4">
               <Link href="/" aria-label={`${SITE.name} home`} className="text-3xl">
                 <Wordmark />
@@ -52,9 +51,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 <MobileNav />
               </div>
             </div>
-          </SiteHeader>
+          </header>
           <main className="flex-1">{children}</main>
-          <footer className="border-t-2 border-foreground bg-foreground text-background">
+          <footer className="bg-foreground text-background">
             <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-14 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <Wordmark className="text-6xl text-primary sm:text-8xl" />

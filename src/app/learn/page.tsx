@@ -27,7 +27,7 @@ export default function LearnPage() {
         </div>
       </PageHeader>
 
-      <section aria-labelledby="services-title" className="border-y-2 border-foreground bg-panel">
+      <section aria-labelledby="services-title" className="bg-panel">
         <div className="mx-auto max-w-7xl px-4 py-20">
           <h2 id="services-title" className="text-3xl font-black font-wide sm:text-5xl">
             What we can do for you
