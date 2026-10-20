@@ -14,9 +14,9 @@ Format:
 
 ## 2026-10-20 — The crew section is a transmitter
 
-- **What:** the home page's "Three of us" section shows the five services as switches (SA–SE) on an RC transmitter (`src/components/home/transmitter.tsx`). The LCD shows the chosen service and a per-service call to action; the sticks follow the mouse or run a pre-flight control check, and a channel monitor shows each stick as a 1000–2000 µs pulse.
-- **What:** added the VT323 pixel font through `next/font/google` (no new package) for the LCD only, and transmitter colour tokens (`--tx`, `--tx-raised`, `--tx-edge`, `--lcd`, `--lcd-ink`) plus `grip-ridges` and `lcd-pixels` utilities in `globals.css`.
-- **Why:** a more crafted, industry-specific and playful home page.
+- **What:** the home page's "Three of us" section shows the five services as switches on a simple RC transmitter (`src/components/home/transmitter.tsx`). Flipping a switch puts the service on the backlit LCD and shows its call to action below; the sticks follow the mouse or run a pre-flight control check on their own.
+- **What:** added the VT323 pixel font through `next/font/google` (no new package) for the LCD only, and transmitter colour tokens (`--tx`, `--tx-raised`, `--tx-edge`, `--lcd`, `--lcd-ink`) plus an `lcd-pixels` utility in `globals.css`.
+- **Why:** a more crafted, industry-specific and playful home page, with less text and one clear idea.
 - **Impact:** none functional. Services gained `short` (switch label) and `cta` fields in `src/content/services.ts`.
 
 ## 2026-10-20 — Figures drawn on the page, centred frame

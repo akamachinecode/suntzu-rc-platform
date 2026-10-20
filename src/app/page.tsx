@@ -149,10 +149,8 @@ export default function HomePage() {
             >
               Three of us. One very loud hobby.
             </h2>
-            <p className="mt-5 max-w-[44ch] text-lg text-pretty">
-              We fly, hover and drive all over South Florida, and we&apos;d like more people out
-              there with us. So we teach, we make introductions, and we write the guides we wanted
-              when we started.
+            <p className="mt-5 max-w-[36ch] text-lg text-pretty">
+              We teach, we make introductions, and we take the machines apart.
             </p>
             {/* On black, the hard shadow and border switch to paper so the button still lifts. */}
             <div className="mt-8 [--foreground:var(--panel)]">
@@ -161,15 +159,7 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
-          <Transmitter
-            services={SERVICES.map(({ id, short, cta, title, lead }) => ({
-              id,
-              short,
-              cta,
-              title,
-              lead,
-            }))}
-          />
+          <Transmitter services={SERVICES.map(({ id, short, cta }) => ({ id, short, cta }))} />
         </div>
       </section>
 

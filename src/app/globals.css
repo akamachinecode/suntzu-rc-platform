@@ -172,11 +172,6 @@
   font-stretch: 75%;
 }
 
-/* Rubber grip ridges on the sides of the transmitter case. */
-@utility grip-ridges {
-  background-image: repeating-linear-gradient(0deg, var(--tx-edge) 0 2px, transparent 2px 7px);
-}
-
 /* The faint pixel grid of a backlit LCD. */
 @utility lcd-pixels {
   background-image:
