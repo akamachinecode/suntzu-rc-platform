@@ -6,3 +6,5 @@ src/components/ui/
 .sst/
 sst-env.d.ts
 .open-next/
+src/components/iso/
+.claude/
