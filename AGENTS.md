@@ -5,10 +5,10 @@ Instructions for AI coding agents (Claude Code, Cursor, GitHub Copilot, Codex, G
 ## Project
 
 - **Name:** Servo (working brand name)
-- **Stack:** `web-app` — Itaca Technologies standard stack (details below)
+- **Stack:** `platform` — Itaca Technologies standard stack (details below)
 - **Hosting:** AWS (`sst`) with Cloudflare in front (DNS, CDN, WAF)
 - **Code:** GitHub `ITACA-TECHNOLOGIES/rc-landing`
-- **Created with:** `create-itaca@0.1.0` on 2026-10-20 (see `itaca.json`)
+- **Created with:** `create-itaca@0.1.0` (`web-app`) on 2026-10-20, moved to the `platform` stack (create-itaca 0.2.0, unreleased branch) on 2026-10-21 (see `itaca.json` and `docs/DECISIONS.md`)
 
 This project follows the Itaca standard so that any Itaca engineer can take it over without surprises. Staying inside the standard matters more than any single feature.
 
@@ -31,12 +31,13 @@ The person prompting you may not be a developer (sales, operations, a client). S
 7. **Don't touch infrastructure** — deployment files (listed under "Deployment") and `.github/` — unless the user explicitly asks. Those changes affect production.
 8. **Accessible and indexable by default:** semantic HTML, one `<h1>` per page, `alt` on images, a `<label>` for every input, keyboard-usable controls, a page `title` and `description`.
 9. **Finish every task with `pnpm check`** (format, lint, types, build) and fix what fails. Run `pnpm format` for formatting. Never disable lint rules or type checks to make it pass.
-10. **Record decisions.** New dependency, environment variable, external service, data model or route structure change → add a dated entry to `docs/DECISIONS.md`. Itaca engineers read it when they take over.
+10. **Read and record decisions.** `docs/DECISIONS.md` is the project's memory: read it before starting a task. New dependency, environment variable, external service, data model or route structure change → add a dated entry to it. Itaca engineers read it when they take over.
 
 ## Servo project notes
 
-- **Content** is typed data in `src/content/` (services, events, places, rules, history, guides). Every factual item carries a source link; keep it that way and re-check dates before editing.
-- **Anatomy figures**: use the project skill in `.claude/skills/anatomy` (read its `SKILL.md`). The kit is vendored in `src/components/iso/`; figures live in `src/components/figures/<name>/` following `references/react.md` (model, view, geometry, frame, art, live, figure). Light theme only, XT60 yellow is the single lit accent (see `.servo-figure` in `globals.css`). Run the line check before shipping a figure.
+- **Read `docs/EVENTS-ENGINE.md`** before working on events, sources or ingestion. The plan: an engine that monitors the web for RC events (Florida first), merges duplicates, verifies them and publishes them; the worker that runs it will live in `apps/api`.
+- **Content** is typed data in `apps/app/src/content/` (services, events, places, rules, history, guides) until the events engine moves events and places into the database. Every factual item carries a source link; keep it that way and re-check dates before editing.
+- **Anatomy figures**: use the project skill in `.claude/skills/anatomy` (read its `SKILL.md`). The kit is vendored in `apps/app/src/components/iso/`; figures live in `apps/app/src/components/figures/<name>/` following `references/react.md`. Light theme only, XT60 yellow is the single lit accent (see `.servo-figure` in `apps/app/src/app/globals.css`). Run the line check before shipping a figure.
 - **Forms** (`/contact`, `/community`) validate with Zod but don't deliver messages yet (see `docs/DECISIONS.md`).
 
 ## Commands
@@ -50,66 +51,41 @@ The person prompting you may not be a developer (sales, operations, a client). S
 | `pnpm lint`      | ESLint                                                           |
 | `pnpm typecheck` | TypeScript type checking                                         |
 
-## Stack: web application (`web-app`)
+## Stack: product platform (`platform`)
 
-Next.js 16 (App Router, React Server Components, Turbopack, React Compiler), React 19, Tailwind CSS 4, shadcn/ui (Radix), Zod, TypeScript strict.
-
-Local dev server: `pnpm dev` → http://localhost:3000
-
-<!-- BEGIN:nextjs-agent-rules -->
-
-## This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
-
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->
-
-Useful guides in `node_modules/next/dist/docs/01-app/02-guides/`: `forms.md`, `server-actions.md`, `data-security.md`, `authentication.md`, `caching-without-cache-components.md`, `environment-variables.md`. The `next-devtools` MCP server in `.mcp.json` can also search the docs and inspect the running dev server.
-
-### Structure
+A pnpm monorepo: one Next.js app (the public site and the signed-in screens) on top of one API, ready for a mobile app. Unlike the standard `platform` stack there is no Astro site (`apps/web`): Servo's public pages are the product (dynamic events, SEO per event, interactive figures), so they live in `apps/app`. Each app and package has its own `AGENTS.md` with its stack, structure and recipes — **read it before changing files there.**
 
 ```text
-src/
-  app/                 routes (App Router): app/about/page.tsx → /about
-  app/layout.tsx       root layout: <html>, header, footer, fonts, metadata
-  app/<route>/actions.ts  Server Actions for that route ("use server")
-  app/api/             Route Handlers — only for webhooks and external callers
-  components/          app components
-  components/ui/       shadcn/ui components (generated — avoid editing)
-  lib/site.ts          app name, description, navigation, public URL
-  lib/env.ts           validated server environment variables
-  app/globals.css      Tailwind + theme tokens (brand colors)
-public/                static files served as-is
+apps/app/             public site + web app: Next.js 16 (App Router), UI only    → https://www.example.com
+apps/api/             backend: NestJS — auth, business rules, data            → https://api.example.com
+packages/db/          database schema and migrations (PostgreSQL + Drizzle), used only by apps/api
+packages/shared/      validation schemas (Zod) and types shared by the API and the apps
+packages/api-client/  typed API client, generated from apps/api/openapi.json
+packages/ui/          shared shadcn/ui components + theme (brand colors, radius)
 ```
 
-`src/app/contact/` is the reference example: Server Component page + Client Component form + Server Action with Zod validation. Copy its pattern.
+### Which app?
 
-### Rules
+- **`apps/api`** — every business rule and every piece of data: who can see what, what happens when something is created, payments, emails, scheduled work. A future mobile app will use the same API, so nothing that matters may live only in the web app.
+- **`apps/app`** — every screen: the public site (home, guides, events, community) and the signed-in screens (logins, crew console, forms). It reads and writes data only through the API (`getApi()` in `apps/app/src/lib/api.ts`).
+- When unsure, ask the user: "Should this also work in a mobile app or for another system?" Yes → the rule goes in `apps/api` and the screen in `apps/app`.
 
-- **Server Components by default.** Add `"use client"` only to the smallest component that needs state, effects, event handlers or browser APIs.
-- **Mutations go through Server Actions** with Zod validation of every input, returning a serializable state (`useActionState` on the client). Check authentication and authorization inside every action — never trust the browser.
-- **Fetch data in Server Components** (async components), not with `useEffect`.
-- **Secrets stay on the server.** Read them through `src/lib/env.ts` (validated, `server-only`). Only `NEXT_PUBLIC_*` variables reach the browser, so never put secrets in them.
-- **Cache Components are disabled** (`cacheComponents: false`) because the AWS hosting targets don't support them yet. Don't use `"use cache"`, `cacheLife` or `cacheTag`; follow `caching-without-cache-components.md`.
-- **Request interception** (redirects by auth, headers) goes in `src/proxy.ts` — `middleware.ts` is deprecated in Next.js 16.
-- **Metadata:** export `metadata` (or `generateMetadata`) from every `page.tsx` with `title` and `description`. Add public routes to `src/app/sitemap.ts`.
+### How a feature is built (end to end)
 
-### Standard choices
+1. **Schema:** add or change tables in `packages/db/src/schema/`, then `pnpm db:generate` (writes a SQL migration) and `pnpm db:migrate`.
+2. **Contract:** add the request/response schemas to `packages/shared`.
+3. **API:** add a module in `apps/api/src/<domain>/` (controller + service), copying `apps/api/src/notes/`.
+4. **Client:** `pnpm build` regenerates `apps/api/openapi.json` and the typed client. Commit both with the change.
+5. **Screen:** add the page in `apps/app/src/app/`, copying `apps/app/src/app/notes/`.
 
-When a feature needs one of these, use the Itaca standard instead of alternatives, record it in `docs/DECISIONS.md`, and tell the user that Itaca engineering should review it before production.
+### Monorepo rules
 
-| Need                  | Itaca standard                                               |
-| --------------------- | ------------------------------------------------------------ |
-| Database              | PostgreSQL (Amazon RDS / Aurora) + Drizzle ORM, in `src/db/` |
-| Authentication        | Better Auth                                                  |
-| Forms with complex UX | shadcn/ui Field + React Hook Form + Zod                      |
-| Email                 | Amazon SES                                                   |
-| File uploads          | Amazon S3 with presigned URLs                                |
-| Tables / charts       | shadcn/ui Data Table (TanStack Table) / shadcn/ui Charts     |
-| Dates                 | date-fns                                                     |
-| Tests                 | Vitest (unit) + Playwright (end-to-end)                      |
+- **Run commands from the repository root.** First time: `pnpm db:up && pnpm db:migrate` (local PostgreSQL in Docker), copy each app's `.env.example` to `.env`. Then `pnpm dev` starts everything (site and app http://localhost:3000, API http://localhost:3001, API docs http://localhost:3001/docs). `pnpm check` checks everything.
+- **Dependencies belong to one app or package:** `pnpm --filter @workspace/api add <pkg>` (or `@workspace/app`…). Never `pnpm add` at the root (only shared tooling such as Prettier lives there).
+- **UI components live in `packages/ui`** and are shared by every app (a future mobile app uses its own UI kit). Import them as `@workspace/ui/components/<name>`. Add a new one from the app that needs it: `cd apps/app && pnpm dlx shadcn@latest add <component>`.
+- **One theme:** brand colors, fonts and radius are CSS variables in `packages/ui/src/styles/globals.css`.
+- Never import code from one app into another. Shared code goes into a package under `packages/` — ask Itaca engineering before creating one.
+- **The API contract is reviewed like code.** A change to `apps/api/openapi.json` in a pull request means web and mobile clients may need to change too.
 
 ## Deployment (AWS via SST)
 
@@ -130,6 +106,7 @@ When a feature needs one of these, use the Itaca standard instead of alternative
 - Integrations with other company systems (ERP, CRM, identity providers, internal APIs).
 - Changes to infrastructure, DNS, domains, AWS or Cloudflare settings.
 
-- **Background jobs, queues, websockets or heavy processing** (reports, imports, video): the hosting target may not support them — ask Itaca engineering for the right AWS service.
+- **Database structure changes that delete or rename data** (dropping columns or tables, changing types) and anything touching user accounts, sessions or permissions in `apps/api/src/auth`.
+- **Background jobs, queues, scheduled tasks, websockets or file uploads:** they need new AWS pieces in `sst.config.ts` — ask Itaca engineering.
 
 Explain to the user why the request needs an engineer, write down what you found in `docs/DECISIONS.md`, and don't improvise a workaround.

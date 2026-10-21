@@ -1,10 +1,28 @@
-# Rc Landing
+# Servo
 
-Built on the **Itaca Technologies standard stack** `web-app`, hosted on **AWS (`sst`)** behind **Cloudflare**, with code on **GitHub**.
+Built on the **Itaca Technologies standard stack** `platform`, hosted on **AWS (`sst`)** behind **Cloudflare**, with code on **GitHub**.
 
-**Stack:** Next.js 16 (App Router) · React 19 · Tailwind CSS 4 · shadcn/ui · Zod · TypeScript.
+**Stack:** a pnpm monorepo with one Next.js app (public site and signed-in screens) and the API behind it (ready for a mobile app):
 
-Dev server: http://localhost:3000 · Health check: `/api/health` · Example form with Server Action: `/contact`
+| Folder                                         | What                                      | Built on                           | Dev URL               | Production              |
+| ---------------------------------------------- | ----------------------------------------- | ---------------------------------- | --------------------- | ----------------------- |
+| [`apps/app`](./apps/app)                       | Public site and web application           | Next.js 16 (App Router) · React 19 | http://localhost:3000 | https://www.example.com |
+| [`apps/api`](./apps/api)                       | Backend: sign-in, business rules, data    | NestJS · Better Auth · OpenAPI     | http://localhost:3001 | https://api.example.com |
+| [`packages/db`](./packages/db)                 | Database schema and migrations            | PostgreSQL · Drizzle ORM           | —                     | Amazon RDS              |
+| [`packages/shared`](./packages/shared)         | Validation schemas shared by API and apps | Zod                                | —                     | —                       |
+| [`packages/api-client`](./packages/api-client) | Typed API client (generated from OpenAPI) | openapi-fetch                      | —                     | —                       |
+| [`packages/ui`](./packages/ui)                 | Shared shadcn/ui components and theme     | Tailwind CSS 4 · shadcn/ui         | —                     | —                       |
+
+First run (needs Docker for the local database):
+
+```bash
+pnpm install
+pnpm db:up && pnpm db:migrate
+cp apps/api/.env.example apps/api/.env && cp apps/app/.env.example apps/app/.env
+pnpm dev
+```
+
+Then open http://localhost:3000, create an account and try the example notes page. API docs: http://localhost:3001/docs.
 
 ## Quick start
 

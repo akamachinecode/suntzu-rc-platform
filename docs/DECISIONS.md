@@ -12,6 +12,26 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-21 — Servo moves to the `platform` stack (Next.js + NestJS API + PostgreSQL)
+
+- **What:** the repo is now a pnpm monorepo built from the `platform` stack of create-itaca 0.2.0. That version is unreleased; it comes from the `docs/platform-stack-design` branch of `itaca-stacks`, commit `f4d3b9e`.
+  - **`apps/app`** holds the whole Next.js site, moved with its history.
+  - **`apps/api`** is the NestJS 12 API, with Better Auth 1.7.8 for accounts.
+  - **`packages/db`** holds the Drizzle schema and migrations for PostgreSQL.
+  - **`packages/shared`** holds the Zod contracts.
+  - **`packages/api-client`** is the typed client, generated from OpenAPI.
+  - **`packages/ui`** holds the shadcn components and the brand theme: tokens, fonts, cutting-mat and pegboard patterns.
+  - The site's own styles (Anatomy figures, Lenis) stay in `apps/app/src/app/globals.css`.
+  - The template's `notes` and `sign-in` examples are kept as the reference until the first real module (events) replaces them.
+- **Why:** the events engine needs a database, scheduled background work and a real API, and a mobile app is likely. `web-app` keeps the backend inside Next.js, so it can't serve a mobile app or run jobs (`docs/EVENTS-ENGINE.md`).
+- **Deviation from the template:** there is **no Astro site (`apps/web`)**. Servo's public pages are the product (dynamic events, a page per event for search, interactive figures, member features), so they live in `apps/app`, served on `www.` (production) and `www-<stage>.` (other stages). The bare domain redirects to `www.`; the API is on `api.`. To feed back into the template: a "no public site" variant of `platform`.
+- **Impact:**
+  - **Local development needs Docker:** `pnpm db:up && pnpm db:migrate`, then `pnpm dev`. If port 5432 is taken, put `DB_PORT=5433` in a root `.env` and use that port in `apps/api/.env`.
+  - **Production has a fixed monthly cost** even with no traffic: load balancer, RDS, NAT instance and a Fargate task. See `docs/DEPLOY.md`.
+  - **Nothing is deployed yet.** The first deploy goes to a test AWS account (stage `dev`) once the domain is bought; the domain is still `example.com` in `sst.config.ts` and `itaca.json`.
+  - **The worker is not added yet.** It will run SQS + Cron for ingestion inside `apps/api`, and it is the next step of the plan.
+  - **Checked:** every page renders with computed styles identical to before the move (home, events, community, contact, RC plane guide). Sign-up, sign-in and a note saved through the API to PostgreSQL work locally.
+
 ## 2026-10-21 — The cars and crawlers guide
 
 - **What:** `/guides/cars-and-crawlers`, built like the plane and helicopter guides: a hero that comes apart on scroll (`figures/car-apart`, a 1/10 short-course truck in the Team Associated Pro2 SC10's proportions, 85 solids in 10 assemblies), a sourced timeline (`src/content/car-history.ts`, 12 milestones from the 1960s to 2026), three benches, a part-by-part explorer (`components/guides/car-explorer.tsx`), a section on crawlers, an RC10-versus-RB10 then-and-now table and the local section (Coral Springs RC Track, West Delray Regional Park; cars need no FAA paperwork). The benches: `figures/diff` (Fig 2: an open differential you steer; the carrier turns at the average of the two wheels), `figures/shock` (Fig 3: a coil-over on a dyno; oil from 100 to 1000 cSt changes the overshoot and settling) and `figures/gearing` (Fig 4: pinion, spur and transmission into final drive and theoretical top speed; 18T on the Pro2 is 12.57:1 and about 40 km/h on 2S). `figures/bench/` holds the shapes and the slider hook the three share.
