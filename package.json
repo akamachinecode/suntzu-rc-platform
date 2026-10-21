@@ -22,7 +22,7 @@
     "deploy:production": "sst deploy --stage production"
   },
   "devDependencies": {
-    "prettier": "3.9.9",
+    "prettier": "3.9.10",
     "prettier-plugin-tailwindcss": "0.8.1",
     "sst": "4.17.1",
     "typescript": "5.9.3"

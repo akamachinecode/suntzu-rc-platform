@@ -12,6 +12,33 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-22 — AWS Agent Toolkit and the new AWS experience project
+
+- **What:** AI agents working on Servo get AWS access through the AWS Agent Toolkit (`aws/agent-toolkit-for-aws`): the AWS CLI profile `servo`, signed in with `aws login` (browser sign-in, no access keys), the AWS MCP server and the default AWS skills. The toolkit's rules for the new AWS experience are in `AGENTS.md`, between the `AWS Agent Toolkit rules` markers, and Servo's own rules win where they conflict.
+- **Why:** the owner wants agents to be able to inspect and build on AWS with current AWS guidance, without handing them long-lived keys.
+- **Impact:**
+  - **Project:** a new AWS experience project (account `352587389937`, signed in with social sign-in). These projects are locked to one Region: **us-east-2**. They can't use Lambda@Edge, StackSets or cross-Region features, and they may have a spend limit that pauses the project.
+  - **Region conflict, needs Itaca engineering:** `sst.config.ts` and `docs/DEPLOY.md` deploy production to **us-east-1**, which this project does not allow for Lambda, Fargate or RDS. Before anyone deploys into this project, engineering must decide whether to move `providers.aws.region` to `us-east-2` or deploy production to a different (advanced) AWS account. Nothing was changed in the infrastructure files.
+  - **Machine setup, not in git:** the profile lives in `~/.aws/`. The skills and the `aws-mcp` server entry live in each agent's global config (for example `~/.claude/skills`), and `AWS_MCP_PROXY_PROFILES=servo` tells that server which profile to use. Each engineer who wants this runs the setup on their own machine.
+  - **Credentials:** they last 12 hours and renew without the browser for up to 90 days. After that, run `aws login --profile servo` again.
+
+## 2026-10-22 — Always on the latest stable versions
+
+- **What:** project policy: every dependency, runtime and service runs its latest stable release. Releases with security or other important fixes are applied as soon as they pass the 1-day `minimumReleaseAge` in `pnpm-workspace.yaml`. Release candidates, betas and canaries don't count as stable. Applied today:
+  - Minor and patch updates: Next.js 16.4.2, React 19.3.1, Better Auth 1.7.12, NestJS 12.2.0, Zod 4.6.7, radix-ui 1.8.1, lucide-react 1.60.0, shadcn 4.22.1, cn 0.5.0, typescript-eslint 8.72.0, Prettier 3.9.10, `@types/node` 24.19.2.
+  - `apps/app` moves from ESLint 9.39.5 to 10.13.0. ESLint 9 is marked as no longer supported, and `apps/api` was already on 10. `eslint-plugin-react`, `-import` and `-jsx-a11y` (through `eslint-config-next`) still declare `eslint ^9` as a peer, but `pnpm lint` passes. Revisit when they add 10.
+- **Why:** the owner's rule. Outdated versions accumulate known vulnerabilities, and large jumps later are riskier than small ones now.
+- **Impact / pending:**
+  - **PostgreSQL:** the latest stable is 18. Version 19 is at RC 1, with GA planned for 2026-11-19. Local Docker already runs `postgres:18-alpine`, but `sst.config.ts` still asks RDS for `17`. Moving it to `18` needs explicit approval because it is an infrastructure file. Nothing is deployed yet, so no data migration is needed.
+  - **Kept on purpose:**
+    - Node.js 24, the active LTS. Node 26 only becomes LTS at the end of October 2026; switch then (`.nvmrc`, `engines`, `@types/node`, Dockerfile).
+    - TypeScript 5.9. TypeScript 7.0 is the new native compiler, a major change that needs its own check with Next.js and NestJS.
+    - `sst` 4.17.1 and OpenNext 4.1.8. The infrastructure tooling is updated only with approval; 4.17.2 and 4.1.12 are available.
+  - **`pnpm audit`:**
+    - `braces` (high, no patched version yet), pulled in by the `shadcn` CLI.
+    - `esbuild` 0.18 (moderate), pulled in by `drizzle-kit` through the deprecated `@esbuild-kit`.
+    - Both are development-time tools that never run in production. Re-check when `shadcn` and `drizzle-kit` publish fixes.
+
 ## 2026-10-21 — Servo moves to the `platform` stack (Next.js + NestJS API + PostgreSQL)
 
 - **What:** the repo is now a pnpm monorepo built from the `platform` stack of create-itaca 0.2.0. That version is unreleased; it comes from the `docs/platform-stack-design` branch of `itaca-stacks`, commit `f4d3b9e`.
