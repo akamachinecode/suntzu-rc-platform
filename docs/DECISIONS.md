@@ -12,6 +12,12 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-22 — Roadmap approved: what we index, the community ladder and the build order
+
+- **What:** [`docs/ROADMAP.md`](./ROADMAP.md) is the approved plan. The engine indexes events, series, competitions, places and hosts now; results and rules later; flying conditions last. The community is a ladder (visitor, member, contributor, organiser, crew) built as utility around events and places, not a forum. Build order: the engine runs locally first (track A), research in parallel (track B, starting with a hand-verified golden set of Florida events), and AWS deployment waits for the region and worker decisions (track C).
+- **Why:** the owner approved the overview on 2026-10-22. Nothing blocked on AWS or the domain stops the engine from being built and tested against the local database.
+- **Impact:** competition results are linked, not stored, until organisers publish them with us (they carry people's names). Events cover all of Florida; places and community start with South Florida. Still for Itaca engineering: region (us-east-2), worker infrastructure, SES, S3 uploads and the `crew` and organiser roles.
+
 ## 2026-10-22 — AWS Agent Toolkit and the new AWS experience project
 
 - **What:** AI agents working on Servo get AWS access through the AWS Agent Toolkit (`aws/agent-toolkit-for-aws`): the AWS CLI profile `servo`, signed in with `aws login` (browser sign-in, no access keys), the AWS MCP server and the default AWS skills. The toolkit's rules for the new AWS experience are in `AGENTS.md`, between the `AWS Agent Toolkit rules` markers, and Servo's own rules win where they conflict.
