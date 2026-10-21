@@ -9,6 +9,8 @@ const ROUTES = [
   "/community",
   "/guides",
   "/guides/rc-planes",
+  "/guides/rc-helicopters",
+  "/guides/cars-and-crawlers",
   "/guides/flying-legally",
   "/contact",
 ];

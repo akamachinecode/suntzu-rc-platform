@@ -70,7 +70,7 @@ function Sticker({ decal, index }: { decal: Decal; index: number }) {
       </span>
     ),
     plate: (
-      <span className="grid w-36 place-items-center rounded-xl border-[6px] border-panel bg-panel p-1 shadow-[3px_3px_0_0_var(--foreground)] lg:w-52">
+      <span className="grid w-36 place-items-center rounded-xl border-[6px] border-panel bg-sky p-1 shadow-[3px_3px_0_0_var(--foreground)] lg:w-52">
         <span className="grid w-full place-items-center rounded-lg border-[3px] border-foreground px-2 py-4 text-foreground lg:px-4 lg:py-5">
           {label}
         </span>
@@ -80,7 +80,7 @@ function Sticker({ decal, index }: { decal: Decal; index: number }) {
       <span className="grid size-36 place-items-center drop-shadow-[3px_3px_0_var(--foreground)] lg:size-44">
         <span className="col-start-1 row-start-1 size-full bg-panel" style={{ clipPath: BURST }} />
         <span
-          className="col-start-1 row-start-1 grid size-[88%] place-items-center bg-foreground text-primary"
+          className="col-start-1 row-start-1 grid size-[88%] place-items-center bg-lead text-foreground"
           style={{ clipPath: BURST }}
         >
           {label}
@@ -146,6 +146,46 @@ function LogoDecal({ index }: { index: number }) {
   );
 }
 
+/** The spares every sheet comes with, on wide screens: a wing roundel and a race number. */
+const SPARES = [
+  {
+    id: "roundel",
+    at: "lg:left-[26%] lg:top-[9%]",
+    tilt: -12,
+    face: (
+      <span className="grid size-24 place-items-center rounded-full border-[6px] border-panel bg-sky shadow-[3px_3px_0_0_var(--foreground)]">
+        <span className="size-12 rounded-full border-[7px] border-panel bg-lead" />
+      </span>
+    ),
+  },
+  {
+    id: "number",
+    at: "lg:right-[28.5%] lg:bottom-[19%]",
+    tilt: 8,
+    face: (
+      <span className="block rounded-[1.1rem] border-[6px] border-panel bg-lead px-4 pt-1 text-5xl leading-none font-black tracking-tight text-foreground font-wide shadow-[3px_3px_0_0_var(--foreground)]">
+        03
+      </span>
+    ),
+  },
+];
+
+function SpareDecal({ spare, index }: { spare: (typeof SPARES)[number]; index: number }) {
+  const reduce = useReducedMotion();
+  return (
+    <motion.div
+      aria-hidden="true"
+      className={cn("absolute max-lg:hidden", spare.at)}
+      initial={reduce ? false : { opacity: 0, scale: 1.35, rotate: spare.tilt + 14 }}
+      whileInView={{ opacity: 1, scale: 1, rotate: spare.tilt }}
+      viewport={{ once: true, amount: 0.6 }}
+      transition={{ type: "spring", stiffness: 420, damping: 22, delay: 0.15 + index * 0.09 }}
+    >
+      {spare.face}
+    </motion.div>
+  );
+}
+
 /** The crew section: a kit's decal sheet, with the headline as the big decal in the middle. */
 export function DecalSheet({ decals }: { decals: Decal[] }) {
   return (
@@ -164,9 +204,11 @@ export function DecalSheet({ decals }: { decals: Decal[] }) {
         />
       ))}
       <span aria-hidden="true" className="absolute top-3.5 left-10 flex gap-1">
-        {["bg-primary", "bg-foreground", "bg-mat", "bg-panel"].map((swatch) => (
-          <span key={swatch} className={cn("size-2.5 border border-foreground/40", swatch)} />
-        ))}
+        {["bg-primary", "bg-sky", "bg-lead", "bg-mat", "bg-foreground", "bg-panel"].map(
+          (swatch) => (
+            <span key={swatch} className={cn("size-2.5 border border-foreground/40", swatch)} />
+          ),
+        )}
       </span>
 
       {/* The big decal: vinyl letters with a white die-cut edge */}
@@ -187,6 +229,9 @@ export function DecalSheet({ decals }: { decals: Decal[] }) {
         ))}
         {/* Every decal sheet carries the maker's logo. */}
         <LogoDecal index={decals.length} />
+        {SPARES.map((spare, index) => (
+          <SpareDecal key={spare.id} spare={spare} index={decals.length + 1 + index} />
+        ))}
       </div>
 
       <p className="mt-8 text-center text-sm text-muted-foreground lg:absolute lg:inset-x-0 lg:bottom-4 lg:mt-0">

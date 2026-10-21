@@ -1,10 +1,23 @@
 import { PencilLine } from "lucide-react";
 import Link from "next/link";
+import { ApartPreview } from "@/components/figures/apart/preview";
+import { SLOTS as CAR_SLOTS } from "@/components/figures/car-apart/art";
+import { CAR_SPEC } from "@/components/figures/car-apart/spec";
+import { SLOTS as HELI_SLOTS } from "@/components/figures/heli-apart/art";
+import { HELI_SPEC } from "@/components/figures/heli-apart/spec";
+import { SLOTS as PLANE_SLOTS } from "@/components/figures/plane-apart/art";
+import { PLANE_SPEC } from "@/components/figures/plane-apart/spec";
 import { cn } from "@/lib/utils";
 
-type Cover = "plane" | "airspace";
+type Cover = "plane" | "heli" | "car" | "airspace";
 
-const COLOURS: Record<Cover, string> = { plane: "bg-sky", airspace: "bg-lead" };
+// Black type reads on all of these; the green cover takes the mat's light ink.
+const COLOURS: Record<Cover, string> = {
+  plane: "bg-sky text-foreground",
+  heli: "bg-primary text-foreground",
+  car: "bg-mat text-mat-foreground",
+  airspace: "bg-lead text-foreground",
+};
 
 /** A guide, drawn as the cover of a kit's assembly manual: stapled spine, number, exploded view. */
 export function ManualCover({
@@ -24,7 +37,7 @@ export function ManualCover({
     <Link
       href={href}
       className={cn(
-        "group relative flex h-full flex-col rounded-sm border-2 border-foreground pl-3 text-left text-foreground shadow-hard-lg transition-transform duration-200 hover:-translate-y-1 hover:-rotate-1 motion-reduce:transform-none",
+        "group relative flex h-full flex-col rounded-sm border-2 border-foreground pl-3 text-left shadow-hard-lg transition-transform duration-200 hover:-translate-y-1 hover:-rotate-1 motion-reduce:transform-none",
         COLOURS[cover],
       )}
     >
@@ -49,7 +62,41 @@ export function ManualCover({
         <span>{minutes} min</span>
       </span>
       <div className="m-4 rounded-sm border-2 border-foreground bg-panel">
-        {cover === "plane" ? <ExplodedPlane /> : <Airspace />}
+        {cover === "plane" ? (
+          <div aria-hidden="true" className="p-2">
+            <ApartPreview
+              spec={PLANE_SPEC}
+              slots={PLANE_SLOTS}
+              lit="wing"
+              view={[84, 102, 448, 338]}
+              label="The trainer from the guide, part-way apart"
+            />
+          </div>
+        ) : cover === "heli" ? (
+          <div aria-hidden="true" className="p-2">
+            <ApartPreview
+              spec={HELI_SPEC}
+              slots={HELI_SLOTS}
+              apart={0.16}
+              lit="blades"
+              view={[86, 97, 486, 367]}
+              label="The helicopter from the guide, part-way apart"
+            />
+          </div>
+        ) : cover === "car" ? (
+          <div aria-hidden="true" className="p-2">
+            <ApartPreview
+              spec={CAR_SPEC}
+              slots={CAR_SLOTS}
+              apart={0.2}
+              lit="body"
+              view={[136, 123, 412, 311]}
+              label="The truck from the guide, part-way apart"
+            />
+          </div>
+        ) : (
+          <Airspace />
+        )}
       </div>
       <div className="mt-auto px-4 pb-5">
         <h3 className="text-2xl leading-tight font-black text-balance font-wide">{title}</h3>
@@ -81,45 +128,6 @@ export function DraftCover({ titles }: { titles: readonly string[] }) {
 }
 
 const ink = { stroke: "var(--foreground)", strokeWidth: 3, strokeLinejoin: "round" } as const;
-
-/** A trainer side-on, with its wing lifted off and the arrows that put it back. */
-function ExplodedPlane() {
-  return (
-    <svg viewBox="0 0 240 170" aria-hidden="true" className="block h-auto w-full">
-      <circle cx="22" cy="24" r="12" fill="var(--foreground)" />
-      <text x="22" y="29" textAnchor="middle" fontSize="14" fontWeight="900" fill="var(--primary)">
-        1
-      </text>
-      {/* the wing, off */}
-      <path
-        d="M 72 50 Q 82 34 122 34 Q 164 36 174 48 Q 124 56 72 50 Z"
-        fill="var(--primary)"
-        {...ink}
-      />
-      {[98, 148].map((x) => (
-        <g key={x} stroke="var(--foreground)" strokeWidth="2">
-          <path d={`M ${x} 60 V 84`} strokeDasharray="4 4" />
-          <path d={`M ${x - 5} 82 L ${x} 90 L ${x + 5} 82`} fill="none" />
-        </g>
-      ))}
-      {/* fuselage, fin and tailplane */}
-      <path
-        d="M 44 106 Q 44 96 56 96 H 182 L 214 100 V 108 L 182 116 H 56 Q 44 116 44 106 Z"
-        fill="var(--panel)"
-        {...ink}
-      />
-      <path d="M 192 98 L 206 72 H 218 L 214 100 Z" fill="var(--primary)" {...ink} />
-      <path d="M 184 106 H 226" stroke="var(--foreground)" strokeWidth="4" strokeLinecap="round" />
-      {/* nose, spinner and prop */}
-      <path d="M 44 99 L 30 106 L 44 113 Z" fill="var(--primary)" {...ink} />
-      <path d="M 26 74 V 138" stroke="var(--foreground)" strokeWidth="5" strokeLinecap="round" />
-      {/* undercarriage */}
-      <path d="M 76 116 L 66 140" fill="none" {...ink} />
-      <circle cx="66" cy="144" r="8" fill="var(--panel)" {...ink} />
-      <circle cx="200" cy="120" r="4" fill="var(--foreground)" />
-    </svg>
-  );
-}
 
 /** Controlled airspace around an airport, and a trainer flying wide of it. */
 function Airspace() {

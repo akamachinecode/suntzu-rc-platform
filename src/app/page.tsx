@@ -5,8 +5,9 @@ import { ServoHero } from "@/components/home/servo-hero";
 import { DecalSheet } from "@/components/home/decal-sheet";
 import { DraftCover, ManualCover } from "@/components/home/manual-cover";
 import { PitPasses } from "@/components/home/pit-passes";
-import { SectionTag } from "@/components/home/section-tag";
+import { SectionTitle } from "@/components/home/section-title";
 import { SignalBench } from "@/components/home/signal-bench";
+import { ToyStage } from "@/components/home/toy-stage";
 import { Button } from "@/components/ui/button";
 import { EVENTS, byDate } from "@/content/events";
 import { GUIDES, IN_THE_WORKS } from "@/content/guides";
@@ -23,37 +24,52 @@ const disciplines = [
     id: "air",
     word: "Air",
     title: "Planes",
+    scene: "airfield",
+    sceneLabel: "A high-wing trainer flying circuits over a grass club field, its prop spinning.",
     body: "Four channels, one wing and a lot of patience with the wind. A high-wing trainer forgives almost everything while your thumbs learn that left is right when it's flying towards you.",
-    specs: [
-      ["Trainer wingspan", "1.2 to 1.5 m"],
-      ["Battery", "3S LiPo, 11.1 V"],
-      ["Flight time", "8 to 12 min"],
-      ["Controls", "Aileron, elevator, rudder, throttle"],
+    tone: "bg-sky",
+    facts: [
+      ["Self-levelling", "A high-wing trainer rights itself when you let go of the sticks."],
+      ["8 to 12 minutes", "of flying from one battery, so charge a few before you go."],
+      [
+        "A free test first",
+        "The FAA's TRUST test and a $5 registration come before your first flight.",
+      ],
     ],
+    guide: { href: "/guides/rc-planes", label: "The RC plane, taken apart" },
   },
   {
     id: "rotor",
     word: "Rotor",
     title: "Helicopters",
+    scene: "helipad",
+    sceneLabel: "A 450-class helicopter lifting off a helipad and hovering, its rotor spinning.",
     body: "The hardest thing in the hobby to fly, and the most satisfying to get right. A swashplate tilts the spinning blades, and a flybarless gyro corrects them many times a second.",
-    specs: [
-      ["Common size", "450 class, 710 to 800 mm rotor"],
-      ["Head speed", "2,500 to 3,000 rpm"],
-      ["Battery", "3S to 6S LiPo"],
-      ["Stabilisation", "3-axis flybarless gyro"],
+    tone: "bg-primary",
+    facts: [
+      ["Hover first", "Lessons start with hovering, one control at a time."],
+      ["Up to 50 turns a second", "A 450 rotor spins 2,500 to 3,000 rpm, so give it room."],
+      ["A gyro on board", "It steadies the heli many times a second: you fly, it corrects."],
     ],
+    guide: { href: "/guides/rc-helicopters", label: "The RC helicopter, taken apart" },
   },
   {
     id: "ground",
     word: "Ground",
     title: "Cars and crawlers",
+    scene: "dirt-track",
+    sceneLabel: "A short-course truck lapping a dirt track while a crawler climbs a pile of rocks.",
     body: "The easiest way in. Bash a short-course truck across a field, race on carpet, or crawl a rock garden at walking pace. If it breaks, you walk over and pick it up.",
-    specs: [
-      ["Popular scale", "1/10"],
-      ["Battery", "2S LiPo, 7.4 V"],
-      ["Basher top speed", "50 km/h and up"],
-      ["Crawler run time", "Often over an hour"],
+    tone: "bg-lead",
+    facts: [
+      ["Nothing to fall from", "No altitude, no airspace and no wind to fight."],
+      [
+        "50 km/h and up",
+        "from a 1/10 basher on a 2S pack. A crawler climbs at walking pace instead.",
+      ],
+      ["No FAA paperwork", "Cars only need a track, or a lot you're allowed to use."],
     ],
+    guide: { href: "/guides/cars-and-crawlers", label: "Cars and crawlers, taken apart" },
   },
 ] as const;
 
@@ -106,32 +122,39 @@ export default function HomePage() {
         <h2 id="disciplines-title" className="sr-only">
           Three ways to play
         </h2>
-        {disciplines.map((d, i) => (
+        {disciplines.map((d) => (
           <article
             key={d.id}
             id={d.id}
             aria-labelledby={`${d.id}-title`}
-            className={i % 2 === 1 ? "scroll-mt-16 bg-primary" : "scroll-mt-16"}
+            className={`scroll-mt-16 ${d.tone}`}
           >
             <DriftWord className="pt-10">{d.word}</DriftWord>
-            <div className="mx-auto grid max-w-7xl gap-8 px-4 pt-6 pb-20 md:grid-cols-[1fr_1.1fr] md:gap-16">
+            <div className="mx-auto grid max-w-7xl items-center gap-6 px-4 pt-6 pb-20 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.45fr)] md:gap-10">
               <div>
                 <h3 id={`${d.id}-title`} className="text-3xl font-black font-wide sm:text-4xl">
                   {d.title}
                 </h3>
                 <p className="mt-4 max-w-[52ch] text-lg text-pretty">{d.body}</p>
+                <ul className="mt-8 grid max-w-lg gap-5">
+                  {d.facts.map(([lead, text]) => (
+                    <li key={lead} className="border-l-4 border-foreground pl-4">
+                      <p className="text-xl leading-tight font-black font-wide">{lead}</p>
+                      <p className="mt-1 text-lg text-pretty">{text}</p>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-9">
+                  <Button asChild size="lg" variant="outline">
+                    <Link href={d.guide.href}>Read: {d.guide.label}</Link>
+                  </Button>
+                </p>
               </div>
-              <dl className="self-start rounded-xl border-2 border-foreground bg-panel shadow-hard">
-                {d.specs.map(([label, value]) => (
-                  <div
-                    key={label}
-                    className="flex items-baseline justify-between gap-6 border-b-2 border-foreground px-5 py-3.5 last:border-b-0"
-                  >
-                    <dt className="text-sm text-muted-foreground">{label}</dt>
-                    <dd className="text-right font-semibold">{value}</dd>
-                  </div>
-                ))}
-              </dl>
+              <ToyStage
+                scene={d.scene}
+                label={d.sceneLabel}
+                className="aspect-[5/4] w-full max-md:-order-1"
+              />
             </div>
           </article>
         ))}
@@ -143,14 +166,12 @@ export default function HomePage() {
         className="scroll-mt-16 overflow-hidden bg-cutting-mat text-mat-foreground"
       >
         <div className="mx-auto max-w-7xl px-4 py-24">
-          <h2
+          <SectionTitle
             id="inside-title"
-            className="text-center text-5xl leading-[0.95] font-black text-balance font-wide sm:text-7xl"
-          >
-            You move a stick.
-            <br />
-            <span className="text-primary">Six parts do the rest.</span>
-          </h2>
+            lead="You move a stick."
+            tag="Six parts do the rest."
+            tone="primary"
+          />
           <SignalBench />
           <p className="mt-10 text-center">
             <Button asChild size="lg">
@@ -160,12 +181,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section aria-labelledby="guides-title" className="px-4 py-24 text-center">
-        <SectionTag id="guides-title" tone="sky">
-          From the bench
-        </SectionTag>
-        <p className="mt-6 text-lg">Guides that take the machines apart.</p>
-        <ul className="mx-auto mt-12 grid max-w-6xl gap-8 md:grid-cols-3">
+      <section aria-labelledby="guides-title" className="overflow-x-clip px-4 py-24 text-center">
+        <SectionTitle
+          id="guides-title"
+          lead="From the bench."
+          tag="Machines, taken apart."
+          tone="sky"
+        />
+        <p className="mt-8 text-lg">Every part and every rule, explained by the crew.</p>
+        {/* Three to a row; a short last row sits in the middle. */}
+        <ul className="mx-auto mt-12 flex max-w-6xl flex-wrap justify-center gap-8 [&>li]:w-full md:[&>li]:w-[calc((100%-2rem)/2)] lg:[&>li]:w-[calc((100%-4rem)/3)]">
           {GUIDES.map((guide, index) => (
             <li key={guide.href}>
               <ManualCover no={index + 1} {...guide} />
@@ -179,12 +204,22 @@ export default function HomePage() {
 
       <section
         aria-labelledby="calendar-title"
-        className="overflow-x-clip bg-pegboard px-4 py-24 text-center"
+        className="relative isolate overflow-x-clip px-4 py-32 text-center"
       >
-        <SectionTag id="calendar-title" tone="lead">
-          On the calendar
-        </SectionTag>
-        <p className="mt-6 text-lg">Fly-ins, races and shows worth the drive.</p>
+        {/* The workshop wall fades up out of the page and back into it: no hard edges. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-pegboard [mask-image:linear-gradient(to_bottom,transparent,black_12rem,black_calc(100%-12rem),transparent)]"
+        />
+        <SectionTitle
+          id="calendar-title"
+          lead="On the calendar."
+          tag="Worth the drive."
+          tone="lead"
+        />
+        <p className="mt-8 text-lg">
+          Fly-ins, races and shows, close to home and a road trip away.
+        </p>
         <PitPasses events={upcoming} />
         <p className="mt-14">
           <Button asChild size="lg">

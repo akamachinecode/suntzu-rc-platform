@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Archivo } from "next/font/google";
 import Link from "next/link";
 import { MobileNav } from "@/components/mobile-nav";
+import { SiteFooter } from "@/components/site-footer";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { Button } from "@/components/ui/button";
 import { Wordmark } from "@/components/wordmark";
@@ -53,20 +54,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </div>
           </header>
           <main className="flex-1">{children}</main>
-          <footer className="bg-foreground text-background">
-            <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-14 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <Wordmark className="text-6xl text-primary sm:text-8xl" />
-                <p className="mt-4 max-w-sm text-sm text-background/70">
-                  Three RC fans in South Florida. Lessons, local events and guides to planes,
-                  helicopters and cars, built by people who have crashed all three.
-                </p>
-              </div>
-              <p className="text-sm text-background/70">
-                © {new Date().getFullYear()} {SITE.name}
-              </p>
-            </div>
-          </footer>
+          <SiteFooter />
         </SmoothScroll>
       </body>
     </html>

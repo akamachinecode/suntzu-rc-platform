@@ -67,18 +67,3 @@ export const NAMES: Record<Assembly, { name: string; does: string }> = {
 
 /** Gap between assemblies along the explode, as a share of the whole travel. */
 export const STEP = 0.06;
-
-const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
-const smooth = (t: number) => t * t * (3 - 2 * t);
-
-/** How far one assembly is out, 0 … 1, when the explode as a whole is at `p`. */
-export function shareOf(index: number, p: number) {
-  const span = 1 - STEP * (STAGGER.length - 1);
-  return smooth(clamp01((p - index * STEP) / span));
-}
-
-export function phaseOf(p: number) {
-  if (p < 0.005) return "assembled";
-  if (p > 0.995) return "apart";
-  return "coming apart";
-}

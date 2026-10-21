@@ -20,8 +20,9 @@ import {
   WING_FAR,
   WING_NEAR,
 } from "./geometry";
-import { PlaneApartLive, type Slot } from "./live";
+import { ApartLive, type Slot } from "../apart/live";
 import { STAGGER, TRAINER } from "./model";
+import { PLANE_SPEC } from "./spec";
 
 const STAND = (
   <g key="stand">
@@ -206,7 +207,7 @@ const PROP = (
 );
 
 /** Painter's order, back to front. Each slot moves with its assembly; the stand and fuselage stay. */
-const SLOTS: Slot[] = [
+export const SLOTS: Slot[] = [
   { key: "stand", node: STAND },
   { key: "gear-back", asm: "gear", node: GEAR_BACK },
   { key: "fuselage-back", node: FUSELAGE_INSIDE },
@@ -227,5 +228,5 @@ const SLOTS: Slot[] = [
 const LABEL = `A ${TRAINER.span / 1000} m electric trainer on a display stand, built from ${PART_COUNT} parts. As you scroll it comes apart into ${STAGGER.length} assemblies in the order you would take it apart: propeller, motor, hatch, wing, battery, radio gear, fin, stabiliser and landing gear.`;
 
 export function PlaneApartArt() {
-  return <PlaneApartLive label={LABEL} slots={SLOTS} parts={PART_COUNT} />;
+  return <ApartLive label={LABEL} slots={SLOTS} parts={PART_COUNT} spec={PLANE_SPEC} />;
 }

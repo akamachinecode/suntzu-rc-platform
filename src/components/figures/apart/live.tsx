@@ -5,12 +5,11 @@ import { translateAlong } from "@/components/iso/iso-kit";
 import { IsoFigure } from "@/components/iso/react/draw";
 import { asksForStillness, useInView, useReadout } from "@/components/iso/react/live";
 import { useApart } from "./context";
-import { MOVES, NAMES, STAGGER, phaseOf, shareOf, type Assembly } from "./model";
-import { HEIGHT, P, WIDTH } from "./view";
+import { phaseOf, shareOf, type ApartSpec } from "./spec";
 
 export interface Slot {
   key: string;
-  asm?: Assembly;
+  asm?: string;
   node: React.ReactNode;
 }
 
@@ -26,11 +25,12 @@ const INTRO_SHARE = 0.16;
 const fine = (value: number) => Math.round(value * 100) / 100;
 
 /** Moves every slot of every assembly to its share of the explode. */
-function place(root: HTMLElement, p: number) {
-  STAGGER.forEach((asm, index) => {
-    const share = shareOf(index, p);
-    const [dx, dy, dz] = MOVES[asm];
-    const move = share > 0.0005 ? translateAlong(P, [dx * share, dy * share, dz * share]) : null;
+function place(root: HTMLElement, spec: ApartSpec, p: number) {
+  spec.stagger.forEach((asm, index) => {
+    const share = shareOf(spec, index, p);
+    const [dx, dy, dz] = spec.moves[asm] ?? [0, 0, 0];
+    const move =
+      share > 0.0005 ? translateAlong(spec.projection, [dx * share, dy * share, dz * share]) : null;
     root.querySelectorAll(`[data-asm="${asm}"]`).forEach((node) => {
       if (move) node.setAttribute("transform", move);
       else node.removeAttribute("transform");
@@ -38,14 +38,20 @@ function place(root: HTMLElement, p: number) {
   });
 }
 
-export function PlaneApartLive({
+/** An exploded figure: scroll (or the intro, or hovering an assembly) moves it apart. */
+export function ApartLive({
   label,
   slots,
   parts,
+  spec,
+  className,
 }: {
   label: string;
   slots: Slot[];
   parts: number;
+  spec: ApartSpec;
+  /** The figure's own class, for its styles (`pla` lights assemblies for every exploded figure). */
+  className?: string;
 }) {
   const { progress, selected, select } = useApart();
   const { anchor: root, say } = useReadout<HTMLDivElement>();
@@ -61,17 +67,17 @@ export function PlaneApartLive({
   const describe = React.useCallback(
     (p: number) => {
       if (selected) {
-        say(`${NAMES[selected].name} · ${fine(p * 100).toFixed(0)}% apart`);
+        say(`${spec.names[selected]?.name ?? selected} · ${fine(p * 100).toFixed(0)}% apart`);
         return;
       }
       const phase = phaseOf(p);
       say(
         phase === "coming apart"
           ? `coming apart · ${Math.round(p * 100)}%`
-          : `${phase} · ${STAGGER.length} assemblies · ${parts} parts`,
+          : `${phase} · ${spec.stagger.length} assemblies · ${parts} parts`,
       );
     },
-    [parts, say, selected],
+    [parts, say, selected, spec],
   );
 
   const run = React.useCallback(() => {
@@ -102,13 +108,13 @@ export function PlaneApartLive({
         }
       }
       const p = Math.min(1, Math.max(0, value.current));
-      place(node, p);
+      place(node, spec, p);
       describe(p);
       const settled = value.current === want && speed.current === 0;
       frame.current = settled ? 0 : requestAnimationFrame(tick);
     };
     frame.current = requestAnimationFrame(tick);
-  }, [describe, root]);
+  }, [describe, root, spec]);
 
   const aim = React.useCallback(() => {
     target.current =
@@ -164,17 +170,17 @@ export function PlaneApartLive({
   return (
     <div
       ref={root}
-      className="pla"
+      className={className ? `pla ${className}` : "pla"}
       data-focus={selected ? "" : undefined}
       onPointerLeave={() => select(null)}
     >
-      <IsoFigure width={WIDTH} height={HEIGHT} label={label}>
+      <IsoFigure width={spec.width} height={spec.height} label={label}>
         {slots.map((slot) => (
           <g
             key={slot.key}
             data-asm={slot.asm}
             data-on={slot.asm && slot.asm === selected ? "" : undefined}
-            onPointerEnter={slot.asm ? () => select(slot.asm!) : undefined}
+            onPointerEnter={slot.asm ? () => select(slot.asm ?? null) : undefined}
           >
             {slot.node}
           </g>
