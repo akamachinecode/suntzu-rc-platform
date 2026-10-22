@@ -12,6 +12,18 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-22 — Discovery first, designed from first principles
+
+- **What:** [`docs/DISCOVERY.md`](./DISCOVERY.md) designs how the engine finds every RC event in Florida and how we measure that it did: a census of organisers, their channels, four ways to find events (watch known channels, aggregators, open-web sweeps, monitors) and people. A new roadmap track (D) puts it ahead of more site readers. Nothing new is built yet.
+- **Why:** the owner's priority: the engine is only as good as what it finds, and Parallel (or similar) was always meant to be part of it.
+- **Impact:**
+  - **Search tools give leads, never data.** Parallel's terms forbid using outputs to "create databases" (§2(c)(vi)(B)) and let Parallel train on our queries; Exa and Brave restrict storing and republishing too. We use their answers only to learn which URL to read, then fetch the organiser's page ourselves. Whether we may keep lead URLs and query history must be asked in writing before going live.
+  - **Florida in numbers (2026-10-22):** ~110 AMA clubs, ~40–50 car tracks, ~7 MultiGP chapters, 36 model-yacht clubs; 163 FAA FRIAs and 104 recreational fixed sites in Florida (public data, the census backbone); ~400–700 headline events a year plus ~2,000–4,000 recurring race and sailing days, stored as venue schedules, not discovered date by date.
+  - **Facebook carries an estimated 50–60 % of all occurrences** (mostly recurring days, crawlers, FPV): reachable only through organisers and members. Headline events are mostly on the open web.
+  - **Partnerships to request:** AMA, DualRates (8 of 21 sampled club sites run on it; 3 blocked us by region), MultiGP (Florida-based), RCSignup, Google Calendar clubs.
+  - **Planned tables** (`discovery_queries`, `discovery_runs`, `leads`, `lead_hits`) and new env vars for API keys come with D3, with their own entry.
+  - Scratch downloads made during the research that contained personal contact details (AMA club pages, FAA point-of-contact fields, calendar descriptions) were deleted; nothing personal was committed.
+
 ## 2026-10-22 — The engine reads its first sources (roadmap A3, first part)
 
 - **What:** `pnpm engine [source…]` runs the engine once from the command line (`apps/api/src/engine.ts`): it fetches each source, keeps a copy of what it read, extracts events and stores them as sightings. Two readers so far, in `apps/api/src/events/engine/`: ICS calendar feeds (every public Google Calendar) and schema.org JSON-LD event data (Wix, WordPress event plugins, ticketing pages). New dev dependency: **Vitest** 5.0.5 in `apps/api`, the Itaca standard for unit tests; `pnpm test` runs the tests and `pnpm check` now includes them. New variable: `ENGINE_SNAPSHOT_DIR` (default `.snapshots`, git-ignored).

@@ -30,6 +30,8 @@ The edge is not any single scraper. It is the **memory**: every source, every si
 
 ### 1. Discover — the source graph
 
+Worked out in detail, with the Florida census and the tool choice, in [`DISCOVERY.md`](./DISCOVERY.md).
+
 A **source** is anything that publishes events: an API, a calendar feed, a club site, a track's Facebook page, a forum board. Sources live in a registry, not in code.
 
 - **Seed** from directories that list clubs and tracks: AMA club finder (Florida is AMA District V), ROAR tracks, MultiGP chapters, the places we already know (`src/content/places.ts`).

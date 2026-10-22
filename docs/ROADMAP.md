@@ -55,11 +55,22 @@ Building no longer waits on AWS: the whole engine runs on a laptop against the l
 - [ ] **A4** Events API, `/events` reading from the API, `/events/[slug]` with schema.org `Event` data, ICS feed.
 - [ ] **A5** Minimal crew console (needs the `crew` role: Itaca review).
 
+### Track D — discovery first (owner's priority, 2026-10-22)
+
+The engine is only as good as what it finds. Design: [`DISCOVERY.md`](./DISCOVERY.md). Reading more sites (A3b) waits until discovery is measured.
+
+- [ ] **D1** Golden set (was B1): every Florida RC event through April 2027, verified by hand, as a reviewed CSV.
+- [ ] **D2** Census v1: FAA FRIA and fixed sites, ROAR, RCSignup, LiveRC, AMYA, MultiGP into `hosts` and `places`; channel probe of every website.
+- [ ] **D3** Discovery tables (`discovery_queries`, `discovery_runs`, `leads`, `lead_hits`) and the lead pipeline, with Parallel and Brave clients.
+- [ ] **D4** Bake-off (was B3): Parallel FindAll, Parallel Search, Brave, Exa Websets and our own sources against the golden set; capture–recapture; choose the mix.
+- [ ] **D5** Monitors and the weekly sweep, run from a command.
+- [ ] **D6** Outreach: AMA, DualRates, MultiGP, RCSignup, Google Calendar clubs.
+
 ### Track B — research (can run in its own session)
 
-- [ ] **B1** Golden set: every real RC event in Florida through April 2027, verified by hand. The measuring stick for the engine.
-- [ ] **B2** Check the new sources: FAA FRIAs, TFRs, AMA club finder, results sites.
-- [ ] **B3** Discovery bake-off (Parallel, Exa, Firecrawl) against the golden set, once there are keys.
+- [ ] **B1** Golden set: moved to D1.
+- [x] **B2** Check the new sources: FAA FRIAs, AMA club finder, results sites, club platforms (see `DISCOVERY.md`). TFRs still to check.
+- [ ] **B3** Discovery bake-off: moved to D4.
 - [ ] **B4** AI extraction with mandatory quotes, on real flyers, once there is access to Claude (Bedrock or the API).
 
 ### Track C — the owner and Itaca engineering
@@ -75,8 +86,8 @@ Building no longer waits on AWS: the whole engine runs on a laptop against the l
 
 | #   | Milestone              | Done when                                                                                                          | Depends on      |
 | --- | ---------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------- |
-| M1  | Live calendar, locally | The worker reads the open sources and `/events` comes from the database. AeroFest appears without anyone typing it | A1–A4, A3c, B1  |
-| M2  | End-to-end demo        | A source changes → the worker notices → merges → the crew sees the evidence → approves → web and ICS update        | A5, B3, B4      |
+| M1  | Live calendar, locally | The worker reads the open sources and `/events` comes from the database. AeroFest appears without anyone typing it | A1–A4, A3c, D1  |
+| M2  | End-to-end demo        | A source changes → the worker notices → merges → the crew sees the evidence → approves → web and ICS update        | A5, D4, B4      |
 | M3  | Deployed to `dev`      | The same, on AWS, with the worker on a schedule                                                                    | C1, C2, C3      |
 | M4  | Members and organisers | Follow, "going", alerts, submit with a flyer, claim a club                                                         | SES, S3, roles  |
 | M5  | Beyond Florida         | Discovery at scale, public API, Expo mobile app                                                                    | Capacity review |
@@ -87,3 +98,4 @@ Building no longer waits on AWS: the whole engine runs on a laptop against the l
 - **Region:** events from all of Florida; places and community for South Florida first.
 - **Community:** utility first (follow, alerts, submit, claim). Social features when there are people.
 - **Start:** A1–A3 now; the golden set (B1) in a parallel session.
+- **Discovery first (2026-10-22, later the same day):** after A3 the owner put discovery ahead of reading more sites: Track D, designed in `DISCOVERY.md`.
