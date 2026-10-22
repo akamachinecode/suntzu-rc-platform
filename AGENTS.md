@@ -35,6 +35,7 @@ The person prompting you may not be a developer (sales, operations, a client). S
 
 ## Servo project notes
 
+- **Why Servo exists:** three RC enthusiasts want the hobby to grow, with a genuinely useful, free, well-made platform people can take part in. **`docs/LANDSCAPE.md`** has what already exists, what other hobbies teach, and the product principles that follow (free to take part, organisers get something back, visible trust, a path for newcomers). Check new features against those principles.
 - **Read `docs/EVENTS-ENGINE.md`** before working on events, sources or ingestion. The plan: an engine that monitors the web for RC events (Florida first), merges duplicates, verifies them and publishes them; the worker that runs it will live in `apps/api`. **`docs/ROADMAP.md`** is the approved build order (what we index, the community ladder, tracks and milestones): tick items off there as they land.
 - **Content** is typed data in `apps/app/src/content/` (services, events, places, rules, history, guides) until the events engine moves events and places into the database. Every factual item carries a source link; keep it that way and re-check dates before editing.
 - **Anatomy figures**: use the project skill in `.claude/skills/anatomy` (read its `SKILL.md`). The kit is vendored in `apps/app/src/components/iso/`; figures live in `apps/app/src/components/figures/<name>/` following `references/react.md`. Light theme only, XT60 yellow is the single lit accent (see `.servo-figure` in `apps/app/src/app/globals.css`). Run the line check before shipping a figure.

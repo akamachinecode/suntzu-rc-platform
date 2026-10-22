@@ -2,6 +2,10 @@
 
 Status: **approved by the owner, 2026-10-22.** This is the working plan for the events engine and the community. The engine's design is in [`EVENTS-ENGINE.md`](./EVENTS-ENGINE.md); this file says what we index, how the community grows and in which order we build. Tick items off here as they land.
 
+## Why
+
+Three RC enthusiasts want the hobby to grow, with a useful, free, well-made platform people can take part in. What exists today and the principles that follow are in [`LANDSCAPE.md`](./LANDSCAPE.md).
+
 ## The idea in one line
 
 Three ways in (open sources, discovery search, people), **one engine** (discover → fetch → extract with evidence → resolve → verify), one memory, and many ways out (a page per event, Google event results, ICS feeds, alerts, a public API, the mobile app).
