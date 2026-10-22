@@ -25,7 +25,10 @@ Format:
 - **Impact:**
   - **Project:** a new AWS experience project (account `352587389937`, signed in with social sign-in). These projects are locked to one Region: **us-east-2**. They can't use Lambda@Edge, StackSets or cross-Region features, and they may have a spend limit that pauses the project.
   - **Region conflict, needs Itaca engineering:** `sst.config.ts` and `docs/DEPLOY.md` deploy production to **us-east-1**, which this project does not allow for Lambda, Fargate or RDS. Before anyone deploys into this project, engineering must decide whether to move `providers.aws.region` to `us-east-2` or deploy production to a different (advanced) AWS account. Nothing was changed in the infrastructure files.
-  - **Machine setup, not in git:** the profile lives in `~/.aws/`. The skills and the `aws-mcp` server entry live in each agent's global config (for example `~/.claude/skills`), and `AWS_MCP_PROXY_PROFILES=servo` tells that server which profile to use. Each engineer who wants this runs the setup on their own machine.
+  - **Machine setup, not in git:** the profile lives in `~/.aws/` and the AWS skills in each agent's global config (for example `~/.claude/skills`). The `aws-mcp` server is configured per environment, one AWS account each, never globally, all with `AWS_MCP_PROXY_PROFILES=servo` here:
+    - **Claude Code:** a local-scope server for this repo only (`claude mcp get aws-mcp`).
+    - **Cursor, Codex and OpenCode:** `.cursor/mcp.json`, `.codex/config.toml` and `opencode.json` at the repo root. They are listed in `.git/info/exclude`, so they stay on that machine and out of git.
+    - Other repos point their own `aws-mcp` at their own profile. Each engineer who wants this runs the setup on their own machine.
   - **Credentials:** they last 12 hours and renew without the browser for up to 90 days. After that, run `aws login --profile servo` again.
 
 ## 2026-10-22 — Always on the latest stable versions
