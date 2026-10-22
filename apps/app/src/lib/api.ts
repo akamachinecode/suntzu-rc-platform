@@ -10,6 +10,14 @@ import { env } from "@/lib/env";
  *   const api = await getApi();
  *   const { data, error } = await api.GET("/notes");
  */
+/**
+ * API client for public data (events, places) that is the same for every visitor: it sends no
+ * cookies, so responses can be cached for a few minutes across visitors.
+ */
+export function getPublicApi() {
+  return createApiClient({ baseUrl: env.API_URL, next: { revalidate: 300 } });
+}
+
 export async function getApi() {
   const cookie = (await headers()).get("cookie") ?? "";
   return createApiClient({ baseUrl: env.API_URL, headers: { cookie }, cache: "no-store" });

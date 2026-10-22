@@ -9,7 +9,7 @@ import { SectionTitle } from "@/components/home/section-title";
 import { SignalBench } from "@/components/home/signal-bench";
 import { ToyStage } from "@/components/home/toy-stage";
 import { Button } from "@workspace/ui/components/button";
-import { EVENTS, byDate } from "@/content/events";
+import { getPublicApi } from "@/lib/api";
 import { GUIDES, IN_THE_WORKS } from "@/content/guides";
 import { SERVICES } from "@/content/services";
 import { SITE } from "@/lib/site";
@@ -96,13 +96,15 @@ const steps = [
   },
 ] as const;
 
-// Re-render once a day so the calendar preview stays current.
-export const revalidate = 86400;
+// Rendered on request (the calendar preview's data is cached for 5 minutes), so the page never
+// depends on the API at build time.
+export const dynamic = "force-dynamic";
 
-export default function HomePage() {
-  const today = new Date().toISOString().slice(0, 10);
-  const upcoming = EVENTS.filter((event) => event.confirmed && (event.end ?? event.start) >= today)
-    .sort(byDate)
+export default async function HomePage() {
+  // The next three events with announced dates.
+  const { data } = await getPublicApi().GET("/events");
+  const upcoming = (data ?? [])
+    .filter((event) => event.datePrecision === "day" && event.status !== "cancelled")
     .slice(0, 3);
 
   return (

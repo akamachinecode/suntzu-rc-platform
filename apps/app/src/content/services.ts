@@ -7,6 +7,7 @@ export const TOPICS = [
   { value: "connect", label: "Shops, clubs and tracks" },
   { value: "rules", label: "Rules and permits" },
   { value: "event", label: "An event to list" },
+  { value: "correction", label: "Something wrong on an event" },
   { value: "other", label: "Something else" },
 ] as const;
 

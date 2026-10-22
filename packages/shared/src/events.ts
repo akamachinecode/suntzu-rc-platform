@@ -79,8 +79,13 @@ export const placeSummary = z.object({
   name: z.string(),
   kind: placeKind,
   address: z.string().nullable(),
+  city: z.string().nullable(),
   county: z.string().nullable(),
   state: z.string(),
+  latitude: z.number().nullable(),
+  longitude: z.number().nullable(),
+  // FAA-recognised identification area: drones without Remote ID may fly there.
+  isFria: z.boolean(),
   url: z.url().nullable(),
 });
 
@@ -118,6 +123,26 @@ export const event = z.object({
   requirements: z.array(z.string()),
   confidence: z.number().min(0).max(1),
   lastCheckedAt: z.iso.datetime().nullable(),
+  updatedAt: z.iso.datetime(),
+});
+
+/** One source behind an event, shown on its page so people can check it themselves. */
+export const eventSource = z.object({
+  name: z.string(),
+  trust: sourceTrust,
+  // The crew's hand-checked calendar rather than a page the engine read.
+  byCrew: z.boolean(),
+  // The page that said it.
+  url: z.url().nullable(),
+  firstSeenAt: z.iso.datetime(),
+  lastSeenAt: z.iso.datetime(),
+});
+
+export const eventDetail = event.extend({ sources: z.array(eventSource) });
+
+export const place = placeSummary.extend({
+  notes: z.string(),
+  host: hostSummary.nullable(),
 });
 
 export const eventListQuery = z.object({
@@ -127,6 +152,9 @@ export const eventListQuery = z.object({
   kind: eventKind.optional(),
   region: region.optional(),
 });
+
+/** Filters of a calendar feed (ICS): the same as the list, always from today on. */
+export const calendarQuery = eventListQuery.pick({ discipline: true, kind: true, region: true });
 
 export type EventKind = z.output<typeof eventKind>;
 export type Discipline = z.output<typeof discipline>;
@@ -139,3 +167,7 @@ export type PlaceSummary = z.output<typeof placeSummary>;
 export type HostSummary = z.output<typeof hostSummary>;
 export type RcEvent = z.output<typeof event>;
 export type EventListQuery = z.output<typeof eventListQuery>;
+export type CalendarQuery = z.output<typeof calendarQuery>;
+export type EventSource = z.output<typeof eventSource>;
+export type EventDetail = z.output<typeof eventDetail>;
+export type Place = z.output<typeof place>;

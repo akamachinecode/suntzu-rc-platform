@@ -1,30 +1,41 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { EventList } from "@/components/events/event-list";
+import { CalendarSubscribe } from "@/components/events/calendar-subscribe";
+import { EventsExplorer } from "@/components/events/events-explorer";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@workspace/ui/components/button";
-import { EVENTS, byDate } from "@/content/events";
+import { getPublicApi } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "RC events in Florida",
   description:
-    "Competitions, shows and fly-ins for RC planes, helicopters and cars in South Florida and worth-the-drive events further afield.",
+    "Fly-ins, races, competitions and swap meets for RC planes, helicopters, cars and FPV drones across Florida, on a map, with a calendar you can subscribe to.",
 };
 
-// Re-render once a day so finished events drop off the list without a redeploy.
-export const revalidate = 86400;
+// Rendered on request (data cached for 5 minutes), so the page never depends on the API at build.
+export const dynamic = "force-dynamic";
 
-export default function EventsPage() {
-  const today = new Date().toISOString().slice(0, 10);
-  const events = EVENTS.filter((event) => (event.end ?? event.start) >= today).sort(byDate);
+export default async function EventsPage() {
+  const api = getPublicApi();
+  const [events, places] = await Promise.all([api.GET("/events"), api.GET("/places")]);
+
   return (
     <>
       <PageHeader
         title="Where to be, and when."
-        lead="Competitions, shows and fly-ins in South Florida, plus the ones worth a road trip. Dates come from each organiser; always check their page before you load the truck."
+        lead="Fly-ins, races, competitions and swap meets across Florida. Every event links to its organiser and says when we last checked it; always check their page before you load the truck."
       />
       <section aria-label="Calendar" className="mx-auto max-w-7xl px-4 pb-16">
-        <EventList events={events} />
+        {events.data ? (
+          <EventsExplorer events={events.data} places={places.data ?? []} />
+        ) : (
+          <p className="rounded-xl border-2 border-foreground bg-panel p-6 text-lg shadow-hard">
+            The calendar is taking a break. Try again in a minute.
+          </p>
+        )}
+      </section>
+      <section className="mx-auto max-w-7xl px-4 pb-16">
+        <CalendarSubscribe />
       </section>
       <section className="mx-auto max-w-7xl px-4 pb-24">
         <div className="flex flex-col items-start gap-6 rounded-xl border-2 border-foreground bg-primary p-8 shadow-hard-lg sm:flex-row sm:items-center sm:justify-between sm:p-10">

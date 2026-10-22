@@ -2,15 +2,12 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
-import { KINDS, type EventKind, type RcEvent } from "@/content/events";
+import type { RcEvent } from "@workspace/shared";
+import { DISCIPLINE_COLORS, formatWhen, formatWhere, KIND_LABELS } from "@/lib/events";
 import { cn } from "@/lib/utils";
 
-// The lanyard's colour says what kind of event it is.
-const LANYARD: Record<EventKind, string> = {
-  "fly-in": "bg-sky",
-  competition: "bg-lead",
-  show: "bg-primary",
-};
+// The lanyard's colour is the discipline's: sky for planes, yellow for helicopters, red for cars.
+const LANYARD = DISCIPLINE_COLORS;
 const TILT = [-3, 2, -1.5];
 
 /** Upcoming events as pit passes hanging off pegs on the workshop pegboard. */
@@ -19,10 +16,10 @@ export function PitPasses({ events }: { events: RcEvent[] }) {
   return (
     <ul className="mt-12 flex flex-wrap justify-center gap-x-10 gap-y-14">
       {events.map((event, index) => {
-        const [date, year] = event.when.split(", ");
+        const [date, year] = formatWhen(event).split(", ");
         const tilt = TILT[index % TILT.length] ?? 0;
         return (
-          <li key={event.id} className="w-72">
+          <li key={event.slug} className="w-72">
             <motion.div
               className="flex origin-top flex-col items-center"
               initial={reduce ? false : { rotate: tilt + (index % 2 === 0 ? 16 : -16) }}
@@ -42,7 +39,10 @@ export function PitPasses({ events }: { events: RcEvent[] }) {
               />
               <span
                 aria-hidden="true"
-                className={cn("-mt-1.5 h-14 w-5 border-x-2 border-foreground", LANYARD[event.kind])}
+                className={cn(
+                  "-mt-1.5 h-14 w-5 border-x-2 border-foreground",
+                  LANYARD[event.discipline],
+                )}
               />
               <span
                 aria-hidden="true"
@@ -50,7 +50,7 @@ export function PitPasses({ events }: { events: RcEvent[] }) {
               />
 
               <Link
-                href={`/events#${event.id}`}
+                href={`/events/${event.slug}`}
                 className="group relative -mt-1 block w-full rounded-xl border-2 border-foreground bg-panel text-center text-foreground shadow-hard-lg"
               >
                 {/* the slot the clip goes through */}
@@ -61,10 +61,10 @@ export function PitPasses({ events }: { events: RcEvent[] }) {
                 <span
                   className={cn(
                     "mt-9 block border-y-2 border-foreground py-1.5 text-xs font-black tracking-[0.25em] uppercase",
-                    LANYARD[event.kind],
+                    LANYARD[event.discipline],
                   )}
                 >
-                  {KINDS[event.kind].label}
+                  {KIND_LABELS[event.kind].label}
                 </span>
                 <div className="px-5 pt-5">
                   <span className="block text-4xl leading-none font-black font-wide">{date}</span>
@@ -76,7 +76,9 @@ export function PitPasses({ events }: { events: RcEvent[] }) {
                   <h3 className="mt-4 text-lg leading-tight font-bold text-balance group-hover:underline">
                     {event.name}
                   </h3>
-                  <span className="mt-1 block text-sm text-muted-foreground">{event.place}</span>
+                  <span className="mt-1 block text-sm text-muted-foreground">
+                    {formatWhere(event)}
+                  </span>
                 </div>
                 <span
                   aria-hidden="true"

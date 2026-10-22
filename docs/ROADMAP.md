@@ -47,34 +47,39 @@ Later: pilot profiles and builds, and "find an instructor" linked to Servo's les
 
 ## Order of work
 
-Building no longer waits on AWS: the whole engine runs on a laptop against the local PostgreSQL in Docker. Deploying comes last.
+Building no longer waits on AWS: everything runs on a laptop against the local PostgreSQL in Docker. Deploying comes last.
 
-### Track A — the engine, locally
+**New order (owner, 2026-10-23):** what people see and organisers use comes first; the engine and discovery keep growing underneath, lean rather than perfectionist (see [`LANDSCAPE.md`](./LANDSCAPE.md) for why).
+
+### Track P — what people see and use
+
+- [x] **P1** Events on the web (was A4): a public events API, `/events` from the database with a map and "near me", a page per event with its sources, last-checked date and schema.org `Event` data, and calendar feeds to subscribe to (all events, per discipline, per event).
+- [ ] **P2** Resolve (was A3c): sightings matched to events; new ones (AeroFest) wait for the crew, then appear on the web.
+- [ ] **P3** Organiser kit: claim a club or track, publish an event by pasting a link or a flyer, a calendar widget for their own site, a monthly report. Accounts and roles need Itaca engineering.
+- [ ] **P4** Places with stewards, a "try it" request for newcomers, "Can I fly here?".
+- [ ] **P5** Minimal crew console (was A5; needs the `crew` role: Itaca review).
+
+### Track A — the engine underneath
 
 - [x] **A1** Commit the dependency updates and the AWS agent rules.
 - [x] **A2** Data model and Zod contracts: sources, fetches, sightings, events, event sightings, series, places, hosts, changes, reviews. Seed from `apps/app/src/content/events.ts` and `places.ts`.
 - [x] **A3** Worker run from a command (`pnpm engine`): polite fetcher, ICS and JSON-LD readers, saved fixtures and Vitest tests. First live result: AeroFest and Jets Over Miami read from the AMPS site.
-- [ ] **A3b** HTML readers, one per site: Extreme Flight, Horizon Hobby, ROAR, RCSignup (check robots.txt and terms first).
-- [ ] **A3c** Resolve: match sightings to events (dates, place, name), create new events unpublished with a review. Needed for M1.
-- [ ] **A4** Events API, `/events` reading from the API, `/events/[slug]` with schema.org `Event` data, ICS feed.
-- [ ] **A5** Minimal crew console (needs the `crew` role: Itaca review).
+- [ ] **A3b** Platform readers in the order the census shows they pay off (DualRates, Wix Events, Wild Apricot, WordPress events), then single sites (Extreme Flight, Horizon Hobby, ROAR, RCSignup) after checking robots.txt and terms.
 
-### Track D — discovery first (owner's priority, 2026-10-22)
+### Track D — discovery, lean
 
-The engine is only as good as what it finds. Design: [`DISCOVERY.md`](./DISCOVERY.md). Reading more sites (A3b) waits until discovery is measured.
+Design: [`DISCOVERY.md`](./DISCOVERY.md). Good coverage of the important events and correct information matter more than finding every last one; we keep one simple estimate of what we miss.
 
-- [ ] **D1** Golden set (was B1): every Florida RC event through April 2027, verified by hand, as a reviewed CSV.
-- [ ] **D2** Census v1: FAA FRIA and fixed sites, ROAR, RCSignup, LiveRC, AMYA, MultiGP into `hosts` and `places`; channel probe of every website.
-- [ ] **D3** Discovery tables (`discovery_queries`, `discovery_runs`, `leads`, `lead_hits`) and the lead pipeline, with Parallel and Brave clients.
-- [ ] **D4** Bake-off (was B3): Parallel FindAll, Parallel Search, Brave, Exa Websets and our own sources against the golden set; capture–recapture; choose the mix.
-- [ ] **D5** Monitors and the weekly sweep, run from a command.
+- [ ] **D1** A sample golden set (~50 events checked by hand) to estimate coverage, instead of an exhaustive one.
+- [ ] **D2** Census v1: FAA FRIA and fixed sites, ROAR, RCSignup, LiveRC, AMYA, MultiGP into `hosts` and `places`; channel probe of every website. Also feeds the map of places.
+- [ ] **D3** Leads pipeline with Parallel (season sweep and a few daily monitors), recording which method found each event.
+- [ ] **D4** Simple comparison of Parallel against our own sources on the sample; estimate of what both miss.
 - [ ] **D6** Outreach: AMA, DualRates, MultiGP, RCSignup, Google Calendar clubs.
 
 ### Track B — research (can run in its own session)
 
-- [ ] **B1** Golden set: moved to D1.
 - [x] **B2** Check the new sources: FAA FRIAs, AMA club finder, results sites, club platforms (see `DISCOVERY.md`). TFRs still to check.
-- [ ] **B3** Discovery bake-off: moved to D4.
+- [x] **B5** Landscape: what exists in RC and what other hobbies teach (see `LANDSCAPE.md`).
 - [ ] **B4** AI extraction with mandatory quotes, on real flyers, once there is access to Claude (Bedrock or the API).
 
 ### Track C — the owner and Itaca engineering
@@ -90,8 +95,8 @@ The engine is only as good as what it finds. Design: [`DISCOVERY.md`](./DISCOVER
 
 | #   | Milestone              | Done when                                                                                                          | Depends on      |
 | --- | ---------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------- |
-| M1  | Live calendar, locally | The worker reads the open sources and `/events` comes from the database. AeroFest appears without anyone typing it | A1–A4, A3c, D1  |
-| M2  | End-to-end demo        | A source changes → the worker notices → merges → the crew sees the evidence → approves → web and ICS update        | A5, D4, B4      |
+| M1  | Live calendar, locally | The worker reads the open sources and `/events` comes from the database. AeroFest appears without anyone typing it | P1, P2, A3      |
+| M2  | End-to-end demo        | A source changes → the worker notices → merges → the crew sees the evidence → approves → web and ICS update        | P5, D3, B4      |
 | M3  | Deployed to `dev`      | The same, on AWS, with the worker on a schedule                                                                    | C1, C2, C3      |
 | M4  | Members and organisers | Follow, "going", alerts, submit with a flyer, claim a club                                                         | SES, S3, roles  |
 | M5  | Beyond Florida         | Discovery at scale, public API, Expo mobile app                                                                    | Capacity review |

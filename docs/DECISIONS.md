@@ -12,6 +12,22 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-23 — Events on the web: from the database, on a map, in your calendar (roadmap P1)
+
+- **What:**
+  - **API (public, read-only):** `GET /events` (filters: dates, discipline, kind, region), `GET /events/:slug` (with its sources), `GET /places`, and two iCalendar feeds: `GET /events/calendar.ics` (filterable) and `GET /events/:slug/calendar.ics`. All `@Public()`, cached 5 minutes. Unpublished events answer 404.
+  - **Web:** `/events` reads from the API, with filters by discipline and kind, a map, "Near me" (sorts by distance in the browser; the location is never sent anywhere) and a block to subscribe to the calendar (Apple/Outlook via `webcal://`, Google Calendar, copy link). New `/events/[slug]` page: dates, place, map and directions, organiser, "Add to calendar", **where the information comes from and when it was last checked**, a "Something wrong? Tell us" link (new contact topic `correction`) and schema.org `Event` data for Google (only for events with exact dates). The home page's three upcoming events and the sitemap also come from the API.
+  - The feeds people subscribe to live on the site's own domain (`/events/calendar.ics`, route handlers that relay the API) because their callers are calendar apps.
+  - `apps/app/src/content/events.ts` is gone: the database is now the only copy of the calendar (`places.ts` stays until places get their own pages).
+- **Why:** the owner's new order (2026-10-23): what people see and use first. Visible sources and "last checked" are the trust nobody else in RC shows (`LANDSCAPE.md`).
+- **Impact:**
+  - **New dependency: `maplibre-gl` 6.15.0** (BSD-3, open-source vector maps) in `apps/app`. Its web worker is pointed at with `setWorkerUrl(new URL(..., import.meta.url))` so the bundler ships it as a file; the map loads only in the browser, after the list.
+  - **New external service: OpenFreeMap** for the base map (free, no key, commercial use allowed, OpenStreetMap data; MapLibre shows the required attribution). No SLA: Itaca may want Amazon Location Service before production.
+  - **Coordinates** come from the FAA FRIA layer (public data) for four fields and the US Census geocoder for the two car tracks; DeLand RC's field isn't in either, so Jets Over DeLand shows without a pin.
+  - Calendar feeds include only events with announced dates; a cancelled event stays in the feed marked CANCELLED, which is how subscribers find out.
+  - Public pages (`/`, `/events`, `/events/[slug]`) render on request with API data cached 5 minutes (`getPublicApi()`, no cookies), so the build never depends on the API being up.
+  - `.claude/launch.json` gained `servo-app` (the web alone on port 3000): the preview tool gives both apps the same `PORT`, so `pnpm dev` there made the API try port 3000.
+
 ## 2026-10-22 — Discovery first, designed from first principles
 
 - **What:** [`docs/DISCOVERY.md`](./DISCOVERY.md) designs how the engine finds every RC event in Florida and how we measure that it did: a census of organisers, their channels, four ways to find events (watch known channels, aggregators, open-web sweeps, monitors) and people. A new roadmap track (D) puts it ahead of more site readers. Nothing new is built yet.
