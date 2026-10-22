@@ -151,7 +151,6 @@ export function EventsMap({
       ref={container}
       role="region"
       aria-label={label}
-      data-lenis-prevent
       className={
         className ??
         "h-[26rem] w-full overflow-hidden rounded-xl border-2 border-foreground shadow-hard"
