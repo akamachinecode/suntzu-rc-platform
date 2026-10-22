@@ -318,23 +318,36 @@ export const SOURCES: WithLinks<NewSource>[] = [
   {
     slug: "deland-rc-calendar",
     name: "DeLand RC calendar",
-    url: "https://www.delandrc.com",
+    url: "https://www.delandrc.com/calendars",
     adapter: "ics",
     trust: "organiser",
     host: "deland-rc",
     region: "florida",
-    permission: "Public Google Calendar embed. Find its ICS feed and check robots.txt.",
+    permission:
+      "Public Google Calendar, but calendar.google.com/robots.txt disallows automated access " +
+      "(checked 2026-10-22). Needs the club's OK and an Itaca decision before it runs.",
+    config: {
+      feedUrl: "https://calendar.google.com/calendar/ical/delandrc%40gmail.com/public/basic.ics",
+      discipline: "air",
+    },
   },
   {
     slug: "coral-springs-rc-track-calendar",
     name: "Coral Springs RC Track calendar",
-    url: "https://www.coralspringsrctrack.com",
+    url: "https://www.coralspringsrctrack.com/calendar/",
     adapter: "ics",
     trust: "organiser",
     host: "coral-springs-rc-track",
     region: "south-florida",
     checkEveryHours: 24,
-    permission: "Public Google Calendar embed. Filter out practice days.",
+    permission:
+      "Public Google Calendar, blocked by calendar.google.com/robots.txt like DeLand's. " +
+      "No entries after early 2026 (checked 2026-10-22): the track may post elsewhere now.",
+    config: {
+      feedUrl:
+        "https://calendar.google.com/calendar/ical/6ifbdadkq20l72628rk39ris8g%40group.calendar.google.com/public/basic.ics",
+      discipline: "ground",
+    },
   },
   {
     slug: "amps-events",
@@ -344,7 +357,9 @@ export const SOURCES: WithLinks<NewSource>[] = [
     trust: "organiser",
     host: "amps",
     region: "south-florida",
-    permission: "Wix Events pages with schema.org Event data.",
+    permission:
+      "robots.txt allows reading (checked 2026-10-22). Wix event pages carry schema.org data.",
+    config: { followLinks: "^/event-details", discipline: "air" },
   },
   {
     slug: "ama-event-calendar",

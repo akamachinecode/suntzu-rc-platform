@@ -1,7 +1,6 @@
 // Loads the events engine's starting data (src/events/seed-data.ts) into the database.
 // Safe to run again: rows are matched by slug and updated. Local use only:
 // `pnpm db:seed` from the root, after `pnpm db:migrate`.
-import { createHash } from "node:crypto";
 import { createDb, getTableColumns, sql } from "@workspace/db";
 import {
   eventSightings,
@@ -14,6 +13,7 @@ import {
 } from "@workspace/db/schema";
 import type { SightingFields } from "@workspace/shared";
 import { env } from "./env.js";
+import { fingerprint } from "./events/engine/read.js";
 import { CREW_SOURCE, EVENTS, HOSTS, PLACES, SERIES, SOURCES } from "./events/seed-data.js";
 
 /** On a slug conflict, overwrite every column the seed sets with the seeded value. */
@@ -124,7 +124,7 @@ try {
         .values({
           sourceId: crewSourceId,
           externalId: event.slug,
-          fingerprint: createHash("sha256").update(JSON.stringify(fields)).digest("hex"),
+          fingerprint: fingerprint(fields),
           name: fields.name,
           startDate: fields.startDate,
           endDate: fields.endDate ?? null,

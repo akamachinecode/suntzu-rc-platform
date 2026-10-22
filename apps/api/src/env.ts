@@ -17,6 +17,8 @@ const schema = z.object({
   COOKIE_DOMAIN: z.string().optional(),
   // At least 32 random characters: `openssl rand -base64 32`.
   BETTER_AUTH_SECRET: z.string().min(32),
+  // Events engine: folder for the raw pages and feeds it reads (local runs; S3 once deployed).
+  ENGINE_SNAPSHOT_DIR: z.string().default(".snapshots"),
 });
 
 export const env = schema.parse(process.env);

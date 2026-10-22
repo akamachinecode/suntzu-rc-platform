@@ -43,14 +43,17 @@ The person prompting you may not be a developer (sales, operations, a client). S
 
 ## Commands
 
-| Command          | What it does                                                     |
-| ---------------- | ---------------------------------------------------------------- |
-| `pnpm dev`       | Local development server                                         |
-| `pnpm build`     | Production build                                                 |
-| `pnpm check`     | Format check + lint + typecheck + build. Must pass before commit |
-| `pnpm format`    | Auto-format every file (Prettier)                                |
-| `pnpm lint`      | ESLint                                                           |
-| `pnpm typecheck` | TypeScript type checking                                         |
+| Command          | What it does                                                   |
+| ---------------- | -------------------------------------------------------------- |
+| `pnpm dev`       | Local development server                                       |
+| `pnpm build`     | Production build                                               |
+| `pnpm check`     | Format check + lint + typecheck + tests + build. Must pass     |
+| `pnpm format`    | Auto-format every file (Prettier)                              |
+| `pnpm lint`      | ESLint                                                         |
+| `pnpm typecheck` | TypeScript type checking                                       |
+| `pnpm test`      | Unit tests (Vitest)                                            |
+| `pnpm db:seed`   | Load the events engine's starting data into the local database |
+| `pnpm engine`    | Run the events engine once (`pnpm engine <source>` for one)    |
 
 ## Stack: product platform (`platform`)
 

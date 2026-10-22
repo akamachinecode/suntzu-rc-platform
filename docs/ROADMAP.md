@@ -49,7 +49,9 @@ Building no longer waits on AWS: the whole engine runs on a laptop against the l
 
 - [x] **A1** Commit the dependency updates and the AWS agent rules.
 - [x] **A2** Data model and Zod contracts: sources, fetches, sightings, events, event sightings, series, places, hosts, changes, reviews. Seed from `apps/app/src/content/events.ts` and `places.ts`.
-- [ ] **A3** Worker run from a command: ICS, JSON-LD and HTML readers for the open sources, saved fixtures and Vitest tests.
+- [x] **A3** Worker run from a command (`pnpm engine`): polite fetcher, ICS and JSON-LD readers, saved fixtures and Vitest tests. First live result: AeroFest and Jets Over Miami read from the AMPS site.
+- [ ] **A3b** HTML readers, one per site: Extreme Flight, Horizon Hobby, ROAR, RCSignup (check robots.txt and terms first).
+- [ ] **A3c** Resolve: match sightings to events (dates, place, name), create new events unpublished with a review. Needed for M1.
 - [ ] **A4** Events API, `/events` reading from the API, `/events/[slug]` with schema.org `Event` data, ICS feed.
 - [ ] **A5** Minimal crew console (needs the `crew` role: Itaca review).
 
@@ -67,12 +69,13 @@ Building no longer waits on AWS: the whole engine runs on a laptop against the l
 - [ ] **C3** Name and domain, and the Cloudflare zone.
 - [ ] **C4** Discovery API keys; send Parallel the question about their terms.
 - [ ] **C5** Write to AMA District V and to a Florida MultiGP chapter.
+- [ ] **C6** Club Google Calendars: `calendar.google.com/robots.txt` blocks automated reading. Ask DeLand RC (and other clubs) for permission or their feed, and decide with Itaca.
 
 ### Milestones
 
 | #   | Milestone              | Done when                                                                                                          | Depends on      |
 | --- | ---------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------- |
-| M1  | Live calendar, locally | The worker reads the open sources and `/events` comes from the database. AeroFest appears without anyone typing it | A1–A4, B1       |
+| M1  | Live calendar, locally | The worker reads the open sources and `/events` comes from the database. AeroFest appears without anyone typing it | A1–A4, A3c, B1  |
 | M2  | End-to-end demo        | A source changes → the worker notices → merges → the crew sees the evidence → approves → web and ICS update        | A5, B3, B4      |
 | M3  | Deployed to `dev`      | The same, on AWS, with the worker on a schedule                                                                    | C1, C2, C3      |
 | M4  | Members and organisers | Follow, "going", alerts, submit with a flyer, claim a club                                                         | SES, S3, roles  |

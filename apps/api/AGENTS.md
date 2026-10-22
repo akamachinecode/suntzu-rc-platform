@@ -18,6 +18,9 @@ src/
   health/            GET /health for the load balancer
   notes/             reference business module: copy it for each domain
   migrate.ts         applies database migrations (runs before every start in production)
+  seed.ts            loads the events engine's starting data (`pnpm db:seed`, local only)
+  engine.ts          runs the events engine once (`pnpm engine [source…]`)
+  events/engine/     the engine: polite fetcher, readers (ICS, JSON-LD), run; tests next to the code
   openapi.ts         writes openapi.json during `pnpm build`
 openapi.json         the API contract (generated, committed)
 ```

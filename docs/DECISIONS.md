@@ -12,6 +12,18 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-22 — The engine reads its first sources (roadmap A3, first part)
+
+- **What:** `pnpm engine [source…]` runs the engine once from the command line (`apps/api/src/engine.ts`): it fetches each source, keeps a copy of what it read, extracts events and stores them as sightings. Two readers so far, in `apps/api/src/events/engine/`: ICS calendar feeds (every public Google Calendar) and schema.org JSON-LD event data (Wix, WordPress event plugins, ticketing pages). New dev dependency: **Vitest** 5.0.5 in `apps/api`, the Itaca standard for unit tests; `pnpm test` runs the tests and `pnpm check` now includes them. New variable: `ENGINE_SNAPSHOT_DIR` (default `.snapshots`, git-ignored).
+- **Why:** first step to a calendar nobody has to type. First live result: the engine read **AeroFest** (Nov 5–7, landing fee $40) and **Jets Over Miami 2026** straight from the AMPS site.
+- **Impact:**
+  - **Politeness is built in, with no switch to turn it off:** the fetcher says who it is (`ServoBot/0.1` + a contact URL, to become Servo's own page once the domain exists), obeys `robots.txt` (RFC 9309), waits at least 2 s between requests to the same site (more if the site asks) and asks for a page only if it changed (ETag / Last-Modified).
+  - **Google Calendar feeds are blocked:** `calendar.google.com/robots.txt` disallows all automated access, so the DeLand RC and Coral Springs calendars can't run, although they are public. One copy of each was downloaded by hand on 2026-10-22 to build the test fixtures. Options for the owner and Itaca: ask each club for permission or for the feed directly, or decide that a calendar subscription isn't crawling. Until then they stay `candidate` sources. Coral Springs' calendar also has nothing after early 2026.
+  - **Club calendars are mostly not events:** DeLand's mixes events with meetings, chores and "no flying" notices. `classify.ts` sorts entries by title (event kind, notice, club business, practice); notices are skipped for now and will feed the "conditions" feature later. Repeating entries are skipped.
+  - **No descriptions from calendars:** they hold organisers' names, phones and emails. The engine keeps title, dates, place and link, plus the exact source line behind each field as evidence. JSON-LD descriptions (one-line taglines) are kept, cut to 300 characters.
+  - **Fixtures** in `apps/api/src/events/engine/fixtures/` are trimmed copies of the real DeLand calendar and AMPS pages, with personal data removed.
+  - **Not done yet:** HTML readers for Extreme Flight, Horizon, ROAR and RCSignup, and resolve (turning sightings into events, needed for the M1 milestone). Both are now separate items in the roadmap.
+
 ## 2026-10-22 — Events engine data model (roadmap A2)
 
 - **What:** ten tables in `packages/db/src/schema/events.ts` (migration `0001_events_engine`): `sources`, `fetches`, `sightings` (what the web said), `events`, `series`, `places`, `hosts` (what we believe), `event_sightings`, `changes` and `reviews` (how we got there). The vocabulary (event kinds, disciplines, statuses, regions, source adapters and trust) and the shapes the API and the extractors share are Zod schemas in `packages/shared/src/events.ts`; the PostgreSQL enums are built from the same lists, so `packages/db` now depends on `@workspace/shared`. `pnpm db:seed` loads the 7 hand-checked events, the 6 places, their hosts and series, and the 9 sources researched on 2026-10-21 (as candidates; the AMA calendar as blocked until AMA says yes).
