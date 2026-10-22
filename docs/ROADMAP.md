@@ -48,7 +48,7 @@ Building no longer waits on AWS: the whole engine runs on a laptop against the l
 ### Track A — the engine, locally
 
 - [x] **A1** Commit the dependency updates and the AWS agent rules.
-- [ ] **A2** Data model and Zod contracts: sources, fetches, sightings, events, event sightings, series, places, hosts, changes, reviews. Seed from `apps/app/src/content/events.ts` and `places.ts`.
+- [x] **A2** Data model and Zod contracts: sources, fetches, sightings, events, event sightings, series, places, hosts, changes, reviews. Seed from `apps/app/src/content/events.ts` and `places.ts`.
 - [ ] **A3** Worker run from a command: ICS, JSON-LD and HTML readers for the open sources, saved fixtures and Vitest tests.
 - [ ] **A4** Events API, `/events` reading from the API, `/events/[slug]` with schema.org `Event` data, ICS feed.
 - [ ] **A5** Minimal crew console (needs the `crew` role: Itaca review).

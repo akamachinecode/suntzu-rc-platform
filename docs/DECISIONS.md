@@ -12,6 +12,16 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-22 — Events engine data model (roadmap A2)
+
+- **What:** ten tables in `packages/db/src/schema/events.ts` (migration `0001_events_engine`): `sources`, `fetches`, `sightings` (what the web said), `events`, `series`, `places`, `hosts` (what we believe), `event_sightings`, `changes` and `reviews` (how we got there). The vocabulary (event kinds, disciplines, statuses, regions, source adapters and trust) and the shapes the API and the extractors share are Zod schemas in `packages/shared/src/events.ts`; the PostgreSQL enums are built from the same lists, so `packages/db` now depends on `@workspace/shared`. `pnpm db:seed` loads the 7 hand-checked events, the 6 places, their hosts and series, and the 9 sources researched on 2026-10-21 (as candidates; the AMA calendar as blocked until AMA says yes).
+- **Why:** first step of the approved build order. Events, places and hosts are a public catalogue, so unlike `notes` they have no `owner_id`: anyone reads what is published, only the engine and the crew write.
+- **Impact:**
+  - **Lifecycle:** the statuses are `expected → announced → confirmed → cancelled | held`. The roadmap's "changed" is a row in `changes` and "results" is `results_url`, not statuses.
+  - **Sightings** are stored once per distinct content of a source (`fingerprint`); seeing the same thing again only moves `last_seen_at`. Every version a source published is kept without one row per fetch. Raw responses will go to S3 (`fetches.snapshot_key`); until then the worker keeps them on disk.
+  - **Seed data is a copy** of `apps/app/src/content/events.ts` and `places.ts` in `apps/api/src/events/seed-data.ts` (apps can't import each other). The app's copy goes away when `/events` reads from the API (A4). Each seeded event is backed by one sighting from the `servo-crew` source.
+  - `reviews.reviewer_id` points to `user`; who may review (the `crew` role) is still for Itaca engineering (A5).
+
 ## 2026-10-22 — Roadmap approved: what we index, the community ladder and the build order
 
 - **What:** [`docs/ROADMAP.md`](./ROADMAP.md) is the approved plan. The engine indexes events, series, competitions, places and hosts now; results and rules later; flying conditions last. The community is a ladder (visitor, member, contributor, organiser, crew) built as utility around events and places, not a forum. Build order: the engine runs locally first (track A), research in parallel (track B, starting with a hand-verified golden set of Florida events), and AWS deployment waits for the region and worker decisions (track C).

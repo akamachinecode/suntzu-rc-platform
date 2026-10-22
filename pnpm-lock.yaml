@@ -343,6 +343,9 @@ importers:
 
   packages/db:
     dependencies:
+      '@workspace/shared':
+        specifier: workspace:*
+        version: link:../shared
       drizzle-orm:
         specifier: 0.45.4
         version: 0.45.4(@types/pg@8.23.1)(kysely@0.29.7)(pg@8.23.1)
