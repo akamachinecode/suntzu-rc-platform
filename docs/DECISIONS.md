@@ -12,6 +12,17 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-27 — Servo 1.0: the plan to finish the web, and who approves what
+
+- **What:** four specifications in `docs/specs/` (0001 events, 0002 places, 0003 community, 0004 launch) and a new "Servo 1.0" section in `ROADMAP.md`. The owner accepted five recommendations:
+  1. Version 1 is phases 0–4, public in Florida. Profiles and builds with photos, stored results, flying conditions, the mobile app and other states come after.
+  2. **The owner acts as Itaca engineering** for the items `AGENTS.md` sends there (accounts and personal data, roles, emails, uploads, AI, scheduled jobs, region and domain). Each one is recorded here when it is built. An Itaca review before production is still recommended.
+  3. Sign-in with Google or a one-time email link, no passwords. Name and home ZIP code are optional; nothing about a member is public by default.
+  4. Clubs and tracks are verified by an email at the club's own domain or a code placed on its website; otherwise the crew checks by hand.
+  5. Events and places for all of Florida from day one; community and promotion start in South Florida.
+- **Why:** the owner's request to finish events and community as version 1, ready to launch, built as a public platform people want to take part in (`LANDSCAPE.md`).
+- **Impact:** the owner asked for all of it to be built in one go; slices are committed in order on branches `feat/servo-1.0-*`. Deploying stays with the owner (`docs/LAUNCH.md`).
+
 ## 2026-10-27 — Refreshed to the Itaca standard `create-itaca@0.2.3`
 
 - **What:** Servo takes everything new in the `platform` stack 0.2.3 that applies to it:

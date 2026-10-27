@@ -1,6 +1,6 @@
 # Roadmap
 
-Status: **approved by the owner, 2026-10-22.** This is the working plan for the events engine and the community. The engine's design is in [`EVENTS-ENGINE.md`](./EVENTS-ENGINE.md); this file says what we index, how the community grows and in which order we build. Tick items off here as they land.
+Status: **approved by the owner, 2026-10-22; Servo 1.0 plan approved 2026-10-27.** This is the working plan for the events engine and the community. The engine's design is in [`EVENTS-ENGINE.md`](./EVENTS-ENGINE.md); this file says what we index, how the community grows and in which order we build. Tick items off here as they land.
 
 ## Why
 
@@ -45,7 +45,23 @@ The community is utility around events and places, not a forum or a social netwo
 
 Later: pilot profiles and builds, and "find an instructor" linked to Servo's lessons.
 
-## Order of work
+## Servo 1.0 — the plan to launch (approved 2026-10-27)
+
+The owner asked to finish the web as version 1: the events and the community, ready to launch in Florida. Each phase is a specification in [`specs/`](./specs/README.md), built slice by slice and ticked off there.
+
+| Phase | What                                                                                            | Spec                                             |
+| ----- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| 0     | Stack refreshed to `create-itaca@0.2.3` (skills, docs, tracing, security, origin lock) — done   | `DECISIONS.md`, 2026-10-27                       |
+| 1     | Events that keep themselves current: resolve, crew console, living event page, finding, readers | [`0001-events.md`](./specs/0001-events.md)       |
+| 2     | Places and clubs: census, `/places`, club pages, "Can I fly here?"                              | [`0002-places.md`](./specs/0002-places.md)       |
+| 3     | Community: accounts, follow and "going", contribute, organisers, newcomers, emails              | [`0003-community.md`](./specs/0003-community.md) |
+| 4     | Launch: infrastructure in `us-east-2`, Turnstile, legal pages, the owner's checklist            | [`0004-launch.md`](./specs/0004-launch.md)       |
+
+**Decisions (owner, 2026-10-27):** version 1 is phases 0–4, public in Florida; profiles and builds, stored results, flying conditions and the app come after. The owner approves what `AGENTS.md` sends to Itaca engineering, and each approval is recorded in `DECISIONS.md`. Sign-in is Google or an email link, no passwords; nothing about a member is public by default. Clubs are verified by an email at their domain or a code on their website, else by the crew. Events and places cover all of Florida from day one; community and promotion start in South Florida.
+
+The tracks below are the earlier order of work. Items that Servo 1.0 covers are mapped to its slices; the rest (discovery with Parallel, outreach) continue after launch.
+
+## Earlier order of work (2026-10-22 and 2026-10-23)
 
 Building no longer waits on AWS: everything runs on a laptop against the local PostgreSQL in Docker. Deploying comes last.
 
