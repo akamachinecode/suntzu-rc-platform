@@ -31,6 +31,8 @@ try {
     console.log("No active sources. Name one: pnpm engine <slug>");
 
   for (const source of chosen) {
+    // Typed by people (the crew, organisers, members): nothing to fetch.
+    if (source.adapter === "manual" || source.adapter === "submission") continue;
     if (source.status === "blocked") {
       console.log(`${source.slug}: blocked, not read (${source.permission})`);
       continue;
