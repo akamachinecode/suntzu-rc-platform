@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { and, eq, inArray, schema } from "@workspace/db";
 import type { Sighting, SubmissionInput, SubmissionResult } from "@workspace/shared";
+import { publicFetch } from "../common/public-url.js";
 import { type Database, InjectDb } from "../db/db.module.js";
 import { env } from "../env.js";
 import { extractEvents, verify } from "../events/engine/ai.js";
@@ -12,7 +13,8 @@ import { resolve } from "../events/engine/resolve.js";
 
 const { sources, sightings, submissions, reviews, eventSightings, events, messages, user } = schema;
 const logger = new Logger("Submissions");
-const fetcher = new PoliteFetcher();
+// Members choose these links: only public addresses, every redirect checked (common/public-url.ts).
+const fetcher = new PoliteFetcher({ fetch: publicFetch });
 
 // A member sends an event (docs/specs/0003-community.md, slice 3). A link is read like any source,
 // politely; text is read by the AI with quotes. What comes out goes through resolve, so it waits
@@ -34,7 +36,12 @@ export class SubmissionsService {
     let found: Sighting[] = [];
 
     if (input.url) {
-      const outcome = await fetcher.get(input.url);
+      const outcome = await fetcher.get(input.url).catch((error: unknown) => {
+        logger.log(
+          `Refused a submitted link: ${error instanceof Error ? error.message : String(error)}`,
+        );
+        return { ok: false as const, reason: "error" as const };
+      });
       if (outcome.ok) {
         const { body, contentType, url } = outcome.page;
         found =

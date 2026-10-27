@@ -15,6 +15,7 @@ import type {
   OrganiserHost,
   PlaceConfirm,
 } from "@workspace/shared";
+import { publicFetch } from "../common/public-url.js";
 import { type Database, InjectDb } from "../db/db.module.js";
 import { env } from "../env.js";
 import { localDate } from "../events/engine/read.js";
@@ -141,7 +142,8 @@ export class OrganiseService {
     const pages = [host.url, new URL("/servo.txt", host.url).toString()];
     for (const page of pages) {
       try {
-        const response = await fetch(page, {
+        // The club's website is set by its organisers: only public addresses (common/public-url.ts).
+        const response = await publicFetch(page, {
           headers: { "User-Agent": "ServoBot/0.1 (club verification requested by its organiser)" },
           signal: AbortSignal.timeout(10_000),
         });

@@ -12,6 +12,12 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-28 — Links people give us only reach the public internet
+
+- **What:** member-submitted event links and organisers' club websites are fetched through `publicFetch` (`apps/api/src/common/public-url.ts`): http(s) on ports 80/443 only, no credentials in the URL, every address the host resolves to must be public (no loopback, private, link-local or cloud-metadata ranges, IPv4 or IPv6), and every redirect is checked again before it's followed.
+- **Why:** these requests run inside the VPC next to the ECS metadata endpoint and the database; without the check a link could reach them (SSRF).
+- **Impact:** the engine's own sources (set by the crew) still use plain fetch. Known gap: DNS could change between the check and the request (rebinding); acceptable for v1, worth a resolving agent that pins the checked address later.
+
 ## 2026-10-28 — Launch in code: us-east-2, SES, S3, scheduled jobs and the owner's checklist (spec 0004)
 
 - **What:**
