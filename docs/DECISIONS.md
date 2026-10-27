@@ -12,6 +12,12 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-27 — Emails Servo sends on its own, and "try it" (specs 0003-5, 0003-6)
+
+- **What:** `pnpm notify` sends change alerts (a followed or "going" event moved or was cancelled), the weekly "this weekend near you" (Thursdays), and organisers' monthly reports (the 1st), and deletes messages and try-it requests older than 12 months. Every email is recorded in `notifications` before it's sent, so runs can repeat without duplicates. Each email has a one-click unsubscribe (`POST /unsubscribe`, RFC 8058); the link in the email opens `/unsubscribe`, which acts only when the button is pressed (mail scanners open links). `/try` sends a newcomer's request to the organisers of up to three nearby clubs that welcome newcomers, with the person's consent, or to the crew.
+- **Why:** spec 0003 slices 5 and 6; principles 5 and 8 in `LANDSCAPE.md`.
+- **Impact:** new column `members.monthly_report` (migration `0005_monthly_report`). Scheduling `pnpm notify` (hourly) and `pnpm engine` needs SST Cron (spec 0004). Production sending needs SES out of the sandbox and a verified domain (`docs/LAUNCH.md`).
+
 ## 2026-10-27 — Places, clubs, "Can I fly here?" and the organiser kit (specs 0002-2, 0002-3, 0003-4)
 
 - **What:**

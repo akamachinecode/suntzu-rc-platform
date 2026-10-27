@@ -1,10 +1,24 @@
-import { Body, Controller, Delete, Get, Header, HttpCode, Param, Patch, Put } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Header,
+  HttpCode,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+} from "@nestjs/common";
 import {
   ApiBody,
   ApiCookieAuth,
   ApiOkResponse,
   ApiParam,
   ApiProduces,
+  ApiQuery,
   ApiTags,
 } from "@nestjs/swagger";
 import {
@@ -126,6 +140,22 @@ export class MembersController {
   @ApiOkResponse({ schema: openApi(peopleCount) })
   people(@Param(keyPipe) key: FollowKey): Promise<PeopleCount> {
     return this.members.people(key);
+  }
+
+  // One-click unsubscribe (RFC 8058): mail apps POST here from the List-Unsubscribe header, and
+  // the unsubscribe page on the site does the same after a click.
+  @Public()
+  @Post("unsubscribe")
+  @Bit("notify.unsubscribe")
+  @HttpCode(204)
+  @ApiQuery({ name: "token", required: true })
+  @ApiQuery({ name: "what", required: true, enum: ["alerts", "digest", "report"] })
+  async unsubscribe(@Query("token") token = "", @Query("what") what = ""): Promise<void> {
+    if (!/^[\w-]{20,64}$/.test(token) || !["alerts", "digest", "report"].includes(what)) {
+      throw new NotFoundException();
+    }
+    const done = await this.members.unsubscribe(token, what as "alerts" | "digest" | "report");
+    if (!done) throw new NotFoundException();
   }
 
   // The secret token in the URL is the key: calendar apps can't sign in.

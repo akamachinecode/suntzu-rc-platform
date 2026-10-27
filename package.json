@@ -23,7 +23,8 @@
     "engine": "pnpm build:packages && pnpm --filter @workspace/api build && pnpm --filter @workspace/api engine",
     "census": "pnpm build:packages && pnpm --filter @workspace/api build && pnpm --filter @workspace/api census",
     "deploy:staging": "sst deploy --stage staging",
-    "deploy:production": "sst deploy --stage production"
+    "deploy:production": "sst deploy --stage production",
+    "notify": "pnpm build:packages && pnpm --filter @workspace/api build && pnpm --filter @workspace/api notify"
   },
   "devDependencies": {
     "prettier": "3.9.10",

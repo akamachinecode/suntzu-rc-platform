@@ -40,6 +40,8 @@ export const members = pgTable("members", {
   disciplines: discipline("disciplines").array().notNull().default([]),
   weeklyDigest: boolean("weekly_digest").notNull().default(false),
   changeAlerts: boolean("change_alerts").notNull().default(true),
+  // Organisers only: the club's report on the first of each month.
+  monthlyReport: boolean("monthly_report").notNull().default(true),
   // Secret parts of URLs: the private calendar feed and one-click unsubscribe links.
   calendarToken: text("calendar_token").notNull().unique(),
   emailToken: text("email_token").notNull().unique(),

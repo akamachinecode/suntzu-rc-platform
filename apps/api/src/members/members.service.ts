@@ -236,6 +236,22 @@ export class MembersService {
     );
   }
 
+  /** One-click unsubscribe from an email: the secret token in the link is the key. */
+  async unsubscribe(token: string, what: "alerts" | "digest" | "report"): Promise<boolean> {
+    const set =
+      what === "alerts"
+        ? { changeAlerts: false }
+        : what === "digest"
+          ? { weeklyDigest: false }
+          : { monthlyReport: false };
+    const rows = await this.db
+      .update(members)
+      .set(set)
+      .where(eq(members.emailToken, token))
+      .returning({ id: members.userId });
+    return rows.length > 0;
+  }
+
   /** The member's settings, created on first use with fresh secret tokens. */
   async ensure(userId: string) {
     const [existing] = await this.db.select().from(members).where(eq(members.userId, userId));

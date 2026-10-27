@@ -6,47 +6,51 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 
 ## Catalog
 
-| Bit                                                 | What it does                                                             | Status       | Test                                |
-| --------------------------------------------------- | ------------------------------------------------------------------------ | ------------ | ----------------------------------- |
-| [notes.list](./notes.list.md)                       | A user sees their notes (example)                                        | read in code | none yet                            |
-| [notes.get](./notes.get.md)                         | The API returns one of the user's notes (example; no screen uses it yet) | read in code | none yet                            |
-| [notes.create](./notes.create.md)                   | A user adds a note (example)                                             | read in code | none yet                            |
-| [notes.delete](./notes.delete.md)                   | A user deletes one of their notes (example)                              | read in code | none yet                            |
-| [events.list](./events.list.md)                     | A visitor finds events                                                   | verified     | none yet                            |
-| [events.get](./events.get.md)                       | A visitor opens an event's page                                          | verified     | none yet                            |
-| [events.calendar](./events.calendar.md)             | Someone subscribes to the events calendar                                | read in code | `ics-writer.test.ts`                |
-| [events.event-calendar](./events.event-calendar.md) | A visitor adds one event to their calendar                               | read in code | `ics-writer.test.ts`                |
-| [places.list](./places.list.md)                     | A visitor browses every field and track                                  | verified     | none yet                            |
-| [contact.send](./contact.send.md)                   | A visitor sends the contact form                                         | verified     | none yet                            |
-| [community.share-build](./community.share-build.md) | A visitor shares a build                                                 | read in code | none yet                            |
-| [engine.run](./engine.run.md)                       | The engine reads its sources                                             | verified     | engine tests                        |
-| [db.seed](./db.seed.md)                             | The starting data is loaded                                              | read in code | none yet                            |
-| [engine.resolve](./engine.resolve.md)               | What the sources say becomes events                                      | verified     | `match.test.ts`                     |
-| [auth.email-link](./auth.email-link.md)             | Someone signs in with a link by email                                    | verified     | none yet                            |
-| [auth.google](./auth.google.md)                     | Someone signs in with Google                                             | not verified | none yet (needs Google credentials) |
-| [account.get](./account.get.md)                     | A member opens My Servo                                                  | verified     | none yet                            |
-| [account.update](./account.update.md)               | A member changes their settings                                          | verified     | none yet                            |
-| [account.delete](./account.delete.md)               | A member deletes their account                                           | read in code | none yet                            |
-| [follows.toggle](./follows.toggle.md)               | A member follows or unfollows something                                  | verified     | none yet                            |
-| [rsvp.toggle](./rsvp.toggle.md)                     | A member says they're going                                              | verified     | none yet                            |
-| [me.calendar](./me.calendar.md)                     | A member's calendar app reads their private feed                         | verified     | none yet                            |
-| [crew.queue](./crew.queue.md)                       | The crew sees what needs a person                                        | verified     | none yet                            |
-| [crew.decide](./crew.decide.md)                     | The crew decides a review                                                | verified     | none yet                            |
-| [crew.add-event](./crew.add-event.md)               | The crew adds an event by hand                                           | read in code | none yet                            |
-| [messages.create](./messages.create.md)             | A visitor writes to the crew                                             | read in code | none yet                            |
-| [events.feedback](./events.feedback.md)             | Someone says whether an event's information was right                    | read in code | none yet                            |
-| [corrections.create](./corrections.create.md)       | A member suggests a correction                                           | read in code | none yet                            |
-| [events.share-image](./events.share-image.md)       | An event's page is shared                                                | verified     | none yet                            |
-| [census.import](./census.import.md)                 | Public registers become places, hosts, airports, airspace and ZIP codes  | verified     | census tests                        |
-| [places.get](./places.get.md)                       | A visitor opens a field's or track's page                                | verified     | none yet                            |
-| [hosts.get](./hosts.get.md)                         | A visitor opens a club's or track's page                                 | verified     | none yet                            |
-| [airspace.check](./airspace.check.md)               | Someone asks "Can I fly here?"                                           | verified     | none yet                            |
-| [hosts.claim](./hosts.claim.md)                     | Someone claims a club or track                                           | verified     | none yet                            |
-| [hosts.verify](./hosts.verify.md)                   | A claim is proved                                                        | verified     | none yet                            |
-| [organiser.publish](./organiser.publish.md)         | An organiser publishes or changes an event                               | verified     | none yet                            |
-| [organiser.widget](./organiser.widget.md)           | A club's website shows its Servo calendar                                | verified     | none yet                            |
-| [places.confirm](./places.confirm.md)               | A steward confirms a place's details                                     | read in code | none yet                            |
-| [try.request](./try.request.md)                     | A newcomer asks to try RC                                                | verified     | none yet                            |
+| Bit                                                     | What it does                                                             | Status       | Test                                |
+| ------------------------------------------------------- | ------------------------------------------------------------------------ | ------------ | ----------------------------------- |
+| [notes.list](./notes.list.md)                           | A user sees their notes (example)                                        | read in code | none yet                            |
+| [notes.get](./notes.get.md)                             | The API returns one of the user's notes (example; no screen uses it yet) | read in code | none yet                            |
+| [notes.create](./notes.create.md)                       | A user adds a note (example)                                             | read in code | none yet                            |
+| [notes.delete](./notes.delete.md)                       | A user deletes one of their notes (example)                              | read in code | none yet                            |
+| [events.list](./events.list.md)                         | A visitor finds events                                                   | verified     | none yet                            |
+| [events.get](./events.get.md)                           | A visitor opens an event's page                                          | verified     | none yet                            |
+| [events.calendar](./events.calendar.md)                 | Someone subscribes to the events calendar                                | read in code | `ics-writer.test.ts`                |
+| [events.event-calendar](./events.event-calendar.md)     | A visitor adds one event to their calendar                               | read in code | `ics-writer.test.ts`                |
+| [places.list](./places.list.md)                         | A visitor browses every field and track                                  | verified     | none yet                            |
+| [contact.send](./contact.send.md)                       | A visitor sends the contact form                                         | verified     | none yet                            |
+| [community.share-build](./community.share-build.md)     | A visitor shares a build                                                 | read in code | none yet                            |
+| [engine.run](./engine.run.md)                           | The engine reads its sources                                             | verified     | engine tests                        |
+| [db.seed](./db.seed.md)                                 | The starting data is loaded                                              | read in code | none yet                            |
+| [engine.resolve](./engine.resolve.md)                   | What the sources say becomes events                                      | verified     | `match.test.ts`                     |
+| [auth.email-link](./auth.email-link.md)                 | Someone signs in with a link by email                                    | verified     | none yet                            |
+| [auth.google](./auth.google.md)                         | Someone signs in with Google                                             | not verified | none yet (needs Google credentials) |
+| [account.get](./account.get.md)                         | A member opens My Servo                                                  | verified     | none yet                            |
+| [account.update](./account.update.md)                   | A member changes their settings                                          | verified     | none yet                            |
+| [account.delete](./account.delete.md)                   | A member deletes their account                                           | read in code | none yet                            |
+| [follows.toggle](./follows.toggle.md)                   | A member follows or unfollows something                                  | verified     | none yet                            |
+| [rsvp.toggle](./rsvp.toggle.md)                         | A member says they're going                                              | verified     | none yet                            |
+| [me.calendar](./me.calendar.md)                         | A member's calendar app reads their private feed                         | verified     | none yet                            |
+| [crew.queue](./crew.queue.md)                           | The crew sees what needs a person                                        | verified     | none yet                            |
+| [crew.decide](./crew.decide.md)                         | The crew decides a review                                                | verified     | none yet                            |
+| [crew.add-event](./crew.add-event.md)                   | The crew adds an event by hand                                           | read in code | none yet                            |
+| [messages.create](./messages.create.md)                 | A visitor writes to the crew                                             | read in code | none yet                            |
+| [events.feedback](./events.feedback.md)                 | Someone says whether an event's information was right                    | read in code | none yet                            |
+| [corrections.create](./corrections.create.md)           | A member suggests a correction                                           | read in code | none yet                            |
+| [events.share-image](./events.share-image.md)           | An event's page is shared                                                | verified     | none yet                            |
+| [census.import](./census.import.md)                     | Public registers become places, hosts, airports, airspace and ZIP codes  | verified     | census tests                        |
+| [places.get](./places.get.md)                           | A visitor opens a field's or track's page                                | verified     | none yet                            |
+| [hosts.get](./hosts.get.md)                             | A visitor opens a club's or track's page                                 | verified     | none yet                            |
+| [airspace.check](./airspace.check.md)                   | Someone asks "Can I fly here?"                                           | verified     | none yet                            |
+| [hosts.claim](./hosts.claim.md)                         | Someone claims a club or track                                           | verified     | none yet                            |
+| [hosts.verify](./hosts.verify.md)                       | A claim is proved                                                        | verified     | none yet                            |
+| [organiser.publish](./organiser.publish.md)             | An organiser publishes or changes an event                               | verified     | none yet                            |
+| [organiser.widget](./organiser.widget.md)               | A club's website shows its Servo calendar                                | verified     | none yet                            |
+| [places.confirm](./places.confirm.md)                   | A steward confirms a place's details                                     | read in code | none yet                            |
+| [try.request](./try.request.md)                         | A newcomer asks to try RC                                                | verified     | none yet                            |
+| [notify.changes](./notify.changes.md)                   | Followers hear that an event moved or was cancelled                      | verified     | none yet                            |
+| [notify.digest](./notify.digest.md)                     | Members get "this weekend near you"                                      | read in code | none yet                            |
+| [notify.organiser-report](./notify.organiser-report.md) | Organisers get their club's monthly report                               | read in code | none yet                            |
+| [notify.unsubscribe](./notify.unsubscribe.md)           | Someone stops an email with one click                                    | verified     | none yet                            |
 
 **Status:** `verified` (someone ran it and saw the result) · `read in code` (followed in the code, not run) · `not verified` · `broken`.
 

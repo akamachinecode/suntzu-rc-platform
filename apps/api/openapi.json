@@ -2675,6 +2675,45 @@
         ]
       }
     },
+    "/unsubscribe": {
+      "post": {
+        "operationId": "MembersController_unsubscribe",
+        "parameters": [
+          {
+            "name": "what",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "alerts",
+                "digest",
+                "report"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "token",
+            "required": true,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "tags": [
+          "members"
+        ]
+      }
+    },
     "/me/calendar/{token}": {
       "get": {
         "operationId": "MembersController_calendar",

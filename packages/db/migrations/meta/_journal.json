@@ -36,6 +36,13 @@
       "when": 1793135994634,
       "tag": "0004_event_rejected",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793138243941,
+      "tag": "0005_monthly_report",
+      "breakpoints": true
     }
   ]
 }
