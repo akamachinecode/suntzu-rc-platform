@@ -64,7 +64,7 @@ RC pilots and racers in Florida find events in a dozen places (club sites, Faceb
 - [x] 2. Crew role and console `/crew`: queue with evidence, approve, correct, merge, reject (blocked by: 1)
 - [x] 3. The living event page: history of changes, next edition, results link, "was this right?", pit-pass share image (blocked by: 1)
 - [x] 4. Finding: search, weekend, beginner and sanction filters, month view (blocked by: —)
-- [ ] 5. More readers: the club platforms and single sites that pay off (DualRates, Wix, Wild Apricot, WordPress events), each after checking robots.txt and terms (blocked by: 1)
+- [x] 5. More readers: the club platforms and single sites that pay off (DualRates, Wix, Wild Apricot, WordPress events), each after checking robots.txt and terms (blocked by: 1). Done 2026-10-27: The Events Calendar, Wild Apricot and schedule-table readers, RCSignup through JSON-LD; DualRates waits on its region block, Horizon and MultiGP on permission (`DECISIONS.md`)
 
 ## Open questions
 

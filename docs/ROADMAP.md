@@ -80,7 +80,7 @@ Building no longer waits on AWS: everything runs on a laptop against the local P
 - [x] **A1** Commit the dependency updates and the AWS agent rules.
 - [x] **A2** Data model and Zod contracts: sources, fetches, sightings, events, event sightings, series, places, hosts, changes, reviews. Seed from `apps/app/src/content/events.ts` and `places.ts`.
 - [x] **A3** Worker run from a command (`pnpm engine`): polite fetcher, ICS and JSON-LD readers, saved fixtures and Vitest tests. First live result: AeroFest and Jets Over Miami read from the AMPS site.
-- [ ] **A3b** Platform readers in the order the census shows they pay off (DualRates, Wix Events, Wild Apricot, WordPress events), then single sites (Extreme Flight, Horizon Hobby, ROAR, RCSignup) after checking robots.txt and terms.
+- [x] **A3b** Platform readers in the order the census shows they pay off (DualRates, Wix Events, Wild Apricot, WordPress events), then single sites (Extreme Flight, Horizon Hobby, ROAR, RCSignup) after checking robots.txt and terms. Done 2026-10-27 (spec 0001, slice 5): The Events Calendar, Wild Apricot, Extreme Flight and RCSignup are read; DualRates is region-blocked, Horizon Hobby (terms) and MultiGP (robots.txt) wait for permission.
 
 ### Track D — discovery, lean
 

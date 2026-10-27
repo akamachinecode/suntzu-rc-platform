@@ -75,6 +75,40 @@ describe("PoliteFetcher", () => {
     expect(waits[1]).toBeGreaterThan(9900);
   });
 
+  it("stops at a bot wall shown instead of robots.txt, without asking for the page", async () => {
+    // What every DualRates club site answered from outside its allowed regions (2026-10-27).
+    const sentry =
+      "<!DOCTYPE html><html><head><title>DualRates Security Protection Sentry</title></head>" +
+      "<body>Access to this page is currently limited to specific regions</body></html>";
+    const web = fakeWeb({
+      "https://club.test/robots.txt": { body: sentry, headers: { "content-type": "text/html" } },
+      "https://club.test/events": { body: sentry },
+    });
+    const fetcher = new PoliteFetcher({ fetch: web.fetchImpl, minDelayMs: 0 });
+    expect(await fetcher.get("https://club.test/events")).toMatchObject({
+      ok: false,
+      reason: "bot-wall",
+      error: expect.stringContaining("DualRates region block"),
+    });
+    expect(web.requests.map((r) => r.url)).toEqual(["https://club.test/robots.txt"]);
+  });
+
+  it("reports a captcha page as a bot wall, not as the page", async () => {
+    const web = fakeWeb({
+      "https://club.test/robots.txt": { body: "User-agent: *\nAllow: /" },
+      "https://club.test/": {
+        status: 202,
+        body: '<html><head><meta http-equiv="refresh" content="0;/.well-known/sgcaptcha/?r=%2F"></head></html>',
+      },
+    });
+    const fetcher = new PoliteFetcher({ fetch: web.fetchImpl, minDelayMs: 0 });
+    expect(await fetcher.get("https://club.test/")).toMatchObject({
+      ok: false,
+      reason: "bot-wall",
+      status: 202,
+    });
+  });
+
   it("reports HTTP errors without throwing", async () => {
     const web = fakeWeb({ "https://club.test/robots.txt": { status: 404 } });
     const fetcher = new PoliteFetcher({ fetch: web.fetchImpl, minDelayMs: 0 });

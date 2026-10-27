@@ -21,7 +21,7 @@ src/
   migrate.ts         applies database migrations (runs before every start in production)
   seed.ts            loads the events engine's starting data (`pnpm db:seed`, local only)
   engine.ts          runs the events engine once (`pnpm engine [source…]`)
-  events/engine/     the engine: polite fetcher, readers (ICS, JSON-LD), run; tests next to the code
+  events/engine/     the engine: polite fetcher, readers (ICS, JSON-LD, The Events Calendar, Wild Apricot, schedule tables), run; tests and fixtures next to the code
   openapi.ts         writes openapi.json during `pnpm build`
 openapi.json         the API contract (generated, committed)
 ```

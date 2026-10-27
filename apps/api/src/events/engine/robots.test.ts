@@ -48,6 +48,18 @@ describe("parseRobots", () => {
     expect(rules.allows("/events/public/list")).toBe(true);
   });
 
+  it("waits as long as Request-rate asks when it is slower than Crawl-delay (Wild Apricot)", () => {
+    // RCACF's robots.txt (Wild Apricot, 2026-10-27): one request a minute.
+    const rules = parseRobots(
+      "User-agent: *\nDisallow: /Sys/Login\nRequest-rate: 1/60\nCrawl-delay: 10",
+      agent,
+    );
+    expect(rules.allows("/events/RSS")).toBe(true);
+    expect(rules.allows("/Sys/Login")).toBe(false);
+    expect(rules.crawlDelaySeconds).toBe(60);
+    expect(parseRobots("User-agent: *\nRequest-rate: 2/1m", agent).crawlDelaySeconds).toBe(30);
+  });
+
   it("treats an empty Disallow as allow all", () => {
     expect(parseRobots("User-agent: *\nDisallow:", agent).allows("/anything")).toBe(true);
   });

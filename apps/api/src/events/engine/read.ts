@@ -16,12 +16,62 @@ export type SkipReason =
   | "club-business" // meetings, dues, work days
   | "practice"
   | "recurring" // repeating entries (practice days, monthly BBQ)
+  | "elsewhere" // outside the area the source is read for (`onlyPlaces`)
   | "unrecognised"
   | "invalid";
 
 export interface ReadResult {
   sightings: Sighting[];
   skipped: { reason: SkipReason; text: string }[];
+  /** The next page of a paged source (an API's next page), when there is one. */
+  next?: string;
+}
+
+/** Keeps the sightings whose place matches; the others are skipped as "elsewhere". */
+export function onlyPlaces(result: ReadResult, pattern: RegExp): ReadResult {
+  const kept: ReadResult = { ...result, sightings: [], skipped: [...result.skipped] };
+  for (const found of result.sightings) {
+    const place = found.fields.placeText;
+    // A sighting that doesn't say where stays: resolve and the crew can still place it.
+    if (!place || pattern.test(place)) kept.sightings.push(found);
+    else kept.skipped.push({ reason: "elsewhere", text: `${found.fields.name} (${place})` });
+  }
+  return kept;
+}
+
+const ENTITIES: Record<string, string> = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+  ndash: "–",
+  mdash: "—",
+  rsquo: "’",
+  lsquo: "‘",
+  rdquo: "”",
+  ldquo: "“",
+  hellip: "…",
+};
+
+/** Turns HTML/XML character references (&amp;, &#39;, &#x27;) back into text. */
+export function decodeEntities(text: string): string {
+  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, ref: string) => {
+    if (ref[0] === "#") {
+      const code =
+        ref[1] === "x" || ref[1] === "X" ? parseInt(ref.slice(2), 16) : Number(ref.slice(1));
+      return Number.isFinite(code) ? String.fromCodePoint(code) : match;
+    }
+    return ENTITIES[ref.toLowerCase()] ?? match;
+  });
+}
+
+/** The visible text of an HTML fragment, on one line. */
+export function htmlText(html: string): string {
+  return decodeEntities(html.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]*>/g, ""))
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 /** Same fields, same fingerprint: lets the engine store each version of a sighting once. */

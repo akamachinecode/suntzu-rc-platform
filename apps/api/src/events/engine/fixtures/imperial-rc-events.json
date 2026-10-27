@@ -1,0 +1,167 @@
+{
+  "events": [
+    {
+      "id": 14910,
+      "global_id": "imperialrcclub.com?id=14910",
+      "url": "https://imperialrcclub.com/event/2026-florida-ejets/",
+      "rest_url": "https://imperialrcclub.com/wp-json/tribe/events/v1/events/14910",
+      "title": "8th Annual Florida eJets",
+      "description": "",
+      "all_day": false,
+      "start_date": "2026-02-05 08:00:00",
+      "end_date": "2026-02-08 17:00:00",
+      "utc_start_date": "2026-02-05 13:00:00",
+      "utc_end_date": "2026-02-08 22:00:00",
+      "timezone": "America/New_York",
+      "cost": "",
+      "website": "",
+      "categories": [
+        {
+          "name": "Events",
+          "slug": "events"
+        }
+      ],
+      "venue": {
+        "id": 367,
+        "venue": "Imperial Radio Control Club",
+        "address": "4286 FL-60",
+        "city": "Mulberry",
+        "country": "United States",
+        "state": "FL",
+        "stateprovince": "FL"
+      },
+      "organizer": []
+    },
+    {
+      "id": 14921,
+      "global_id": "imperialrcclub.com?id=14921",
+      "url": "https://imperialrcclub.com/event/ircc-february-monthly-meeting-2/",
+      "rest_url": "https://imperialrcclub.com/wp-json/tribe/events/v1/events/14921",
+      "title": "IRCC February Monthly Meeting",
+      "description": "",
+      "all_day": false,
+      "start_date": "2026-02-14 10:00:00",
+      "end_date": "2026-02-14 11:00:00",
+      "utc_start_date": "2026-02-14 15:00:00",
+      "utc_end_date": "2026-02-14 16:00:00",
+      "timezone": "America/New_York",
+      "cost": "",
+      "website": "",
+      "categories": [
+        {
+          "name": "Club Meeting",
+          "slug": "club-meeting"
+        }
+      ],
+      "venue": {
+        "id": 367,
+        "venue": "Imperial Radio Control Club",
+        "address": "4286 FL-60",
+        "city": "Mulberry",
+        "country": "United States",
+        "state": "FL",
+        "stateprovince": "FL"
+      },
+      "organizer": []
+    },
+    {
+      "id": 14980,
+      "global_id": "imperialrcclub.com?id=14980",
+      "url": "https://imperialrcclub.com/event/sae-aero-design-east/",
+      "rest_url": "https://imperialrcclub.com/wp-json/tribe/events/v1/events/14980",
+      "title": "SAE Aero Design East",
+      "description": "",
+      "all_day": false,
+      "start_date": "2026-03-06 08:00:00",
+      "end_date": "2026-03-08 17:00:00",
+      "utc_start_date": "2026-03-06 13:00:00",
+      "utc_end_date": "2026-03-08 21:00:00",
+      "timezone": "America/New_York",
+      "cost": "",
+      "website": "",
+      "categories": [
+        {
+          "name": "Events",
+          "slug": "events"
+        }
+      ],
+      "venue": {
+        "id": 355,
+        "venue": "Paradise Field",
+        "address": "4999 Air Show Road",
+        "city": "Lakeland",
+        "country": "United States",
+        "state": "FL",
+        "stateprovince": "FL"
+      },
+      "organizer": []
+    },
+    {
+      "id": 14977,
+      "global_id": "imperialrcclub.com?id=14977",
+      "url": "https://imperialrcclub.com/event/frank-tiano-scale-fly-in/",
+      "rest_url": "https://imperialrcclub.com/wp-json/tribe/events/v1/events/14977",
+      "title": "Frank Tiano Scale Fly-In",
+      "description": "",
+      "all_day": false,
+      "start_date": "2026-05-07 08:00:00",
+      "end_date": "2026-05-10 17:00:00",
+      "utc_start_date": "2026-05-07 12:00:00",
+      "utc_end_date": "2026-05-10 21:00:00",
+      "timezone": "America/New_York",
+      "cost": "",
+      "website": "",
+      "categories": [
+        {
+          "name": "Events",
+          "slug": "events"
+        }
+      ],
+      "venue": {
+        "id": 367,
+        "venue": "Imperial Radio Control Club",
+        "address": "4286 FL-60",
+        "city": "Mulberry",
+        "country": "United States",
+        "state": "FL",
+        "stateprovince": "FL"
+      },
+      "organizer": []
+    },
+    {
+      "id": 15233,
+      "global_id": "imperialrcclub.com?id=15233",
+      "url": "https://imperialrcclub.com/event/fall-all-scale-any-size-fly-in/",
+      "rest_url": "https://imperialrcclub.com/wp-json/tribe/events/v1/events/15233",
+      "title": "Fall, All Scale, Any Size Fly-In",
+      "description": "",
+      "all_day": false,
+      "start_date": "2026-10-16 08:00:00",
+      "end_date": "2026-10-17 17:00:00",
+      "utc_start_date": "2026-10-16 12:00:00",
+      "utc_end_date": "2026-10-17 21:00:00",
+      "timezone": "America/New_York",
+      "cost": "",
+      "website": "",
+      "categories": [
+        {
+          "name": "Events",
+          "slug": "events"
+        }
+      ],
+      "venue": {
+        "id": 367,
+        "venue": "Imperial Radio Control Club",
+        "address": "4286 FL-60",
+        "city": "Mulberry",
+        "country": "United States",
+        "state": "FL",
+        "stateprovince": "FL"
+      },
+      "organizer": []
+    }
+  ],
+  "rest_url": "https://imperialrcclub.com/wp-json/tribe/events/v1/events/?page=1&per_page=50&start_date=2026-01-01 00:00:00&end_date=2026-12-31 23:59:59&status=publish",
+  "total": 5,
+  "total_pages": 1
+}
