@@ -37,3 +37,6 @@ bun.lockb
 .idea/
 *.pem
 .playwright-mcp/
+
+# agent worktrees (Claude Code)
+.claude/worktrees/
