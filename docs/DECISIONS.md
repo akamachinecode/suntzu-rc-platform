@@ -12,6 +12,18 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-27 — Places, clubs, "Can I fly here?" and the organiser kit (specs 0002-2, 0002-3, 0003-4)
+
+- **What:**
+  - `/places` (every field and track on a map, with search and near me), a page per place (how to visit, who runs it, upcoming events, the rules, the source and last-checked date), `/clubs` and a page per club with its own calendar feed. "Places" is in the main navigation.
+  - `/places/can-i-fly-here`: a point is checked against the FAA's airspace, airports and FRIAs (`GET /airspace/check`). It's guidance with links to B4UFLY and LAANC, never an authorisation; temporary flight restrictions aren't included yet. The point isn't stored or logged.
+  - Organisers claim a club by a code sent to an address at the club's own domain (never a shared domain such as Facebook, Wix or Gmail), a code on its website, or the crew's check. Verified organisers publish and change their club's events (published at once, with organiser trust), confirm their places' details yearly and get an embeddable widget (`/embed/clubs/<slug>`).
+- **Why:** specs 0002 and 0003; principle 2 in `LANDSCAPE.md` (organisers get something back).
+- **Impact:**
+  - `next.config.ts`: `X-Frame-Options: DENY` now applies to every path except `/embed`, which other sites frame on purpose. `Permissions-Policy` allows geolocation for the site itself (`geolocation=(self)`): before, it blocked "Near me" on every page.
+  - A duplicate club from the census ("SRQ R/C Squadron", AMA 780) was merged into the seeded "Sarasota R/C Squadron", which now carries the number and the alias.
+  - Website verification fetches the club's home page and `/servo.txt` once, when the organiser asks.
+
 ## 2026-10-27 — The crew console, and every form reaches the crew (specs 0001-2, 0003-3)
 
 - **What:** `/crew` (crew role only): the review queue with each source's exact words next to what we publish, and decisions to publish, correct, merge or reject; "Add an event" by hand (published at once, backed by a `servo-crew` sighting so the engine links to it later); the inbox (contact form and builds) and the feedback from past events. Events the crew rejects keep `rejected_at` and are never published automatically again; "different events" tells resolve never to match that pair. Public forms (`POST /messages`, `POST /events/{slug}/feedback`) check a Cloudflare Turnstile token when `TURNSTILE_SECRET_KEY` is set (production) and the app shows the widget when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is set. Members can suggest corrections (`POST /events/{slug}/corrections`), which wait for the crew.

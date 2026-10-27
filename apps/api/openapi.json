@@ -3874,6 +3874,251 @@
         ]
       }
     },
+    "/airspace/check": {
+      "get": {
+        "operationId": "PlacesController_check",
+        "parameters": [
+          {
+            "name": "lng",
+            "required": true,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "lat",
+            "required": true,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "verdict": {
+                      "type": "string",
+                      "enum": [
+                        "controlled",
+                        "near-airport",
+                        "fria",
+                        "clear"
+                      ]
+                    },
+                    "airspace": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "class": {
+                            "type": "string"
+                          },
+                          "lowerFt": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "class",
+                          "lowerFt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "airports": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "ident": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "miles": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "ident",
+                          "name",
+                          "kind",
+                          "miles"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "fria": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "slug": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "flying-field",
+                            "car-track",
+                            "indoor",
+                            "venue"
+                          ]
+                        },
+                        "address": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "city": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "county": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "latitude": {
+                          "nullable": true,
+                          "type": "number"
+                        },
+                        "longitude": {
+                          "nullable": true,
+                          "type": "number"
+                        },
+                        "isFria": {
+                          "type": "boolean"
+                        },
+                        "url": {
+                          "nullable": true,
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "miles": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "slug",
+                        "name",
+                        "kind",
+                        "address",
+                        "city",
+                        "county",
+                        "state",
+                        "latitude",
+                        "longitude",
+                        "isFria",
+                        "url",
+                        "miles"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "fields": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "slug": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "flying-field",
+                              "car-track",
+                              "indoor",
+                              "venue"
+                            ]
+                          },
+                          "address": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "city": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "county": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "latitude": {
+                            "nullable": true,
+                            "type": "number"
+                          },
+                          "longitude": {
+                            "nullable": true,
+                            "type": "number"
+                          },
+                          "isFria": {
+                            "type": "boolean"
+                          },
+                          "url": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "miles": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "slug",
+                          "name",
+                          "kind",
+                          "address",
+                          "city",
+                          "county",
+                          "state",
+                          "latitude",
+                          "longitude",
+                          "isFria",
+                          "url",
+                          "miles"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "verdict",
+                    "airspace",
+                    "airports",
+                    "fria",
+                    "fields"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "places"
+        ]
+      }
+    },
     "/places/{slug}": {
       "get": {
         "operationId": "PlacesController_place",

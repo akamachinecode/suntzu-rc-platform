@@ -16,7 +16,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [events.get](./events.get.md)                       | A visitor opens an event's page                                          | verified     | none yet                            |
 | [events.calendar](./events.calendar.md)             | Someone subscribes to the events calendar                                | read in code | `ics-writer.test.ts`                |
 | [events.event-calendar](./events.event-calendar.md) | A visitor adds one event to their calendar                               | read in code | `ics-writer.test.ts`                |
-| [places.list](./places.list.md)                     | The events map gets its places                                           | read in code | none yet                            |
+| [places.list](./places.list.md)                     | A visitor browses every field and track                                  | verified     | none yet                            |
 | [contact.send](./contact.send.md)                   | A visitor sends the contact form                                         | verified     | none yet                            |
 | [community.share-build](./community.share-build.md) | A visitor shares a build                                                 | read in code | none yet                            |
 | [engine.run](./engine.run.md)                       | The engine reads its sources                                             | verified     | engine tests                        |
@@ -38,6 +38,14 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [corrections.create](./corrections.create.md)       | A member suggests a correction                                           | read in code | none yet                            |
 | [events.share-image](./events.share-image.md)       | An event's page is shared                                                | verified     | none yet                            |
 | [census.import](./census.import.md)                 | Public registers become places, hosts, airports, airspace and ZIP codes  | verified     | census tests                        |
+| [places.get](./places.get.md)                       | A visitor opens a field's or track's page                                | verified     | none yet                            |
+| [hosts.get](./hosts.get.md)                         | A visitor opens a club's or track's page                                 | verified     | none yet                            |
+| [airspace.check](./airspace.check.md)               | Someone asks "Can I fly here?"                                           | verified     | none yet                            |
+| [hosts.claim](./hosts.claim.md)                     | Someone claims a club or track                                           | verified     | none yet                            |
+| [hosts.verify](./hosts.verify.md)                   | A claim is proved                                                        | verified     | none yet                            |
+| [organiser.publish](./organiser.publish.md)         | An organiser publishes or changes an event                               | verified     | none yet                            |
+| [organiser.widget](./organiser.widget.md)           | A club's website shows its Servo calendar                                | verified     | none yet                            |
+| [places.confirm](./places.confirm.md)               | A steward confirms a place's details                                     | read in code | none yet                            |
 
 **Status:** `verified` (someone ran it and saw the result) · `read in code` (followed in the code, not run) · `not verified` · `broken`.
 

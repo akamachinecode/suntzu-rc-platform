@@ -51,8 +51,8 @@
 ## Slices
 
 - [x] 1. Census: FAA recognised areas and fixed sites, Florida airports and controlled airspace, ZIP centres (blocked by: —) — `pnpm census`, 2026-10-27
-- [ ] 2. `/places` map and list, a page per place and per club or track (blocked by: 1)
-- [ ] 3. "Can I fly here?" (blocked by: 1)
+- [x] 2. `/places` map and list, a page per place and per club or track (blocked by: 1)
+- [x] 3. "Can I fly here?" (blocked by: 1)
 
 ## Open questions
 

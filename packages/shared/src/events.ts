@@ -255,3 +255,25 @@ export type Place = z.output<typeof place>;
 export type PlaceDetail = z.output<typeof placeDetail>;
 export type Host = z.output<typeof host>;
 export type HostDetail = z.output<typeof hostDetail>;
+
+/** "Can I fly here?" (docs/specs/0002-places.md, slice 3): a point checked, never stored. */
+export const airspaceQuery = z.object({
+  lat: z.coerce.number().min(24).max(31.5),
+  lng: z.coerce.number().min(-88).max(-79.5),
+});
+
+export const airspaceCheck = z.object({
+  // controlled: inside class B, C, D or E surface airspace (LAANC needed).
+  // near-airport: within 5 miles of an airport, outside controlled airspace.
+  // fria: at an FAA-recognised identification area. clear: none of these.
+  verdict: z.enum(["controlled", "near-airport", "fria", "clear"]),
+  airspace: z.array(z.object({ name: z.string(), class: z.string(), lowerFt: z.number() })),
+  airports: z.array(
+    z.object({ ident: z.string(), name: z.string(), kind: z.string(), miles: z.number() }),
+  ),
+  fria: placeSummary.extend({ miles: z.number() }).nullable(),
+  fields: z.array(placeSummary.extend({ miles: z.number() })),
+});
+
+export type AirspaceQuery = z.output<typeof airspaceQuery>;
+export type AirspaceCheck = z.output<typeof airspaceCheck>;

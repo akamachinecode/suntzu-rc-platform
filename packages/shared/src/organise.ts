@@ -16,7 +16,10 @@ export const claimInput = z.object({
 });
 
 export const claimVerify = z.object({
-  code: z.string().trim().regex(/^\d{6}$/, "The 6-digit code from the email."),
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "The 6-digit code from the email."),
 });
 
 export const claimStatus = z.object({
@@ -37,7 +40,11 @@ export const organiserHost = z.object({
   }),
   places: z.array(place),
   events: z.array(
-    event.extend({ going: z.number().int(), following: z.number().int(), byOrganiser: z.boolean() }),
+    event.extend({
+      going: z.number().int(),
+      following: z.number().int(),
+      byOrganiser: z.boolean(),
+    }),
   ),
   followers: z.number().int(),
   goingTotal: z.number().int(),

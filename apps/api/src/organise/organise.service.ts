@@ -283,7 +283,8 @@ export class OrganiseService {
     const [event] = await this.db.select().from(events).where(eq(events.slug, eventSlug));
     if (!event || event.hostId !== host.id) throw new NotFoundException();
     // Organisers speak for their own events; the name and the slug stay, so links keep working.
-    const { name: _name, ...rest } = patch;
+    const rest = { ...patch };
+    delete rest.name;
     await this.db.transaction((tx) => applyPatch(tx, event, rest, { by: "organiser" }));
   }
 

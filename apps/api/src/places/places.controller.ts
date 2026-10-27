@@ -1,6 +1,10 @@
-import { Controller, Get, Header, Param } from "@nestjs/common";
-import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { Controller, Get, Header, Param, Query } from "@nestjs/common";
+import { ApiOkResponse, ApiQuery, ApiTags } from "@nestjs/swagger";
 import {
+  airspaceCheck,
+  type AirspaceCheck,
+  airspaceQuery,
+  type AirspaceQuery,
   host,
   type Host,
   hostDetail,
@@ -10,7 +14,8 @@ import {
 } from "@workspace/shared";
 import { Public } from "../auth/auth.guard.js";
 import { Bit } from "../common/trace.js";
-import { openApi } from "../common/zod.js";
+import { openApi, ZodPipe } from "../common/zod.js";
+import { AirspaceService } from "./airspace.service.js";
 import { PlacesService } from "./places.service.js";
 
 const PUBLIC_CACHE = "public, max-age=300";
@@ -18,7 +23,22 @@ const PUBLIC_CACHE = "public, max-age=300";
 @ApiTags("places")
 @Controller()
 export class PlacesController {
-  constructor(private readonly places: PlacesService) {}
+  constructor(
+    private readonly places: PlacesService,
+    private readonly airspace: AirspaceService,
+  ) {}
+
+  // Before places/:slug. The query (the point) isn't logged: log lines carry the route only.
+  @Public()
+  @Get("airspace/check")
+  @Bit("airspace.check")
+  @Header("Cache-Control", "no-store")
+  @ApiQuery({ name: "lat", required: true })
+  @ApiQuery({ name: "lng", required: true })
+  @ApiOkResponse({ schema: openApi(airspaceCheck) })
+  check(@Query(new ZodPipe(airspaceQuery)) query: AirspaceQuery): Promise<AirspaceCheck> {
+    return this.airspace.check(query);
+  }
 
   @Public()
   @Get("places/:slug")
