@@ -27,7 +27,7 @@
   "devDependencies": {
     "prettier": "3.9.10",
     "prettier-plugin-tailwindcss": "0.8.1",
-    "sst": "4.17.1",
+    "sst": "4.17.2",
     "typescript": "5.9.3"
   },
   "packageManager": "pnpm@12.11.2",

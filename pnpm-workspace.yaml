@@ -32,3 +32,17 @@ saveExact: true
 packages:
   - apps/*
   - packages/*
+
+# Security exceptions and accepted deprecation warnings, reviewed by Itaca engineering.
+# Each one says why it exists and when to remove it.
+overrides:
+  # GHSA-q7qp-rjg7-q26m (high, DoS): multer < 2.5.0, pulled in by @nestjs/platform-express 12.2.0.
+  # Remove when @nestjs/platform-express >= 12.3.0 (which depends on multer 2.5.0) is installed.
+  multer: 2.5.0
+  # GHSA-67mh-4wv8-2f99 (moderate, dev server): esbuild < 0.25.0, pulled in by drizzle-kit 0.31 through @esbuild-kit.
+  # Same esbuild drizzle-kit already uses. Remove when drizzle-kit drops @esbuild-kit (1.0).
+  "@esbuild-kit/core-utils>esbuild": 0.25.12
+allowedDeprecatedVersions:
+  # drizzle-kit 0.31 still depends on these deprecated loaders. Remove with the esbuild override above.
+  "@esbuild-kit/core-utils": "3"
+  "@esbuild-kit/esm-loader": "2"

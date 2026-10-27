@@ -16,6 +16,7 @@ import {
   REGIONS,
 } from "@workspace/shared";
 import { Public } from "../auth/auth.guard.js";
+import { Bit } from "../common/trace.js";
 import { openApi, ZodPipe } from "../common/zod.js";
 import { EventsService } from "./events.service.js";
 
@@ -35,6 +36,7 @@ export class EventsController {
 
   @Public()
   @Get("events")
+  @Bit("events.list")
   @Header("Cache-Control", PUBLIC_CACHE)
   @ApiQuery({ name: "from", required: false, description: "YYYY-MM-DD, default today" })
   @ApiQuery({ name: "to", required: false, description: "YYYY-MM-DD" })
@@ -47,6 +49,7 @@ export class EventsController {
   // Declared before events/:slug so "calendar.ics" is never read as a slug.
   @Public()
   @Get("events/calendar.ics")
+  @Bit("events.calendar")
   @Header("Content-Type", "text/calendar; charset=utf-8")
   @Header("Cache-Control", PUBLIC_CACHE)
   @ApiProduces("text/calendar")
@@ -58,6 +61,7 @@ export class EventsController {
 
   @Public()
   @Get("events/:slug")
+  @Bit("events.get")
   @Header("Cache-Control", PUBLIC_CACHE)
   @ApiOkResponse({ schema: openApi(eventDetail) })
   get(@Param("slug") slug: string): Promise<EventDetail> {
@@ -66,6 +70,7 @@ export class EventsController {
 
   @Public()
   @Get("events/:slug/calendar.ics")
+  @Bit("events.event-calendar")
   @Header("Content-Type", "text/calendar; charset=utf-8")
   @Header("Cache-Control", PUBLIC_CACHE)
   @ApiProduces("text/calendar")
@@ -76,6 +81,7 @@ export class EventsController {
 
   @Public()
   @Get("places")
+  @Bit("places.list")
   @Header("Cache-Control", PUBLIC_CACHE)
   @ApiOkResponse({ schema: { type: "array", items: openApi(place) } })
   places(): Promise<Place[]> {
