@@ -28,6 +28,7 @@ Format:
   - **Data model** (migration `0003_community`): `members`, `follows`, `rsvps`, `host_members`, `messages`, `submissions`, `try_requests`, `feedback`, `notifications`; `events.beginner_friendly`; `reviews.submitted_by`.
 - **Why:** spec 0003, with the owner's choices (no passwords; nothing about a member public by default). Approved by the owner acting as Itaca engineering (accounts, personal data, roles, email).
 - **Impact:** personal data now lives in Servo: email, optional name and ZIP, follows and "going". Deleting an account removes all of it (cascades); contributions to the public catalogue stay without the name. For production: verify the sender domain in SES and request production access (`docs/LAUNCH.md`), create the Google OAuth client, set `CREW_EMAILS`. An Itaca review of `apps/api/src/auth/` before launch is still recommended.
+
 ## 2026-10-27 — More readers: club platforms and single sites (spec 0001, slice 5)
 
 - **What:**
@@ -59,6 +60,31 @@ Format:
   - **Horizon Hobby and MultiGP need permission** (roadmap D6). Horizon's calendar is a JSON block in the page (about 230 entries), a short reader once allowed.
   - RCACF's one request a minute makes its run take a minute; fine for a weekly source.
   - Follow-up, not done: a one-off read of past editions (The Events Calendar's API takes a `start_date`) would give resolve and series prediction a year of history.
+
+## 2026-10-27 — Places census: FAA registers and Census ZIP codes (spec 0002, slice 1)
+
+- **What:** `pnpm census [dataset…]` (`apps/api/src/census.ts`, code in `apps/api/src/places/census/`, bit `census.import`) loads five public datasets for Florida into the tables of migration `0002_places_census`. No schema change, no new dependency (ZIP files are read with Node's built-in `zlib`).
+
+  | Dataset                                      | Source (all public domain: US government works)                                                                                                                                                             | Into              |
+  | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+  | `fria` FAA-Recognized Identification Areas   | `https://services6.arcgis.com/ssFJjBXIUyZDrSYZ/arcgis/rest/services/FAA_Recognized_Identification_Areas/FeatureServer/0` (FAA UAS Data Delivery System, `udds-faa.opendata.arcgis.com`), `state='FL'`       | `places`, `hosts` |
+  | `fixed-sites` Recreational Flyer Fixed Sites | `https://services6.arcgis.com/ssFJjBXIUyZDrSYZ/arcgis/rest/services/Recreational_Flyer_Fixed_Sites/FeatureServer/0`, `STATE='FL'`                                                                           | `places`, `hosts` |
+  | `airports` airports and heliports            | `https://services6.arcgis.com/ssFJjBXIUyZDrSYZ/arcgis/rest/services/US_Airport/FeatureServer/0` (FAA Aeronautical Data Delivery Service, `adds-faa.opendata.arcgis.com`), `STATE='FL'`, closed ones skipped | `airports`        |
+  | `airspace` controlled airspace               | `https://services6.arcgis.com/ssFJjBXIUyZDrSYZ/arcgis/rest/services/Class_Airspace/FeatureServer/0`, Florida's envelope: class B (all parts), C and D from the surface, E2/E3/E4 surface areas              | `airspace`        |
+  | `zip-codes` ZIP code centres                 | US Census Bureau Gazetteer ZCTA file, latest year published (`https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2026_Gazetteer/2026_Gaz_zcta_national.zip`), ZIPs 320–339 and 341–349               | `zip_codes`       |
+
+- **Stored:** site and organisation names, coordinates (a FRIA's centre, a fixed site's point), the city, a road when the register's title names one, FAA record ids, approval and edit dates, a fixed site's ceiling (in the place's notes) and a link to the FAA's map of the register at the site. **Not stored, and never requested:** the FRIA requester's postal address and ZIP code, a fixed site's point of contact (POC) and ZIP code. One FRIA title begins with a person's name; the census replaces it (`TITLE_FIXES` in `fria.ts`). Fixtures and logs follow the same rule.
+- **How it dedupes:** places by `(register, registerId)`, else the nearest flying field within 300 m, else the same club's field from the other FAA register within 1,200 m (a FRIA is an area and a fixed site a point, up to ~1 km apart for the same field); hosts by record, AMA charter number (from the FRIA title, "Club #1234"), name or alias with spelling ignored, then one or two typos. The four seeded fields that are FRIAs (Silver Field, Markham Park, West Delray, Dyer Park) now carry their FAA record; their names, notes and access are untouched, and the seeded clubs are matched rather than copied. Running twice changes nothing. Places and hosts are never deleted by the census; records that leave a register are listed for the crew.
+- **Decisions taken while building it:**
+  - An AMA club's FRIA is hosted by **the club** (charter number in the title), not by the AMA. Sites of other recognised organisations (FPV Freedom Coalition, Flite Test Community Association) are hosted by that organisation as a `sanctioning-body`. **School FRIAs (64) and school fixed sites are places without a host**: the register names no organisation for them, and they are for the school's own programme (said in the notes).
+  - Every new place has access `permission` (the FAA records say nothing about visiting); `verifiedAt` is the FRIA's approval date or the fixed site's last edit, not the import time, so "last checked" stays honest.
+  - FRIA record ids drop amendment suffixes (`…-FRIA-A1` → `…-FRIA`); fixed sites use the FAA's site id when there is one, else the record's GlobalID.
+  - On later runs, a place or host the census created only gets register facts refreshed (FRIA flag, source link, newer date, a missing host): names, coordinates, notes and access belong to the crew and stewards (principle 4 in `LANDSCAPE.md`).
+  - Class B shelves are kept with their floor in `lower_ft`; the FAA gives shelf floors above sea level, which in Florida (under 350 ft of terrain) is close to above ground. Class D and E areas that are part-time (hours by NOTAM) are stored like the others: the table has no column for hours.
+  - Airports, airspace and ZIP codes are mirrors: rows the register dropped are deleted, unless a response looks incomplete (under half of what we hold).
+  - The seed now marks Silver Field and West Delray as FRIAs too (`seed-data.ts`): `pnpm db:seed` writes every column any seeded place sets, so it used to clear the flag the census had set.
+- **Result (local database, 2026-10-27):** 163 FRIAs and 104 fixed sites in Florida became 187 new places plus 4 seeded places linked to their record (193 places in all) and 91 new hosts (clubs already seeded were matched by charter number or name), 926 airports and heliports (9 closed ones skipped), 122 airspace areas, 1,013 ZIP codes. Eight requests in all; a second run changed nothing.
+- **Impact:** no new environment variables or services. Running it on a schedule (the registers change every few weeks) needs SST Cron: ask Itaca engineering. Possible schema additions for slice 3, not made: a fixed site's ceiling as a number (today in notes), part-time hours for airspace, and the FRIA polygon itself (today only its centre).
 
 ## 2026-10-27 — Servo 1.0: the plan to finish the web, and who approves what
 

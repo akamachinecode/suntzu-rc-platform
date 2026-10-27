@@ -87,7 +87,7 @@ Building no longer waits on AWS: everything runs on a laptop against the local P
 Design: [`DISCOVERY.md`](./DISCOVERY.md). Good coverage of the important events and correct information matter more than finding every last one; we keep one simple estimate of what we miss.
 
 - [ ] **D1** A sample golden set (~50 events checked by hand) to estimate coverage, instead of an exhaustive one.
-- [ ] **D2** Census v1: FAA FRIA and fixed sites, ROAR, RCSignup, LiveRC, AMYA, MultiGP into `hosts` and `places`; channel probe of every website. Also feeds the map of places.
+- [ ] **D2** Census v1: FAA FRIA and fixed sites, ROAR, RCSignup, LiveRC, AMYA, MultiGP into `hosts` and `places`; channel probe of every website. Also feeds the map of places. FAA FRIA and fixed sites done (`pnpm census`, 2026-10-27).
 - [ ] **D3** Leads pipeline with Parallel (season sweep and a few daily monitors), recording which method found each event.
 - [ ] **D4** Simple comparison of Parallel against our own sources on the sample; estimate of what both miss.
 - [ ] **D6** Outreach: AMA, DualRates, MultiGP, RCSignup, Google Calendar clubs.

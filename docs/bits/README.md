@@ -19,7 +19,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [places.list](./places.list.md)                     | The events map gets its places                                           | read in code | none yet                            |
 | [contact.send](./contact.send.md)                   | A visitor sends the contact form                                         | verified     | none yet                            |
 | [community.share-build](./community.share-build.md) | A visitor shares a build                                                 | read in code | none yet                            |
-| [engine.run](./engine.run.md)                       | The engine reads its sources                                             | verified     | engine tests         |
+| [engine.run](./engine.run.md)                       | The engine reads its sources                                             | verified     | engine tests                        |
 | [db.seed](./db.seed.md)                             | The starting data is loaded                                              | read in code | none yet                            |
 | [engine.resolve](./engine.resolve.md)               | What the sources say becomes events                                      | verified     | `match.test.ts`                     |
 | [auth.email-link](./auth.email-link.md)             | Someone signs in with a link by email                                    | verified     | none yet                            |
@@ -37,6 +37,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [events.feedback](./events.feedback.md)             | Someone says whether an event's information was right                    | read in code | none yet                            |
 | [corrections.create](./corrections.create.md)       | A member suggests a correction                                           | read in code | none yet                            |
 | [events.share-image](./events.share-image.md)       | An event's page is shared                                                | verified     | none yet                            |
+| [census.import](./census.import.md)                 | Public registers become places, hosts, airports, airspace and ZIP codes  | verified     | census tests                        |
 
 **Status:** `verified` (someone ran it and saw the result) · `read in code` (followed in the code, not run) · `not verified` · `broken`.
 

@@ -85,6 +85,9 @@ export const HOSTS: NewHost[] = [
     name: "Sarasota R/C Squadron",
     kind: "club",
     url: "https://www.sarasotarc.com",
+    // The FAA register calls it "SRQ R/C Squadron" (AMA club 780): the census matches it here.
+    amaClubNumber: 780,
+    aliases: ["SRQ R/C Squadron"],
   },
   {
     slug: "sarasota-silent-flyers",
@@ -112,6 +115,8 @@ export const PLACES: WithLinks<NewPlace>[] = [
     address: "20044 SW 168th St (west of Krome Ave)",
     city: "Miami",
     county: "Miami-Dade",
+    // FAA record 2022-CBO-00118-FRIA (`pnpm census` links it): the seed must not unset the flag.
+    isFria: true,
     notes: "AMA club 200. Home of Jets Over Miami every December.",
     url: "https://www.amps-rc.com",
     aliases: ["AMPS field"],
@@ -141,6 +146,8 @@ export const PLACES: WithLinks<NewPlace>[] = [
     address: "10875 W Atlantic Ave",
     city: "Delray Beach",
     county: "Palm Beach",
+    // FAA record 2023-CBO-00628-FRIA.
+    isFria: true,
     notes: "AMA club 1016. Hosts 3D Over the Glades each February.",
     url: "https://www.palmbeachrc.com",
     latitude: 26.4647,

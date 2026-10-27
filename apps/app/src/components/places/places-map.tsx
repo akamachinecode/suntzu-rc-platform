@@ -59,7 +59,9 @@ export function PlacesMap({
   const map = useRef<MapLibre | null>(null);
   const markers = useRef<Marker[]>([]);
   const pick = useRef(onPick);
-  pick.current = onPick;
+  useEffect(() => {
+    pick.current = onPick;
+  }, [onPick]);
 
   useEffect(() => {
     if (!container.current) return;

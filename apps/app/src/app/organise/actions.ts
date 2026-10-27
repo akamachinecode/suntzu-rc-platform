@@ -76,7 +76,7 @@ export async function enterCode(
   return { status: "verified", message: "Verified. Welcome aboard." };
 }
 
-export async function checkWebsite(host: string, _prev: ClaimState): Promise<ClaimState> {
+export async function checkWebsite(host: string): Promise<ClaimState> {
   if (!slug.safeParse(host).success) return { status: "error" };
   const api = await getApi();
   const { data, response } = await api.POST("/organise/claims/{host}/website", {
