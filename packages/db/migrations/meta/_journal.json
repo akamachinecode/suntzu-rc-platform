@@ -15,6 +15,13 @@
       "when": 1792692595549,
       "tag": "0001_events_engine",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793134973726,
+      "tag": "0002_places_census",
+      "breakpoints": true
     }
   ]
 }

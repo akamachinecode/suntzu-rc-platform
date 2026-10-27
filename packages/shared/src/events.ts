@@ -22,6 +22,12 @@ export const DATE_PRECISIONS = ["day", "month"] as const;
 export const REGIONS = ["south-florida", "florida", "road-trip"] as const;
 export const PLACE_KINDS = ["flying-field", "car-track", "indoor", "venue"] as const;
 export const HOST_KINDS = ["club", "track", "shop", "sanctioning-body", "organiser"] as const;
+// How a visitor may use a place. "permission": ask the owner or club first (most FAA-recognised
+// club fields); "unknown": nobody has told us yet.
+export const PLACE_ACCESS = ["public", "guests", "members", "permission", "unknown"] as const;
+// Public registers a place or host can come from, so imports can run again without duplicates.
+export const REGISTERS = ["faa-fria", "faa-fixed-site", "crew", "organiser"] as const;
+export const AIRSPACE_CLASSES = ["B", "C", "D", "E"] as const;
 // How the engine reads a source. "manual" is the crew typing, "submission" a member's form.
 export const SOURCE_ADAPTERS = ["ics", "json-ld", "html", "api", "manual", "submission"] as const;
 // Who is speaking, most trusted first. Verify turns this into a weight.
@@ -38,6 +44,9 @@ export const datePrecision = z.enum(DATE_PRECISIONS);
 export const region = z.enum(REGIONS);
 export const placeKind = z.enum(PLACE_KINDS);
 export const hostKind = z.enum(HOST_KINDS);
+export const placeAccess = z.enum(PLACE_ACCESS);
+export const register = z.enum(REGISTERS);
+export const airspaceClass = z.enum(AIRSPACE_CLASSES);
 export const sourceAdapter = z.enum(SOURCE_ADAPTERS);
 export const sourceTrust = z.enum(SOURCE_TRUST);
 
