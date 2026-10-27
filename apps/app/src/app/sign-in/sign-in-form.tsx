@@ -1,78 +1,95 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { MailCheckIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { authClient } from "@/lib/auth-client";
 
-export function SignInForm({ next }: { next: string }) {
-  const router = useRouter();
-  const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
+/** No passwords: an email with a one-time link, or Google when it's set up. */
+export function SignInForm({ next, google }: { next: string; google: boolean }) {
   const [error, setError] = useState<string>();
+  const [sentTo, setSentTo] = useState<string>();
   const [pending, setPending] = useState(false);
+  const callbackURL = new URL(next, window.location.origin).toString();
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPending(true);
     setError(undefined);
-    const form = new FormData(event.currentTarget);
-    const email = String(form.get("email"));
-    const password = String(form.get("password"));
+    const email = String(new FormData(event.currentTarget).get("email")).trim();
     try {
-      const { error } =
-        mode === "sign-in"
-          ? await authClient.signIn.email({ email, password })
-          : await authClient.signUp.email({ email, password, name: String(form.get("name")) });
+      const { error } = await authClient.signIn.magicLink({ email, callbackURL });
       if (error) return setError(error.message ?? "Something went wrong. Try again.");
+      setSentTo(email);
     } catch {
-      return setError("Can't reach the server. Check your connection and try again.");
+      setError("Can't reach the server. Check your connection and try again.");
     } finally {
       setPending(false);
     }
-    router.push(next);
-    router.refresh();
+  }
+
+  async function withGoogle() {
+    setPending(true);
+    setError(undefined);
+    const { error } = await authClient.signIn.social({ provider: "google", callbackURL });
+    if (error) {
+      setError(error.message ?? "Google sign-in isn't available right now.");
+      setPending(false);
+    }
+  }
+
+  if (sentTo) {
+    return (
+      <div
+        role="status"
+        className="grid gap-4 rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard"
+      >
+        <MailCheckIcon aria-hidden="true" className="size-8" />
+        <p className="text-xl font-black font-wide">Check your email</p>
+        <p className="text-pretty">
+          We sent a sign-in link to <strong>{sentTo}</strong>. It works once, for 15 minutes. You
+          can close this tab.
+        </p>
+        <Button
+          type="button"
+          variant="link"
+          className="justify-self-start px-0"
+          onClick={() => setSentTo(undefined)}
+        >
+          Use another address
+        </Button>
+      </div>
+    );
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-5">
-      {mode === "sign-up" && (
+    <div className="grid gap-6">
+      {google && (
+        <>
+          <Button type="button" size="lg" variant="outline" disabled={pending} onClick={withGoogle}>
+            Continue with Google
+          </Button>
+          <p className="text-center text-sm text-muted-foreground">or</p>
+        </>
+      )}
+      <form onSubmit={onSubmit} className="grid gap-5">
         <div className="grid gap-2">
-          <Label htmlFor="name">Name</Label>
-          <Input id="name" name="name" autoComplete="name" required />
+          <Label htmlFor="email" className="font-semibold">
+            Email
+          </Label>
+          <Input id="email" name="email" type="email" autoComplete="email" required />
         </div>
-      )}
-      <div className="grid gap-2">
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" name="email" type="email" autoComplete="email" required />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          minLength={12}
-          autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
-          required
-        />
-      </div>
-      {error && (
-        <p role="alert" className="text-sm text-destructive">
-          {error}
-        </p>
-      )}
-      <Button type="submit" disabled={pending}>
-        {pending ? "Please wait…" : mode === "sign-in" ? "Sign in" : "Create account"}
-      </Button>
-      <Button
-        type="button"
-        variant="link"
-        onClick={() => setMode(mode === "sign-in" ? "sign-up" : "sign-in")}
-      >
-        {mode === "sign-in" ? "No account yet? Create one" : "Already have an account? Sign in"}
-      </Button>
-    </form>
+        {error && (
+          <p role="alert" className="text-sm text-destructive">
+            {error}
+          </p>
+        )}
+        <Button type="submit" size="lg" disabled={pending}>
+          {pending ? "Sending…" : "Email me a sign-in link"}
+        </Button>
+      </form>
+    </div>
   );
 }

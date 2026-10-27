@@ -36,6 +36,9 @@ export const SOURCE_TRUST = ["organiser", "sanctioning-body", "aggregator", "com
 export const SOURCE_STATUSES = ["candidate", "active", "paused", "broken", "blocked"] as const;
 export const REVIEW_KINDS = ["new-event", "merge", "change", "disappeared", "new-source"] as const;
 export const REVIEW_STATUSES = ["open", "approved", "corrected", "rejected"] as const;
+// What a member can follow. "discipline" follows every event of air, rotor, ground or FPV.
+export const FOLLOW_TARGETS = ["event", "host", "place", "discipline"] as const;
+export const MESSAGE_KINDS = ["contact", "build"] as const;
 
 export const eventKind = z.enum(EVENT_KINDS);
 export const discipline = z.enum(DISCIPLINES);
@@ -45,6 +48,8 @@ export const region = z.enum(REGIONS);
 export const placeKind = z.enum(PLACE_KINDS);
 export const hostKind = z.enum(HOST_KINDS);
 export const placeAccess = z.enum(PLACE_ACCESS);
+export const followTarget = z.enum(FOLLOW_TARGETS);
+export const messageKind = z.enum(MESSAGE_KINDS);
 export const register = z.enum(REGISTERS);
 export const airspaceClass = z.enum(AIRSPACE_CLASSES);
 export const sourceAdapter = z.enum(SOURCE_ADAPTERS);

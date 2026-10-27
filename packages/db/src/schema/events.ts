@@ -299,6 +299,8 @@ export const events = pgTable(
     resultsUrl: text("results_url"),
     // AMA membership, FAA TRUST certificate, landing fee…
     requirements: text("requirements").array().notNull().default([]),
+    // Welcomes newcomers: set by the crew or the organiser, shown as a filter and a badge.
+    beginnerFriendly: boolean("beginner_friendly").notNull().default(false),
     confidence: real("confidence").notNull().default(0),
     // Empty while the event waits in the review queue.
     publishedAt: timestamp("published_at", { withTimezone: true }),
@@ -365,6 +367,8 @@ export const reviews = pgTable(
     // What the engine proposes (fields to set, events to merge).
     proposal: jsonb("proposal").$type<Record<string, unknown>>().notNull().default({}),
     note: text("note").notNull().default(""),
+    // The member who suggested it (corrections, submissions); credited, never shown publicly.
+    submittedBy: text("submitted_by").references(() => user.id, { onDelete: "set null" }),
     reviewerId: text("reviewer_id").references(() => user.id, { onDelete: "set null" }),
     decidedAt: timestamp("decided_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

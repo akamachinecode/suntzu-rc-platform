@@ -5,10 +5,11 @@ import { BitInterceptor } from "./common/trace.js";
 import { DbModule } from "./db/db.module.js";
 import { EventsModule } from "./events/events.module.js";
 import { HealthController } from "./health/health.controller.js";
+import { MembersModule } from "./members/members.module.js";
 import { NotesModule } from "./notes/notes.module.js";
 
 @Module({
-  imports: [DbModule, AuthModule, NotesModule, EventsModule],
+  imports: [DbModule, AuthModule, NotesModule, EventsModule, MembersModule],
   controllers: [HealthController],
   providers: [{ provide: APP_INTERCEPTOR, useClass: BitInterceptor }],
 })

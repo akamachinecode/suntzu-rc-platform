@@ -12,6 +12,17 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-27 — Accounts without passwords, the crew role, follows and a private calendar (specs 0003-1, 0003-2)
+
+- **What:**
+  - **Sign-in:** a one-time link by email (Better Auth magic-link plugin, 15 minutes, works once) or Google (`GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`; the app shows the button when `NEXT_PUBLIC_GOOGLE_SIGN_IN=true`). Email and password sign-in is turned off.
+  - **Roles:** a `role` column on `user` (`member` or `crew`), a Better Auth additional field that requests can't set. The crew is whoever `CREW_EMAILS` lists, synced at every sign-in, so adding or removing someone is a configuration change. `@CrewOnly()` guards crew routes.
+  - **Members:** `/me` (name, optional ZIP, distance, disciplines, change alerts, weekly digest, delete account), follows (events, clubs, places, disciplines), "I'm going", and a private calendar feed at `/calendar/<secret>.ics`. Only counts are public.
+  - **Email:** `apps/api/src/mail/mail.ts` sends through Amazon SES (`MAIL_TRANSPORT=ses`) or prints to the console locally (`log`). New dependency **`@aws-sdk/client-sesv2` 3.1157.0** (the Itaca standard for email). New variables: `MAIL_TRANSPORT`, `MAIL_FROM`, `AWS_REGION`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `CREW_EMAILS`, `CREW_INBOX` (API) and `NEXT_PUBLIC_GOOGLE_SIGN_IN` (app).
+  - **Data model** (migration `0003_community`): `members`, `follows`, `rsvps`, `host_members`, `messages`, `submissions`, `try_requests`, `feedback`, `notifications`; `events.beginner_friendly`; `reviews.submitted_by`.
+- **Why:** spec 0003, with the owner's choices (no passwords; nothing about a member public by default). Approved by the owner acting as Itaca engineering (accounts, personal data, roles, email).
+- **Impact:** personal data now lives in Servo: email, optional name and ZIP, follows and "going". Deleting an account removes all of it (cascades); contributions to the public catalogue stay without the name. For production: verify the sender domain in SES and request production access (`docs/LAUNCH.md`), create the Google OAuth client, set `CREW_EMAILS`. An Itaca review of `apps/api/src/auth/` before launch is still recommended.
+
 ## 2026-10-27 — Servo 1.0: the plan to finish the web, and who approves what
 
 - **What:** four specifications in `docs/specs/` (0001 events, 0002 places, 0003 community, 0004 launch) and a new "Servo 1.0" section in `ROADMAP.md`. The owner accepted five recommendations:

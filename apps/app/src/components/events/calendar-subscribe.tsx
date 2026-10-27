@@ -14,13 +14,24 @@ const OPTIONS: Array<{ value: Discipline | "all"; label: string }> = [
   })),
 ];
 
-/** Subscribe to the calendar (all events or one discipline) in any calendar app. */
-export function CalendarSubscribe() {
+/**
+ * Subscribe to the calendar (all events or one discipline) in any calendar app. With `feed`, it
+ * offers that one feed instead (a member's private calendar, a club's events).
+ */
+export function CalendarSubscribe({
+  feed: fixedFeed,
+  title = "Put the calendar in your phone",
+  lead = "Subscribe once and new events, date changes and cancellations show up in your own calendar. Only events with announced dates are included.",
+}: {
+  feed?: string;
+  title?: string;
+  lead?: string;
+}) {
   const [discipline, setDiscipline] = useState<Discipline | "all">("all");
   const [copied, setCopied] = useState(false);
 
-  const feed = new URL("/events/calendar.ics", SITE.url);
-  if (discipline !== "all") feed.searchParams.set("discipline", discipline);
+  const feed = new URL(fixedFeed ?? "/events/calendar.ics", SITE.url);
+  if (!fixedFeed && discipline !== "all") feed.searchParams.set("discipline", discipline);
   const webcal = feed.toString().replace(/^https?:/, "webcal:");
   const google = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcal)}`;
 
@@ -39,14 +50,11 @@ export function CalendarSubscribe() {
       className="rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard sm:p-8"
     >
       <h2 id="subscribe-title" className="text-2xl font-black font-wide">
-        Put the calendar in your phone
+        {title}
       </h2>
-      <p className="mt-2 max-w-[60ch] text-pretty">
-        Subscribe once and new events, date changes and cancellations show up in your own calendar.
-        Only events with announced dates are included.
-      </p>
+      <p className="mt-2 max-w-[60ch] text-pretty">{lead}</p>
       <div className="mt-5 flex flex-wrap items-end gap-3">
-        <label className="grid gap-1 text-sm font-semibold">
+        <label className={fixedFeed ? "hidden" : "grid gap-1 text-sm font-semibold"}>
           Which events
           <select
             value={discipline}

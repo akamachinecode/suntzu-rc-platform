@@ -2,6 +2,7 @@ import {
   type CanActivate,
   createParamDecorator,
   type ExecutionContext,
+  ForbiddenException,
   Injectable,
   SetMetadata,
   UnauthorizedException,
@@ -12,8 +13,11 @@ import type { Request } from "express";
 import { type Auth, InjectAuth, type Session } from "./auth.js";
 
 const IS_PUBLIC = "isPublic";
+const CREW_ONLY = "crewOnly";
 /** Allows calls without a session (health checks, public data). Use sparingly. */
 export const Public = () => SetMetadata(IS_PUBLIC, true);
+/** Only the crew (users with the `crew` role, see CREW_EMAILS) may call it. */
+export const CrewOnly = () => SetMetadata(CREW_ONLY, true);
 
 type AuthedRequest = Request & { session?: Session };
 
@@ -41,6 +45,11 @@ export class AuthGuard implements CanActivate {
     const session = await this.auth.api.getSession({ headers: fromNodeHeaders(request.headers) });
     if (!session) throw new UnauthorizedException();
     request.session = session;
+    const crewOnly = this.reflector.getAllAndOverride<boolean>(CREW_ONLY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (crewOnly && session.user.role !== "crew") throw new ForbiddenException();
     return true;
   }
 }

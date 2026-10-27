@@ -63,8 +63,8 @@ The hobby grows through people, but RC communities are scattered across Facebook
 
 ## Slices
 
-- [ ] 1. Accounts: email link and Google, `/me` with name, ZIP, preferences and delete (blocked by: —)
-- [ ] 2. Follow, "going" and the private calendar feed (blocked by: 1)
+- [x] 1. Accounts: email link and Google, `/me` with name, ZIP, preferences and delete (blocked by: —)
+- [x] 2. Follow, "going" and the private calendar feed (blocked by: 1)
 - [ ] 3. Contribute: send an event (link or text, AI with quotes), suggest a correction; contact and builds reach the crew's inbox (blocked by: 1, 0001-2)
 - [ ] 4. Organisers: claim and verify a club, badge, publish and edit events, the widget (blocked by: 1, 0002-2)
 - [ ] 5. Newcomers: "Try it" requests and beginner-friendly events; stewards confirm their places yearly (blocked by: 4)

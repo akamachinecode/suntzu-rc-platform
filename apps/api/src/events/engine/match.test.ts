@@ -44,9 +44,7 @@ describe("nameSimilarity", () => {
 
 describe("dateCloseness", () => {
   it("is exact for the same days", () => {
-    expect(dateCloseness(day("2026-12-02", "2026-12-05"), day("2026-12-02", "2026-12-05"))).toBe(
-      1,
-    );
+    expect(dateCloseness(day("2026-12-02", "2026-12-05"), day("2026-12-02", "2026-12-05"))).toBe(1);
   });
 
   it("fits an expected event's month", () => {
@@ -105,7 +103,12 @@ describe("judge", () => {
 
   it("matches through an alias such as the series name", () => {
     const verdict = judge(
-      { name: "Snowbird Nats", dates: day("2027-01-22", "2027-01-24"), hostId: null, placeId: null },
+      {
+        name: "Snowbird Nats",
+        dates: day("2027-01-22", "2027-01-24"),
+        hostId: null,
+        placeId: null,
+      },
       {
         name: "Snowbird Nationals",
         dates: { start: "2027-01-01", end: null, precision: "month" },

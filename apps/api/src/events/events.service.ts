@@ -153,7 +153,7 @@ export class EventsService {
   }
 }
 
-function toPlaceSummary(place: PlaceRow) {
+export function toPlaceSummary(place: PlaceRow) {
   return {
     slug: place.slug,
     name: place.name,
@@ -169,11 +169,11 @@ function toPlaceSummary(place: PlaceRow) {
   };
 }
 
-function toHostSummary(host: HostRow) {
+export function toHostSummary(host: HostRow) {
   return { slug: host.slug, name: host.name, kind: host.kind, url: host.url };
 }
 
-function toEvent(event: EventRow, place: PlaceRow | null, host: HostRow | null): RcEvent {
+export function toEvent(event: EventRow, place: PlaceRow | null, host: HostRow | null): RcEvent {
   return {
     slug: event.slug,
     name: event.name,
@@ -203,7 +203,7 @@ function toEvent(event: EventRow, place: PlaceRow | null, host: HostRow | null):
   };
 }
 
-function toIcsEvent(event: RcEvent): IcsEvent {
+export function toIcsEvent(event: RcEvent): IcsEvent {
   const place = event.place;
   const where = place
     ? [place.name, place.address, place.city, place.state].filter(Boolean).join(", ")
