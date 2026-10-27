@@ -23,7 +23,7 @@ Format:
   - `docs/LAUNCH.md`: the owner's ordered checklist (GitHub, name and domain, Cloudflare with Turnstile and rate-limiting rules, AWS with SES production access and Bedrock model access, secrets, `dev`, production).
 - **Why:** spec 0004; the owner approved the region, the jobs, S3, SES and Bedrock (acting as Itaca engineering, 2026-10-27).
 - **Impact / risks, for Itaca engineering:**
-  - Nothing was deployed and `sst.config.ts` hasn't been type-checked against SST's platform types (`.sst/platform` is only installed by `sst install`). Run `pnpm sst diff --stage dev` first.
+  - Nothing was deployed. `sst.config.ts` type-checks against SST's platform types (`pnpm sst install`, then `tsc` on the file: the only errors are inside SST's own sources), but `pnpm sst diff --stage dev` is the real first check.
   - CloudFront's certificate lives in us-east-1; whether the AWS project allows it is the first thing to check on `dev` (fallback in `LAUNCH.md`).
   - The Bedrock IAM actions (`bedrock:InvokeModel*`) may need adjusting for the Mantle endpoint.
 
