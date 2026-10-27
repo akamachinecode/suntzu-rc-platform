@@ -14,6 +14,7 @@ import type { Discipline } from "@workspace/shared";
 import { env } from "../env.js";
 import { localDate } from "../events/engine/read.js";
 import { formatDates } from "../mail/dates.js";
+import { Logger } from "@nestjs/common";
 import { renderEmail, sendMail } from "../mail/mail.js";
 import { DISCIPLINE_WORDS } from "../mail/words.js";
 import { distanceMeters } from "../places/census/geometry.js";
@@ -21,6 +22,8 @@ import { distanceMeters } from "../places/census/geometry.js";
 // The emails Servo sends on its own (docs/specs/0003-community.md, slice 6). Each one is written
 // to `notifications` before it goes out, so a run can be repeated (or scheduled every hour) without
 // anyone getting the same email twice.
+
+const logger = new Logger("Notify");
 
 const {
   changes,
@@ -52,14 +55,44 @@ const stop = (token: string, what: "alerts" | "digest" | "report") =>
 const oneClick = (token: string, what: "alerts" | "digest" | "report") =>
   new URL(`/unsubscribe?token=${encodeURIComponent(token)}&what=${what}`, env.API_URL).toString();
 
-/** Marks it as sent; false when it already was (someone else's run, or an earlier one). */
-async function claim(db: Database, userId: string, kind: string, key: string): Promise<boolean> {
+/**
+ * Sends one email once: it's recorded in `notifications` first (so two runs can't both send it),
+ * and the record is removed again if sending fails, so the next run retries it. One failure
+ * never stops the others.
+ */
+async function deliver(
+  db: Database,
+  userId: string,
+  kind: string,
+  key: string,
+  mail: Parameters<typeof sendMail>[0],
+): Promise<boolean> {
   const rows = await db
     .insert(notifications)
     .values({ userId, kind, key })
     .onConflictDoNothing()
     .returning();
-  return rows.length > 0;
+  if (!rows.length) return false;
+  try {
+    await sendMail(mail);
+    // Stay well under SES's sending rate.
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    return true;
+  } catch (error) {
+    await db
+      .delete(notifications)
+      .where(
+        and(
+          eq(notifications.userId, userId),
+          eq(notifications.kind, kind),
+          eq(notifications.key, key),
+        ),
+      );
+    logger.warn(
+      `Could not send a ${kind} email: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    return false;
+  }
 }
 
 /**
@@ -129,21 +162,22 @@ export async function sendAlerts(db: Database, now = new Date()): Promise<number
           : `The last day changed: it's now ${formatDates(event.startDate, event.endDate)}.`,
     );
     for (const person of audience) {
-      if (!(await claim(db, person.id, "change", key))) continue;
-      await sendMail({
-        to: person.email,
-        subject: cancelled
-          ? `Cancelled: ${event.name}`
-          : `Changed: ${event.name}, now ${formatDates(event.startDate, event.endDate)}`,
-        unsubscribeUrl: oneClick(person.token, "alerts"),
-        ...renderEmail({
-          heading: cancelled ? `${event.name} is cancelled` : `${event.name} has changed`,
-          paragraphs: [...new Set(lines), "Check the organiser's page before you travel."],
-          button: { label: "See the event", url: page(`/events/${event.slug}`) },
-          footer: `You follow this event, its club or its field on Servo. Stop change alerts: ${stop(person.token, "alerts")}`,
-        }),
-      });
-      sent++;
+      if (
+        await deliver(db, person.id, "change", key, {
+          to: person.email,
+          subject: cancelled
+            ? `Cancelled: ${event.name}`
+            : `Changed: ${event.name}, now ${formatDates(event.startDate, event.endDate)}`,
+          unsubscribeUrl: oneClick(person.token, "alerts"),
+          ...renderEmail({
+            heading: cancelled ? `${event.name} is cancelled` : `${event.name} has changed`,
+            paragraphs: [...new Set(lines), "Check the organiser's page before you travel."],
+            button: { label: "See the event", url: page(`/events/${event.slug}`) },
+            footer: `You follow this event, its club or its field on Servo. Stop change alerts: ${stop(person.token, "alerts")}`,
+          }),
+        })
+      )
+        sent++;
     }
   }
   return sent;
@@ -210,22 +244,23 @@ export async function sendDigests(db: Database, now = new Date()): Promise<numbe
       .sort((a, b) => a.miles - b.miles)
       .slice(0, 10);
     if (!near.length) continue;
-    if (!(await claim(db, reader.id, "digest", from))) continue;
-    await sendMail({
-      to: reader.email,
-      subject: `This weekend near you: ${near[0]!.event.name}${near.length > 1 ? ` and ${near.length - 1} more` : ""}`,
-      unsubscribeUrl: oneClick(reader.member.emailToken, "digest"),
-      ...renderEmail({
-        heading: `${reader.name ? `${reader.name.split(" ")[0]}, here's` : "Here's"} what's on this weekend`,
-        paragraphs: near.map(
-          ({ event, place, miles }) =>
-            `${event.name} · ${formatDates(event.startDate, event.endDate)} · ${place.name}${place.city ? `, ${place.city}` : ""} (${Math.round(miles)} mi) · ${page(`/events/${event.slug}`)}`,
-        ),
-        button: { label: "The whole weekend", url: page("/events?when=weekend") },
-        footer: `Every Thursday, within ${reader.member.radiusMiles} miles of ${reader.member.zip}${wanted.length ? ` for ${wanted.map((d) => DISCIPLINE_WORDS[d]).join(", ")}` : ""}. Change it in My Servo, or stop it: ${stop(reader.member.emailToken, "digest")}`,
-      }),
-    });
-    sent++;
+    if (
+      await deliver(db, reader.id, "digest", from, {
+        to: reader.email,
+        subject: `This weekend near you: ${near[0]!.event.name}${near.length > 1 ? ` and ${near.length - 1} more` : ""}`,
+        unsubscribeUrl: oneClick(reader.member.emailToken, "digest"),
+        ...renderEmail({
+          heading: `${reader.name ? `${reader.name.split(" ")[0]}, here's` : "Here's"} what's on this weekend`,
+          paragraphs: near.map(
+            ({ event, place, miles }) =>
+              `${event.name} · ${formatDates(event.startDate, event.endDate)} · ${place.name}${place.city ? `, ${place.city}` : ""} (${Math.round(miles)} mi) · ${page(`/events/${event.slug}`)}`,
+          ),
+          button: { label: "The whole weekend", url: page("/events?when=weekend") },
+          footer: `Every Thursday, within ${reader.member.radiusMiles} miles of ${reader.member.zip}${wanted.length ? ` for ${wanted.map((d) => DISCIPLINE_WORDS[d]).join(", ")}` : ""}. Change it in My Servo, or stop it: ${stop(reader.member.emailToken, "digest")}`,
+        }),
+      })
+    )
+      sent++;
   }
   return sent;
 }
@@ -270,24 +305,28 @@ export async function sendReports(db: Database, now = new Date()): Promise<numbe
       )
       .orderBy(events.startDate)
       .limit(10);
-    if (!(await claim(db, organiser.id, "report", `${organiser.host.id}:${month}`))) continue;
-    await sendMail({
-      to: organiser.email,
-      subject: `${organiser.host.name} on Servo: ${followers?.n ?? 0} following`,
-      ...(organiser.token && { unsubscribeUrl: oneClick(organiser.token, "report") }),
-      ...renderEmail({
-        heading: `${organiser.host.name} this month`,
-        paragraphs: [
-          `${followers?.n ?? 0} people follow the club on Servo.`,
-          coming.length
-            ? `Coming up: ${coming.map(({ event, going }) => `${event.name} (${formatDates(event.startDate, event.endDate)}, ${going} going)`).join("; ")}.`
-            : "Nothing on the calendar yet: publish your next event and followers hear about it.",
-        ],
-        button: { label: "Open the club dashboard", url: page(`/organise/${organiser.host.slug}`) },
-        footer: `You're an organiser of ${organiser.host.name} on Servo.${organiser.token ? ` Stop monthly reports: ${stop(organiser.token, "report")}` : ""}`,
-      }),
-    });
-    sent++;
+    if (
+      await deliver(db, organiser.id, "report", `${organiser.host.id}:${month}`, {
+        to: organiser.email,
+        subject: `${organiser.host.name} on Servo: ${followers?.n ?? 0} following`,
+        ...(organiser.token && { unsubscribeUrl: oneClick(organiser.token, "report") }),
+        ...renderEmail({
+          heading: `${organiser.host.name} this month`,
+          paragraphs: [
+            `${followers?.n ?? 0} people follow the club on Servo.`,
+            coming.length
+              ? `Coming up: ${coming.map(({ event, going }) => `${event.name} (${formatDates(event.startDate, event.endDate)}, ${going} going)`).join("; ")}.`
+              : "Nothing on the calendar yet: publish your next event and followers hear about it.",
+          ],
+          button: {
+            label: "Open the club dashboard",
+            url: page(`/organise/${organiser.host.slug}`),
+          },
+          footer: `You're an organiser of ${organiser.host.name} on Servo.${organiser.token ? ` Stop monthly reports: ${stop(organiser.token, "report")}` : ""}`,
+        }),
+      })
+    )
+      sent++;
   }
   return sent;
 }

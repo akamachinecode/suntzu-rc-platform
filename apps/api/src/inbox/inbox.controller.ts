@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Param, Post, Req } from "@nestjs/common";
+import { Body, Controller, HttpCode, Param, Post } from "@nestjs/common";
 import { ApiBody, ApiTags } from "@nestjs/swagger";
 import {
   correctionInput,
@@ -8,10 +8,9 @@ import {
   messageInput,
   type MessageInput,
 } from "@workspace/shared";
-import type { Request } from "express";
 import { CurrentUser, Public, type Session } from "../auth/auth.guard.js";
 import { Bit } from "../common/trace.js";
-import { checkTurnstile, clientIp } from "../common/turnstile.js";
+import { checkTurnstile } from "../common/turnstile.js";
 import { openApi, ZodPipe } from "../common/zod.js";
 import { InboxService } from "./inbox.service.js";
 
@@ -25,11 +24,8 @@ export class InboxController {
   @Bit("messages.create")
   @HttpCode(204)
   @ApiBody({ schema: openApi(messageInput, "input") })
-  async message(
-    @Req() request: Request,
-    @Body(new ZodPipe(messageInput)) input: MessageInput,
-  ): Promise<void> {
-    await checkTurnstile(input.turnstileToken, clientIp(request.headers));
+  async message(@Body(new ZodPipe(messageInput)) input: MessageInput): Promise<void> {
+    await checkTurnstile(input.turnstileToken);
     await this.inbox.message(input, null);
   }
 
@@ -39,11 +35,10 @@ export class InboxController {
   @HttpCode(204)
   @ApiBody({ schema: openApi(feedbackInput, "input") })
   async feedback(
-    @Req() request: Request,
     @Param("slug") slug: string,
     @Body(new ZodPipe(feedbackInput)) input: FeedbackInput,
   ): Promise<void> {
-    await checkTurnstile(input.turnstileToken, clientIp(request.headers));
+    await checkTurnstile(input.turnstileToken);
     await this.inbox.feedback(slug, input);
   }
 

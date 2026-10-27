@@ -43,6 +43,13 @@
       "when": 1793138243941,
       "tag": "0005_monthly_report",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793139800646,
+      "tag": "0006_claim_attempts",
+      "breakpoints": true
     }
   ]
 }

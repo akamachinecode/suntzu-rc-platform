@@ -50,6 +50,7 @@ export class NewcomersService {
         .innerJoin(user, eq(hostMembers.userId, user.id))
         .where(and(eq(hostMembers.hostId, host.id), isNotNull(hostMembers.verifiedAt)));
       if (!organisers.length) continue;
+      let delivered = false;
       for (const { email } of organisers) {
         try {
           await sendMail({
@@ -65,13 +66,15 @@ export class NewcomersService {
               footer: `You got this because ${host.name} welcomes newcomers on Servo. Turn it off on your club dashboard.`,
             }),
           });
+          delivered = true;
         } catch (error) {
           logger.warn(
             `Could not email an organiser: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       }
-      sentTo.push(host.name);
+      // Only a club that really got it counts: otherwise the crew takes the request.
+      if (delivered) sentTo.push(host.name);
     }
 
     const toCrew = sentTo.length === 0;

@@ -237,11 +237,15 @@ export async function resolve(db: Database, options: { now?: Date } = {}): Promi
     report.linked++;
 
     const otherSources = [...(linkedSources.get(event.id) ?? [])].filter((id) => id !== source.id);
+    // Members (community trust) never change an event on their own: the crew checks first.
     const speaksForOrganiser =
-      source.trust === "sanctioning-body" ||
-      (source.trust === "organiser" && source.hostId !== null && source.hostId === event.hostId) ||
-      otherSources.length === 0 ||
-      !event.publishedAt;
+      source.trust !== "community" &&
+      (source.trust === "sanctioning-body" ||
+        (source.trust === "organiser" &&
+          source.hostId !== null &&
+          source.hostId === event.hostId) ||
+        otherSources.length === 0 ||
+        !event.publishedAt);
     const patch = proposePatch(event, row.fields, source.trust === "organiser");
     let current = event;
     if (Object.keys(patch).length) {
@@ -265,8 +269,12 @@ export async function resolve(db: Database, options: { now?: Date } = {}): Promi
     const trusts = [...(linkedSources.get(event.id) ?? [])]
       .map((id) => sourceById.get(id)?.trust)
       .filter((trust) => trust !== undefined);
-    // Two independent sources agree, unless the crew already said it isn't an RC event.
-    const agreed = (linkedSources.get(event.id)?.size ?? 0) >= 2 && !current.rejectedAt;
+    // Two independent sources agree, unless the crew already said it isn't an RC event. A member's
+    // link (community trust) doesn't count as one of the two: the crew checks those first.
+    const independent = [...(linkedSources.get(event.id) ?? [])].filter(
+      (id) => sourceById.get(id)?.trust !== "community",
+    );
+    const agreed = independent.length >= 2 && !current.rejectedAt;
     const [updated] = await tx
       .update(events)
       .set({
@@ -489,6 +497,10 @@ export async function applyPatch(
   patch: EventPatch,
   origin: { by: "engine" | "crew" | "organiser"; sightingId?: string },
 ): Promise<Event> {
+  // Whatever the source of the change, an event never ends before it starts.
+  const startDate = patch.startDate ?? event.startDate;
+  const endDate = patch.endDate !== undefined ? patch.endDate : event.endDate;
+  if (endDate && endDate < startDate) patch = { ...patch, endDate: null };
   const entries = Object.entries(patch).filter(
     ([field, value]) =>
       JSON.stringify(event[field as keyof EventPatch] ?? null) !== JSON.stringify(value ?? null),

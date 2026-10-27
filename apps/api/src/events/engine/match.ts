@@ -146,7 +146,12 @@ export function judge(sighting: MatchInput, event: MatchCandidate): MatchVerdict
   );
   const sameHost = sighting.hostId !== null && sighting.hostId === event.hostId;
   const samePlace = sighting.placeId !== null && sighting.placeId === event.placeId;
+  // Two different clubs (or fields) can run a "Fun Fly" on the same weekend: never merge those
+  // on the name alone.
+  const otherHost = sighting.hostId !== null && event.hostId !== null && !sameHost;
+  const otherPlace = sighting.placeId !== null && event.placeId !== null && !samePlace;
   const score = 0.4 * name + 0.3 * date + 0.2 * (sameHost ? 1 : 0) + 0.1 * (samePlace ? 1 : 0);
+  if (otherHost || otherPlace) return name >= 0.6 ? { kind: "maybe", score } : null;
   if (name >= 0.6 || (sameHost && (name >= 0.25 || date === 1))) return { kind: "same", score };
   if (name >= 0.3 || (samePlace && date === 1)) return { kind: "maybe", score };
   return null;

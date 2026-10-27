@@ -10,6 +10,7 @@ import {
 import { Reflector } from "@nestjs/core";
 import { fromNodeHeaders } from "better-auth/node";
 import type { Request } from "express";
+import { env } from "../env.js";
 import { type Auth, InjectAuth, type Session } from "./auth.js";
 
 const IS_PUBLIC = "isPublic";
@@ -49,9 +50,17 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (crewOnly && session.user.role !== "crew") throw new ForbiddenException();
+    if (crewOnly && !isCrew(session.user.email)) throw new ForbiddenException();
     return true;
   }
+}
+
+/**
+ * The crew is whoever CREW_EMAILS lists right now: checked on every request, so removing someone
+ * from the list takes effect at once, even on a session they already have.
+ */
+export function isCrew(email: string): boolean {
+  return env.CREW_EMAILS.includes(email.toLowerCase());
 }
 
 export type { Session };

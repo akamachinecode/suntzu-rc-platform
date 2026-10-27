@@ -129,6 +129,22 @@ describe("judge", () => {
   });
 });
 
+describe("judge across clubs", () => {
+  it("asks the crew when two clubs run an event with the same name on the same days", () => {
+    const verdict = judge(
+      { name: "Fun Fly", dates: day("2026-11-14"), hostId: "club-b", placeId: "field-b" },
+      {
+        name: "Fun Fly",
+        dates: day("2026-11-14"),
+        hostId: "club-a",
+        placeId: "field-a",
+        aliases: [],
+      },
+    );
+    expect(verdict?.kind).toBe("maybe");
+  });
+});
+
 describe("helpers", () => {
   it("adds up independent sources", () => {
     expect(confidenceOf(["organiser"])).toBe(0.9);

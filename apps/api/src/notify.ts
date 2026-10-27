@@ -11,17 +11,31 @@ const now = new Date();
 const today = new Date(`${localDate(now, "America/New_York")}T12:00:00Z`);
 const { db, pool } = createDb(env.DATABASE_URL);
 
+// Each part runs on its own: one failing doesn't stop the others.
+async function step(name: string, run: () => Promise<number>): Promise<number> {
+  try {
+    return await run();
+  } catch (error) {
+    console.error(`notify: ${name} failed`, error);
+    process.exitCode = 1;
+    return 0;
+  }
+}
+
 try {
-  const alerts = await sendAlerts(db, now);
-  const digests = asked.has("digest") || today.getUTCDay() === 4 ? await sendDigests(db, now) : 0;
-  const reports = asked.has("report") || today.getUTCDate() === 1 ? await sendReports(db, now) : 0;
-  const purged = await purge(db, now);
+  const alerts = await step("alerts", () => sendAlerts(db, now));
+  const digests =
+    asked.has("digest") || today.getUTCDay() === 4
+      ? await step("digest", () => sendDigests(db, now))
+      : 0;
+  const reports =
+    asked.has("report") || today.getUTCDate() === 1
+      ? await step("reports", () => sendReports(db, now))
+      : 0;
+  const purged = await step("purge", () => purge(db, now));
   console.log(
     `notify: ${alerts} change alerts, ${digests} weekly digests, ${reports} organiser reports; ${purged} old messages deleted`,
   );
-} catch (error) {
-  console.error(error);
-  process.exitCode = 1;
 } finally {
   await pool.end();
 }

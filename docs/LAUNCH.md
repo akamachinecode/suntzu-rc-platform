@@ -42,9 +42,10 @@ Open pull requests in order: `feat/platform-monorepo` (if it isn't merged yet) �
 1. Add the domain to Cloudflare in **the right account** (moving it later is painful) and apply the baseline in [`CLOUDFLARE.md`](./CLOUDFLARE.md).
 2. Create an account-owned API token with DNS edit on the zone; keep it for step 5 and for GitHub (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`).
 3. **Turnstile:** create a widget for the domain (Managed mode). Keep the site key and the secret for step 5.
-4. **Rate limiting** (Security → WAF → Rate limiting rules), at least:
-   - `POST /auth/sign-in/magic-link` on the API host: 5 requests per minute per IP;
-   - `POST` to `/messages`, `/try`, `/submissions`, `/organise/claims` and `/events/*/feedback`: 20 per minute per IP.
+4. **Rate limiting** (Security → WAF → Rate limiting rules). Public forms reach the API through the site's server, so the API sees the server's address, not the visitor's: limit on the **site's** host, where the visitor connects.
+   - `POST` requests to `www.<domain>` (forms are Server Actions): 30 per minute per IP.
+   - `POST /auth/sign-in/magic-link` on `api.<domain>` (the browser calls it directly): 5 per minute per IP.
+   - The API also limits per member (10 events and 20 corrections an hour; a new club code every 5 minutes, 8 guesses per claim, ever).
 5. Leave **Bot Fight Mode off** on the zone: it can't be skipped for the API, and the calendar feeds are read by calendar apps, not browsers.
 
 **Check:** the zone shows "Active" and SSL/TLS is Full (strict).

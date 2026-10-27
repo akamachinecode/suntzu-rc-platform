@@ -49,6 +49,7 @@ export async function unfollow(key: FollowKey): Promise<void> {
 export async function deleteAccount(formData: FormData): Promise<void> {
   if (formData.get("confirm") !== "delete") return;
   const api = await getApi();
-  await api.DELETE("/me");
-  redirect("/?account=deleted");
+  const { response } = await api.DELETE("/me");
+  // Say it's gone only when it is.
+  redirect(response.ok ? "/?account=deleted" : "/me?delete=failed");
 }

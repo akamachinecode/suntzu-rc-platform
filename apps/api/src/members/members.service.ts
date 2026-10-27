@@ -11,6 +11,7 @@ import {
   type PeopleCount,
   type ViewerState,
 } from "@workspace/shared";
+import { isCrew } from "../auth/auth.guard.js";
 import { type Database, InjectDb } from "../db/db.module.js";
 import { env } from "../env.js";
 import { localDate } from "../events/engine/read.js";
@@ -39,7 +40,7 @@ export class MembersService {
     return {
       name: person.name,
       email: person.email,
-      role: person.role === "crew" ? "crew" : "member",
+      role: isCrew(person.email) ? "crew" : "member",
       zip: member.zip,
       radiusMiles: member.radiusMiles,
       disciplines: member.disciplines,

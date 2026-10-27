@@ -12,6 +12,20 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-28 — Fixes from an independent security and bug review
+
+- **What:** an independent review of the night's work found these, all fixed and tested:
+  - **Club claims:** a new code at most every 5 minutes, and 8 guesses per claim ever (counted atomically before each check, compared in constant time); after that only the crew can verify it. Before, the 6-digit code could be guessed with unlimited retries.
+  - **Crew:** decided from `CREW_EMAILS` on every request, so removing someone takes effect on their open sessions too.
+  - **Links people give us:** IPv6 spellings of internal addresses (`[::ffff:7f00:1]`, NAT64) are refused, and answers are cut at 2 MB.
+  - **Limits:** 10 submitted events and 20 corrections per member an hour. Turnstile refuses public forms in production when its key is missing, and no longer sends the server's address as the visitor's. `LAUNCH.md` rate-limits the site's host, where visitors connect.
+  - **Emails:** a failed send no longer loses the email (the record is removed and the next run retries it) and no longer stops the run; each `notify` step runs on its own.
+  - **Try it:** a club counts as reached only when an email to one of its organisers was sent; otherwise the crew gets the request.
+  - **Dates:** a correction that moves only the first day keeps the event's length, and no change can leave an event ending before it starts (which made future events "held").
+  - **Engine:** events with the same name at two different clubs or fields are a question for the crew, never merged on the name alone; a member's link (community trust) never changes or publishes an event without the crew.
+  - **Small ones:** account deletion says so when it fails; long model names in "share your build" no longer fail; a submitted site's robots.txt is read afresh each time.
+- **Known gap:** DNS could change between the address check and the request (rebinding). Pinning the checked address needs a custom HTTP agent; worth doing before traffic grows.
+
 ## 2026-10-28 — Links people give us only reach the public internet
 
 - **What:** member-submitted event links and organisers' club websites are fetched through `publicFetch` (`apps/api/src/common/public-url.ts`): http(s) on ports 80/443 only, no credentials in the URL, every address the host resolves to must be public (no loopback, private, link-local or cloud-metadata ranges, IPv4 or IPv6), and every redirect is checked again before it's followed.

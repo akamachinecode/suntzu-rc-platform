@@ -1,8 +1,15 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { and, eq, isNotNull, schema } from "@workspace/db";
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from "@nestjs/common";
+import { and, count, eq, gte, isNotNull, schema } from "@workspace/db";
 import type { CorrectionInput, FeedbackInput, MessageInput } from "@workspace/shared";
 import { type Database, InjectDb } from "../db/db.module.js";
 import { env } from "../env.js";
+import { addDays } from "../events/engine/read.js";
 import { renderEmail, sendMail } from "../mail/mail.js";
 
 const { messages, feedback, events, reviews } = schema;
@@ -57,9 +64,22 @@ export class InboxService {
 
   async correction(slug: string, input: CorrectionInput, userId: string): Promise<void> {
     const id = await this.eventId(slug);
+    await this.withinQuota(userId);
+    const [event] = await this.db.select().from(events).where(eq(events.id, id));
+    // Only the first day given: the event keeps its length, so it never ends before it starts.
+    const endDate =
+      input.endDate ||
+      (input.startDate && event?.endDate && event.datePrecision === "day"
+        ? addDays(input.startDate, daysBetween(event.startDate, event.endDate))
+        : input.startDate
+          ? null
+          : undefined);
+    if (input.startDate && endDate && endDate < input.startDate) {
+      throw new BadRequestException("The last day can't be before the first.");
+    }
     const proposal = {
       ...(input.startDate && { startDate: input.startDate, datePrecision: "day" }),
-      ...(input.endDate !== undefined && input.endDate !== "" && { endDate: input.endDate }),
+      ...(endDate !== undefined && { endDate }),
       ...(input.cancelled && { status: "cancelled" }),
       ...(input.url && { url: input.url }),
     };
@@ -74,6 +94,22 @@ export class InboxService {
     });
   }
 
+  /** At most 20 corrections a member an hour: plenty for people, not for scripts. */
+  private async withinQuota(userId: string): Promise<void> {
+    const [row] = await this.db
+      .select({ n: count() })
+      .from(reviews)
+      .where(
+        and(
+          eq(reviews.submittedBy, userId),
+          gte(reviews.createdAt, new Date(Date.now() - 3_600_000)),
+        ),
+      );
+    if ((row?.n ?? 0) >= 20) {
+      throw new HttpException("That's a lot of corrections at once. Try again in an hour.", 429);
+    }
+  }
+
   private async eventId(slug: string): Promise<string> {
     const [row] = await this.db
       .select({ id: events.id })
@@ -82,4 +118,10 @@ export class InboxService {
     if (!row) throw new NotFoundException();
     return row.id;
   }
+}
+
+function daysBetween(start: string, end: string): number {
+  return Math.round(
+    (Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86_400_000,
+  );
 }

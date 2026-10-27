@@ -101,6 +101,9 @@ export const hostMembers = pgTable(
     // SHA-256 of the one-time code, never the code itself.
     codeHash: text("code_hash"),
     codeExpiresAt: timestamp("code_expires_at", { withTimezone: true }),
+    codeSentAt: timestamp("code_sent_at", { withTimezone: true }),
+    // Wrong codes so far, never reset: after a few, only the crew can verify this claim.
+    codeAttempts: integer("code_attempts").notNull().default(0),
     verifiedAt: timestamp("verified_at", { withTimezone: true }),
     ...timestamps,
   },

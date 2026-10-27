@@ -18,7 +18,8 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default async function MePage() {
+export default async function MePage({ searchParams }: PageProps<"/me">) {
+  const { delete: deletion } = await searchParams;
   const api = await getApi();
   const [profile, following] = await Promise.all([api.GET("/me"), api.GET("/me/following")]);
   if (profile.response.status === 401 || !profile.data) redirect("/sign-in?next=/me");
@@ -159,6 +160,12 @@ export default async function MePage() {
           Your email, settings, follows and &ldquo;going&rdquo; are deleted at once. Events and
           corrections you sent stay on Servo, without your name.
         </p>
+        {deletion === "failed" ? (
+          <p role="alert" className="mt-3 font-semibold text-destructive">
+            We couldn&apos;t delete your account just now. Nothing was deleted: try again, or write
+            to us.
+          </p>
+        ) : null}
         <form action={deleteAccount} className="mt-5 flex flex-wrap items-end gap-3">
           <label className="grid gap-1 text-sm font-semibold">
             Type &ldquo;delete&rdquo; to confirm

@@ -1,11 +1,11 @@
-import { createHash, createHmac, randomInt } from "node:crypto";
+import { createHash, createHmac, randomInt, timingSafeEqual } from "node:crypto";
 import {
   BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { and, asc, count, eq, isNotNull, isNull, schema, sql } from "@workspace/db";
+import { and, asc, count, eq, isNotNull, isNull, lt, schema, sql } from "@workspace/db";
 import type {
   ClaimInput,
   ClaimStatus,
@@ -30,6 +30,10 @@ const { hosts, hostMembers, places, events, follows, rsvps, sources, eventSighti
 type HostRow = typeof hosts.$inferSelect;
 
 const CODE_MINUTES = 30;
+// A new code at most every few minutes (no flooding a club's inbox), and a handful of wrong
+// guesses per claim, ever: after that, only the crew can verify it.
+const CODE_EVERY_MINUTES = 5;
+const MAX_WRONG_CODES = 8;
 
 // Organisers: the people who run a club or track and proved it. They publish its events without
 // waiting for the crew, keep its page and places current, and get its widget and report.
@@ -55,9 +59,29 @@ export class OrganiseService {
     const domain = domainOf(host);
     let codeHash: string | null = null;
     let codeExpiresAt: Date | null = null;
+    let codeSentAt: Date | null = null;
+    const [previous] = await this.db
+      .select()
+      .from(hostMembers)
+      .where(and(eq(hostMembers.hostId, host.id), eq(hostMembers.userId, userId)));
+    if (previous?.verifiedAt)
+      return this.status(host, previous.method, previous.verifiedAt, userId);
 
     if (input.method === "domain-email") {
       if (!domain) throw new BadRequestException("This club has no website domain on Servo yet.");
+      if ((previous?.codeAttempts ?? 0) >= MAX_WRONG_CODES) {
+        throw new BadRequestException(
+          "Too many wrong codes for this club. Ask the crew to check instead.",
+        );
+      }
+      if (
+        previous?.codeSentAt &&
+        Date.now() - previous.codeSentAt.getTime() < CODE_EVERY_MINUTES * 60_000
+      ) {
+        throw new BadRequestException(
+          `We just sent a code. Wait ${CODE_EVERY_MINUTES} minutes before asking for another.`,
+        );
+      }
       const email = input.email?.toLowerCase() ?? "";
       const at = email.split("@")[1] ?? "";
       if (at !== domain && !at.endsWith(`.${domain}`)) {
@@ -65,7 +89,8 @@ export class OrganiseService {
       }
       const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
       codeHash = hash(code);
-      codeExpiresAt = new Date(Date.now() + CODE_MINUTES * 60_000);
+      codeSentAt = new Date();
+      codeExpiresAt = new Date(codeSentAt.getTime() + CODE_MINUTES * 60_000);
       await sendMail({
         to: email,
         subject: `Your code to manage ${host.name} on Servo`,
@@ -83,10 +108,17 @@ export class OrganiseService {
 
     await this.db
       .insert(hostMembers)
-      .values({ hostId: host.id, userId, method: input.method, codeHash, codeExpiresAt })
+      .values({
+        hostId: host.id,
+        userId,
+        method: input.method,
+        codeHash,
+        codeExpiresAt,
+        codeSentAt,
+      })
       .onConflictDoUpdate({
         target: [hostMembers.hostId, hostMembers.userId],
-        set: { method: input.method, codeHash, codeExpiresAt },
+        set: { method: input.method, codeHash, codeExpiresAt, ...(codeSentAt && { codeSentAt }) },
       });
 
     if (input.method === "crew" && env.CREW_INBOX) {
@@ -125,7 +157,27 @@ export class OrganiseService {
     if (!member.codeExpiresAt || member.codeExpiresAt < new Date()) {
       throw new BadRequestException("The code has expired. Ask for a new one.");
     }
-    if (member.codeHash !== hash(code)) throw new BadRequestException("That code isn't right.");
+    // Every guess uses up an attempt first, atomically, so a burst of parallel guesses can't get
+    // past the limit before the count catches up.
+    const [counted] = await this.db
+      .update(hostMembers)
+      .set({ codeAttempts: sql`${hostMembers.codeAttempts} + 1` })
+      .where(
+        and(
+          eq(hostMembers.hostId, host.id),
+          eq(hostMembers.userId, userId),
+          lt(hostMembers.codeAttempts, MAX_WRONG_CODES),
+        ),
+      )
+      .returning({ attempts: hostMembers.codeAttempts });
+    if (!counted) {
+      throw new BadRequestException(
+        "Too many wrong codes for this club. Ask the crew to check instead.",
+      );
+    }
+    if (!timingSafeEqual(Buffer.from(member.codeHash), Buffer.from(hash(code)))) {
+      throw new BadRequestException("That code isn't right.");
+    }
     return this.markVerified(host, userId, "domain-email");
   }
 

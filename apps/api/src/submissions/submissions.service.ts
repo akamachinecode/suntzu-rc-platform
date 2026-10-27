@@ -1,5 +1,5 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { and, eq, inArray, schema } from "@workspace/db";
+import { HttpException, Injectable, Logger } from "@nestjs/common";
+import { and, count, eq, gte, inArray, schema } from "@workspace/db";
 import type { Sighting, SubmissionInput, SubmissionResult } from "@workspace/shared";
 import { publicFetch } from "../common/public-url.js";
 import { type Database, InjectDb } from "../db/db.module.js";
@@ -13,8 +13,7 @@ import { resolve } from "../events/engine/resolve.js";
 
 const { sources, sightings, submissions, reviews, eventSightings, events, messages, user } = schema;
 const logger = new Logger("Submissions");
-// Members choose these links: only public addresses, every redirect checked (common/public-url.ts).
-const fetcher = new PoliteFetcher({ fetch: publicFetch });
+const PER_HOUR = 10;
 
 // A member sends an event (docs/specs/0003-community.md, slice 3). A link is read like any source,
 // politely; text is read by the AI with quotes. What comes out goes through resolve, so it waits
@@ -25,6 +24,21 @@ export class SubmissionsService {
   constructor(@InjectDb() private readonly db: Database) {}
 
   async submit(userId: string, input: SubmissionInput): Promise<SubmissionResult> {
+    const [recent] = await this.db
+      .select({ n: count() })
+      .from(submissions)
+      .where(
+        and(
+          eq(submissions.userId, userId),
+          gte(submissions.createdAt, new Date(Date.now() - 3_600_000)),
+        ),
+      );
+    if ((recent?.n ?? 0) >= PER_HOUR) {
+      throw new HttpException("That's a lot of events at once. Try again in an hour.", 429);
+    }
+    // Members choose these links: only public addresses, every redirect checked, a size limit
+    // (common/public-url.ts). A fresh fetcher each time, so a site's robots.txt is read afresh.
+    const fetcher = new PoliteFetcher({ fetch: publicFetch });
     const source = await this.source();
     const [submission] = await this.db
       .insert(submissions)

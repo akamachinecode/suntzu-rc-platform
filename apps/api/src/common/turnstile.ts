@@ -8,12 +8,20 @@ const logger = new Logger("Turnstile");
  * token. Without TURNSTILE_SECRET_KEY (local development) every form is accepted.
  * https://developers.cloudflare.com/turnstile/get-started/server-side-validation/
  */
-export async function checkTurnstile(token: string | undefined, ip: string | undefined) {
-  if (!env.TURNSTILE_SECRET_KEY) return;
+// No remote IP is sent: public forms reach the API through the app's server, so the address
+// Cloudflare sees is the server's, not the visitor's, and a wrong address is worse than none.
+export async function checkTurnstile(token: string | undefined) {
+  if (!env.TURNSTILE_SECRET_KEY) {
+    // Locally forms are open; in production a missing key must not leave them unprotected.
+    if (env.NODE_ENV === "production") {
+      logger.error("TURNSTILE_SECRET_KEY is not set: public forms are refused");
+      throw new ForbiddenException("This form is closed for a moment. Try again later.");
+    }
+    return;
+  }
   if (!token) throw new ForbiddenException("Please confirm you're not a robot.");
   try {
     const body = new URLSearchParams({ secret: env.TURNSTILE_SECRET_KEY, response: token });
-    if (ip) body.set("remoteip", ip);
     const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
       method: "POST",
       body,
@@ -27,12 +35,4 @@ export async function checkTurnstile(token: string | undefined, ip: string | und
     );
   }
   throw new ForbiddenException("Please confirm you're not a robot.");
-}
-
-/** The visitor's address as Cloudflare saw it. */
-export function clientIp(
-  headers: Record<string, string | string[] | undefined>,
-): string | undefined {
-  const value = headers["cf-connecting-ip"];
-  return typeof value === "string" ? value : undefined;
 }
