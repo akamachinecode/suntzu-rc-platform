@@ -309,6 +309,20 @@
             }
           },
           {
+            "name": "host",
+            "required": false,
+            "in": "query",
+            "description": "A club's slug",
+            "schema": {}
+          },
+          {
+            "name": "place",
+            "required": false,
+            "in": "query",
+            "description": "A place's slug",
+            "schema": {}
+          },
+          {
             "name": "to",
             "required": false,
             "in": "query",
@@ -656,6 +670,20 @@
               ],
               "type": "string"
             }
+          },
+          {
+            "name": "host",
+            "required": false,
+            "in": "query",
+            "description": "A club's slug",
+            "schema": {}
+          },
+          {
+            "name": "place",
+            "required": false,
+            "in": "query",
+            "description": "A place's slug",
+            "schema": {}
           }
         ],
         "responses": {
@@ -1240,6 +1268,48 @@
                           "url"
                         ],
                         "additionalProperties": false
+                      },
+                      "disciplines": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "air",
+                            "rotor",
+                            "ground",
+                            "fpv"
+                          ]
+                        }
+                      },
+                      "access": {
+                        "type": "string",
+                        "enum": [
+                          "public",
+                          "guests",
+                          "members",
+                          "permission",
+                          "unknown"
+                        ]
+                      },
+                      "register": {
+                        "type": "string",
+                        "enum": [
+                          "faa-fria",
+                          "faa-fixed-site",
+                          "crew",
+                          "organiser"
+                        ]
+                      },
+                      "sourceUrl": {
+                        "nullable": true,
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "verifiedAt": {
+                        "nullable": true,
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                       }
                     },
                     "required": [
@@ -1255,7 +1325,12 @@
                       "isFria",
                       "url",
                       "notes",
-                      "host"
+                      "host",
+                      "disciplines",
+                      "access",
+                      "register",
+                      "sourceUrl",
+                      "verifiedAt"
                     ],
                     "additionalProperties": false
                   }
@@ -3796,6 +3871,1083 @@
         },
         "tags": [
           "inbox"
+        ]
+      }
+    },
+    "/places/{slug}": {
+      "get": {
+        "operationId": "PlacesController_place",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "slug": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "flying-field",
+                        "car-track",
+                        "indoor",
+                        "venue"
+                      ]
+                    },
+                    "address": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "city": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "county": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "latitude": {
+                      "nullable": true,
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "nullable": true,
+                      "type": "number"
+                    },
+                    "isFria": {
+                      "type": "boolean"
+                    },
+                    "url": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "notes": {
+                      "type": "string"
+                    },
+                    "host": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "slug": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "club",
+                            "track",
+                            "shop",
+                            "sanctioning-body",
+                            "organiser"
+                          ]
+                        },
+                        "url": {
+                          "nullable": true,
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      },
+                      "required": [
+                        "slug",
+                        "name",
+                        "kind",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "disciplines": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "air",
+                          "rotor",
+                          "ground",
+                          "fpv"
+                        ]
+                      }
+                    },
+                    "access": {
+                      "type": "string",
+                      "enum": [
+                        "public",
+                        "guests",
+                        "members",
+                        "permission",
+                        "unknown"
+                      ]
+                    },
+                    "register": {
+                      "type": "string",
+                      "enum": [
+                        "faa-fria",
+                        "faa-fixed-site",
+                        "crew",
+                        "organiser"
+                      ]
+                    },
+                    "sourceUrl": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "verifiedAt": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "slug": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "fly-in",
+                              "competition",
+                              "race",
+                              "show",
+                              "swap-meet",
+                              "open-day",
+                              "course",
+                              "other"
+                            ]
+                          },
+                          "discipline": {
+                            "type": "string",
+                            "enum": [
+                              "air",
+                              "rotor",
+                              "ground",
+                              "fpv"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "expected",
+                              "announced",
+                              "confirmed",
+                              "cancelled",
+                              "held"
+                            ]
+                          },
+                          "startDate": {
+                            "type": "string",
+                            "format": "date",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                          },
+                          "endDate": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "date",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                          },
+                          "datePrecision": {
+                            "type": "string",
+                            "enum": [
+                              "day",
+                              "month"
+                            ]
+                          },
+                          "dateText": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "timezone": {
+                            "type": "string"
+                          },
+                          "region": {
+                            "type": "string",
+                            "enum": [
+                              "south-florida",
+                              "florida",
+                              "road-trip"
+                            ]
+                          },
+                          "place": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "slug": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "flying-field",
+                                  "car-track",
+                                  "indoor",
+                                  "venue"
+                                ]
+                              },
+                              "address": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "city": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "county": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "state": {
+                                "type": "string"
+                              },
+                              "latitude": {
+                                "nullable": true,
+                                "type": "number"
+                              },
+                              "longitude": {
+                                "nullable": true,
+                                "type": "number"
+                              },
+                              "isFria": {
+                                "type": "boolean"
+                              },
+                              "url": {
+                                "nullable": true,
+                                "type": "string",
+                                "format": "uri"
+                              }
+                            },
+                            "required": [
+                              "slug",
+                              "name",
+                              "kind",
+                              "address",
+                              "city",
+                              "county",
+                              "state",
+                              "latitude",
+                              "longitude",
+                              "isFria",
+                              "url"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "placeText": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "host": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "slug": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "club",
+                                  "track",
+                                  "shop",
+                                  "sanctioning-body",
+                                  "organiser"
+                                ]
+                              },
+                              "url": {
+                                "nullable": true,
+                                "type": "string",
+                                "format": "uri"
+                              }
+                            },
+                            "required": [
+                              "slug",
+                              "name",
+                              "kind",
+                              "url"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "sanctions": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "classes": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "entryFee": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "entryUrl": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "resultsUrl": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "requirements": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "beginnerFriendly": {
+                            "type": "boolean"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "lastCheckedAt": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "slug",
+                          "name",
+                          "kind",
+                          "discipline",
+                          "status",
+                          "startDate",
+                          "endDate",
+                          "datePrecision",
+                          "dateText",
+                          "timezone",
+                          "region",
+                          "place",
+                          "placeText",
+                          "host",
+                          "summary",
+                          "url",
+                          "sanctions",
+                          "classes",
+                          "entryFee",
+                          "entryUrl",
+                          "resultsUrl",
+                          "requirements",
+                          "beginnerFriendly",
+                          "confidence",
+                          "lastCheckedAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "following": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "stewarded": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "slug",
+                    "name",
+                    "kind",
+                    "address",
+                    "city",
+                    "county",
+                    "state",
+                    "latitude",
+                    "longitude",
+                    "isFria",
+                    "url",
+                    "notes",
+                    "host",
+                    "disciplines",
+                    "access",
+                    "register",
+                    "sourceUrl",
+                    "verifiedAt",
+                    "events",
+                    "following",
+                    "stewarded"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "places"
+        ]
+      }
+    },
+    "/hosts": {
+      "get": {
+        "operationId": "PlacesController_hosts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "slug": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "club",
+                          "track",
+                          "shop",
+                          "sanctioning-body",
+                          "organiser"
+                        ]
+                      },
+                      "url": {
+                        "nullable": true,
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "city": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "county": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "disciplines": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "air",
+                            "rotor",
+                            "ground",
+                            "fpv"
+                          ]
+                        }
+                      },
+                      "verified": {
+                        "type": "boolean"
+                      },
+                      "acceptsNewcomers": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "slug",
+                      "name",
+                      "kind",
+                      "url",
+                      "summary",
+                      "city",
+                      "county",
+                      "disciplines",
+                      "verified",
+                      "acceptsNewcomers"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "places"
+        ]
+      }
+    },
+    "/hosts/{slug}": {
+      "get": {
+        "operationId": "PlacesController_host",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "slug": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "club",
+                        "track",
+                        "shop",
+                        "sanctioning-body",
+                        "organiser"
+                      ]
+                    },
+                    "url": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "summary": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "county": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "disciplines": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "air",
+                          "rotor",
+                          "ground",
+                          "fpv"
+                        ]
+                      }
+                    },
+                    "verified": {
+                      "type": "boolean"
+                    },
+                    "acceptsNewcomers": {
+                      "type": "boolean"
+                    },
+                    "places": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "slug": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "flying-field",
+                              "car-track",
+                              "indoor",
+                              "venue"
+                            ]
+                          },
+                          "address": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "city": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "county": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "latitude": {
+                            "nullable": true,
+                            "type": "number"
+                          },
+                          "longitude": {
+                            "nullable": true,
+                            "type": "number"
+                          },
+                          "isFria": {
+                            "type": "boolean"
+                          },
+                          "url": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "notes": {
+                            "type": "string"
+                          },
+                          "host": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "slug": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "club",
+                                  "track",
+                                  "shop",
+                                  "sanctioning-body",
+                                  "organiser"
+                                ]
+                              },
+                              "url": {
+                                "nullable": true,
+                                "type": "string",
+                                "format": "uri"
+                              }
+                            },
+                            "required": [
+                              "slug",
+                              "name",
+                              "kind",
+                              "url"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "disciplines": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "air",
+                                "rotor",
+                                "ground",
+                                "fpv"
+                              ]
+                            }
+                          },
+                          "access": {
+                            "type": "string",
+                            "enum": [
+                              "public",
+                              "guests",
+                              "members",
+                              "permission",
+                              "unknown"
+                            ]
+                          },
+                          "register": {
+                            "type": "string",
+                            "enum": [
+                              "faa-fria",
+                              "faa-fixed-site",
+                              "crew",
+                              "organiser"
+                            ]
+                          },
+                          "sourceUrl": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "verifiedAt": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "slug",
+                          "name",
+                          "kind",
+                          "address",
+                          "city",
+                          "county",
+                          "state",
+                          "latitude",
+                          "longitude",
+                          "isFria",
+                          "url",
+                          "notes",
+                          "host",
+                          "disciplines",
+                          "access",
+                          "register",
+                          "sourceUrl",
+                          "verifiedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "slug": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "fly-in",
+                              "competition",
+                              "race",
+                              "show",
+                              "swap-meet",
+                              "open-day",
+                              "course",
+                              "other"
+                            ]
+                          },
+                          "discipline": {
+                            "type": "string",
+                            "enum": [
+                              "air",
+                              "rotor",
+                              "ground",
+                              "fpv"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "expected",
+                              "announced",
+                              "confirmed",
+                              "cancelled",
+                              "held"
+                            ]
+                          },
+                          "startDate": {
+                            "type": "string",
+                            "format": "date",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                          },
+                          "endDate": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "date",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                          },
+                          "datePrecision": {
+                            "type": "string",
+                            "enum": [
+                              "day",
+                              "month"
+                            ]
+                          },
+                          "dateText": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "timezone": {
+                            "type": "string"
+                          },
+                          "region": {
+                            "type": "string",
+                            "enum": [
+                              "south-florida",
+                              "florida",
+                              "road-trip"
+                            ]
+                          },
+                          "place": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "slug": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "flying-field",
+                                  "car-track",
+                                  "indoor",
+                                  "venue"
+                                ]
+                              },
+                              "address": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "city": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "county": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "state": {
+                                "type": "string"
+                              },
+                              "latitude": {
+                                "nullable": true,
+                                "type": "number"
+                              },
+                              "longitude": {
+                                "nullable": true,
+                                "type": "number"
+                              },
+                              "isFria": {
+                                "type": "boolean"
+                              },
+                              "url": {
+                                "nullable": true,
+                                "type": "string",
+                                "format": "uri"
+                              }
+                            },
+                            "required": [
+                              "slug",
+                              "name",
+                              "kind",
+                              "address",
+                              "city",
+                              "county",
+                              "state",
+                              "latitude",
+                              "longitude",
+                              "isFria",
+                              "url"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "placeText": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "host": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "slug": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "club",
+                                  "track",
+                                  "shop",
+                                  "sanctioning-body",
+                                  "organiser"
+                                ]
+                              },
+                              "url": {
+                                "nullable": true,
+                                "type": "string",
+                                "format": "uri"
+                              }
+                            },
+                            "required": [
+                              "slug",
+                              "name",
+                              "kind",
+                              "url"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "sanctions": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "classes": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "entryFee": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "entryUrl": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "resultsUrl": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "requirements": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "beginnerFriendly": {
+                            "type": "boolean"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "lastCheckedAt": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "slug",
+                          "name",
+                          "kind",
+                          "discipline",
+                          "status",
+                          "startDate",
+                          "endDate",
+                          "datePrecision",
+                          "dateText",
+                          "timezone",
+                          "region",
+                          "place",
+                          "placeText",
+                          "host",
+                          "summary",
+                          "url",
+                          "sanctions",
+                          "classes",
+                          "entryFee",
+                          "entryUrl",
+                          "resultsUrl",
+                          "requirements",
+                          "beginnerFriendly",
+                          "confidence",
+                          "lastCheckedAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "following": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "slug",
+                    "name",
+                    "kind",
+                    "url",
+                    "summary",
+                    "city",
+                    "county",
+                    "disciplines",
+                    "verified",
+                    "acceptsNewcomers",
+                    "places",
+                    "events",
+                    "following"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "places"
         ]
       }
     }

@@ -9,6 +9,7 @@ export const SITE = {
   nav: [
     { label: "Learn with us", href: "/learn" },
     { label: "Events", href: "/events" },
+    { label: "Places", href: "/places" },
     { label: "Community", href: "/community" },
     { label: "Guides", href: "/guides" },
   ],

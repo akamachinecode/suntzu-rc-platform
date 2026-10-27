@@ -58,6 +58,9 @@ export class EventsService {
     if (query.discipline) conditions.push(eq(events.discipline, query.discipline));
     if (query.kind) conditions.push(eq(events.kind, query.kind));
     if (query.region) conditions.push(eq(events.region, query.region));
+    if (query.host) conditions.push(eq(hosts.slug, query.host));
+    if (query.place) conditions.push(eq(places.slug, query.place));
+    conditions.push(sql`${events.rejectedAt} is null`);
 
     const rows = await this.db
       .select({ event: events, place: places, host: hosts })
@@ -149,11 +152,7 @@ export class EventsService {
       .from(places)
       .leftJoin(hosts, eq(places.hostId, hosts.id))
       .orderBy(asc(places.name));
-    return rows.map(({ place, host }) => ({
-      ...toPlaceSummary(place),
-      notes: place.notes,
-      host: host && toHostSummary(host),
-    }));
+    return rows.map(({ place, host }) => toPlace(place, host));
   }
 
   /** An ICS feed of upcoming events with exact dates, filtered like the list. */
@@ -229,6 +228,19 @@ export function toPlaceSummary(place: PlaceRow) {
     longitude: place.longitude,
     isFria: place.isFria,
     url: place.url,
+  };
+}
+
+export function toPlace(place: PlaceRow, host: HostRow | null): Place {
+  return {
+    ...toPlaceSummary(place),
+    notes: place.notes,
+    host: host && toHostSummary(host),
+    disciplines: place.disciplines,
+    access: place.access,
+    register: place.register,
+    sourceUrl: place.sourceUrl,
+    verifiedAt: place.verifiedAt?.toISOString() ?? null,
   };
 }
 

@@ -182,6 +182,34 @@ export const eventDetail = event.extend({
 export const place = placeSummary.extend({
   notes: z.string(),
   host: hostSummary.nullable(),
+  disciplines: z.array(discipline),
+  access: placeAccess,
+  // Where its details come from (an FAA record, the club's page) and when someone last checked.
+  register: register,
+  sourceUrl: z.url().nullable(),
+  verifiedAt: z.iso.datetime().nullable(),
+});
+
+export const placeDetail = place.extend({
+  events: z.array(event),
+  following: z.number().int(),
+  // Run by an organiser who proved it on Servo: they keep it current.
+  stewarded: z.boolean(),
+});
+
+export const host = hostSummary.extend({
+  summary: z.string(),
+  city: z.string().nullable(),
+  county: z.string().nullable(),
+  disciplines: z.array(discipline),
+  verified: z.boolean(),
+  acceptsNewcomers: z.boolean(),
+});
+
+export const hostDetail = host.extend({
+  places: z.array(place),
+  events: z.array(event),
+  following: z.number().int(),
 });
 
 export const eventListQuery = z.object({
@@ -190,16 +218,26 @@ export const eventListQuery = z.object({
   discipline: discipline.optional(),
   kind: eventKind.optional(),
   region: region.optional(),
+  // A club's or a place's events, by slug.
+  host: z.string().max(120).optional(),
+  place: z.string().max(120).optional(),
 });
 
 /** Filters of a calendar feed (ICS): the same as the list, always from today on. */
-export const calendarQuery = eventListQuery.pick({ discipline: true, kind: true, region: true });
+export const calendarQuery = eventListQuery.pick({
+  discipline: true,
+  kind: true,
+  region: true,
+  host: true,
+  place: true,
+});
 
 export type EventKind = z.output<typeof eventKind>;
 export type Discipline = z.output<typeof discipline>;
 export type EventStatus = z.output<typeof eventStatus>;
 export type Region = z.output<typeof region>;
 export type SourceTrust = z.output<typeof sourceTrust>;
+export type PlaceKind = z.output<typeof placeKind>;
 export type PlaceAccess = z.output<typeof placeAccess>;
 export type SightingFields = z.output<typeof sightingFields>;
 export type SightingEvidence = z.output<typeof sightingEvidence>;
@@ -214,3 +252,6 @@ export type EventDetail = z.output<typeof eventDetail>;
 export type EventChange = z.output<typeof eventChange>;
 export type EventEdition = z.output<typeof eventEdition>;
 export type Place = z.output<typeof place>;
+export type PlaceDetail = z.output<typeof placeDetail>;
+export type Host = z.output<typeof host>;
+export type HostDetail = z.output<typeof hostDetail>;

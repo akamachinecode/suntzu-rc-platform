@@ -9,6 +9,7 @@ import { HealthController } from "./health/health.controller.js";
 import { InboxModule } from "./inbox/inbox.module.js";
 import { MembersModule } from "./members/members.module.js";
 import { NotesModule } from "./notes/notes.module.js";
+import { PlacesModule } from "./places/places.module.js";
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { NotesModule } from "./notes/notes.module.js";
     MembersModule,
     CrewModule,
     InboxModule,
+    PlacesModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_INTERCEPTOR, useClass: BitInterceptor }],

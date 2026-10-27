@@ -7,7 +7,14 @@ const ROUTES = [
   "/",
   "/learn",
   "/events",
+  "/places",
+  "/places/can-i-fly-here",
+  "/clubs",
   "/community",
+  "/try",
+  "/organise",
+  "/privacy",
+  "/terms",
   "/guides",
   "/guides/rc-planes",
   "/guides/rc-helicopters",
@@ -28,5 +35,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: new URL(`/events/${event.slug}`, SITE.url).toString(),
     lastModified: event.updatedAt,
   }));
-  return [...pages, ...eventPages];
+  const [{ data: places }, { data: hosts }] = await Promise.all([
+    getPublicApi()
+      .GET("/places")
+      .catch(() => ({ data: undefined })),
+    getPublicApi()
+      .GET("/hosts")
+      .catch(() => ({ data: undefined })),
+  ]);
+  const placePages = (places ?? []).map((place) => ({
+    url: new URL(`/places/${place.slug}`, SITE.url).toString(),
+    ...(place.verifiedAt && { lastModified: place.verifiedAt }),
+  }));
+  const hostPages = (hosts ?? []).map((host) => ({
+    url: new URL(`/clubs/${host.slug}`, SITE.url).toString(),
+  }));
+  return [...pages, ...eventPages, ...placePages, ...hostPages];
 }

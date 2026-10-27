@@ -27,6 +27,16 @@ const filters = () => (target: object, key: string | symbol, descriptor: Propert
   ApiQuery({ name: "discipline", required: false, enum: DISCIPLINES })(target, key, descriptor);
   ApiQuery({ name: "kind", required: false, enum: EVENT_KINDS })(target, key, descriptor);
   ApiQuery({ name: "region", required: false, enum: REGIONS })(target, key, descriptor);
+  ApiQuery({ name: "host", required: false, description: "A club's slug" })(
+    target,
+    key,
+    descriptor,
+  );
+  ApiQuery({ name: "place", required: false, description: "A place's slug" })(
+    target,
+    key,
+    descriptor,
+  );
 };
 
 @ApiTags("events")
