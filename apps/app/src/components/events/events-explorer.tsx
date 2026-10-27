@@ -1,12 +1,19 @@
 "use client";
 
 import type { Discipline, EventKind, Place, RcEvent } from "@workspace/shared";
-import { LocateFixed } from "lucide-react";
+import { CalendarDays, List, LocateFixed, Search } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { EventCard } from "@/components/events/event-card";
 import type { MapEvent } from "@/components/events/events-map";
-import { DISCIPLINE_LABELS, KIND_LABELS, milesBetween } from "@/lib/events";
+import { MonthView } from "@/components/events/month-view";
+import {
+  DISCIPLINE_LABELS,
+  KIND_LABELS,
+  milesBetween,
+  runsBetween,
+  weekendRange,
+} from "@/lib/events";
 import { cn } from "@/lib/utils";
 
 // The map is heavy and needs the browser: load it after the list.
@@ -48,22 +55,78 @@ const positionOf = (event: RcEvent): [number, number] | undefined =>
     ? [event.place.longitude, event.place.latitude]
     : undefined;
 
-/** The calendar: filters, "near me", a map and the list. Your location never leaves the browser. */
-export function EventsExplorer({ events, places }: { events: RcEvent[]; places: Place[] }) {
-  const [discipline, setDiscipline] = useState<Discipline | "all">("all");
-  const [kind, setKind] = useState<EventKind | "all">("all");
+export interface ExplorerFilters {
+  discipline?: Discipline;
+  kind?: EventKind;
+  weekend?: boolean;
+  beginners?: boolean;
+  q?: string;
+}
+
+const normal = (text: string) =>
+  text
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+/**
+ * The calendar: search, filters, "this weekend", "near me", a map and the list or the month.
+ * Your location never leaves the browser.
+ */
+export function EventsExplorer({
+  events,
+  places,
+  initial = {},
+  today,
+}: {
+  events: RcEvent[];
+  places: Place[];
+  initial?: ExplorerFilters;
+  today: string;
+}) {
+  const [discipline, setDiscipline] = useState<Discipline | "all">(initial.discipline ?? "all");
+  const [kind, setKind] = useState<EventKind | "all">(initial.kind ?? "all");
+  const [weekend, setWeekend] = useState(initial.weekend ?? false);
+  const [beginners, setBeginners] = useState(initial.beginners ?? false);
+  const [sanction, setSanction] = useState<string>("all");
+  const [query, setQuery] = useState(initial.q ?? "");
+  const [view, setView] = useState<"list" | "month">("list");
   const [origin, setOrigin] = useState<[number, number] | undefined>();
   const [located, setLocated] = useState<Located>("idle");
 
   const disciplines = [...new Set(events.map((event) => event.discipline))];
   const kinds = [...new Set(events.map((event) => event.kind))];
+  const sanctions = [...new Set(events.flatMap((event) => event.sanctions))].sort();
+  const range = useMemo(
+    () =>
+      weekendRange(/^\d{4}-\d{2}-\d{2}$/.test(today) ? new Date(`${today}T12:00:00Z`) : new Date()),
+    [today],
+  );
 
   const shown = useMemo(() => {
-    const filtered = events.filter(
-      (event) =>
+    const words = normal(query).split(/\s+/).filter(Boolean);
+    const filtered = events.filter((event) => {
+      const haystack = normal(
+        [
+          event.name,
+          event.place?.name,
+          event.place?.city,
+          event.placeText,
+          event.host?.name,
+          event.summary,
+        ]
+          .filter(Boolean)
+          .join(" "),
+      );
+      return (
         (discipline === "all" || event.discipline === discipline) &&
-        (kind === "all" || event.kind === kind),
-    );
+        (kind === "all" || event.kind === kind) &&
+        (!weekend || runsBetween(event, range.from, range.to)) &&
+        (!beginners || event.beginnerFriendly) &&
+        (sanction === "all" || event.sanctions.includes(sanction)) &&
+        words.every((word) => haystack.includes(word))
+      );
+    });
     const withDistance = filtered.map((event) => {
       const position = positionOf(event);
       return {
@@ -78,7 +141,7 @@ export function EventsExplorer({ events, places }: { events: RcEvent[]; places: 
     // Near me: closest first; events without an exact place go last, in date order.
     if (origin) withDistance.sort((a, b) => (a.miles ?? Infinity) - (b.miles ?? Infinity));
     return withDistance;
-  }, [events, discipline, kind, origin]);
+  }, [events, discipline, kind, weekend, beginners, sanction, query, range, origin]);
 
   const pins: MapEvent[] = shown.flatMap(({ event, position }) =>
     position ? [{ event, position }] : [],
@@ -108,6 +171,45 @@ export function EventsExplorer({ events, places }: { events: RcEvent[]; places: 
   return (
     <div>
       <div className="grid gap-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <label className="relative min-w-0 flex-1 basis-64">
+            <span className="sr-only">Search events, places and clubs</span>
+            <Search
+              aria-hidden
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
+            />
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search: jets, Orlando, Markham Park…"
+              className="h-11 w-full rounded-md border-2 border-foreground bg-panel pr-3 pl-9 shadow-hard-sm"
+            />
+          </label>
+          <Chip pressed={weekend} onClick={() => setWeekend((value) => !value)}>
+            This weekend
+          </Chip>
+          <Chip pressed={beginners} onClick={() => setBeginners((value) => !value)}>
+            Beginners welcome
+          </Chip>
+          {sanctions.length ? (
+            <label className="flex items-center gap-2 text-sm font-semibold">
+              Sanctioned by
+              <select
+                value={sanction}
+                onChange={(event) => setSanction(event.target.value)}
+                className="h-10 rounded-md border-2 border-foreground bg-panel px-2"
+              >
+                <option value="all">Any</option>
+                {sanctions.map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+        </div>
         <div role="group" aria-label="Filter by discipline" className="flex flex-wrap gap-3">
           <Chip pressed={discipline === "all"} onClick={() => setDiscipline("all")}>
             All disciplines
@@ -155,8 +257,24 @@ export function EventsExplorer({ events, places }: { events: RcEvent[]; places: 
         ) : null}
       </div>
 
+      <div role="group" aria-label="View" className="mt-10 flex gap-3">
+        <Chip pressed={view === "list"} onClick={() => setView("list")}>
+          <List aria-hidden className="mr-1 inline size-4" /> List
+        </Chip>
+        <Chip pressed={view === "month"} onClick={() => setView("month")}>
+          <CalendarDays aria-hidden className="mr-1 inline size-4" /> Month
+        </Chip>
+      </div>
+
+      {view === "month" ? (
+        <div className="mt-6">
+          <MonthView events={shown.map(({ event }) => event)} today={today} />
+        </div>
+      ) : null}
+
       <ol
-        className="mt-10 grid gap-6"
+        hidden={view === "month"}
+        className="mt-6 grid gap-6"
         aria-label={origin ? "Events, closest first" : "Events, soonest first"}
       >
         {shown.map(({ event, miles }) => (
@@ -165,8 +283,12 @@ export function EventsExplorer({ events, places }: { events: RcEvent[]; places: 
           </li>
         ))}
       </ol>
-      {shown.length === 0 ? (
-        <p className="mt-10 text-lg">Nothing like this on the calendar right now.</p>
+      {shown.length === 0 && view === "list" ? (
+        <p className="mt-10 text-lg">
+          {weekend
+            ? "Nothing announced for this weekend with these filters. Try the month view."
+            : "Nothing like this on the calendar right now."}
+        </p>
       ) : null}
     </div>
   );

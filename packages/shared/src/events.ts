@@ -135,6 +135,7 @@ export const event = z.object({
   entryUrl: z.url().nullable(),
   resultsUrl: z.url().nullable(),
   requirements: z.array(z.string()),
+  beginnerFriendly: z.boolean(),
   confidence: z.number().min(0).max(1),
   lastCheckedAt: z.iso.datetime().nullable(),
   updatedAt: z.iso.datetime(),
@@ -152,7 +153,31 @@ export const eventSource = z.object({
   lastSeenAt: z.iso.datetime(),
 });
 
-export const eventDetail = event.extend({ sources: z.array(eventSource) });
+/** One public change to an event: its history on the page ("moved from Nov 8 to Nov 15"). */
+export const eventChange = z.object({
+  field: z.enum(["created", "startDate", "endDate", "status", "datePrecision"]),
+  from: z.unknown(),
+  to: z.unknown(),
+  at: z.iso.datetime(),
+});
+
+/** Another edition of the same series (last year's, next year's). */
+export const eventEdition = z.object({
+  slug: z.string(),
+  name: z.string(),
+  startDate: z.iso.date(),
+  datePrecision,
+  dateText: z.string().nullable(),
+  status: eventStatus,
+  resultsUrl: z.url().nullable(),
+});
+
+export const eventDetail = event.extend({
+  sources: z.array(eventSource),
+  history: z.array(eventChange),
+  editions: z.array(eventEdition),
+  people: z.object({ following: z.number().int(), going: z.number().int() }),
+});
 
 export const place = placeSummary.extend({
   notes: z.string(),
@@ -186,4 +211,6 @@ export type EventListQuery = z.output<typeof eventListQuery>;
 export type CalendarQuery = z.output<typeof calendarQuery>;
 export type EventSource = z.output<typeof eventSource>;
 export type EventDetail = z.output<typeof eventDetail>;
+export type EventChange = z.output<typeof eventChange>;
+export type EventEdition = z.output<typeof eventEdition>;
 export type Place = z.output<typeof place>;

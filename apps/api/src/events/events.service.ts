@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { and, asc, eq, isNotNull, schema, sql, type SQL } from "@workspace/db";
+import { and, asc, count, eq, inArray, isNotNull, ne, schema, sql, type SQL } from "@workspace/db";
 import {
   SOURCE_TRUST,
   type CalendarQuery,
@@ -14,7 +14,10 @@ import { env } from "../env.js";
 import { localDate } from "./engine/read.js";
 import { writeIcs, type IcsEvent } from "./ics-writer.js";
 
-const { events, places, hosts, eventSightings, sightings, sources } = schema;
+const { events, places, hosts, eventSightings, sightings, sources, changes, follows, rsvps } =
+  schema;
+
+const PUBLIC_FIELDS = ["created", "startDate", "endDate", "status", "datePrecision"] as const;
 
 type EventRow = typeof events.$inferSelect;
 type PlaceRow = typeof places.$inferSelect;
@@ -74,10 +77,70 @@ export class EventsService {
       .leftJoin(hosts, eq(events.hostId, hosts.id))
       .where(and(eq(events.slug, slug), isNotNull(events.publishedAt)));
     if (!row) throw new NotFoundException();
+    const [sourceList, history, editions, people] = await Promise.all([
+      this.sourcesOf(row.event.id),
+      this.historyOf(row.event.id),
+      this.editionsOf(row.event),
+      this.peopleOf(row.event.id),
+    ]);
     return {
       ...toEvent(row.event, row.place, row.host),
-      sources: await this.sourcesOf(row.event.id),
+      sources: sourceList,
+      history,
+      editions,
+      people,
     };
+  }
+
+  /** What changed and when, oldest first: dates, status and the day it appeared. */
+  private async historyOf(eventId: string): Promise<EventDetail["history"]> {
+    const rows = await this.db
+      .select()
+      .from(changes)
+      .where(and(eq(changes.eventId, eventId), inArray(changes.field, [...PUBLIC_FIELDS])))
+      .orderBy(asc(changes.createdAt));
+    return rows.map((row) => ({
+      field: row.field as (typeof PUBLIC_FIELDS)[number],
+      from: row.field === "created" ? null : row.oldValue,
+      to: row.field === "created" ? null : row.newValue,
+      at: row.createdAt.toISOString(),
+    }));
+  }
+
+  /** Other published editions of the same series, in date order. */
+  private async editionsOf(event: EventRow): Promise<EventDetail["editions"]> {
+    if (!event.seriesId) return [];
+    const rows = await this.db
+      .select()
+      .from(events)
+      .where(
+        and(
+          eq(events.seriesId, event.seriesId),
+          ne(events.id, event.id),
+          isNotNull(events.publishedAt),
+        ),
+      )
+      .orderBy(asc(events.startDate));
+    return rows.map((row) => ({
+      slug: row.slug,
+      name: row.name,
+      startDate: row.startDate,
+      datePrecision: row.datePrecision,
+      dateText: row.dateText,
+      status: row.status,
+      resultsUrl: row.resultsUrl,
+    }));
+  }
+
+  private async peopleOf(eventId: string): Promise<EventDetail["people"]> {
+    const [[followed], [going]] = await Promise.all([
+      this.db
+        .select({ n: count() })
+        .from(follows)
+        .where(and(eq(follows.target, "event"), eq(follows.targetId, eventId))),
+      this.db.select({ n: count() }).from(rsvps).where(eq(rsvps.eventId, eventId)),
+    ]);
+    return { following: followed?.n ?? 0, going: going?.n ?? 0 };
   }
 
   async places(): Promise<Place[]> {
@@ -197,6 +260,7 @@ export function toEvent(event: EventRow, place: PlaceRow | null, host: HostRow |
     entryUrl: event.entryUrl,
     resultsUrl: event.resultsUrl,
     requirements: event.requirements,
+    beginnerFriendly: event.beginnerFriendly,
     confidence: event.confidence,
     lastCheckedAt: event.lastCheckedAt?.toISOString() ?? null,
     updatedAt: event.updatedAt.toISOString(),

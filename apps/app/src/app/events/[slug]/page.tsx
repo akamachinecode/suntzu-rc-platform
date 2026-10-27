@@ -1,9 +1,12 @@
-import type { EventDetail } from "@workspace/shared";
-import { ArrowLeft, CalendarPlus, ExternalLink, Navigation } from "lucide-react";
+import type { EventChange, EventDetail } from "@workspace/shared";
+import { ArrowLeft, CalendarPlus, ExternalLink, Navigation, Trophy } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
+import { FollowButtons } from "@/components/account/follow-buttons";
+import { CorrectionForm } from "@/components/events/correction-form";
+import { EventFeedback } from "@/components/events/event-feedback";
 import { EventLocationMap } from "@/components/events/event-location-map";
 import { getPublicApi } from "@/lib/api";
 import {
@@ -50,6 +53,52 @@ function nextDay(date: string) {
   const day = new Date(`${date}T00:00:00Z`);
   day.setUTCDate(day.getUTCDate() + 1);
   return day.toISOString().slice(0, 10);
+}
+
+const STATUS_WORDS: Record<string, string> = {
+  expected: "expected",
+  announced: "announced",
+  confirmed: "confirmed by the organiser",
+  cancelled: "cancelled",
+  held: "held",
+};
+
+const shortDate = (value: unknown) =>
+  typeof value === "string"
+    ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(
+        new Date(`${value}T12:00:00Z`),
+      )
+    : "—";
+
+/** The page's history in plain words, one line per moment (changes made together read as one). */
+function historyLines(history: EventChange[]): { at: string; text: string }[] {
+  const moments = new Map<string, EventChange[]>();
+  for (const change of history) {
+    const key = change.at.slice(0, 16);
+    moments.set(key, [...(moments.get(key) ?? []), change]);
+  }
+  return [...moments.values()].flatMap((group) => {
+    const at = group[0]!.at;
+    const parts: string[] = [];
+    for (const change of group) {
+      if (change.field === "created") parts.push("Listed on Servo");
+      if (change.field === "startDate") {
+        parts.push(`First day moved from ${shortDate(change.from)} to ${shortDate(change.to)}`);
+      }
+      if (change.field === "endDate" && !group.some((other) => other.field === "startDate")) {
+        parts.push(`Last day changed to ${shortDate(change.to)}`);
+      }
+      if (change.field === "status" && typeof change.to === "string") {
+        parts.push(`Now ${STATUS_WORDS[change.to] ?? change.to}`);
+      }
+    }
+    return parts.length ? [{ at, text: parts.join(". ") }] : [];
+  });
+}
+
+function exactLastDay(event: EventDetail): string | undefined {
+  if (event.datePrecision !== "day") return undefined;
+  return event.endDate ?? event.startDate;
 }
 
 function address(event: EventDetail) {
@@ -104,6 +153,10 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
   if (!event) notFound();
 
   const page = new URL(`/events/${event.slug}`, SITE.url).toString();
+  const today = new Date().toISOString().slice(0, 10);
+  const past = event.status === "held" || (exactLastDay(event) ?? "9999") < today;
+  const history = historyLines(event.history);
+  const next = event.editions.find((edition) => edition.startDate > event.startDate);
   const exact = hasExactDates(event);
   const cancelled = event.status === "cancelled";
   const place = event.place;
@@ -151,6 +204,11 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
             {DISCIPLINE_LABELS[event.discipline]}
           </li>
           <li className="rounded-md bg-muted px-2 py-0.5">{REGION_LABELS[event.region]}</li>
+          {event.beginnerFriendly ? (
+            <li className="rounded-md border-2 border-foreground bg-sky px-2 py-0.5">
+              Beginners welcome
+            </li>
+          ) : null}
           {event.sanctions.map((sanction) => (
             <li key={sanction} className="rounded-md bg-muted px-2 py-0.5">
               {sanction} sanctioned
@@ -178,6 +236,16 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
             we&apos;ll update this page as soon as they do.
           </p>
         ) : null}
+        <div className="mt-6 flex flex-wrap items-center gap-4">
+          <FollowButtons target="event" id={event.slug} going={!past && !cancelled} />
+          {event.people.going || event.people.following ? (
+            <p className="text-sm font-semibold">
+              {event.people.going ? `${event.people.going} going` : ""}
+              {event.people.going && event.people.following ? " · " : ""}
+              {event.people.following ? `${event.people.following} following` : ""}
+            </p>
+          ) : null}
+        </div>
       </header>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_24rem]">
@@ -199,7 +267,19 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
                 <span className="sr-only"> (opens in a new tab)</span>
               </a>
             ) : null}
-            {exact && !cancelled ? (
+            {event.resultsUrl ? (
+              <a
+                href={event.resultsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className={cn(button, "bg-sky")}
+              >
+                <Trophy aria-hidden className="size-4" />
+                Results
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            ) : null}
+            {exact && !cancelled && !past ? (
               <>
                 <a href={`/events/${event.slug}/calendar.ics`} className={cn(button, "bg-panel")}>
                   <CalendarPlus aria-hidden className="size-4" />
@@ -245,6 +325,82 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
                     </a>
                   </li>
                 ) : null}
+              </ul>
+            </section>
+          ) : null}
+
+          {past ? (
+            <section
+              aria-labelledby="after-title"
+              className="rounded-xl border-2 border-foreground bg-primary p-6 shadow-hard"
+            >
+              <h2 id="after-title" className="text-xl font-black font-wide">
+                {cancelled ? "This one didn't happen" : "That was it"}
+              </h2>
+              {next ? (
+                <p className="mt-2 text-pretty">
+                  Next edition:{" "}
+                  <Link
+                    href={`/events/${next.slug}`}
+                    className="font-semibold underline underline-offset-4"
+                  >
+                    {formatWhen({ ...next, endDate: null })}
+                  </Link>
+                  . Follow it and we&apos;ll tell you when the dates are out.
+                </p>
+              ) : null}
+              <div className="mt-4">
+                <EventFeedback slug={event.slug} />
+              </div>
+            </section>
+          ) : null}
+
+          {history.length > 1 ? (
+            <section
+              aria-labelledby="history-title"
+              className="rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard"
+            >
+              <h2 id="history-title" className="text-xl font-black font-wide">
+                What changed
+              </h2>
+              <ol className="mt-4 grid gap-3 border-l-2 border-foreground pl-5">
+                {history.map((line) => (
+                  <li key={line.at} className="relative">
+                    <span
+                      aria-hidden="true"
+                      className="absolute top-1.5 -left-[1.6rem] size-3 rounded-full border-2 border-foreground bg-primary"
+                    />
+                    <p className="text-sm text-muted-foreground">{formatDate(line.at)}</p>
+                    <p>{line.text}.</p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ) : null}
+
+          {event.editions.length ? (
+            <section
+              aria-labelledby="editions-title"
+              className="rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard"
+            >
+              <h2 id="editions-title" className="text-xl font-black font-wide">
+                Other editions
+              </h2>
+              <ul className="mt-4 grid gap-2">
+                {event.editions.map((edition) => (
+                  <li key={edition.slug} className="flex flex-wrap items-baseline gap-x-3">
+                    <Link
+                      href={`/events/${edition.slug}`}
+                      className="font-semibold underline underline-offset-4"
+                    >
+                      {formatWhen({ ...edition, endDate: null })}
+                    </Link>
+                    <span className="text-sm text-muted-foreground">
+                      {STATUS_WORDS[edition.status]}
+                      {edition.resultsUrl ? " · results" : ""}
+                    </span>
+                  </li>
+                ))}
               </ul>
             </section>
           ) : null}
@@ -295,6 +451,9 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
               </Link>
               .
             </p>
+            <div className="mt-4">
+              <CorrectionForm slug={event.slug} />
+            </div>
           </section>
         </div>
 

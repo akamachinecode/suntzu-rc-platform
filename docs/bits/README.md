@@ -12,8 +12,8 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [notes.get](./notes.get.md)                         | The API returns one of the user's notes (example; no screen uses it yet) | read in code | none yet                            |
 | [notes.create](./notes.create.md)                   | A user adds a note (example)                                             | read in code | none yet                            |
 | [notes.delete](./notes.delete.md)                   | A user deletes one of their notes (example)                              | read in code | none yet                            |
-| [events.list](./events.list.md)                     | A visitor browses upcoming events                                        | read in code | none yet                            |
-| [events.get](./events.get.md)                       | A visitor opens an event's page                                          | read in code | none yet                            |
+| [events.list](./events.list.md)                     | A visitor finds events                                                   | verified     | none yet                            |
+| [events.get](./events.get.md)                       | A visitor opens an event's page                                          | verified     | none yet                            |
 | [events.calendar](./events.calendar.md)             | Someone subscribes to the events calendar                                | read in code | `ics-writer.test.ts`                |
 | [events.event-calendar](./events.event-calendar.md) | A visitor adds one event to their calendar                               | read in code | `ics-writer.test.ts`                |
 | [places.list](./places.list.md)                     | The events map gets its places                                           | read in code | none yet                            |
@@ -36,6 +36,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [messages.create](./messages.create.md)             | A visitor writes to the crew                                             | read in code | none yet                            |
 | [events.feedback](./events.feedback.md)             | Someone says whether an event's information was right                    | read in code | none yet                            |
 | [corrections.create](./corrections.create.md)       | A member suggests a correction                                           | read in code | none yet                            |
+| [events.share-image](./events.share-image.md)       | An event's page is shared                                                | verified     | none yet                            |
 
 **Status:** `verified` (someone ran it and saw the result) · `read in code` (followed in the code, not run) · `not verified` · `broken`.
 
