@@ -61,7 +61,7 @@ RC pilots and racers in Florida find events in a dozen places (club sites, Faceb
 ## Slices
 
 - [x] 1. Resolve: match, merge, publish, apply or queue changes, held and expected editions; `pnpm engine` runs it after reading (blocked by: —)
-- [ ] 2. Crew role and console `/crew`: queue with evidence, approve, correct, merge, reject (blocked by: 1)
+- [x] 2. Crew role and console `/crew`: queue with evidence, approve, correct, merge, reject (blocked by: 1)
 - [ ] 3. The living event page: history of changes, next edition, results link, "was this right?", pit-pass share image (blocked by: 1)
 - [ ] 4. Finding: search, weekend, beginner and sanction filters, month view (blocked by: —)
 - [ ] 5. More readers: the club platforms and single sites that pay off (DualRates, Wix, Wild Apricot, WordPress events), each after checking robots.txt and terms (blocked by: 1)

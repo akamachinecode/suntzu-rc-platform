@@ -2,14 +2,24 @@ import { Module } from "@nestjs/common";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 import { AuthModule } from "./auth/auth.module.js";
 import { BitInterceptor } from "./common/trace.js";
+import { CrewModule } from "./crew/crew.module.js";
 import { DbModule } from "./db/db.module.js";
 import { EventsModule } from "./events/events.module.js";
 import { HealthController } from "./health/health.controller.js";
+import { InboxModule } from "./inbox/inbox.module.js";
 import { MembersModule } from "./members/members.module.js";
 import { NotesModule } from "./notes/notes.module.js";
 
 @Module({
-  imports: [DbModule, AuthModule, NotesModule, EventsModule, MembersModule],
+  imports: [
+    DbModule,
+    AuthModule,
+    NotesModule,
+    EventsModule,
+    MembersModule,
+    CrewModule,
+    InboxModule,
+  ],
   controllers: [HealthController],
   providers: [{ provide: APP_INTERCEPTOR, useClass: BitInterceptor }],
 })

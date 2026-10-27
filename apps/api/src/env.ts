@@ -39,6 +39,8 @@ const schema = z.object({
     ),
   // Where the crew hears about new messages and "try it" requests nobody else can take.
   CREW_INBOX: z.string().optional(),
+  // Cloudflare Turnstile: public forms are checked when it's set (production), open when it isn't.
+  TURNSTILE_SECRET_KEY: z.string().optional(),
 });
 
 export const env = schema.parse(process.env);

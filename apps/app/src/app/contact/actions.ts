@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { TOPICS } from "@/content/services";
+import { getApi } from "@/lib/api";
 
 const topicValues = TOPICS.map((topic) => topic.value) as [string, ...string[]];
 
@@ -20,9 +21,9 @@ export type ContactState = {
 
 /**
  * Pattern to follow for every mutation:
- * 1. (When auth exists) check the user is allowed to do this.
+ * 1. Check the user is allowed to do this (public here: Turnstile proves a person sent it).
  * 2. Validate ALL input with Zod — never trust the browser.
- * 3. Do the work (save to the database, send an email…).
+ * 3. Do the work through the API.
  * 4. Return a serializable state for the form to display.
  */
 export async function submitContact(
@@ -38,8 +39,22 @@ export async function submitContact(
     };
   }
 
-  // TODO: deliver the message (Amazon SES) — see "Standard choices" in AGENTS.md and docs/DECISIONS.md.
-  console.info("Contact form submission", { name: parsed.data.name, topic: parsed.data.topic });
+  // The crew's inbox (and an email to CREW_INBOX): see docs/bits/messages.create.md.
+  const api = await getApi();
+  const token = formData.get("cf-turnstile-response");
+  const { error } = await api.POST("/messages", {
+    body: {
+      kind: "contact",
+      topic: parsed.data.topic,
+      name: parsed.data.name,
+      email: parsed.data.email,
+      body: parsed.data.message,
+      ...(typeof token === "string" && { turnstileToken: token }),
+    },
+  });
+  if (error) {
+    return { status: "error", message: "We couldn't send it. Try again in a minute." };
+  }
 
   return { status: "success", message: "Got it. One of us will reply within a couple of days." };
 }

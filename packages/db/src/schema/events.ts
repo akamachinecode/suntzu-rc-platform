@@ -304,6 +304,9 @@ export const events = pgTable(
     confidence: real("confidence").notNull().default(0),
     // Empty while the event waits in the review queue.
     publishedAt: timestamp("published_at", { withTimezone: true }),
+    // The crew said it isn't a real RC event: it stays hidden, and resolve keeps linking new
+    // sightings of it here so it never comes back as "new".
+    rejectedAt: timestamp("rejected_at", { withTimezone: true }),
     lastCheckedAt: timestamp("last_checked_at", { withTimezone: true }),
     ...timestamps,
   },

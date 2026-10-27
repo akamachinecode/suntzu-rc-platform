@@ -12,6 +12,12 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-27 — The crew console, and every form reaches the crew (specs 0001-2, 0003-3)
+
+- **What:** `/crew` (crew role only): the review queue with each source's exact words next to what we publish, and decisions to publish, correct, merge or reject; "Add an event" by hand (published at once, backed by a `servo-crew` sighting so the engine links to it later); the inbox (contact form and builds) and the feedback from past events. Events the crew rejects keep `rejected_at` and are never published automatically again; "different events" tells resolve never to match that pair. Public forms (`POST /messages`, `POST /events/{slug}/feedback`) check a Cloudflare Turnstile token when `TURNSTILE_SECRET_KEY` is set (production) and the app shows the widget when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is set. Members can suggest corrections (`POST /events/{slug}/corrections`), which wait for the crew.
+- **Why:** spec 0001 slice 2 and spec 0003 slice 3. The contact and build forms were the last pieces that went nowhere.
+- **Impact:** new table column `events.rejected_at` (migration `0004_event_rejected`); messages keep a name and an email for 12 months (purged by `pnpm notify`, spec 0003-6). New variables `TURNSTILE_SECRET_KEY` (API) and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (app); Turnstile is free and part of the standard (`CLOUDFLARE.md`).
+
 ## 2026-10-27 — Accounts without passwords, the crew role, follows and a private calendar (specs 0003-1, 0003-2)
 
 - **What:**

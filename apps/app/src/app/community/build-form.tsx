@@ -5,6 +5,7 @@ import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { Textarea } from "@workspace/ui/components/textarea";
+import { Turnstile } from "@/components/turnstile";
 import { type BuildState, submitBuild } from "./actions";
 
 const initialState: BuildState = { status: "idle" };
@@ -76,6 +77,7 @@ export function BuildForm() {
           </p>
         ))}
       </div>
+      <Turnstile />
       <div className="flex flex-wrap items-center gap-4">
         <Button type="submit" size="lg" disabled={pending}>
           {pending ? "Sending…" : "Send your build"}

@@ -41,6 +41,7 @@ export type Tx = Parameters<Parameters<Database["transaction"]>[0]>[0];
 
 /** The event fields resolve and the crew may change; each change is kept in `changes`. */
 export interface EventPatch {
+  name?: string;
   startDate?: string;
   endDate?: string | null;
   datePrecision?: "day" | "month";
@@ -53,6 +54,8 @@ export interface EventPatch {
   summary?: string;
   sanctions?: string[];
   classes?: string[];
+  resultsUrl?: string | null;
+  beginnerFriendly?: boolean;
 }
 
 export interface ResolveReport {
@@ -136,14 +139,25 @@ export async function resolve(db: Database, options: { now?: Date } = {}): Promi
         a.row.firstSeenAt.getTime() - b.row.firstSeenAt.getTime(),
     );
 
+  const reviewRows = await db
+    .select({
+      sightingId: reviews.sightingId,
+      eventId: reviews.eventId,
+      kind: reviews.kind,
+      status: reviews.status,
+    })
+    .from(reviews)
+    .where(isNotNull(reviews.sightingId));
   const openReviewSightings = new Set(
-    (
-      await db
-        .select({ sightingId: reviews.sightingId })
-        .from(reviews)
-        .where(and(eq(reviews.status, "open"), isNotNull(reviews.sightingId)))
-    ).map((row) => row.sightingId),
+    reviewRows.filter((row) => row.status === "open").map((row) => row.sightingId),
   );
+  // "Not the same event", said by the crew: that pair is never matched again.
+  const notSame = new Map<string, Set<string>>();
+  for (const row of reviewRows) {
+    if (row.kind === "merge" && row.status === "rejected" && row.sightingId && row.eventId) {
+      addTo(notSame, row.sightingId, row.eventId);
+    }
+  }
 
   for (const { row, source, key } of pending) {
     try {
@@ -164,6 +178,7 @@ export async function resolve(db: Database, options: { now?: Date } = {}): Promi
           const input: MatchInput = { name: row.name, dates: rangeOf(fields), hostId, placeId };
           let best: { event: Event; score: number; kind: "same" | "maybe" } | undefined;
           for (const event of eventById.values()) {
+            if (notSame.get(row.id)?.has(event.id)) continue;
             const verdict = judge(input, candidateOf(event, seriesById, linkedNames));
             if (verdict && (!best || rank(verdict) > rank(best))) best = { event, ...verdict };
           }
@@ -250,7 +265,8 @@ export async function resolve(db: Database, options: { now?: Date } = {}): Promi
     const trusts = [...(linkedSources.get(event.id) ?? [])]
       .map((id) => sourceById.get(id)?.trust)
       .filter((trust) => trust !== undefined);
-    const agreed = (linkedSources.get(event.id)?.size ?? 0) >= 2;
+    // Two independent sources agree, unless the crew already said it isn't an RC event.
+    const agreed = (linkedSources.get(event.id)?.size ?? 0) >= 2 && !current.rejectedAt;
     const [updated] = await tx
       .update(events)
       .set({
@@ -259,7 +275,6 @@ export async function resolve(db: Database, options: { now?: Date } = {}): Promi
           !current.lastCheckedAt || row.lastSeenAt > current.lastCheckedAt
             ? row.lastSeenAt
             : current.lastCheckedAt,
-        // Two independent sources agree: no need to wait for the crew.
         ...(!current.publishedAt && agreed && { publishedAt: now }),
       })
       .where(eq(events.id, event.id))

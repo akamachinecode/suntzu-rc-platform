@@ -76,6 +76,27 @@ export const messageInput = z.object({
   turnstileToken: z.string().optional(),
 });
 
+/** "Was this information right?" after an event. */
+export const feedbackInput = z.object({
+  right: z.boolean(),
+  note: z.string().trim().max(1000).optional(),
+  turnstileToken: z.string().optional(),
+});
+
+/** A member suggests a correction: the fields they'd change and where they saw it. */
+export const correctionInput = z.object({
+  startDate: z.union([z.literal(""), z.iso.date()]).optional(),
+  endDate: z.union([z.literal(""), z.iso.date()]).optional(),
+  cancelled: z.boolean().optional(),
+  url: z.union([z.literal(""), z.url()]).optional(),
+  note: z.string().trim().min(5, "Tell us what's wrong.").max(1000),
+  sourceUrl: z
+    .union([z.literal(""), z.url("Paste a full link, starting with https://")])
+    .optional(),
+});
+
+export type FeedbackInput = z.output<typeof feedbackInput>;
+export type CorrectionInput = z.output<typeof correctionInput>;
 export type MemberProfile = z.output<typeof memberProfile>;
 export type MemberUpdate = z.output<typeof memberUpdate>;
 export type FollowKey = z.output<typeof followKey>;
