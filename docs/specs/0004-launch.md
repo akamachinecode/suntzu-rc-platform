@@ -1,6 +1,6 @@
 # 0004 — Launch: Servo 1.0 in Florida
 
-- **Status:** Approved 2026-10-27
+- **Status:** Approved 2026-10-27 · Built 2026-10-28 (not deployed: the owner deploys with `docs/LAUNCH.md`)
 - **Requested by:** the owner (Alejandro), 2026-10-27
 - **Approved by:** the owner, 2026-10-27
 
@@ -45,10 +45,10 @@ Everything in specs 0001–0003 runs on a laptop. To launch, Servo needs its inf
 
 ## Slices
 
-- [ ] 1. Infrastructure in code: region `us-east-2`, S3 for snapshots, SES permissions, scheduled jobs, secrets and environment variables (blocked by: 0001-1, 0003-6)
-- [ ] 2. Turnstile on public forms; rate-limiting rules documented for Cloudflare (blocked by: 0003-3)
+- [x] 1. Infrastructure in code: region `us-east-2`, S3 for snapshots, SES permissions, scheduled jobs, secrets and environment variables (blocked by: 0001-1, 0003-6)
+- [x] 2. Turnstile on public forms; rate-limiting rules documented for Cloudflare (blocked by: 0003-3)
 - [x] 3. Privacy policy and terms; footer links; cookie-free analytics decision (blocked by: 0003-1)
-- [ ] 4. Launch checklist `docs/LAUNCH.md`; final accessibility, SEO and performance pass (blocked by: all)
+- [x] 4. Launch checklist `docs/LAUNCH.md`; final accessibility, SEO and performance pass (blocked by: all)
 
 ## Open questions
 

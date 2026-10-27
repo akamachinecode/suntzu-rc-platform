@@ -12,6 +12,21 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-28 — Launch in code: us-east-2, SES, S3, scheduled jobs and the owner's checklist (spec 0004)
+
+- **What:**
+  - **Region (C1):** `sst.config.ts`, `itaca.json` and the deploy workflow move to **us-east-2**, the AWS project's only region. The domain is one constant (`DOMAIN`) at the top of `sst.config.ts`.
+  - **Email:** `sst.aws.Email` sends from the domain through SES, with DKIM and DMARC records in Cloudflare (DNS only). The API and the jobs get `MAIL_TRANSPORT=ses`.
+  - **Engine snapshots** go to an S3 bucket (`ENGINE_SNAPSHOT_DIR=s3://…`; new dependency **`@aws-sdk/client-s3` 3.1157.0**, the Itaca standard for S3): the container's disk isn't writable, and the engine re-reads snapshots when a source answers "not modified".
+  - **Scheduled jobs** (SST `CronV2` running the API image as Fargate tasks, times in Florida): the engine four times a day, `notify` every hour, the census on the 2nd of each month, and a `Setup` task (seed, census, first read) to run once per stage.
+  - **Secrets** (optional ones default to empty, and their feature stays off): `CrewEmails`, `CrewInbox`, `GoogleClientId`, `GoogleClientSecret`, `TurnstileSecretKey`, `TurnstileSiteKey`. Bedrock invoke permissions for the AI extraction.
+  - `docs/LAUNCH.md`: the owner's ordered checklist (GitHub, name and domain, Cloudflare with Turnstile and rate-limiting rules, AWS with SES production access and Bedrock model access, secrets, `dev`, production).
+- **Why:** spec 0004; the owner approved the region, the jobs, S3, SES and Bedrock (acting as Itaca engineering, 2026-10-27).
+- **Impact / risks, for Itaca engineering:**
+  - Nothing was deployed and `sst.config.ts` hasn't been type-checked against SST's platform types (`.sst/platform` is only installed by `sst install`). Run `pnpm sst diff --stage dev` first.
+  - CloudFront's certificate lives in us-east-1; whether the AWS project allows it is the first thing to check on `dev` (fallback in `LAUNCH.md`).
+  - The Bedrock IAM actions (`bedrock:InvokeModel*`) may need adjusting for the Mantle endpoint.
+
 ## 2026-10-27 — Members send events, and AI reads pasted flyers with quotes (spec 0003-3)
 
 - **What:** `/submit` (members): a link is read like any source (politely, robots.txt respected: ICS, JSON-LD, then the AI on the page's text); pasted text (a flyer, a Facebook post) is read by Claude on Amazon Bedrock. The model must quote the text for every field; `verify()` drops any field whose quote isn't in the text word for word, and any event without a quoted name and first day. Results go through resolve with community trust (they wait for the crew, credited to the member), or link to an event we already have. When nothing can be read, the text reaches the crew's inbox.

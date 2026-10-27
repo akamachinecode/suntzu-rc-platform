@@ -20,7 +20,9 @@ Servo has no separate Astro site (`apps/web`): its public pages are the product,
 Visitor ──► Cloudflare ──┬─► www: AWS (Next.js, apps/app) ──┐  x-request-id
                          └─► api: AWS (NestJS on Fargate) ◄─┘──► PostgreSQL (RDS)
 Calendar apps ──► www/events/calendar.ics ──► api/events/calendar.ics
-Engine (command) ──► organisers' sites (robots.txt, 2 s per site) ──► PostgreSQL
+Engine (schedule, 4×/day) ──► organisers' sites (robots.txt, 2 s per site) ──► PostgreSQL, S3
+Notify (schedule, hourly) ──► SES ──► members and organisers
+Census (schedule, monthly) ──► FAA and Census public data ──► PostgreSQL
 Census (command) ──► FAA open data (ArcGIS) + Census Bureau Gazetteer ──► PostgreSQL
 ```
 
@@ -28,15 +30,20 @@ Every API request gets a trace ID (`x-request-id`, or Cloudflare's `cf-ray`), re
 
 ## Integrations
 
-| Service              | What for                                                           | Where it's configured              |
-| -------------------- | ------------------------------------------------------------------ | ---------------------------------- |
-| Cloudflare           | DNS, TLS, WAF and DDoS protection in front of everything           | [`CLOUDFLARE.md`](./CLOUDFLARE.md) |
-| AWS                  | Hosting (`sst`, region `us-east-1` until C1 is settled)            | [`DEPLOY.md`](./DEPLOY.md)         |
-| GitHub               | Code, pull requests and CI                                         | [`GITHUB.md`](./GITHUB.md)         |
-| OpenFreeMap          | Base map tiles for the events maps (free, no key)                  | `apps/app/src/components/events/`  |
-| Organisers' websites | What the engine reads (each one is a row in `sources`)             | `pnpm db:seed`, `sources` table    |
-| FAA open data        | Recognised areas, fixed sites, airports, airspace (public, no key) | `apps/api/src/places/census/`      |
-| US Census Bureau     | ZIP code centres (Gazetteer ZCTA file, public, no key)             | `apps/api/src/places/census/`      |
+| Service              | What for                                                                                                       | Where it's configured                       |
+| -------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| Cloudflare           | DNS, TLS, WAF and DDoS protection in front of everything                                                       | [`CLOUDFLARE.md`](./CLOUDFLARE.md)          |
+| AWS                  | Hosting (`sst`, region `us-east-2`): Fargate, RDS, Lambda + CloudFront, S3 (engine snapshots), scheduled tasks | [`DEPLOY.md`](./DEPLOY.md), `sst.config.ts` |
+| Amazon SES           | Sign-in links, change alerts, weekly digest, club reports, try-it requests (`MAIL_TRANSPORT=ses`)              | `apps/api/src/mail/`, `docs/LAUNCH.md`      |
+| Amazon Bedrock       | Claude reads pasted flyers (`BEDROCK_MODEL_ID`), with quotes checked                                           | `apps/api/src/events/engine/ai.ts`          |
+| Google (optional)    | "Continue with Google" (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`)                                            | `apps/api/src/auth/auth.ts`                 |
+| Cloudflare Turnstile | Proves a person sent a public form (`TURNSTILE_SECRET_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`)                  | `apps/api/src/common/turnstile.ts`          |
+| FAA and US Census    | Public registers for places, airports, airspace and ZIP codes (`pnpm census`)                                  | `apps/api/src/places/census/`               |
+| GitHub               | Code, pull requests and CI                                                                                     | [`GITHUB.md`](./GITHUB.md)                  |
+| OpenFreeMap          | Base map tiles for the events maps (free, no key)                                                              | `apps/app/src/components/events/`           |
+| Organisers' websites | What the engine reads (each one is a row in `sources`)                                                         | `pnpm db:seed`, `sources` table             |
+| FAA open data        | Recognised areas, fixed sites, airports, airspace (public, no key)                                             | `apps/api/src/places/census/`               |
+| US Census Bureau     | ZIP code centres (Gazetteer ZCTA file, public, no key)                                                         | `apps/api/src/places/census/`               |
 
 ## Environments
 

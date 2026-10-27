@@ -17,7 +17,8 @@ const schema = z.object({
   COOKIE_DOMAIN: z.string().optional(),
   // At least 32 random characters: `openssl rand -base64 32`.
   BETTER_AUTH_SECRET: z.string().min(32),
-  // Events engine: folder for the raw pages and feeds it reads (local runs; S3 once deployed).
+  // Events engine: where the raw pages and feeds it reads are kept: a folder (local runs) or an
+  // S3 bucket once deployed ("s3://<bucket>").
   ENGINE_SNAPSHOT_DIR: z.string().default(".snapshots"),
   // Email: "log" prints each message to the console (local), "ses" sends it with Amazon SES.
   MAIL_TRANSPORT: z.enum(["log", "ses"]).default("log"),

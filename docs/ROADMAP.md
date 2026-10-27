@@ -57,6 +57,8 @@ The owner asked to finish the web as version 1: the events and the community, re
 | 3     | Community: accounts, follow and "going", contribute, organisers, newcomers, emails              | [`0003-community.md`](./specs/0003-community.md) |
 | 4     | Launch: infrastructure in `us-east-2`, Turnstile, legal pages, the owner's checklist            | [`0004-launch.md`](./specs/0004-launch.md)       |
 
+**Status (2026-10-28):** phases 0–4 are built and checked locally; every slice is ticked in its spec. Going live is the owner's checklist: [`LAUNCH.md`](./LAUNCH.md).
+
 **Decisions (owner, 2026-10-27):** version 1 is phases 0–4, public in Florida; profiles and builds, stored results, flying conditions and the app come after. The owner approves what `AGENTS.md` sends to Itaca engineering, and each approval is recorded in `DECISIONS.md`. Sign-in is Google or an email link, no passwords; nothing about a member is public by default. Clubs are verified by an email at their domain or a code on their website, else by the crew. Events and places cover all of Florida from day one; community and promotion start in South Florida.
 
 The tracks below are the earlier order of work. Items that Servo 1.0 covers are mapped to its slices; the rest (discovery with Parallel, outreach) continue after launch.

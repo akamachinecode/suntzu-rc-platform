@@ -19,10 +19,11 @@ First run (needs Docker for the local database):
 pnpm install
 pnpm db:up && pnpm db:migrate
 cp apps/api/.env.example apps/api/.env && cp apps/app/.env.example apps/app/.env
+pnpm db:seed && pnpm census && pnpm engine
 pnpm dev
 ```
 
-Then open http://localhost:3000, create an account and try the example notes page. API docs: http://localhost:3001/docs.
+`db:seed` loads the hand-checked events, places and sources, `census` the FAA's fields, airports and airspace for Florida, and `engine` reads every active source. Then open http://localhost:3000 and sign in with any email: locally the sign-in link is printed in the API's console instead of being emailed. Put your address in `CREW_EMAILS` (`apps/api/.env`) to open the crew console at `/crew`. API docs: http://localhost:3001/docs.
 
 ## Quick start
 
@@ -66,6 +67,7 @@ Before committing, run `pnpm check`.
 - [`docs/bits/`](./docs/bits/README.md) — the catalog of bits: each piece of behaviour, end to end
 - [`docs/specs/`](./docs/specs/README.md) — specifications of features, written with `/plan`
 - [`docs/OPERATIONS.md`](./docs/OPERATIONS.md) — running, deploying, rolling back, access and backups
+- [`docs/LAUNCH.md`](./docs/LAUNCH.md) — the owner's checklist to take Servo 1.0 live
 - [`docs/DEPLOY.md`](./docs/DEPLOY.md) — how this project is deployed to AWS
 - [`docs/CLOUDFLARE.md`](./docs/CLOUDFLARE.md) — domain, DNS, TLS and security settings
 - [`docs/GITHUB.md`](./docs/GITHUB.md) — repository setup and protections

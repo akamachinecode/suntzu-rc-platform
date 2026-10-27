@@ -153,7 +153,7 @@ Explain to the user why the request needs an engineer, write down what you found
 
 <!-- BEGIN AWS Agent Toolkit rules -->
 
-> Added by the AWS Agent Toolkit setup (2026-10-22), from `aws/agent-toolkit-for-aws` `rules/aws-starter-rules.md`. The Servo AWS project runs in **us-east-2** with CLI profile `servo`. Production in `sst.config.ts` still targets `us-east-1`: until Itaca engineering settles that (see `docs/DECISIONS.md`, 2026-10-22), do not deploy, and treat the rules above this block as the ones that win.
+> Added by the AWS Agent Toolkit setup (2026-10-22), from `aws/agent-toolkit-for-aws` `rules/aws-starter-rules.md`. The Servo AWS project runs in **us-east-2** with CLI profile `servo`, and `sst.config.ts` targets it since 2026-10-27 (C1). Deploying is the owner's step, following `docs/LAUNCH.md`; treat the rules above this block as the ones that win.
 
 ## AWS Guidance for the new AWS experience
 

@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { and, desc, eq, isNotNull, type Database } from "@workspace/db";
@@ -69,7 +70,10 @@ export interface RunReport {
 
 export interface RunOptions {
   fetcher: PoliteFetcher;
-  /** Where raw responses are kept. Local disk for now; Amazon S3 once deployed. */
+  /**
+   * Where raw responses are kept: a folder on disk (local runs), or an S3 bucket once deployed
+   * (`s3://bucket`, from ENGINE_SNAPSHOT_BUCKET).
+   */
   snapshotDir: string;
   now?: Date;
 }
@@ -296,6 +300,19 @@ async function saveSnapshot(
         ? "xml"
         : "html";
   const key = `${sourceSlug}/${now.toISOString().replace(/[:.]/g, "-")}-${hash.slice(0, 12)}.${extension}`;
+  const bucket = bucketOf(dir);
+  if (bucket) {
+    s3 ??= new S3Client({});
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: bucket,
+        Key: key,
+        Body: body,
+        ContentType: contentType ?? "text/plain",
+      }),
+    );
+    return key;
+  }
   const path = join(dir, key);
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, body);
@@ -304,11 +321,21 @@ async function saveSnapshot(
 
 async function readSnapshot(dir: string, key: string): Promise<string | undefined> {
   try {
+    const bucket = bucketOf(dir);
+    if (bucket) {
+      s3 ??= new S3Client({});
+      const object = await s3.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
+      return await object.Body?.transformToString("utf8");
+    }
     return await readFile(join(dir, key), "utf8");
   } catch {
-    return undefined; // snapshots stay on the machine that fetched them
+    return undefined; // a local snapshot stays on the machine that fetched it
   }
 }
+
+let s3: S3Client | undefined;
+const bucketOf = (dir: string) =>
+  dir.startsWith("s3://") ? dir.slice(5).replace(/\/+$/, "") : undefined;
 
 function countBy(values: string[]): Map<string, number> {
   const counts = new Map<string, number>();

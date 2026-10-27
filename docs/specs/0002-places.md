@@ -1,6 +1,6 @@
 # 0002 — Places and clubs
 
-- **Status:** Approved 2026-10-27
+- **Status:** Approved 2026-10-27 · Done 2026-10-28 (locally; deploy in spec 0004)
 - **Requested by:** the owner (Alejandro), 2026-10-27
 - **Approved by:** the owner, 2026-10-27
 
