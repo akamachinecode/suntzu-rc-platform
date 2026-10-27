@@ -21,6 +21,7 @@
     "db:migrate": "pnpm build:packages && pnpm --filter @workspace/api build && pnpm --filter @workspace/api db:migrate",
     "db:seed": "pnpm build:packages && pnpm --filter @workspace/api build && pnpm --filter @workspace/api db:seed",
     "engine": "pnpm build:packages && pnpm --filter @workspace/api build && pnpm --filter @workspace/api engine",
+    "census": "pnpm build:packages && pnpm --filter @workspace/api build && pnpm --filter @workspace/api census",
     "deploy:staging": "sst deploy --stage staging",
     "deploy:production": "sst deploy --stage production"
   },

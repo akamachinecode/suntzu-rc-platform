@@ -78,17 +78,18 @@ A **bit** is the smallest piece of behaviour someone can trigger and check end t
 
 ## Commands
 
-| Command          | What it does                                                   |
-| ---------------- | -------------------------------------------------------------- |
-| `pnpm dev`       | Local development server                                       |
-| `pnpm build`     | Production build                                               |
-| `pnpm check`     | Format check + lint + typecheck + tests + build. Must pass     |
-| `pnpm format`    | Auto-format every file (Prettier)                              |
-| `pnpm lint`      | ESLint                                                         |
-| `pnpm typecheck` | TypeScript type checking                                       |
-| `pnpm test`      | Unit tests (Vitest)                                            |
-| `pnpm db:seed`   | Load the events engine's starting data into the local database |
-| `pnpm engine`    | Run the events engine once (`pnpm engine <source>` for one)    |
+| Command          | What it does                                                      |
+| ---------------- | ----------------------------------------------------------------- |
+| `pnpm dev`       | Local development server                                          |
+| `pnpm build`     | Production build                                                  |
+| `pnpm check`     | Format check + lint + typecheck + tests + build. Must pass        |
+| `pnpm format`    | Auto-format every file (Prettier)                                 |
+| `pnpm lint`      | ESLint                                                            |
+| `pnpm typecheck` | TypeScript type checking                                          |
+| `pnpm test`      | Unit tests (Vitest)                                               |
+| `pnpm db:seed`   | Load the events engine's starting data into the local database    |
+| `pnpm engine`    | Run the events engine once (`pnpm engine <source>` for one)       |
+| `pnpm census`    | Load the FAA registers and ZIP codes (`pnpm census fria` for one) |
 
 ## Stack: product platform (`platform`)
 

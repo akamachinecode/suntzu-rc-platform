@@ -1,0 +1,79 @@
+{
+  "features": [
+    {
+      "attributes": {
+        "IDENT": "01FD",
+        "NAME": "Advent Health Altamonte Springs",
+        "TYPE_CODE": "HP",
+        "SERVCITY": "ALTAMONTE SPRINGS",
+        "STATE": "FL",
+        "OPERSTATUS": "OPERATIONAL",
+        "PRIVATEUSE": 1
+      },
+      "geometry": {
+        "x": -81.369703,
+        "y": 28.666644
+      }
+    },
+    {
+      "attributes": {
+        "IDENT": "AAF",
+        "NAME": "Apalachicola Rgnl-Cleve Randolph Fld",
+        "TYPE_CODE": "AD",
+        "SERVCITY": "APALACHICOLA",
+        "STATE": "FL",
+        "OPERSTATUS": "OPERATIONAL",
+        "PRIVATEUSE": 0
+      },
+      "geometry": {
+        "x": -85.027382,
+        "y": 29.727555
+      }
+    },
+    {
+      "attributes": {
+        "IDENT": "80FA",
+        "NAME": "Lake Marian",
+        "TYPE_CODE": "SP",
+        "SERVCITY": "KENANSVILLE",
+        "STATE": "FL",
+        "OPERSTATUS": "INDEFINITE",
+        "PRIVATEUSE": 1
+      },
+      "geometry": {
+        "x": -81.083892,
+        "y": 27.886394
+      }
+    },
+    {
+      "attributes": {
+        "IDENT": "X44",
+        "NAME": "Miami",
+        "TYPE_CODE": "SP",
+        "SERVCITY": "MIAMI",
+        "STATE": "FL",
+        "OPERSTATUS": "OPERATIONAL",
+        "PRIVATEUSE": 0
+      },
+      "geometry": {
+        "x": -80.17028,
+        "y": 25.778338
+      }
+    },
+    {
+      "attributes": {
+        "IDENT": "MIA",
+        "NAME": "Miami Intl",
+        "TYPE_CODE": "AD",
+        "SERVCITY": "MIAMI",
+        "STATE": "FL",
+        "OPERSTATUS": "OPERATIONAL",
+        "PRIVATEUSE": 0
+      },
+      "geometry": {
+        "x": -80.290119,
+        "y": 25.795366
+      }
+    }
+  ]
+}

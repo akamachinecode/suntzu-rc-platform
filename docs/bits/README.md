@@ -23,6 +23,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [community.share-build](./community.share-build.md) | A visitor shares a build                                                 | read in code | none yet             |
 | [engine.run](./engine.run.md)                       | The engine reads its sources                                             | read in code | engine tests         |
 | [db.seed](./db.seed.md)                             | The starting data is loaded                                              | read in code | none yet             |
+| [census.import](./census.import.md)                 | Public registers become places, hosts, airports, airspace and ZIP codes  | verified     | census tests         |
 
 **Status:** `verified` (someone ran it and saw the result) · `read in code` (followed in the code, not run) · `not verified` · `broken`.
 

@@ -22,6 +22,8 @@ src/
   seed.ts            loads the events engine's starting data (`pnpm db:seed`, local only)
   engine.ts          runs the events engine once (`pnpm engine [source…]`)
   events/engine/     the engine: polite fetcher, readers (ICS, JSON-LD), run; tests next to the code
+  census.ts          loads the public registers into places and hosts (`pnpm census [dataset…]`)
+  places/census/     the census: FAA and Census Bureau readers, matching, loading; tests next to the code
   openapi.ts         writes openapi.json during `pnpm build`
 openapi.json         the API contract (generated, committed)
 ```
