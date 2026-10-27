@@ -3,7 +3,8 @@ import { ALLOW_ALL, DISALLOW_ALL, parseRobots, type RobotsRules } from "./robots
 // The engine's only way out to the web. It says who it is, reads robots.txt before touching a
 // site and obeys it, waits between requests to the same site, and asks for a page only if it
 // changed (ETag / Last-Modified). There is no switch to skip robots.txt: a source that needs
-// it gets the organiser's permission another way (a feed they give us, a partnership).
+// it gets the organiser's permission another way (a feed they give us, a partnership). A bot
+// wall (a captcha or region block shown instead of the page) is reported, never worked around.
 
 // The contact URL becomes Servo's own page once the domain exists (roadmap C3).
 export const USER_AGENT = "ServoBot/0.1 (+https://github.com/ITACA-TECHNOLOGIES/rc-landing)";
@@ -20,7 +21,33 @@ export interface Page {
 
 export type FetchOutcome =
   | { ok: true; page: Page }
-  | { ok: false; reason: "robots" | "error"; url: string; error: string; status?: number };
+  | {
+      ok: false;
+      reason: "robots" | "bot-wall" | "error";
+      url: string;
+      error: string;
+      status?: number;
+    };
+
+// Pages some sites show bots instead of the content. We never try to get past one: the source
+// waits for the organiser's permission or a partnership (DISCOVERY.md, layer 4).
+const BOT_WALLS: [name: string, sign: RegExp][] = [
+  // Every DualRates club site, robots.txt included, from outside its allowed regions.
+  ["DualRates region block", /<title>\s*DualRates Security Protection Sentry\s*<\/title>/i],
+  ["SiteGround captcha", /\/\.well-known\/sgcaptcha\//],
+  [
+    "Cloudflare challenge",
+    /<title>\s*(Just a moment\.\.\.|Attention Required! \| Cloudflare)\s*<\/title>/i,
+  ],
+];
+
+/** The name of the bot wall a response is, if it is one. */
+export function botWall(body: string): string | undefined {
+  return BOT_WALLS.find(([, sign]) => sign.test(body))?.[0];
+}
+
+/** A site's robots.txt rules, or the wall it showed instead of them. */
+type SiteRules = RobotsRules & { wall?: string };
 
 export interface FetcherOptions {
   userAgent?: string;
@@ -37,7 +64,7 @@ export class PoliteFetcher {
   private readonly timeoutMs: number;
   private readonly fetchImpl: typeof fetch;
   private readonly sleep: (ms: number) => Promise<void>;
-  private readonly robots = new Map<string, Promise<RobotsRules>>();
+  private readonly robots = new Map<string, Promise<SiteRules>>();
   private readonly lastRequest = new Map<string, number>();
 
   constructor(options: FetcherOptions = {}) {
@@ -54,6 +81,14 @@ export class PoliteFetcher {
   ): Promise<FetchOutcome> {
     const target = new URL(url);
     const rules = await this.rulesFor(target);
+    if (rules.wall) {
+      return {
+        ok: false,
+        reason: "bot-wall",
+        url,
+        error: `${target.host} answers with a ${rules.wall}, even for robots.txt`,
+      };
+    }
     if (!rules.allows(target.pathname + target.search)) {
       return {
         ok: false,
@@ -77,6 +112,16 @@ export class PoliteFetcher {
         ...optional("etag", response.headers.get("etag")),
         ...optional("lastModified", response.headers.get("last-modified")),
       };
+      const wall = botWall(page.body);
+      if (wall) {
+        return {
+          ok: false,
+          reason: "bot-wall",
+          url,
+          status: response.status,
+          error: `${wall} instead of the page`,
+        };
+      }
       if (response.status !== 304 && !response.ok) {
         return {
           ok: false,
@@ -92,12 +137,17 @@ export class PoliteFetcher {
     }
   }
 
-  private rulesFor(target: URL): Promise<RobotsRules> {
+  private rulesFor(target: URL): Promise<SiteRules> {
     let rules = this.robots.get(target.origin);
     if (!rules) {
       rules = this.request(new URL("/robots.txt", target.origin), ALLOW_ALL, {})
-        .then(async (response) => {
-          if (response.ok) return parseRobots(await response.text(), this.userAgent);
+        .then(async (response): Promise<SiteRules> => {
+          if (response.ok) {
+            const text = await response.text();
+            // A wall instead of robots.txt: we can't know the rules, so nothing is allowed.
+            const wall = botWall(text);
+            return wall ? { ...DISALLOW_ALL, wall } : parseRobots(text, this.userAgent);
+          }
           // RFC 9309: no robots.txt (4xx) allows everything; a server error allows nothing.
           return response.status >= 500 ? DISALLOW_ALL : ALLOW_ALL;
         })

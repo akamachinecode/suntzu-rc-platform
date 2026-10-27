@@ -21,7 +21,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [places.list](./places.list.md)                     | The events map gets its places                                           | read in code | none yet             |
 | [contact.send](./contact.send.md)                   | A visitor sends the contact form                                         | read in code | none yet             |
 | [community.share-build](./community.share-build.md) | A visitor shares a build                                                 | read in code | none yet             |
-| [engine.run](./engine.run.md)                       | The engine reads its sources                                             | read in code | engine tests         |
+| [engine.run](./engine.run.md)                       | The engine reads its sources                                             | verified     | engine tests         |
 | [db.seed](./db.seed.md)                             | The starting data is loaded                                              | read in code | none yet             |
 
 **Status:** `verified` (someone ran it and saw the result) · `read in code` (followed in the code, not run) · `not verified` · `broken`.

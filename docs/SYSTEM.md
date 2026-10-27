@@ -4,14 +4,14 @@ What runs where, and how the pieces connect. Keep it current: a change to a piec
 
 ## Pieces
 
-| Piece         | What                                                                                                                        | Code                                       | URL                        |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | -------------------------- |
-| Site and app  | Next.js 16: the public pages (home, guides, events, places, community) and the signed-in screens; data only through the API | `apps/app/`                                | https://www.example.com    |
-| API           | NestJS: sign-in (Better Auth), the public events API and calendar feeds, business rules, data                               | `apps/api/`                                | https://api.example.com    |
-| Events engine | Reads sources (ICS feeds, schema.org JSON-LD pages), stores what each one says as sightings; `pnpm engine`                  | `apps/api/src/events/engine/`              | runs from the command line |
-| Database      | PostgreSQL (Amazon RDS): users, events, places, hosts, sources and the evidence behind them                                 | `packages/db/`                             | private network only       |
-| Contracts     | Zod schemas shared by API and app; typed client generated from `openapi.json`                                               | `packages/shared/`, `packages/api-client/` | —                          |
-| Theme and UI  | shadcn/ui components and Servo's brand tokens                                                                               | `packages/ui/`                             | —                          |
+| Piece         | What                                                                                                                           | Code                                       | URL                        |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------ | -------------------------- |
+| Site and app  | Next.js 16: the public pages (home, guides, events, places, community) and the signed-in screens; data only through the API    | `apps/app/`                                | https://www.example.com    |
+| API           | NestJS: sign-in (Better Auth), the public events API and calendar feeds, business rules, data                                  | `apps/api/`                                | https://api.example.com    |
+| Events engine | Reads sources (ICS, schema.org JSON-LD, WordPress events API, Wild Apricot RSS, schedule tables) into sightings; `pnpm engine` | `apps/api/src/events/engine/`              | runs from the command line |
+| Database      | PostgreSQL (Amazon RDS): users, events, places, hosts, sources and the evidence behind them                                    | `packages/db/`                             | private network only       |
+| Contracts     | Zod schemas shared by API and app; typed client generated from `openapi.json`                                                  | `packages/shared/`, `packages/api-client/` | —                          |
+| Theme and UI  | shadcn/ui components and Servo's brand tokens                                                                                  | `packages/ui/`                             | —                          |
 
 Servo has no separate Astro site (`apps/web`): its public pages are the product, so they live in `apps/app` (see `DECISIONS.md`, 2026-10-21).
 

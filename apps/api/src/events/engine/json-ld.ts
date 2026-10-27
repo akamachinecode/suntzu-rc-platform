@@ -32,12 +32,15 @@ function isEvent(node: Node): boolean {
   return types.some((type) => typeof type === "string" && /(Event|Festival)$/.test(type));
 }
 
-/** Every Event node, wherever it sits: top level, arrays or @graph. */
+/** Every Event node, wherever it sits: top level, arrays, @graph or a list of events. */
 export function findEvents(value: unknown): Node[] {
   if (Array.isArray(value)) return value.flatMap(findEvents);
   if (!isNode(value)) return [];
   if (isEvent(value)) return [value];
-  return findEvents(value["@graph"] ?? []);
+  // An ItemList of ListItems, each with its event in `item` (RCSignup's state pages).
+  return [value["@graph"], value.itemListElement, value.item].flatMap((child) =>
+    findEvents(child ?? []),
+  );
 }
 
 const text = (value: unknown) => (typeof value === "string" ? value.trim() : undefined);

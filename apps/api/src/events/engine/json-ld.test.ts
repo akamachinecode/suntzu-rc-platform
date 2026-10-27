@@ -49,6 +49,43 @@ describe("readJsonLd on the AMPS event pages", () => {
   });
 });
 
+// rcsignup-florida.html: RCSignup's Florida page (2026-10-27), its schema.org list of upcoming
+// races trimmed to three. No personal data on the page.
+describe("readJsonLd on RCSignup's Florida page", () => {
+  const url = "https://rcsignup.com/rc-races/florida/";
+  const ground = { discipline: "ground" as const, timezone: "America/New_York" };
+  const result = readJsonLd(fixture("rcsignup-florida.html"), url, ground);
+
+  it("reads every race in the page's list of events", () => {
+    expect(result.skipped).toEqual([]);
+    expect(result.sightings.map((s) => [s.fields.startDate, s.fields.kind, s.fields.name])).toEqual(
+      [
+        ["2026-11-04", "competition", "JCONCEPTS 2026 FLORIDA CARPET CHAMPIONSHIPS"],
+        ["2026-11-06", "competition", "DIALED-RC-X Championship 2026-2027  Round 2"],
+        ["2026-11-20", "race", "B&T R/C Raceway-Community Charity Race-Nov 20-22, 2026"],
+      ],
+    );
+  });
+
+  it("keys each race by its RCSignup page and reads the track and town", () => {
+    expect(result.sightings[0]).toMatchObject({
+      externalId: "https://rcsignup.com/events/displayEvent.cfm?ID=16517",
+      fields: {
+        discipline: "ground",
+        endDate: "2026-11-08",
+        placeText: "Beachline Raceway, COCOA, FL",
+        url: "https://rcsignup.com/events/displayEvent.cfm?ID=16517",
+      },
+    });
+  });
+
+  it("ignores the breadcrumb list", () => {
+    expect(
+      findEvents({ "@type": "BreadcrumbList", itemListElement: [{ item: "https://x.test" }] }),
+    ).toEqual([]);
+  });
+});
+
 describe("readJsonLd edge cases", () => {
   const page = (data: unknown) =>
     `<script type="application/ld+json">${JSON.stringify(data)}</script>`;

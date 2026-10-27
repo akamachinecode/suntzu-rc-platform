@@ -8,18 +8,50 @@ import { z } from "zod";
 import type { Page, PoliteFetcher } from "./fetcher.js";
 import { readIcs } from "./ics.js";
 import { findLinks, readJsonLd } from "./json-ld.js";
-import { fingerprint, type ReadContext, type ReadResult } from "./read.js";
+import { fingerprint, onlyPlaces, type ReadContext, type ReadResult } from "./read.js";
+import { readScheduleTable } from "./schedule-table.js";
+import { readTheEventsCalendar } from "./the-events-calendar.js";
+import { readWildApricot } from "./wild-apricot.js";
 
 // One run of one source: fetch → keep a snapshot → read → store sightings. Merging sightings
 // into events (resolve) is the next step of the engine and doesn't happen here.
 
+type Reader = (body: string, pageUrl: string, context: ReadContext) => ReadResult;
+
+/**
+ * Readers for `api` and `html` sources, by the platform the site runs on. A platform that
+ * already publishes ICS or schema.org data needs no reader of its own: its sources use the
+ * `ics` or `json-ld` adapter, and `platform` only records what the site runs on.
+ */
+export const PLATFORM_READERS: Record<string, { adapter: "api" | "html"; read: Reader }> = {
+  // WordPress + The Events Calendar: /wp-json/tribe/events/v1/events.
+  "the-events-calendar": { adapter: "api", read: readTheEventsCalendar },
+  // Wild Apricot's events feed: /events/RSS.
+  "wild-apricot": { adapter: "api", read: readWildApricot },
+  // A table of date | name | town under a year heading (Extreme Flight's schedule).
+  "schedule-table": { adapter: "html", read: readScheduleTable },
+};
+
+const pattern = z.string().refine((value) => {
+  try {
+    return Boolean(new RegExp(value));
+  } catch {
+    return false;
+  }
+}, "Not a regular expression");
+
 /** Adapter settings kept in `sources.config`. */
 export const sourceConfig = z.looseObject({
-  /** The feed to read when it isn't the source's own URL (an ICS link). */
+  /** What to read when it isn't the source's own URL: an ICS link, an API, an RSS feed. */
   feedUrl: z.url().optional(),
+  /** What the site runs on (wix, dualrates…). For `api` and `html` sources it picks the reader. */
+  platform: z.string().optional(),
   discipline: discipline.optional(),
   /** JSON-LD sources: follow links whose path matches this pattern (event pages). */
-  followLinks: z.string().optional(),
+  followLinks: pattern.optional(),
+  /** Keep only sightings whose place matches this pattern (",\\s*FL$" for Florida). */
+  onlyPlaces: pattern.optional(),
+  /** Pages read per run: followed links, or an API's pages. */
   maxPages: z.number().int().positive().max(100).default(20),
   timezone: z.string().default("America/New_York"),
 });
@@ -67,6 +99,7 @@ export async function runSource(
     timezone: config.data.timezone,
     ...(config.data.discipline && { discipline: config.data.discipline }),
   };
+  const area = config.data.onlyPlaces ? new RegExp(config.data.onlyPlaces) : undefined;
 
   /** Fetches one URL, records it, keeps a snapshot. Undefined when there is nothing to read. */
   async function load(
@@ -158,7 +191,8 @@ export async function runSource(
     return { page, fetchId: saved!.id };
   }
 
-  async function store(result: ReadResult, fetchId: string) {
+  async function store(read: ReadResult, fetchId: string) {
+    const result = area ? onlyPlaces(read, area) : read;
     for (const [reason, count] of countBy(result.skipped.map((s) => s.reason))) {
       report.skipped[reason] = (report.skipped[reason] ?? 0) + count;
     }
@@ -210,6 +244,25 @@ export async function runSource(
           await store(readJsonLd(loaded.page.body, loaded.page.url, context), loaded.fetchId);
       }
     }
+  } else if (source.adapter === "api" || source.adapter === "html") {
+    const platform = config.data.platform;
+    const reader =
+      platform && Object.hasOwn(PLATFORM_READERS, platform)
+        ? PLATFORM_READERS[platform]
+        : undefined;
+    if (!reader || reader.adapter !== source.adapter) {
+      report.errors.push(`No ${source.adapter} reader for platform "${platform ?? "(none)"}" yet`);
+    } else {
+      // An API answers a page at a time: follow its next page, up to maxPages.
+      let url: string | undefined = config.data.feedUrl ?? source.url;
+      for (let page = 0; url && page < config.data.maxPages; page++) {
+        const loaded = await load(url, true);
+        if (!loaded) break;
+        const result = reader.read(loaded.page.body, loaded.page.url, context);
+        await store(result, loaded.fetchId);
+        url = result.next;
+      }
+    }
   } else {
     report.errors.push(`No reader for "${source.adapter}" sources yet`);
   }
@@ -239,7 +292,9 @@ async function saveSnapshot(
     ? "ics"
     : contentType?.includes("json")
       ? "json"
-      : "html";
+      : /\b(text|application)\/(rss\+)?xml\b/.test(contentType ?? "")
+        ? "xml"
+        : "html";
   const key = `${sourceSlug}/${now.toISOString().replace(/[:.]/g, "-")}-${hash.slice(0, 12)}.${extension}`;
   const path = join(dir, key);
   await mkdir(dirname(path), { recursive: true });
