@@ -39,6 +39,10 @@ const schema = z.object({
     ),
   // Where the crew hears about new messages and "try it" requests nobody else can take.
   CREW_INBOX: z.string().optional(),
+  // AI extraction of events from pasted text (Claude on Amazon Bedrock). Off when unset: pasted
+  // text then reaches the crew as a message.
+  BEDROCK_MODEL_ID: z.string().optional(),
+  BEDROCK_FALLBACK_MODEL_ID: z.string().default("anthropic.claude-opus-4-8"),
   // Cloudflare Turnstile: public forms are checked when it's set (production), open when it isn't.
   TURNSTILE_SECRET_KEY: z.string().optional(),
 });

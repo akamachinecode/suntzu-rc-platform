@@ -20,6 +20,8 @@
     "notify": "node --env-file-if-exists=.env dist/notify.js"
   },
   "dependencies": {
+    "@anthropic-ai/bedrock-sdk": "1.1.0",
+    "@anthropic-ai/sdk": "1.3.0",
     "@aws-sdk/client-sesv2": "3.1157.0",
     "@nestjs/common": "12.2.0",
     "@nestjs/core": "12.2.0",

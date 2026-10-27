@@ -12,6 +12,7 @@ const ROUTES = [
   "/clubs",
   "/community",
   "/try",
+  "/submit",
   "/organise",
   "/privacy",
   "/terms",

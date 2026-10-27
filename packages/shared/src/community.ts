@@ -126,3 +126,25 @@ export const tryResult = z.object({
 
 export type TryInput = z.output<typeof tryInput>;
 export type TryResult = z.output<typeof tryResult>;
+
+/** A member sends an event: a link the engine reads, or text (a flyer, a post) the AI reads. */
+export const submissionInput = z
+  .object({
+    url: z.union([z.literal(""), z.url("Paste a full link, starting with https://")]).optional(),
+    text: z.string().trim().max(8000).optional(),
+  })
+  .refine((value) => Boolean(value.url) || (value.text?.length ?? 0) >= 20, {
+    message: "Paste a link to the event, or its text (at least a couple of lines).",
+    path: ["text"],
+  });
+
+export const submissionResult = z.object({
+  // queued: the crew will check it; known: it's already on Servo; inbox: a person will read it.
+  outcome: z.enum(["queued", "known", "inbox"]),
+  events: z.array(
+    z.object({ name: z.string(), startDate: z.iso.date(), slug: z.string().nullable() }),
+  ),
+});
+
+export type SubmissionInput = z.output<typeof submissionInput>;
+export type SubmissionResult = z.output<typeof submissionResult>;

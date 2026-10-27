@@ -12,6 +12,15 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-27 — Members send events, and AI reads pasted flyers with quotes (spec 0003-3)
+
+- **What:** `/submit` (members): a link is read like any source (politely, robots.txt respected: ICS, JSON-LD, then the AI on the page's text); pasted text (a flyer, a Facebook post) is read by Claude on Amazon Bedrock. The model must quote the text for every field; `verify()` drops any field whose quote isn't in the text word for word, and any event without a quoted name and first day. Results go through resolve with community trust (they wait for the crew, credited to the member), or link to an event we already have. When nothing can be read, the text reaches the crew's inbox.
+- **Why:** principle 2 and 3 in `LANDSCAPE.md`: Facebook-only events reach Servo through people, and trust stays visible (the exact words are in the crew's review).
+- **Impact:**
+  - New dependencies **`@anthropic-ai/sdk` 1.3.0** (structured outputs with Zod, the refusal-fallback middleware) and **`@anthropic-ai/bedrock-sdk` 1.1.0** (the Bedrock Mantle client: Messages API on Bedrock, AWS credentials from the environment) in `apps/api`.
+  - Model `claude-opus-5-5` on Bedrock (`BEDROCK_MODEL_ID=anthropic.claude-opus-5-5`) at `low` effort, with a client-side fallback to `anthropic.claude-opus-4-8` if a request is declined (`BEDROCK_FALLBACK_MODEL_ID`). Off until `BEDROCK_MODEL_ID` is set; model access must be turned on in the Bedrock console of the project's region, and the API's task role needs `bedrock:InvokeModel` (spec 0004).
+  - What the model sees is only the pasted text and today's date; it is told never to return people's names, phones or emails. Not verified against Bedrock tonight: no AWS calls were made.
+
 ## 2026-10-27 — Emails Servo sends on its own, and "try it" (specs 0003-5, 0003-6)
 
 - **What:** `pnpm notify` sends change alerts (a followed or "going" event moved or was cancelled), the weekly "this weekend near you" (Thursdays), and organisers' monthly reports (the 1st), and deletes messages and try-it requests older than 12 months. Every email is recorded in `notifications` before it's sent, so runs can repeat without duplicates. Each email has a one-click unsubscribe (`POST /unsubscribe`, RFC 8058); the link in the email opens `/unsubscribe`, which acts only when the button is pressed (mail scanners open links). `/try` sends a newcomer's request to the organisers of up to three nearby clubs that welcome newcomers, with the person's consent, or to the crew.

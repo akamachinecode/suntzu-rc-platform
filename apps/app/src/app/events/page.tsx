@@ -64,7 +64,7 @@ export default async function EventsPage({ searchParams }: PageProps<"/events">)
             Running a race, a fly-in or a club open day?
           </p>
           <Button asChild size="lg" variant="outline">
-            <Link href="/contact?topic=event">Send us your event</Link>
+            <Link href="/submit">Send us your event</Link>
           </Button>
         </div>
       </section>
