@@ -105,3 +105,24 @@ export type ViewerState = z.output<typeof viewerState>;
 export type PeopleCount = z.output<typeof peopleCount>;
 export type MessageInput = z.output<typeof messageInput>;
 export type FollowTargetKind = FollowKey["target"];
+
+/** "I'd like to try": a newcomer asks to be put in touch with a club, track or shop nearby. */
+export const tryInput = z.object({
+  name: z.string().trim().min(1, "Please enter your name.").max(100),
+  email: z.email("Please enter a valid email address."),
+  zip: z.string().regex(/^\d{5}$/, "A 5-digit Florida ZIP code."),
+  discipline,
+  message: z.string().trim().max(1000).optional(),
+  // They agree that the club gets their name and email to reply.
+  consent: z.literal(true, "We need your OK to pass your name and email to the club."),
+  turnstileToken: z.string().optional(),
+});
+
+export const tryResult = z.object({
+  // Who it went to: the clubs (by name), or the crew when no club nearby takes newcomers yet.
+  sentTo: z.array(z.string()),
+  toCrew: z.boolean(),
+});
+
+export type TryInput = z.output<typeof tryInput>;
+export type TryResult = z.output<typeof tryResult>;

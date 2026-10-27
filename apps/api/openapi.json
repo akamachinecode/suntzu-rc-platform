@@ -6704,6 +6704,135 @@
           "organise"
         ]
       }
+    },
+    "/try": {
+      "post": {
+        "operationId": "NewcomersController_request",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  "zip": {
+                    "type": "string",
+                    "pattern": "^\\d{5}$"
+                  },
+                  "discipline": {
+                    "type": "string",
+                    "enum": [
+                      "air",
+                      "rotor",
+                      "ground",
+                      "fpv"
+                    ]
+                  },
+                  "message": {
+                    "type": "string",
+                    "maxLength": 1000
+                  },
+                  "consent": {
+                    "type": "boolean",
+                    "enum": [
+                      true
+                    ]
+                  },
+                  "turnstileToken": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "email",
+                  "zip",
+                  "discipline",
+                  "consent"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sentTo": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "toCrew": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "sentTo",
+                    "toCrew"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "newcomers"
+        ]
+      }
+    },
+    "/crew/try": {
+      "get": {
+        "operationId": "NewcomersController_open",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "newcomers"
+        ]
+      }
+    },
+    "/crew/try/{id}/sent": {
+      "post": {
+        "operationId": "NewcomersController_sent",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "newcomers"
+        ]
+      }
     }
   },
   "info": {

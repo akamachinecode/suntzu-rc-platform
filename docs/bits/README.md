@@ -46,6 +46,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [organiser.publish](./organiser.publish.md)         | An organiser publishes or changes an event                               | verified     | none yet                            |
 | [organiser.widget](./organiser.widget.md)           | A club's website shows its Servo calendar                                | verified     | none yet                            |
 | [places.confirm](./places.confirm.md)               | A steward confirms a place's details                                     | read in code | none yet                            |
+| [try.request](./try.request.md)                     | A newcomer asks to try RC                                                | verified     | none yet                            |
 
 **Status:** `verified` (someone ran it and saw the result) · `read in code` (followed in the code, not run) · `not verified` · `broken`.
 

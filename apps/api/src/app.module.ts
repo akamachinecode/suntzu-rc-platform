@@ -8,6 +8,7 @@ import { EventsModule } from "./events/events.module.js";
 import { HealthController } from "./health/health.controller.js";
 import { InboxModule } from "./inbox/inbox.module.js";
 import { MembersModule } from "./members/members.module.js";
+import { NewcomersModule } from "./newcomers/newcomers.module.js";
 import { NotesModule } from "./notes/notes.module.js";
 import { OrganiseModule } from "./organise/organise.module.js";
 import { PlacesModule } from "./places/places.module.js";
@@ -23,6 +24,7 @@ import { PlacesModule } from "./places/places.module.js";
     InboxModule,
     PlacesModule,
     OrganiseModule,
+    NewcomersModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_INTERCEPTOR, useClass: BitInterceptor }],

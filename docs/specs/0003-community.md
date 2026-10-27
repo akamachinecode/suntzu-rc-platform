@@ -67,7 +67,7 @@ The hobby grows through people, but RC communities are scattered across Facebook
 - [x] 2. Follow, "going" and the private calendar feed (blocked by: 1)
 - [ ] 3. Contribute: send an event (link or text, AI with quotes), suggest a correction; contact and builds reach the crew's inbox (blocked by: 1, 0001-2)
 - [x] 4. Organisers: claim and verify a club, badge, publish and edit events, the widget (blocked by: 1, 0002-2)
-- [ ] 5. Newcomers: "Try it" requests and beginner-friendly events; stewards confirm their places yearly (blocked by: 4)
+- [x] 5. Newcomers: "Try it" requests and beginner-friendly events; stewards confirm their places yearly (blocked by: 4)
 - [ ] 6. Emails: change alerts, weekly digest, organiser's monthly report (blocked by: 2, 4)
 
 ## Open questions
