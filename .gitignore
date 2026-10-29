@@ -8,10 +8,16 @@ build/
 out/
 .next/
 .astro/
-.open-next/
-.sst/
 *.tsbuildinfo
 next-env.d.ts
+
+# Terraform state and plans (.terraform.lock.hcl is committed)
+.terraform/
+*.tfstate
+*.tfstate.*
+tfplan
+*.tfplan
+crash.log
 
 # events engine snapshots (pnpm engine)
 .snapshots/

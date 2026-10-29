@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-# Production image for apps/api. Built from the repository root by SST (sst.config.ts):
+# Production image for apps/api. Built from the repository root by .github/workflows/deploy.yml:
 #   docker build -f apps/api/Dockerfile .
 
 FROM node:24-alpine AS build

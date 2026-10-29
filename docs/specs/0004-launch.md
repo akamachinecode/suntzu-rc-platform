@@ -59,3 +59,4 @@ Everything in specs 0001–0003 runs on a laptop. To launch, Servo needs its inf
 ## Needs Itaca engineering
 
 - Region, scheduled jobs, S3, SES and Bedrock: approved by the owner acting as Itaca engineering, 2026-10-27. Deploying (`sst deploy`) is not part of this spec: the owner runs it from the checklist.
+- 2026-10-29: the same infrastructure moved from SST to Terraform (`infra/`, create-itaca 0.3.0); the deploy is still the owner's, from the checklist (`DECISIONS.md`).

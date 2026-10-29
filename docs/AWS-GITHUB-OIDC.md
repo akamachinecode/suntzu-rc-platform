@@ -55,7 +55,7 @@ aws iam create-role \
   --assume-role-policy-document file://trust-policy.json
 ```
 
-Then grant the permissions this deploy target needs — see "Deploy role permissions" in [`DEPLOY.md`](./DEPLOY.md).
+Then grant it `AdministratorAccess` in a dedicated account (one per client or project); in a shared account, ask Itaca engineering for a scoped policy. `infra/bootstrap` does steps 1, 3 and 4 for you: see [`TERRAFORM.md`](./TERRAFORM.md).
 
 ## 4. Tell GitHub which role to use
 

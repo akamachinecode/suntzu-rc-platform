@@ -1,5 +1,5 @@
 # Local development services. `pnpm db:up` starts them, `pnpm db:down` stops them.
-# Production uses Amazon RDS (see sst.config.ts); this file is never deployed.
+# Production uses Amazon RDS (see infra/); this file is never deployed.
 services:
   db:
     image: postgres:18-alpine

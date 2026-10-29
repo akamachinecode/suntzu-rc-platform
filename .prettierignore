@@ -1,11 +1,8 @@
 dist/
 .next/
 out/
-.sst/
-.open-next/
 pnpm-lock.yaml
 next-env.d.ts
-sst-env.d.ts
 packages/ui/src/components/
 # Generated: the API contract, its typed client and the SQL migrations.
 apps/api/openapi.json

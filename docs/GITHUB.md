@@ -42,13 +42,12 @@ In **Settings → Advanced Security** (or `Code security`):
 
 ## 4. Deployment secrets and variables
 
-Deploys use the GitHub environment `production` (see [`DEPLOY.md`](./DEPLOY.md)):
+Deploys use one GitHub environment per stage: `production` and `staging` (see [`DEPLOY.md`](./DEPLOY.md)):
 
-| Name                    | Type     | Value                                                     |
-| ----------------------- | -------- | --------------------------------------------------------- |
-| `AWS_DEPLOY_ROLE_ARN`   | variable | IAM role assumed via OIDC ([guide](./AWS-GITHUB-OIDC.md)) |
-| `CLOUDFLARE_ACCOUNT_ID` | variable | Cloudflare account that owns the DNS zone                 |
-| `CLOUDFLARE_API_TOKEN`  | secret   | Token with DNS edit permission on the zone                |
+| Name                   | Type     | Value                                                                                  |
+| ---------------------- | -------- | -------------------------------------------------------------------------------------- |
+| `AWS_DEPLOY_ROLE_ARN`  | variable | IAM role assumed via OIDC, output of `infra/bootstrap` ([guide](./AWS-GITHUB-OIDC.md)) |
+| `CLOUDFLARE_API_TOKEN` | secret   | Token with Zone Read and DNS Edit on the zone                                          |
 
 ## CI
 

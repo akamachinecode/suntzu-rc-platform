@@ -9,6 +9,5 @@
 **/.env.*
 !**/.env.example
 **/*.log
-.sst
-.open-next
+infra
 docs

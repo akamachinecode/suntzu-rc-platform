@@ -6,9 +6,9 @@ Instructions for AI coding agents (Claude Code, Cursor, GitHub Copilot, Codex, G
 
 - **Name:** Servo (working brand name)
 - **Stack:** `platform` — Itaca Technologies standard stack (details below)
-- **Hosting:** AWS (`sst`) with Cloudflare in front (DNS, CDN, WAF)
+- **Hosting:** AWS (`terraform`) with Cloudflare in front (DNS, CDN, WAF)
 - **Code:** GitHub `ITACA-TECHNOLOGIES/rc-landing`
-- **Created with:** `create-itaca@0.1.0` (`web-app`) on 2026-10-20, moved to the `platform` stack (create-itaca 0.2.0, unreleased branch) on 2026-10-21 and refreshed to `create-itaca@0.2.3` on 2026-10-27 (see `itaca.json` and `docs/DECISIONS.md`)
+- **Created with:** `create-itaca@0.1.0` (`web-app`) on 2026-10-20, moved to the `platform` stack (create-itaca 0.2.0, unreleased branch) on 2026-10-21 refreshed to `create-itaca@0.2.3` on 2026-10-27 and migrated to `create-itaca@0.3.0` (SST → Terraform) on 2026-10-29 (see `itaca.json` and `docs/DECISIONS.md`)
 
 This project follows the Itaca standard so that any Itaca engineer can take it over without surprises. Staying inside the standard matters more than any single feature.
 
@@ -129,11 +129,12 @@ packages/ui/          shared shadcn/ui components + theme (brand colors, radius)
 - Never import code from one app into another. Shared code goes into a package under `packages/` — ask Itaca engineering before creating one.
 - **The API contract is reviewed like code.** A change to `apps/api/openapi.json` in a pull request means web and mobile clients may need to change too.
 
-## Deployment (AWS via SST)
+## Deployment (AWS via Terraform)
 
-- Infrastructure lives in `sst.config.ts`; deploys run from `.github/workflows/deploy.yml` when `main` changes. See `docs/DEPLOY.md`.
-- Don't edit `sst.config.ts` or the workflows, and don't run `sst deploy` / `sst remove`, unless the user explicitly asks — they change real AWS resources and cost money.
-- New environment variables: add them to `.env.example`, and tell the user they must also be configured for production (see `docs/DEPLOY.md`).
+- Infrastructure lives in `infra/` (Terraform); deploys run from `.github/workflows/deploy.yml` when `main` changes. See `docs/DEPLOY.md` and `docs/TERRAFORM.md`.
+- Don't edit `infra/` or the workflows, and don't run `terraform apply` / `terraform destroy`, unless the user explicitly asks — they change real AWS resources and cost money. After editing `infra/`, run `terraform fmt -recursive infra` and `terraform -chdir=infra validate` (after `terraform -chdir=infra init -backend=false` once).
+- Scheduled jobs (engine, notify, census) and the one-off `setup` live in `infra/jobs.tf`; run one by hand from **Actions → Run a task** (`.github/workflows/task.yml`).
+- New environment variables: add them to `.env.example`, and tell the user they must also be configured for production (see `docs/DEPLOY.md`, "Secrets and configuration").
 
 ## Git & GitHub
 
@@ -149,13 +150,13 @@ packages/ui/          shared shadcn/ui components + theme (brand colors, radius)
 - Changes to infrastructure, DNS, domains, AWS or Cloudflare settings.
 
 - **Database structure changes that delete or rename data** (dropping columns or tables, changing types) and anything touching user accounts, sessions or permissions in `apps/api/src/auth`.
-- **Background jobs, queues, scheduled tasks, websockets or file uploads:** they need new AWS pieces in `sst.config.ts` — ask Itaca engineering.
+- **Background jobs, queues, scheduled tasks, websockets or file uploads:** they need new AWS pieces in `infra/` (Terraform) — ask Itaca engineering.
 
 Explain to the user why the request needs an engineer, write down what you found in `docs/DECISIONS.md`, and don't improvise a workaround.
 
 <!-- BEGIN AWS Agent Toolkit rules -->
 
-> Added by the AWS Agent Toolkit setup (2026-10-22), from `aws/agent-toolkit-for-aws` `rules/aws-starter-rules.md`. The Servo AWS project runs in **us-east-2** with CLI profile `servo`, and `sst.config.ts` targets it since 2026-10-27 (C1). Deploying is the owner's step, following `docs/LAUNCH.md`; treat the rules above this block as the ones that win.
+> Added by the AWS Agent Toolkit setup (2026-10-22), from `aws/agent-toolkit-for-aws` `rules/aws-starter-rules.md`. The Servo AWS project runs in **us-east-2** with CLI profile `servo`, and `infra/` (Terraform) targets it since 2026-10-29 (C1, first in `sst.config.ts` on 2026-10-27). Deploying is the owner's step, following `docs/LAUNCH.md`; treat the rules above this block as the ones that win.
 
 ## AWS Guidance for the new AWS experience
 

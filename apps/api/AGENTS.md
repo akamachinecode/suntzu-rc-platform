@@ -42,12 +42,12 @@ openapi.json         the API contract (generated, committed)
 
 ### Standard choices
 
-| Need                        | Itaca standard                                                   |
-| --------------------------- | ---------------------------------------------------------------- |
-| Database                    | PostgreSQL (Amazon RDS) + Drizzle ORM, in `packages/db`          |
-| Authentication              | Better Auth (`src/auth`)                                         |
-| Validation and API contract | Zod schemas in `packages/shared` + OpenAPI (`openapi.json`)      |
-| Email                       | Amazon SES                                                       |
-| File uploads                | Amazon S3 with presigned URLs                                    |
-| Background jobs, schedules  | Amazon SQS + SST Cron (ask Itaca engineering before adding them) |
-| Tests                       | Vitest (unit) + Playwright (end-to-end)                          |
+| Need                        | Itaca standard                                                                    |
+| --------------------------- | --------------------------------------------------------------------------------- |
+| Database                    | PostgreSQL (Amazon RDS) + Drizzle ORM, in `packages/db`                           |
+| Authentication              | Better Auth (`src/auth`)                                                          |
+| Validation and API contract | Zod schemas in `packages/shared` + OpenAPI (`openapi.json`)                       |
+| Email                       | Amazon SES                                                                        |
+| File uploads                | Amazon S3 with presigned URLs                                                     |
+| Background jobs, schedules  | Amazon SQS + EventBridge Scheduler (`infra/jobs.tf`; ask Itaca engineering first) |
+| Tests                       | Vitest (unit) + Playwright (end-to-end)                                           |
