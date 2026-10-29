@@ -12,6 +12,15 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-29 — The repository lives in the owner's personal GitHub account
+
+- **What:** the code is on GitHub at **`akamachinecode/rc-landing`** (private), the owner's personal account, instead of `ITACA-TECHNOLOGIES/rc-landing`. Every reference moved with it: `itaca.json`, `AGENTS.md`, the GitHub, OIDC, deploy, Terraform and launch docs, the engine's user agent (`ServoBot/0.1 (+https://github.com/akamachinecode/rc-landing)`) and the seeded crew source's link.
+- **Why:** the owner's choice.
+- **Impact / risks, for Itaca engineering:**
+  - The account is on **GitHub Free** (checked 2026-10-29: the rulesets and branch protection APIs answer "Upgrade to GitHub Pro or make this repository public"). On a private repository that means **no protected `main`** and **no environments** (`production`, `staging`) with their own variables, secrets or required reviewers, which the deploy workflows and `LAUNCH.md` rely on. Pending the owner's call: GitHub Pro, a public repository, or workflows adapted to repository-level settings.
+  - The deploy role's OIDC subject uses the user's ID instead of an organisation's (`AWS-GITHUB-OIDC.md`, step 2).
+  - Moving it to the Itaca organisation later is a transfer (Settings → Transfer ownership): the OIDC subject changes and `infra/bootstrap` must be applied again with the new one.
+
 ## 2026-10-29 — Migrated to the Itaca standard `create-itaca@0.3.0`: SST → Terraform
 
 - **What:** Servo takes `create-itaca@0.3.0` (published 2026-10-28), whose change is the deploy target: **Terraform replaces SST** as the Itaca standard for infrastructure (SST's upstream activity dropped in 2026). The reference was a fresh `platform` project generated with 0.3.0 (tag `v0.3.0` of `itaca-stacks`, commit `d15486b`); everything in it that applies to Servo was taken, and `sst.config.ts` was rewritten in Terraform piece by piece:

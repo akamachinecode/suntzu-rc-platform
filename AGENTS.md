@@ -7,7 +7,7 @@ Instructions for AI coding agents (Claude Code, Cursor, GitHub Copilot, Codex, G
 - **Name:** Servo (working brand name)
 - **Stack:** `platform` — Itaca Technologies standard stack (details below)
 - **Hosting:** AWS (`terraform`) with Cloudflare in front (DNS, CDN, WAF)
-- **Code:** GitHub `ITACA-TECHNOLOGIES/rc-landing`
+- **Code:** GitHub `akamachinecode/rc-landing` (the owner's personal account, not the Itaca organisation: see `docs/DECISIONS.md`, 2026-10-29)
 - **Created with:** `create-itaca@0.1.0` (`web-app`) on 2026-10-20, moved to the `platform` stack (create-itaca 0.2.0, unreleased branch) on 2026-10-21 refreshed to `create-itaca@0.2.3` on 2026-10-27 and migrated to `create-itaca@0.3.0` (SST → Terraform) on 2026-10-29 (see `itaca.json` and `docs/DECISIONS.md`)
 
 This project follows the Itaca standard so that any Itaca engineer can take it over without surprises. Staying inside the standard matters more than any single feature.

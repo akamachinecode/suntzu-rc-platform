@@ -47,7 +47,7 @@ Images are stored in Amazon ECR (`rc-landing-app`, `rc-landing-api`) and logs go
 3. **GitHub environments `production` and `staging`** (the same for both, with `--env staging`):
 
    ```bash
-   gh api -X PUT repos/ITACA-TECHNOLOGIES/rc-landing/environments/production
+   gh api -X PUT repos/akamachinecode/rc-landing/environments/production
    gh variable set AWS_DEPLOY_ROLE_ARN --env production --body "$(terraform -chdir=infra/bootstrap output -raw deploy_role_arn)"
    gh secret set CLOUDFLARE_API_TOKEN --env production   # paste the token when prompted
    ```

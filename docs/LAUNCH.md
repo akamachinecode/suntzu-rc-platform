@@ -17,7 +17,7 @@ Everything in specs 0001–0004 is built and checked locally (`pnpm check` green
 The local repository has no remote yet, so all of this lives on one laptop.
 
 ```bash
-git remote add origin git@github.com:ITACA-TECHNOLOGIES/rc-landing.git
+git remote add origin git@github.com:akamachinecode/rc-landing.git
 ```
 
 ```bash

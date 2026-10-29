@@ -377,7 +377,7 @@ export const EVENTS: WithLinks<NewEvent>[] = [
 export const CREW_SOURCE: NewSource = {
   slug: "servo-crew",
   name: "Servo crew, hand-checked calendar",
-  url: "https://github.com/ITACA-TECHNOLOGIES/rc-landing/blob/main/apps/app/src/content/events.ts",
+  url: "https://github.com/akamachinecode/rc-landing/blob/main/apps/app/src/content/events.ts",
   adapter: "manual",
   trust: "aggregator",
   status: "active",

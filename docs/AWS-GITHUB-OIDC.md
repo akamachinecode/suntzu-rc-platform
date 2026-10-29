@@ -17,12 +17,12 @@ aws iam create-open-id-connect-provider \
 The deploy job runs in the GitHub environment `production`, so its token subject ends in `:environment:production`. Repositories created (or renamed/transferred) after 2026-07-15 include immutable owner and repository IDs:
 
 ```bash
-ORG_ID=$(gh api orgs/ITACA-TECHNOLOGIES --jq .id)
-REPO_ID=$(gh api repos/ITACA-TECHNOLOGIES/rc-landing --jq .id)
-echo "repo:ITACA-TECHNOLOGIES@${ORG_ID}/rc-landing@${REPO_ID}:environment:production"
+OWNER_ID=$(gh api users/akamachinecode --jq .id)
+REPO_ID=$(gh api repos/akamachinecode/rc-landing --jq .id)
+echo "repo:akamachinecode@${OWNER_ID}/rc-landing@${REPO_ID}:environment:production"
 ```
 
-Older repositories that haven't opted in use `repo:ITACA-TECHNOLOGIES/rc-landing:environment:production`.
+Older repositories that haven't opted in use `repo:akamachinecode/rc-landing:environment:production`.
 
 ## 3. Deploy role
 
@@ -60,7 +60,7 @@ Then grant it `AdministratorAccess` in a dedicated account (one per client or pr
 ## 4. Tell GitHub which role to use
 
 ```bash
-gh api -X PUT repos/ITACA-TECHNOLOGIES/rc-landing/environments/production
+gh api -X PUT repos/akamachinecode/rc-landing/environments/production
 gh variable set AWS_DEPLOY_ROLE_ARN --env production \
   --body "arn:aws:iam::<ACCOUNT_ID>:role/rc-landing-github-deploy"
 ```
