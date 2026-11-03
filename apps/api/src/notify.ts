@@ -34,7 +34,7 @@ try {
       : 0;
   const purged = await step("purge", () => purge(db, now));
   console.log(
-    `notify: ${alerts} change alerts, ${digests} weekly digests, ${reports} organiser reports; ${purged} old messages deleted`,
+    `notify: ${alerts} change alerts, ${digests} weekly digests, ${reports} organiser reports; ${purged} old messages and searches deleted`,
   );
 } finally {
   await pool.end();

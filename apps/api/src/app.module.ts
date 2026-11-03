@@ -12,6 +12,7 @@ import { NewcomersModule } from "./newcomers/newcomers.module.js";
 import { NotesModule } from "./notes/notes.module.js";
 import { OrganiseModule } from "./organise/organise.module.js";
 import { PlacesModule } from "./places/places.module.js";
+import { SearchModule } from "./search/search.module.js";
 import { SubmissionsModule } from "./submissions/submissions.module.js";
 
 @Module({
@@ -27,6 +28,7 @@ import { SubmissionsModule } from "./submissions/submissions.module.js";
     OrganiseModule,
     NewcomersModule,
     SubmissionsModule,
+    SearchModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_INTERCEPTOR, useClass: BitInterceptor }],

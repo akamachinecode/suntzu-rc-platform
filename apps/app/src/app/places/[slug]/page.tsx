@@ -6,7 +6,7 @@ import { cache } from "react";
 import { FollowButtons } from "@/components/account/follow-buttons";
 import { EventCard } from "@/components/events/event-card";
 import { PlaceMap } from "@/components/places/place-map";
-import { FAA_RULES } from "@/content/rules";
+import { FAA_RULES } from "@workspace/shared";
 import { getPublicApi } from "@/lib/api";
 import { formatDate } from "@/lib/events";
 import { ACCESS_LABELS, PLACE_KIND_LABELS, REGISTER_LABELS } from "@/lib/places";

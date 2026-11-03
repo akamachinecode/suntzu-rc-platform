@@ -2,9 +2,7 @@ import { ArrowUp, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@workspace/ui/components/button";
 import { Wordmark } from "@/components/wordmark";
-import { GUIDES, IN_THE_WORKS } from "@/content/guides";
-import { AMA, FAA_RULES } from "@/content/rules";
-import { SERVICES } from "@/content/services";
+import { GUIDES, IN_THE_WORKS, AMA, FAA_RULES, SERVICES } from "@workspace/shared";
 import { SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 

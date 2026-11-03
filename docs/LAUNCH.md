@@ -1,6 +1,6 @@
 # Launch checklist: Servo 1.0
 
-Everything in specs 0001–0004 is built and checked locally (`pnpm check` green, each bit marked in `docs/bits/`). What's left needs the owner: accounts, money, the name and the domain. Do the steps in order; each one says how to check it worked. Nothing here has been deployed yet.
+Everything in specs 0001–0005 is built and checked locally (`pnpm check` green, each bit marked in `docs/bits/`). What's left needs the owner: accounts, money, the name and the domain. Do the steps in order; each one says how to check it worked. Nothing here has been deployed yet.
 
 ## 0. What's ready, and what isn't verified
 
@@ -8,6 +8,7 @@ Everything in specs 0001–0004 is built and checked locally (`pnpm check` green
 | ----------------------------------------------------------------- | ----------------------------------------------------------------- |
 | Events engine, resolve, crew console, calendars and feeds         | `sst.config.ts` (never deployed: region, SES, S3, scheduled jobs) |
 | Places, clubs, "Can I fly here?" (FAA data loaded)                | Emails through Amazon SES (locally they're printed)               |
+| Search: the box (⌘K, `/`), `/search`, "searched, not found"       | Search's PostgreSQL extensions on RDS (created by a migration)    |
 | Accounts with email links, follows, "going", private calendar     | "Continue with Google" (needs an OAuth client)                    |
 | Organisers: claim, verify, publish, widget                        | AI reading of pasted flyers (needs Bedrock model access)          |
 | Alerts, digest and reports (printed locally), try-it, submissions | Turnstile on public forms (needs keys)                            |
@@ -45,6 +46,7 @@ Open pull requests in order: `feat/platform-monorepo` (if it isn't merged yet) �
 4. **Rate limiting** (Security → WAF → Rate limiting rules). Public forms reach the API through the site's server, so the API sees the server's address, not the visitor's: limit on the **site's** host, where the visitor connects.
    - `POST` requests to `www.<domain>` (forms are Server Actions): 30 per minute per IP.
    - `POST /auth/sign-in/magic-link` on `api.<domain>` (the browser calls it directly): 5 per minute per IP.
+   - `POST /search/misses` on `api.<domain>` (the browser reports searches that found nothing): 20 per minute per IP. `GET /search` only reads and is cached for 5 minutes; whether it needs a limit too is Itaca engineering's call (spec 0005).
    - The API also limits per member (10 events and 20 corrections an hour; a new club code every 5 minutes, 8 guesses per claim, ever).
 5. Leave **Bot Fight Mode off** on the zone: it can't be skipped for the API, and the calendar feeds are read by calendar apps, not browsers.
 
@@ -108,6 +110,7 @@ The first deploy takes 15–25 minutes (database, network, certificates). Then:
    - `https://api-dev.<domain>/health` answers `ok`;
    - signing in at `/sign-in` with a crew address sends an email that arrives, and `/crew` opens;
    - `/places/can-i-fly-here` answers for a point near Miami;
+   - ⌘K (or `/`) opens search on any page, and `/search?q=markam park` puts Markham Park first;
    - in CloudWatch, the `Engine` task's log ends with a `resolve:` line and the `Notify` task's with `notify:`.
 3. In `/crew`, approve the RCSignup races and anything else waiting (the engine found 10 Florida races that wait for a person, because RCSignup is a listing, not the organiser).
 

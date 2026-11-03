@@ -3,6 +3,7 @@ import { Archivo } from "next/font/google";
 import Link from "next/link";
 import { AccountButton } from "@/components/account/account-button";
 import { MobileNav } from "@/components/mobile-nav";
+import { SiteSearch } from "@/components/search/site-search";
 import { SiteFooter } from "@/components/site-footer";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { Button } from "@workspace/ui/components/button";
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 ))}
               </nav>
               <div className="flex items-center gap-3">
+                <SiteSearch />
                 <AccountButton />
                 <Button asChild className="max-lg:hidden">
                   <Link href={SITE.cta.href}>{SITE.cta.label}</Link>

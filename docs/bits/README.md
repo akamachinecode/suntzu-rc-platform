@@ -52,6 +52,8 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [notify.organiser-report](./notify.organiser-report.md) | Organisers get their club's monthly report                               | read in code | none yet                            |
 | [notify.unsubscribe](./notify.unsubscribe.md)           | Someone stops an email with one click                                    | verified     | none yet                            |
 | [submissions.create](./submissions.create.md)           | A member sends an event                                                  | verified     | none yet                            |
+| [search.query](./search.query.md)                       | A visitor searches the whole site                                        | verified     | `query.test.ts`, `golden.test.ts`   |
+| [search.misses](./search.misses.md)                     | The crew sees what people searched for and didn't find                   | verified     | `golden.test.ts`, `query.test.ts`   |
 
 **Status:** `verified` (someone ran it and saw the result) · `read in code` (followed in the code, not run) · `not verified` · `broken`.
 

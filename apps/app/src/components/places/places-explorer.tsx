@@ -4,7 +4,7 @@ import type { Discipline, Place } from "@workspace/shared";
 import { LocateFixed, Search } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DISCIPLINE_LABELS, milesBetween } from "@/lib/events";
 import { ACCESS_LABELS, PLACE_KIND_LABELS } from "@/lib/places";
 import { cn } from "@/lib/utils";
@@ -45,7 +45,7 @@ function Chip({
 const normal = (text: string) => text.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "");
 
 /** Every field and track: search, kind, discipline, "near me" (computed in the browser). */
-export function PlacesExplorer({ places }: { places: Place[] }) {
+export function PlacesExplorer({ places, nearMe }: { places: Place[]; nearMe?: boolean }) {
   const [kind, setKind] = useState<Place["kind"] | "all">("all");
   const [discipline, setDiscipline] = useState<Discipline | "all">("all");
   const [friaOnly, setFriaOnly] = useState(false);
@@ -81,6 +81,16 @@ export function PlacesExplorer({ places }: { places: Place[] }) {
     if (origin) list.sort((a, b) => (a.miles ?? Infinity) - (b.miles ?? Infinity));
     return list;
   }, [places, kind, discipline, friaOnly, query, origin]);
+
+  // The visitor asked for "near me" before the page opened (search's shortcut): once, on arrival.
+  useEffect(() => {
+    if (!nearMe) return;
+    navigator.geolocation?.getCurrentPosition(
+      ({ coords }) => setOrigin([coords.longitude, coords.latitude]),
+      () => undefined,
+      { maximumAge: 600_000, timeout: 10_000 },
+    );
+  }, [nearMe]);
 
   function locate() {
     if (origin) return setOrigin(undefined);

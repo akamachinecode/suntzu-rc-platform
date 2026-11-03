@@ -12,6 +12,29 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-29 — Search's screens and "searched, not found" (spec 0005, slices 2–4)
+
+- **What:** the owner asked to finish search so that Servo 1.0 ships with it. Built: the results page `/search` (`noindex`, works without JavaScript), the search box on every page (⌘K, Ctrl+K, `/`, the header and the mobile menu) and the crew's "Searched, not found" list. Decisions along the way:
+  - **No new dependency.** The box is the shadcn/ui Dialog (added to `packages/ui`, built on `radix-ui`, which we already had) with our own combobox (arrows, Enter, screen-reader announcements), not `cmdk`: Enter must open the results page when no result is chosen, and `cmdk` always chooses the first one.
+  - **The box asks the API from the browser** (`browserApi` in `apps/app/src/lib/search.ts`): public data, no cookies, cached 5 minutes like the pages. The API already allows the site's origin (CORS).
+  - **"Little" means partial.** The API now says `partial` when no result has every word ("qwxzv hovertank" found four loose matches before). Those searches, and the ones that found nothing, are what the crew sees; a search with one or two exact results is a success and isn't counted. The browser reports them (`POST /search/misses`, public, no Turnstile: there's no form) and the API searches again, so only searches that really fail are counted. Words that look like an email, a phone number or a street address are dropped. Counts are deleted after 90 days by the existing scheduled clean-up (`pnpm notify`), so there's no new job. New table `search_misses` (migration 0009).
+  - **A town or ZIP keeps to its radius.** Slice 1 listed matches from anywhere before what was near ("car track near Hialeah" showed tracks 86 miles away under "within 25 miles"). Now events, places and clubs must be within the radius and come closest first; guides and rules, which hold anywhere, keep their place.
+  - **Shortcuts:** "Near me" opens `/places?near=me` (located in the browser, as before) and "Can I fly here?" for a town opens `/places/can-i-fly-here?at=lat,lng`.
+- **Why:** search is the front door for people who arrive with one thing in mind; the crew learns from what it misses.
+- **Impact:** no new services, costs or environment variables. Suggested Cloudflare rule: `POST /search/misses` at 20 per minute per IP (`LAUNCH.md`, step 3). Itaca engineering should look at the new public `POST` endpoint and the shadcn Dialog in the launch review.
+
+## 2026-10-28 — Search across the whole site runs in PostgreSQL (spec 0005)
+
+- **What:** the owner approved [spec 0005](./specs/0005-search.md): one search box for events, places, clubs, guides, rules and services, with towns and ZIP codes ("near Tampa", "33441"), typos, half-typed words and common Spanish words. Decisions:
+  - **Engine: PostgreSQL**, the database we already run, with the standard extensions `pg_trgm` (typos), `unaccent` (accents), `fuzzystrmatch` (closest spelling), `cube` and `earthdistance` (distance). A comparison on 2026-10-28 ran the same 369 documents and 36 searches on PostgreSQL and Typesense 30.2: tuned, PostgreSQL put the right answer first 32 times and Typesense 31, both in about 3 ms; out of the box Typesense led 24 to 15. Typesense would add a service to host, a bill and a sync that can fall behind the pages; PostgreSQL keeps the index in step with the data inside the database. Its known weakness is ranking a rare word above a common one (fields at "High" schools before the 400 ft rule), covered by pinned answers. Revisit when the index passes about 100,000 documents or that weakness shows in real searches; all search code lives in `apps/api/src/search/` so the engine can change without touching the screens.
+  - **One search document shape** (`search_documents`): type, title, subtitle, text, link, place, dates and weight. Triggers on `events`, `places` and `hosts` keep it current; guides, rules and services are written to it when the API starts. A new kind of content (RC models, builds) adds its own documents and nothing else changes.
+  - **Guides, rules and services move to `packages/shared`** so the API can index them and a mobile app can show them; rules get a stable `id` so pinned answers survive a change of title.
+  - **Query understanding** in code, not in the database: Florida towns and ZIP codes, "events"/"clubs"/"fields" as a type, Spanish words, synonyms ("heli", "1/8" → "8th") and pinned answers ("lessons" → the Lessons service). RDS doesn't allow synonym files, and code keeps them reviewed in git.
+  - **Privacy:** searches without results are counted per day with the words and the number of results only, never the account, IP address or location, and deleted after 90 days (slice 4). Request logs already record only the route.
+  - **The golden searches** are a test; it needs the local database and skips without one.
+- **Why:** someone who lands on Servo should find the event, field, club or rule they mean from the front door, and search must never disagree with the pages.
+- **Impact:** no new dependencies, services or environment variables. A migration creates the extensions (allowed for the RDS master user). Itaca may want a Cloudflare rate-limit rule on `api/search` at launch (open question in the spec).
+
 ## 2026-10-28 — Fixes from an independent security and bug review
 
 - **What:** an independent review of the night's work found these, all fixed and tested:

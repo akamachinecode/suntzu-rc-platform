@@ -50,6 +50,27 @@
       "when": 1793139800646,
       "tag": "0006_claim_attempts",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793184691804,
+      "tag": "0007_search_documents",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793184692217,
+      "tag": "0008_search_sync",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793276587392,
+      "tag": "0009_search_misses",
+      "breakpoints": true
     }
   ]
 }

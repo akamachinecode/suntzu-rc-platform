@@ -18,6 +18,7 @@ import { Logger } from "@nestjs/common";
 import { renderEmail, sendMail } from "../mail/mail.js";
 import { DISCIPLINE_WORDS } from "../mail/words.js";
 import { distanceMeters } from "../places/census/geometry.js";
+import { purgeMisses } from "../search/search.js";
 
 // The emails Servo sends on its own (docs/specs/0003-community.md, slice 6). Each one is written
 // to `notifications` before it goes out, so a run can be repeated (or scheduled every hour) without
@@ -331,7 +332,7 @@ export async function sendReports(db: Database, now = new Date()): Promise<numbe
   return sent;
 }
 
-/** Messages and "try it" requests are kept for 12 months, then deleted. */
+/** Messages and "try it" requests are kept for 12 months, searches without results 90 days. */
 export async function purge(db: Database, now = new Date()): Promise<number> {
   const cutoff = new Date(now.getTime() - 365 * 86_400_000);
   const gone = await db
@@ -342,5 +343,7 @@ export async function purge(db: Database, now = new Date()): Promise<number> {
     .delete(tryRequests)
     .where(lt(tryRequests.createdAt, cutoff))
     .returning({ id: tryRequests.id });
-  return gone.length + tries.length;
+  // Searches without results are kept 90 days (spec 0005).
+  const misses = await purgeMisses(db, localDate(now, "America/New_York"));
+  return gone.length + tries.length + misses;
 }

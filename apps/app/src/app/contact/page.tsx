@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/page-header";
-import { TOPICS, type Topic } from "@/content/services";
+import { TOPICS, type Topic } from "@workspace/shared";
 import { ContactForm } from "./contact-form";
 
 export const metadata: Metadata = {
