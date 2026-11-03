@@ -22,7 +22,8 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [engine.run](./engine.run.md)                           | The engine reads its sources                                             | verified     | engine tests                        |
 | [db.seed](./db.seed.md)                                 | The starting data is loaded                                              | read in code | none yet                            |
 | [engine.resolve](./engine.resolve.md)                   | What the sources say becomes events                                      | verified     | `match.test.ts`                     |
-| [auth.email-link](./auth.email-link.md)                 | Someone signs in with a link by email                                    | verified     | none yet                            |
+| [auth.email-link](./auth.email-link.md)                 | Someone signs in with a link by email                                    | verified     | `sign-in-code.test.ts`              |
+| [auth.email-code](./auth.email-code.md)                 | Someone signs in by typing the code from the email                       | verified     | `sign-in-code.test.ts`              |
 | [auth.google](./auth.google.md)                         | Someone signs in with Google                                             | not verified | none yet (needs Google credentials) |
 | [account.get](./account.get.md)                         | A member opens My SunTzu RC                                              | verified     | none yet                            |
 | [account.update](./account.update.md)                   | A member changes their settings                                          | verified     | none yet                            |

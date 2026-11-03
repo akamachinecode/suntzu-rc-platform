@@ -44,7 +44,7 @@ The domain is registered with Cloudflare Registrar (since 2025-04-05) and alread
 3. **Turnstile:** create a widget for the domain (Managed mode). Keep the site key and the secret for step 5.
 4. **Rate limiting** (Security → WAF → Rate limiting rules). Public forms reach the API through the site's server, so the API sees the server's address, not the visitor's: limit on the **site's** host, where the visitor connects.
    - `POST` requests to `www.<domain>` (forms are Server Actions): 30 per minute per IP.
-   - `POST /auth/sign-in/magic-link` on `api.<domain>` (the browser calls it directly): 5 per minute per IP.
+   - `POST /auth/sign-in/magic-link` and `POST /auth/sign-in/email-otp` on `api.<domain>` (the browser calls them directly): 5 per minute per IP.
    - `POST /search/misses` on `api.<domain>` (the browser reports searches that found nothing): 20 per minute per IP. `GET /search` only reads and is cached for 5 minutes; whether it needs a limit too is Itaca engineering's call (spec 0005).
    - The API also limits per member (10 events and 20 corrections an hour; a new club code every 5 minutes, 8 guesses per claim, ever).
 5. Leave **Bot Fight Mode off** on the zone: it can't be skipped for the API, and the calendar feeds are read by calendar apps, not browsers.

@@ -12,6 +12,18 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-03 — A sign-in code next to the link, still no passwords (spec 0006)
+
+- **What:** the owner asked whether to add passwords and decided against them; instead, the sign-in email now carries a **6-digit code** next to the link (spec [0006](./specs/0006-sign-in-code.md), approved today, acting as Itaca engineering for accounts):
+  - **Why a code:** on a phone the link opens in whatever browser the mail app picks (Gmail's own, for example), so the person stays signed out where they asked. The code is typed on the "Check your email" screen and signs in there.
+  - **One email:** the link's email creates the code with Better Auth's `emailOTP` plugin (`createVerificationOTP`, part of `better-auth`: **no new dependency**). Only the latest email's code works; it works once, for 15 minutes like the link, with 3 tries. Stored **hashed**. Not in the subject or the inbox preview (someone who sees a locked phone could use it). After 3 wrong tries, or once expired, the screen offers "Email me a new one".
+  - **Closed routes:** the plugin also brings routes to send a code without a link, verify an email, reset a password and change an email; they answer 404 (`disabledPaths` in `apps/api/src/auth/auth.ts`). Only `POST /auth/sign-in/email-otp` is open (Better Auth limits it to 3 requests a minute).
+  - **Emails** can now have a preview text and a code block (`renderEmail` in `apps/api/src/mail/mail.ts`).
+  - **Header:** the longer wordmark ("suntzu rc") wrapped between 768 and 1280 px; it now stays on one line, and "My SunTzu RC" shows as an icon below 1280 px (its name stays for screen readers).
+- **Kept out:** passwords (owner, 2026-11-03); passkeys, for when members come back often; Sign in with Apple, only if many members use iPhones (a paid Apple developer account).
+- **Why:** the sign-in has to work on phones, where most people will check this weekend's events.
+- **Impact:** no new variables, tables or services. The Cloudflare rate-limit rule for `POST /auth/sign-in/magic-link` (`LAUNCH.md`, step 3) should also cover `POST /auth/sign-in/email-otp`. The pre-launch review of `apps/api/src/auth/` should include it.
+
 ## 2026-11-03 — The name is SunTzu RC, at suntzurc.com (C3), and it is the example project for 0.3.1
 
 - **What:** the owner chose the name **SunTzu RC** and the domain **suntzurc.com**, replacing the working name "Servo", and asked to keep the project as the example of `create-itaca@0.3.1`.
