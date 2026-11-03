@@ -12,6 +12,39 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-29 — The repository lives in the owner's personal GitHub account
+
+- **What:** the code is on GitHub at **`akamachinecode/rc-landing`** (private), the owner's personal account, instead of `ITACA-TECHNOLOGIES/rc-landing`. Every reference moved with it: `itaca.json`, `AGENTS.md`, the GitHub, OIDC, deploy, Terraform and launch docs, the engine's user agent (`ServoBot/0.1 (+https://github.com/akamachinecode/rc-landing)`) and the seeded crew source's link.
+- **Why:** the owner's choice.
+- **Impact / risks, for Itaca engineering:**
+  - The account is on **GitHub Free** (checked 2026-10-29: the rulesets and branch protection APIs answer "Upgrade to GitHub Pro or make this repository public"). On a private repository that means **no protected `main`** and **no environments** (`production`, `staging`) with their own variables, secrets or required reviewers, which the deploy workflows and `LAUNCH.md` rely on. Pending the owner's call: GitHub Pro, a public repository, or workflows adapted to repository-level settings.
+  - The deploy role's OIDC subject uses the user's ID instead of an organisation's (`AWS-GITHUB-OIDC.md`, step 2).
+  - Moving it to the Itaca organisation later is a transfer (Settings → Transfer ownership): the OIDC subject changes and `infra/bootstrap` must be applied again with the new one.
+
+## 2026-10-29 — Migrated to the Itaca standard `create-itaca@0.3.0`: SST → Terraform
+
+- **What:** Servo takes `create-itaca@0.3.0` (published 2026-10-28), whose change is the deploy target: **Terraform replaces SST** as the Itaca standard for infrastructure (SST's upstream activity dropped in 2026). The reference was a fresh `platform` project generated with 0.3.0 (tag `v0.3.0` of `itaca-stacks`, commit `d15486b`); everything in it that applies to Servo was taken, and `sst.config.ts` was rewritten in Terraform piece by piece:
+  - **From the template, unchanged:** `infra/` core (`versions.tf`, `stage.tf`, `origin-lock.tf`, the lock files, `bootstrap/` with the OIDC deploy role, the ECR registries and the state bucket), the `zone`, `network`, `load-balancer`, `service` and `database` modules, `.github/workflows/infra.yml`, `apps/app/Dockerfile`, Dependabot for Terraform, `docs/TERRAFORM.md`, and the small edits to `.gitignore`, `.dockerignore`, `.prettierignore`, ESLint, `tsconfig.json`, `next.config.ts`, `compose.yaml` and the `.env.example` files.
+  - **Servo's own, ported from `sst.config.ts`:** the scheduled jobs (`infra/jobs.tf` and a new `modules/task`: EventBridge Scheduler starts the API's image on Fargate, same commands and Florida times; `setup` has no schedule), SES with DKIM and DMARC in Cloudflare (`email.tf`), the snapshots bucket (`storage.tf`), the code's permissions (`permissions.tf`: snapshots, SES, Bedrock) and the optional secrets (`secrets.tf`).
+  - **Workflows:** `deploy.yml` builds both images, applies Terraform and checks the new version is running; production on merge to `main`, `staging` from the Actions tab. New `task.yml` (**Actions → Run a task**) runs `setup`, `engine`, `notify` or `census` by hand and waits for the result: it replaces running `Setup` from the SST console.
+  - Removed: `sst.config.ts`, the `sst` dev dependency and the `deploy:*` scripts. `itaca.json` says `"deploy": "terraform"`.
+- **Why:** staying on the standard (the owner asked to migrate everything to 0.3.0, acting as Itaca engineering, 2026-10-29). Nothing had been deployed with SST, so there was nothing to move: no state, no data.
+- **Deviations from the template, on purpose:**
+  - **No `apps/web` and no CloudFront:** Servo's public site is `apps/app` on `www` (2026-10-21), so `hosts` has `app` and `api` only, and the bare domain redirects to `www` with a load balancer rule. The `aws.us_east_1` provider is gone: every resource is in us-east-2, which also settles the open question about CloudFront certificates in us-east-1 (2026-10-28).
+  - **PostgreSQL 18**, as with SST and locally (`compose.yaml`): the database module takes `engine_version` (default `"17"`, the template's).
+  - **Resource prefix `rc-landing`** (the repository's name, as with SST and the deploy role), not the brand: the brand may still change (C3).
+  - **Optional secrets** only reach the containers once their parameter exists (`aws_ssm_parameters_by_path`), because SSM parameters can't be empty: the same "off until set" behaviour as SST's empty secrets. The two public values (Turnstile's site key, and whether Google sign-in is on) are read by the deploy workflow from the same parameters.
+  - **One SES identity per stage** (production `example.com`, staging `staging.example.com`): an identity belongs to the AWS account, so sharing one would tie staging to production's deploy order.
+  - **Network:** the template's public subnets with public IPs and no NAT, instead of SST's NAT instance; containers and jobs accept no connections except the load balancer's.
+  - **Bedrock:** the code's policy adds `bedrock-mantle:CreateInference` on the account's Mantle projects, the action AWS documents for inference through the Mantle endpoint that `@anthropic-ai/bedrock-sdk` calls (this settles the open point of 2026-10-28), and keeps `bedrock:InvokeModel*`.
+  - **Job sizes:** 0.5 vCPU and 1 GB for every job (SST's default was 0.25 vCPU and 0.5 GB), because the census reads the FAA registers in memory.
+- **Impact / risks, for Itaca engineering:**
+  - Verified without AWS: `terraform fmt` and `terraform validate` (Terraform 1.16.6, the CI version) on `infra/` and `infra/bootstrap/`; a `terraform test` plan with mocked providers in both workspaces (production creates the redirect; each stage gets its own SES identity, DKIM and DMARC records; only the optional secrets that exist under the stage's own path are wired in; four jobs); both Docker images built and run against PostgreSQL 18 (migrations at start, seed, notify, every public page, an event's share image and calendar). The first real `terraform plan` happens in the first Deploy run on `staging` (`docs/LAUNCH.md`).
+  - Deploy order: the Deploy workflow must be on `main` to run from the Actions tab, so `LAUNCH.md` now asks for required reviewers on `production` before merging; the production run started by the merge waits until `staging` works.
+  - Cost: the fixed floor per stage is the load balancer, RDS and two always-on containers (roughly 75 USD a month), plus the jobs by use; no NAT instance and no Lambda or CloudFront any more.
+  - Secrets moved from SST secrets to SSM Parameter Store (`/rc-landing/<stage>/…`); `BetterAuthSecret` is now generated by Terraform. `CLOUDFLARE_ACCOUNT_ID` is no longer needed in GitHub.
+  - Not taken from 0.3.0: nothing else in it applies (the EC2 target and the static-site module are for other stacks).
+
 ## 2026-10-29 — Search's screens and "searched, not found" (spec 0005, slices 2–4)
 
 - **What:** the owner asked to finish search so that Servo 1.0 ships with it. Built: the results page `/search` (`noindex`, works without JavaScript), the search box on every page (⌘K, Ctrl+K, `/`, the header and the mobile menu) and the crew's "Searched, not found" list. Decisions along the way:

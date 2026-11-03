@@ -14,7 +14,8 @@ See the Quick start in [`README.md`](../README.md). Servo also has:
 
 ## Deploy and roll back
 
-- **Deploy:** merging to `main`; details in [`DEPLOY.md`](./DEPLOY.md). Nothing is deployed yet: the AWS region (C1), name and domain (C3) are still open in [`ROADMAP.md`](./ROADMAP.md).
+- **Deploy:** merging to `main` deploys production; `staging` from **Actions → Deploy**. Details in [`DEPLOY.md`](./DEPLOY.md). Nothing is deployed yet: the name and domain (C3) are still open in [`ROADMAP.md`](./ROADMAP.md), and going live is [`LAUNCH.md`](./LAUNCH.md).
+- **Run a job by hand** (`setup`, `engine`, `notify`, `census`): **Actions → Run a task**. Their schedules are in `infra/jobs.tf`.
 - **Roll back:** revert the change on `main` (`git revert <commit>` in a pull request) and let the normal deploy run. Never change production by hand.
 
 ## Access
@@ -27,7 +28,7 @@ See the Quick start in [`README.md`](../README.md). Servo also has:
 
 ## Configuration and secrets
 
-Variable names are listed in the `.env.example` files. Real values live in the hosting provider or SST secrets for production (`BetterAuthSecret`, `OriginVerifyHeader`), and in the team password manager.
+Variable names are listed in the `.env.example` files. Real values live in AWS Systems Manager Parameter Store for production (`/rc-landing/<stage>/…`, see "Secrets and configuration" in [`DEPLOY.md`](./DEPLOY.md)), and in the team password manager.
 
 ## Backups and recovery
 

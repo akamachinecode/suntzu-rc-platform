@@ -31,20 +31,20 @@ Every API request gets a trace ID (`x-request-id`, or Cloudflare's `cf-ray`), re
 
 ## Integrations
 
-| Service              | What for                                                                                                       | Where it's configured                       |
-| -------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| Cloudflare           | DNS, TLS, WAF and DDoS protection in front of everything                                                       | [`CLOUDFLARE.md`](./CLOUDFLARE.md)          |
-| AWS                  | Hosting (`sst`, region `us-east-2`): Fargate, RDS, Lambda + CloudFront, S3 (engine snapshots), scheduled tasks | [`DEPLOY.md`](./DEPLOY.md), `sst.config.ts` |
-| Amazon SES           | Sign-in links, change alerts, weekly digest, club reports, try-it requests (`MAIL_TRANSPORT=ses`)              | `apps/api/src/mail/`, `docs/LAUNCH.md`      |
-| Amazon Bedrock       | Claude reads pasted flyers (`BEDROCK_MODEL_ID`), with quotes checked                                           | `apps/api/src/events/engine/ai.ts`          |
-| Google (optional)    | "Continue with Google" (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`)                                            | `apps/api/src/auth/auth.ts`                 |
-| Cloudflare Turnstile | Proves a person sent a public form (`TURNSTILE_SECRET_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`)                  | `apps/api/src/common/turnstile.ts`          |
-| FAA and US Census    | Public registers for places, airports, airspace and ZIP codes (`pnpm census`)                                  | `apps/api/src/places/census/`               |
-| GitHub               | Code, pull requests and CI                                                                                     | [`GITHUB.md`](./GITHUB.md)                  |
-| OpenFreeMap          | Base map tiles for the events maps (free, no key)                                                              | `apps/app/src/components/events/`           |
-| Organisers' websites | What the engine reads (each one is a row in `sources`)                                                         | `pnpm db:seed`, `sources` table             |
-| FAA open data        | Recognised areas, fixed sites, airports, airspace (public, no key)                                             | `apps/api/src/places/census/`               |
-| US Census Bureau     | ZIP code centres (Gazetteer ZCTA file, public, no key)                                                         | `apps/api/src/places/census/`               |
+| Service              | What for                                                                                                                           | Where it's configured                  |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| Cloudflare           | DNS, TLS, WAF and DDoS protection in front of everything                                                                           | [`CLOUDFLARE.md`](./CLOUDFLARE.md)     |
+| AWS                  | Hosting (Terraform, region `us-east-2`): Fargate (site, API and scheduled jobs), RDS, S3 (engine snapshots), EventBridge Scheduler | [`DEPLOY.md`](./DEPLOY.md), `infra/`   |
+| Amazon SES           | Sign-in links, change alerts, weekly digest, club reports, try-it requests (`MAIL_TRANSPORT=ses`)                                  | `apps/api/src/mail/`, `docs/LAUNCH.md` |
+| Amazon Bedrock       | Claude reads pasted flyers (`BEDROCK_MODEL_ID`), with quotes checked                                                               | `apps/api/src/events/engine/ai.ts`     |
+| Google (optional)    | "Continue with Google" (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`)                                                                | `apps/api/src/auth/auth.ts`            |
+| Cloudflare Turnstile | Proves a person sent a public form (`TURNSTILE_SECRET_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`)                                      | `apps/api/src/common/turnstile.ts`     |
+| FAA and US Census    | Public registers for places, airports, airspace and ZIP codes (`pnpm census`)                                                      | `apps/api/src/places/census/`          |
+| GitHub               | Code, pull requests and CI                                                                                                         | [`GITHUB.md`](./GITHUB.md)             |
+| OpenFreeMap          | Base map tiles for the events maps (free, no key)                                                                                  | `apps/app/src/components/events/`      |
+| Organisers' websites | What the engine reads (each one is a row in `sources`)                                                                             | `pnpm db:seed`, `sources` table        |
+| FAA open data        | Recognised areas, fixed sites, airports, airspace (public, no key)                                                                 | `apps/api/src/places/census/`          |
+| US Census Bureau     | ZIP code centres (Gazetteer ZCTA file, public, no key)                                                                             | `apps/api/src/places/census/`          |
 
 ## Environments
 

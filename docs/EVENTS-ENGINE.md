@@ -161,7 +161,7 @@ Phase 0 proves which sources actually work before anyone pays for infrastructure
 ## What needs Itaca engineering
 
 - **Database**: PostgreSQL (RDS / Aurora) + Drizzle, per the standard.
-- **Scheduled and background work**: fetching and extraction cannot run inside page requests. Likely EventBridge schedules + SQS + Lambda (or Step Functions) defined in `sst.config.ts`. Engineering to choose and own.
+- **Scheduled and background work**: fetching and extraction cannot run inside page requests. Built as EventBridge Scheduler starting the API's image on Fargate (`infra/jobs.tf`); a queue (SQS) is still engineering's to add if the work outgrows one task per run.
 - **Snapshot storage**: Amazon S3.
 - **AI extraction**: LLM provider (Amazon Bedrock or the Anthropic API), cost budget and limits.
 - **Geocoding**: Amazon Location Service or similar.
