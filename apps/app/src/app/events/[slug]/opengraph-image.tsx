@@ -3,13 +3,13 @@ import { getPublicApi } from "@/lib/api";
 import { DISCIPLINE_LABELS, formatWhen, formatWhere, KIND_LABELS } from "@/lib/events";
 import { archivo } from "@/lib/og-font";
 
-// The picture people see when an event is shared: a Servo pit pass. Images are drawn outside the
+// The picture people see when an event is shared: a SunTzu RC pit pass. Images are drawn outside the
 // page, so they can't use the theme's CSS variables: the colours below are the theme's values.
 const INK = "#000000";
 const PAPER = "#fafaf7";
 const YELLOW = "#ffc629";
 
-export const alt = "Event pass from Servo";
+export const alt = "Event pass from SunTzu RC";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -20,12 +20,12 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   });
   const name = event?.name ?? "RC events in Florida";
   const when = event ? formatWhen(event) : "Fly-ins, races and swap meets";
-  const where = event ? formatWhere(event) : "servo";
+  const where = event ? formatWhere(event) : "suntzurc.com";
   const tags = event
     ? [KIND_LABELS[event.kind].label, DISCIPLINE_LABELS[event.discipline]]
     : ["Planes", "Helicopters", "Cars", "FPV"];
   const cancelled = event?.status === "cancelled";
-  const headline = `SERVO PIT PASS ${name} ${cancelled ? "Cancelled · " : ""}${when}`;
+  const headline = `SUNTZU RC PIT PASS ${name} ${cancelled ? "Cancelled · " : ""}${when}`;
   const [heavy, regular] = await Promise.all([
     archivo(headline, { weight: 900, wide: true }),
     archivo(`${where} ${tags.join(" ")}`, { weight: 600, wide: false }),
@@ -72,7 +72,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             letterSpacing: 6,
           }}
         >
-          <span>SERVO</span>
+          <span>SUNTZU RC</span>
           <span>PIT PASS</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", padding: "36px 40px", flex: 1 }}>

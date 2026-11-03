@@ -6,7 +6,7 @@ Everything this project runs on in AWS and Cloudflare is described in [`infra/`]
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `infra/*.tf`                | The stack. CI applies it on every deploy. `main.tf` (app, API, database), `jobs.tf`, `email.tf`, `storage.tf`, `permissions.tf` and `secrets.tf` |
 | `infra/<stage>.tfvars.json` | One file per stage with its hostnames and email domain. `production` and `staging` come with the project.                                        |
-| `infra/modules/`            | Local modules used by the stack (`task` is Servo's own, for the scheduled jobs). No modules are downloaded from a registry.                      |
+| `infra/modules/`            | Local modules used by the stack (`task` is SunTzu RC's own, for the scheduled jobs). No modules are downloaded from a registry.                  |
 | `infra/bootstrap/`          | One-time setup of the AWS account, run by an admin.                                                                                              |
 | `infra/.terraform.lock.hcl` | Checksums of the providers, so every machine runs the same code. Committed.                                                                      |
 
@@ -43,7 +43,7 @@ Then continue with the Cloudflare and GitHub steps in [`DEPLOY.md`](./DEPLOY.md)
 
 `staging` is ready (`infra/staging.tfvars.json`); for another one:
 
-1. Copy `infra/staging.tfvars.json` to `infra/<stage>.tfvars.json` and change the hostnames and the email domain (each stage sends from its own, such as `<stage>.example.com`). Use first-level subdomains such as `www-<stage>.example.com`: Cloudflare's free certificate doesn't cover deeper levels.
+1. Copy `infra/staging.tfvars.json` to `infra/<stage>.tfvars.json` and change the hostnames and the email domain (each stage sends from its own, such as `<stage>.suntzurc.com`). Use first-level subdomains such as `www-<stage>.suntzurc.com`: Cloudflare's free certificate doesn't cover deeper levels.
 2. Add the stage to the `options` of `.github/workflows/deploy.yml` and `task.yml`, and to `github_environments` in `infra/bootstrap` (then apply it again).
 3. Create the GitHub environment with the same variables and secrets as `production`, and the stage's optional settings ([`DEPLOY.md`](./DEPLOY.md)).
 4. Commit, then run **Actions → Deploy → Run workflow** with the new stage, and **Actions → Run a task** with `setup`.

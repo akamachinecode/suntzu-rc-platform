@@ -14,7 +14,7 @@ export function StopButton({ token, what, label }: { token: string; what: string
       <p role="status" className="text-lg font-semibold">
         Done. You won&apos;t get {label} any more. Change your mind in{" "}
         <Link href="/me" className="underline underline-offset-4">
-          My Servo
+          My SunTzu RC
         </Link>
         .
       </p>
@@ -32,7 +32,7 @@ export function StopButton({ token, what, label }: { token: string; what: string
       </Button>
       {result === "error" ? (
         <p role="alert" className="text-destructive">
-          That link doesn&apos;t work any more. Change your emails in My Servo.
+          That link doesn&apos;t work any more. Change your emails in My SunTzu RC.
         </p>
       ) : null}
     </div>

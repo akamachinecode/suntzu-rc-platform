@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Search",
-  description: "Search Servo's events, fields, tracks, clubs, guides and rules in one place.",
+  description: "Search SunTzu RC's events, fields, tracks, clubs, guides and rules in one place.",
   // Google indexes the pages themselves, not our searches.
   robots: { index: false },
 };
@@ -69,7 +69,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
     <>
       <header className="mx-auto max-w-7xl px-4 pt-16 pb-8 sm:pt-20">
         <h1 className="text-4xl leading-[0.95] font-black tracking-tight text-balance break-words font-wide sm:text-6xl">
-          {q ? <>Results for &ldquo;{q}&rdquo;</> : "Search Servo"}
+          {q ? <>Results for &ldquo;{q}&rdquo;</> : "Search SunTzu RC"}
         </h1>
         <SearchForm q={q} />
       </header>

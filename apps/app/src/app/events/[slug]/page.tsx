@@ -81,7 +81,7 @@ function historyLines(history: EventChange[]): { at: string; text: string }[] {
     const at = group[0]!.at;
     const parts: string[] = [];
     for (const change of group) {
-      if (change.field === "created") parts.push("Listed on Servo");
+      if (change.field === "created") parts.push("Listed on SunTzu RC");
       if (change.field === "startDate") {
         parts.push(`First day moved from ${shortDate(change.from)} to ${shortDate(change.to)}`);
       }
@@ -417,7 +417,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
                 <li key={`${source.name}-${source.lastSeenAt}`} className="grid gap-1">
                   <p className="font-semibold">
                     {source.byCrew
-                      ? "Checked by the Servo crew against the organiser's page"
+                      ? "Checked by the SunTzu RC crew against the organiser's page"
                       : `${source.name} (${TRUST_LABELS[source.trust].toLowerCase()})`}
                   </p>
                   <p className="text-sm text-muted-foreground">

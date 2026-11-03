@@ -229,8 +229,8 @@ export class MembersService {
       : [];
     return writeIcs(
       {
-        name: "Servo: my RC calendar",
-        description: "The RC events you follow on Servo, kept up to date.",
+        name: "SunTzu RC: my RC calendar",
+        description: "The RC events you follow on SunTzu RC, kept up to date.",
         events: list.map(({ event, place, host }) => toIcsEvent(toEvent(event, place, host))),
       },
       new Date(),

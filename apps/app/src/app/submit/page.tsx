@@ -6,7 +6,7 @@ import { SubmitForm } from "./submit-form";
 export const metadata: Metadata = {
   title: "Send us an event",
   description:
-    "Know about an RC fly-in, race or swap meet in Florida that isn't on Servo? Paste the link or the flyer.",
+    "Know about an RC fly-in, race or swap meet in Florida that isn't on SunTzu RC? Paste the link or the flyer.",
 };
 
 export default function SubmitPage() {
@@ -31,8 +31,8 @@ export default function SubmitPage() {
             can&apos;t quote is left out.
           </p>
           <p>
-            Either way, the crew checks it before it goes live. If it&apos;s already on Servo, your
-            link counts as one more source.
+            Either way, the crew checks it before it goes live. If it&apos;s already on SunTzu RC,
+            your link counts as one more source.
           </p>
           <p>
             Organisers:{" "}

@@ -6,7 +6,7 @@ import { ContactForm } from "./contact-form";
 export const metadata: Metadata = {
   title: "Book a session",
   description:
-    "Ask the Servo crew about lessons, a first model, advanced courses, local clubs and FAA rules in South Florida.",
+    "Ask the SunTzu RC crew about lessons, a first model, advanced courses, local clubs and FAA rules in South Florida.",
 };
 
 const isTopic = (value: unknown): value is Topic => TOPICS.some((topic) => topic.value === value);

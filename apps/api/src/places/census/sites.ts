@@ -2,7 +2,7 @@ import type { DISCIPLINES, HOST_KINDS, REGISTERS } from "@workspace/shared";
 import { nameKey, withoutCompanySuffix } from "./names.js";
 
 // What the FAA registers say about one flying site, before it is matched against the places
-// and hosts Servo already knows. Shared by the FRIA and fixed-site readers.
+// and hosts SunTzu RC already knows. Shared by the FRIA and fixed-site readers.
 
 export type SiteRegister = Extract<(typeof REGISTERS)[number], "faa-fria" | "faa-fixed-site">;
 export type HostKind = (typeof HOST_KINDS)[number];

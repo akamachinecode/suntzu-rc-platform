@@ -59,11 +59,11 @@ export class NewcomersService {
             ...renderEmail({
               heading: `${input.name} would like to try ${DISCIPLINE_WORDS[input.discipline]}`,
               paragraphs: [
-                `They live about ${Math.round(miles)} miles from your field (ZIP ${input.zip}) and found ${host.name} on Servo.`,
+                `They live about ${Math.round(miles)} miles from your field (ZIP ${input.zip}) and found ${host.name} on SunTzu RC.`,
                 ...(input.message ? [`“${input.message}”`] : []),
                 `Reply to them at ${input.email}. They agreed to share their name and email with you, and only with you.`,
               ],
-              footer: `You got this because ${host.name} welcomes newcomers on Servo. Turn it off on your club dashboard.`,
+              footer: `You got this because ${host.name} welcomes newcomers on SunTzu RC. Turn it off on your club dashboard.`,
             }),
           });
           delivered = true;
@@ -93,7 +93,7 @@ export class NewcomersService {
         to: env.CREW_INBOX,
         subject: `A newcomer wants to try ${DISCIPLINE_WORDS[input.discipline]} near ${input.zip}`,
         ...renderEmail({
-          heading: "No club nearby takes newcomers on Servo yet",
+          heading: "No club nearby takes newcomers on SunTzu RC yet",
           paragraphs: [
             `${input.name} <${input.email}>, ZIP ${input.zip}.`,
             input.message || "No message.",

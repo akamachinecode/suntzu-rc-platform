@@ -64,7 +64,7 @@ describe("CensusHttp", () => {
     });
     await expect(http.json("https://example.test/a")).resolves.toEqual({});
     expect(calls).toBe(2);
-    expect(agents[0]).toMatch(/^ServoBot\//);
+    expect(agents[0]).toMatch(/^SunTzuRCBot\//);
   });
 
   it("doesn't retry a missing file", async () => {

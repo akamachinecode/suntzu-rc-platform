@@ -22,7 +22,7 @@ export const TYPE_LABELS: Record<SearchType, string> = {
   club: "Club",
   guide: "Guide",
   rule: "Rule",
-  service: "With Servo",
+  service: "With SunTzu RC",
 };
 
 /** Where to go when a search finds nothing, and when the box opens empty. */

@@ -3,11 +3,11 @@ import { LegalPage } from "@/components/legal/legal-page";
 
 export const metadata: Metadata = {
   title: "Privacy",
-  description: "What Servo stores about you, why, for how long, and how to delete it.",
+  description: "What SunTzu RC stores about you, why, for how long, and how to delete it.",
 };
 
 // Plain-language policy written for launch (docs/specs/0004-launch.md). The owner should have it
-// reviewed before Servo goes public; see docs/LAUNCH.md.
+// reviewed before SunTzu RC goes public; see docs/LAUNCH.md.
 export default function PrivacyPage() {
   return (
     <LegalPage
@@ -16,7 +16,7 @@ export default function PrivacyPage() {
       updated="October 29, 2026"
       sections={[
         {
-          title: "Browsing Servo",
+          title: "Browsing SunTzu RC",
           paragraphs: [
             "You don't need an account to read the calendar, the places or the guides. We don't use advertising or tracking cookies, and we don't sell or share data with advertisers.",
             '"Near me" works out distances in your browser: your location is never sent to us. "Can I fly here?" sends us the point you choose so we can check it; we don\'t store or log it.',
@@ -41,7 +41,7 @@ export default function PrivacyPage() {
         {
           title: "Emails",
           paragraphs: [
-            'We send sign-in links when you ask for one. Change alerts and the weekly "this weekend near you" email are on or off in My Servo, and every one of them has a one-click link to stop it.',
+            'We send sign-in links when you ask for one. Change alerts and the weekly "this weekend near you" email are on or off in My SunTzu RC, and every one of them has a one-click link to stop it.',
             "Emails are sent through Amazon Web Services (Amazon SES).",
           ],
         },
@@ -61,7 +61,7 @@ export default function PrivacyPage() {
         {
           title: "Deleting your data",
           paragraphs: [
-            'Delete your account from My Servo at any time: your email, settings, follows and "going" are deleted at once. Events and corrections you gave to the public calendar stay, without your name.',
+            'Delete your account from My SunTzu RC at any time: your email, settings, follows and "going" are deleted at once. Events and corrections you gave to the public calendar stay, without your name.',
             "To ask what we hold about you, or for anything else about your data, write to us through the contact page.",
           ],
         },

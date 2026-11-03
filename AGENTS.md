@@ -4,7 +4,7 @@ Instructions for AI coding agents (Claude Code, Cursor, GitHub Copilot, Codex, G
 
 ## Project
 
-- **Name:** Servo (working brand name)
+- **Name:** SunTzu RC, at **suntzurc.com** (chosen by the owner on 2026-11-03; it was "Servo" until then, see `docs/DECISIONS.md`)
 - **Stack:** `platform` — Itaca Technologies standard stack (details below)
 - **Hosting:** AWS (`terraform`) with Cloudflare in front (DNS, CDN, WAF)
 - **Code:** GitHub `akamachinecode/rc-landing` (the owner's personal account, not the Itaca organisation: see `docs/DECISIONS.md`, 2026-10-29)
@@ -66,10 +66,10 @@ A **bit** is the smallest piece of behaviour someone can trigger and check end t
 9. **Finish every task with `pnpm check`** (format, lint, types, build) and fix what fails. Run `pnpm format` for formatting. Never disable lint rules or type checks to make it pass.
 10. **Read and record decisions.** `docs/DECISIONS.md` is the project's memory: read it before starting a task. New dependency, environment variable, external service, data model or route structure change → add a dated entry to it. Itaca engineers read it when they take over.
 
-## Servo project notes
+## SunTzu RC project notes
 
-- **Why Servo exists:** three RC enthusiasts want the hobby to grow, with a genuinely useful, free, well-made platform people can take part in. **`docs/LANDSCAPE.md`** has what already exists, what other hobbies teach, and the product principles that follow (free to take part, organisers get something back, visible trust, a path for newcomers). Check new features against those principles.
-- **Servo 1.0** is planned in `docs/specs/0001`–`0004` (events, places, community, launch) and summarised in `docs/ROADMAP.md`: build slice by slice and tick each one off in its spec.
+- **Why SunTzu RC exists:** three RC enthusiasts want the hobby to grow, with a genuinely useful, free, well-made platform people can take part in. **`docs/LANDSCAPE.md`** has what already exists, what other hobbies teach, and the product principles that follow (free to take part, organisers get something back, visible trust, a path for newcomers). Check new features against those principles.
+- **SunTzu RC 1.0** is planned in `docs/specs/0001`–`0004` (events, places, community, launch) and summarised in `docs/ROADMAP.md`: build slice by slice and tick each one off in its spec.
 - **Read `docs/EVENTS-ENGINE.md`** before working on events, sources or ingestion. The plan: an engine that monitors the web for RC events (Florida first), merges duplicates, verifies them and publishes them; the worker that runs it will live in `apps/api`. **`docs/ROADMAP.md`** is the approved build order (what we index, the community ladder, tracks and milestones): tick items off there as they land.
 - **Content** is typed data in `apps/app/src/content/` (services, rules, history, guides). Events and places live in the database now (the engine, the census, the crew and organisers). Every factual item carries a source link; keep it that way and re-check dates before editing.
 - **Anatomy figures**: use the project skill in `.claude/skills/anatomy` (read its `SKILL.md`). The kit is vendored in `apps/app/src/components/iso/`; figures live in `apps/app/src/components/figures/<name>/` following `references/react.md`. Light theme only, XT60 yellow is the single lit accent (see `.servo-figure` in `apps/app/src/app/globals.css`). Run the line check before shipping a figure.
@@ -96,11 +96,11 @@ A **bit** is the smallest piece of behaviour someone can trigger and check end t
 
 ## Stack: product platform (`platform`)
 
-A pnpm monorepo: one Next.js app (the public site and the signed-in screens) on top of one API, ready for a mobile app. Unlike the standard `platform` stack there is no Astro site (`apps/web`): Servo's public pages are the product (dynamic events, SEO per event, interactive figures), so they live in `apps/app`. Each app and package has its own `AGENTS.md` with its stack, structure and recipes — **read it before changing files there.**
+A pnpm monorepo: one Next.js app (the public site and the signed-in screens) on top of one API, ready for a mobile app. Unlike the standard `platform` stack there is no Astro site (`apps/web`): SunTzu RC's public pages are the product (dynamic events, SEO per event, interactive figures), so they live in `apps/app`. Each app and package has its own `AGENTS.md` with its stack, structure and recipes — **read it before changing files there.**
 
 ```text
-apps/app/             public site + web app: Next.js 16 (App Router), UI only    → https://www.example.com
-apps/api/             backend: NestJS — auth, business rules, data            → https://api.example.com
+apps/app/             public site + web app: Next.js 16 (App Router), UI only    → https://www.suntzurc.com
+apps/api/             backend: NestJS — auth, business rules, data            → https://api.suntzurc.com
 packages/db/          database schema and migrations (PostgreSQL + Drizzle), used only by apps/api
 packages/shared/      validation schemas (Zod) and types shared by the API and the apps
 packages/api-client/  typed API client, generated from apps/api/openapi.json
@@ -157,7 +157,7 @@ Explain to the user why the request needs an engineer, write down what you found
 
 <!-- BEGIN AWS Agent Toolkit rules -->
 
-> Added by the AWS Agent Toolkit setup (2026-10-22), from `aws/agent-toolkit-for-aws` `rules/aws-starter-rules.md`. The Servo AWS project runs in **us-east-2** with CLI profile `servo`, and `infra/` (Terraform) targets it since 2026-10-29 (C1, first in `sst.config.ts` on 2026-10-27). Deploying is the owner's step, following `docs/LAUNCH.md`; treat the rules above this block as the ones that win.
+> Added by the AWS Agent Toolkit setup (2026-10-22), from `aws/agent-toolkit-for-aws` `rules/aws-starter-rules.md`. The SunTzu RC AWS project runs in **us-east-2** with CLI profile `servo`, and `infra/` (Terraform) targets it since 2026-10-29 (C1, first in `sst.config.ts` on 2026-10-27). Deploying is the owner's step, following `docs/LAUNCH.md`; treat the rules above this block as the ones that win.
 
 ## AWS Guidance for the new AWS experience
 

@@ -10,7 +10,7 @@ import { VerifyPanel } from "./verify-panel";
 export const metadata: Metadata = {
   title: "For clubs and tracks",
   description:
-    "Run an RC club, field or track in Florida? Publish your events on Servo for free: a verified page, a calendar widget for your site, and people who follow and show up.",
+    "Run an RC club, field or track in Florida? Publish your events on SunTzu RC for free: a verified page, a calendar widget for your site, and people who follow and show up.",
 };
 
 export const dynamic = "force-dynamic";
@@ -53,7 +53,7 @@ export default async function OrganisePage({ searchParams }: PageProps<"/organis
     <>
       <PageHeader
         title="Run a club or track? Publish with us."
-        lead="Free, forever. Servo puts your events in front of every RC pilot and racer in Florida, and gives you something back for it."
+        lead="Free, forever. SunTzu RC puts your events in front of every RC pilot and racer in Florida, and gives you something back for it."
       />
       <section aria-label="What you get" className="mx-auto max-w-7xl px-4 pb-16">
         <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">

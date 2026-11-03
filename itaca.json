@@ -1,10 +1,12 @@
 {
+  "name": "SunTzu RC",
   "stack": "platform",
   "deploy": "terraform",
-  "domain": "example.com",
+  "domain": "suntzurc.com",
   "awsRegion": "us-east-2",
   "github": "akamachinecode/rc-landing",
   "createdWith": "create-itaca@0.2.0 (unreleased platform branch, commit f4d3b9e), migrated from web-app 0.1.0",
   "refreshedWith": "create-itaca@0.3.1 (2026-11-03)",
-  "createdAt": "2026-10-20"
+  "createdAt": "2026-10-20",
+  "exampleOf": "create-itaca@0.3.1 (platform stack, terraform deploy)"
 }

@@ -6,8 +6,8 @@ import { ALLOW_ALL, DISALLOW_ALL, parseRobots, type RobotsRules } from "./robots
 // it gets the organiser's permission another way (a feed they give us, a partnership). A bot
 // wall (a captcha or region block shown instead of the page) is reported, never worked around.
 
-// The contact URL becomes Servo's own page once the domain exists (roadmap C3).
-export const USER_AGENT = "ServoBot/0.1 (+https://github.com/akamachinecode/rc-landing)";
+// Site owners who see it in their logs can reach the crew from the contact page.
+export const USER_AGENT = "SunTzuRCBot/0.1 (+https://www.suntzurc.com/contact)";
 
 export interface Page {
   url: string;

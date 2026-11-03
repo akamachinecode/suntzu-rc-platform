@@ -60,7 +60,7 @@ export default async function ClubsPage() {
                       </h3>
                       {host.verified ? (
                         <p className="mt-2 inline-flex items-center gap-1 text-sm font-semibold">
-                          <ShieldCheck aria-hidden className="size-4" /> Verified on Servo
+                          <ShieldCheck aria-hidden className="size-4" /> Verified on SunTzu RC
                         </p>
                       ) : null}
                     </li>

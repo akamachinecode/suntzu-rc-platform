@@ -193,7 +193,7 @@ export const place = placeSummary.extend({
 export const placeDetail = place.extend({
   events: z.array(event),
   following: z.number().int(),
-  // Run by an organiser who proved it on Servo: they keep it current.
+  // Run by an organiser who proved it on SunTzu RC: they keep it current.
   stewarded: z.boolean(),
 });
 

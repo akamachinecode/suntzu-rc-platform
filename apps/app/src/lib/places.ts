@@ -37,6 +37,6 @@ export const ACCESS_LABELS: Record<PlaceAccess, { label: string; detail: string 
 export const REGISTER_LABELS = {
   "faa-fria": "FAA-recognised identification area (FRIA)",
   "faa-fixed-site": "FAA recreational fixed site",
-  crew: "Checked by the Servo crew",
+  crew: "Checked by the SunTzu RC crew",
   organiser: "Kept by its organiser",
 } as const;

@@ -88,7 +88,7 @@ export function AddEventForm({
       </div>
       <div className="grid gap-2">
         <Label htmlFor="add-place" className="font-semibold">
-          Place on Servo
+          Place on SunTzu RC
         </Label>
         <select id="add-place" name="place" defaultValue="" className={select}>
           <option value="">Not listed — describe it</option>

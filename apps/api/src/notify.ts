@@ -1,4 +1,4 @@
-// Sends Servo's own emails once, from the command line (`pnpm notify`), and on a schedule once
+// Sends SunTzu RC's own emails once, from the command line (`pnpm notify`), and on a schedule once
 // deployed: change alerts and the clean-up every run, the weekly digest on Thursdays and the
 // organisers' report on the first of the month. `pnpm notify digest report` sends those now.
 import { createDb } from "@workspace/db";

@@ -6,13 +6,13 @@
 
 ## Problem
 
-The hobby grows through people, but RC communities are scattered across Facebook groups, forums and club sites, and organisers have no reason to publish anywhere else. Servo's community page is a static list and a form that goes nowhere.
+The hobby grows through people, but RC communities are scattered across Facebook groups, forums and club sites, and organisers have no reason to publish anywhere else. SunTzu RC's community page is a static list and a form that goes nowhere.
 
 ## Goals
 
 - Following events, clubs, places and disciplines, marking "going" and getting told about changes is free and takes seconds.
 - People can add and fix events, and every contribution is credited and checked.
-- Organisers get something back for publishing with Servo: a verified page, a calendar widget for their own site and a monthly report.
+- Organisers get something back for publishing with SunTzu RC: a verified page, a calendar widget for their own site and a monthly report.
 - A curious newcomer can ask to try the hobby and reach a nearby club, track or shop.
 
 ## Out of scope
@@ -28,7 +28,7 @@ The hobby grows through people, but RC communities are scattered across Facebook
 - As a member, I want an email when something I follow changes or is cancelled, and a weekly "this weekend near you".
 - As a member, I want to send an event by pasting a link or its text, and suggest a correction to an event.
 - As a club officer, I want to claim my club, get a verified badge, publish and edit our events, put our calendar on our site and see how many people follow and go.
-- As a newcomer, I want to tell Servo where I live and what I'd like to try, and hear from someone nearby.
+- As a newcomer, I want to tell SunTzu RC where I live and what I'd like to try, and hear from someone nearby.
 - As a member, I want to delete my account and my data whenever I want.
 
 ## Capabilities touched
@@ -57,7 +57,7 @@ The hobby grows through people, but RC communities are scattered across Facebook
 - When a member pastes a link, then the engine reads it; when they paste text, the AI extracts the fields with quotes; either way the event goes to the crew's queue credited to them.
 - When someone suggests a correction, then it reaches the crew next to the current value and the source.
 - When a club officer proves control of the club's domain email or website, then they become its organiser, the club and its events show "Verified", and they can publish events that appear without waiting for the crew.
-- When an organiser copies the widget code, then their site shows their upcoming events from Servo.
+- When an organiser copies the widget code, then their site shows their upcoming events from SunTzu RC.
 - When a newcomer asks to try a discipline, then the nearest verified organisers who accept newcomers (or the crew, when there are none) receive the request.
 - When a member deletes their account, then their email, follows, "going" and preferences are gone, and their past contributions stay without their name.
 

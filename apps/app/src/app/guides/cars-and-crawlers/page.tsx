@@ -168,7 +168,7 @@ export default function CarsGuide() {
         </h1>
         <p className="mt-5 text-lg text-pretty">
           Sixty years of radio cars, every part of a short-course truck, and benches you can drive
-          yourself. By the Servo crew, about 15 minutes.
+          yourself. By the SunTzu RC crew, about 15 minutes.
         </p>
       </header>
 

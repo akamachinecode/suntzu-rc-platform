@@ -2,7 +2,7 @@ import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
 import { Logger } from "@nestjs/common";
 import { env } from "../env.js";
 
-// Every email Servo sends goes through here: Amazon SES in production, the console locally
+// Every email SunTzu RC sends goes through here: Amazon SES in production, the console locally
 // (MAIL_TRANSPORT=log), so sign-in links and alerts can be followed without sending anything.
 
 export interface Mail {
@@ -70,7 +70,7 @@ export function renderEmail(content: EmailContent): { text: string; html: string
   ].join("\n");
   const html = `<!doctype html><html><body style="margin:0;background:#f4f1ea;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a">
 <div style="max-width:560px;margin:0 auto;padding:32px 24px">
-<p style="font-size:22px;font-weight:900;letter-spacing:-0.5px;margin:0 0 24px">SERVO</p>
+<p style="font-size:22px;font-weight:900;letter-spacing:-0.5px;margin:0 0 24px">SUNTZU RC</p>
 <h1 style="font-size:24px;line-height:1.2;margin:0 0 16px">${escape(content.heading)}</h1>
 ${content.paragraphs.map((paragraph) => `<p style="font-size:16px;line-height:1.5;margin:0 0 14px">${escape(paragraph)}</p>`).join("\n")}
 ${content.button ? `<p style="margin:24px 0"><a href="${escape(content.button.url)}" style="display:inline-block;background:#ffd400;color:#1a1a1a;font-weight:700;text-decoration:none;padding:12px 18px;border:2px solid #1a1a1a;border-radius:6px">${escape(content.button.label)}</a></p>` : ""}

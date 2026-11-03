@@ -23,7 +23,7 @@ export const FRIA_LAYER = `${FAA_SERVICES}/FAA_Recognized_Identification_Areas/F
 export const FRIA_DATASET =
   "https://udds-faa.opendata.arcgis.com/datasets/faa::faa-recognized-identification-areas";
 
-// The register also holds the requester's postal address and ZIP code: Servo never asks for them.
+// The register also holds the requester's postal address and ZIP code: SunTzu RC never asks for them.
 export const FRIA_FIELDS = [
   "refNumber",
   "title",

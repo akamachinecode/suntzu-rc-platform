@@ -4,7 +4,7 @@ Cloudflare is the front door of every Itaca project and AWS is the house: everyt
 
 ## Account and access
 
-- The zone for `example.com` lives in **the client's own Cloudflare account**, billed to them. Itaca joins as a member with the **Administrator** role plus **API Token Provisioning** ([roles](https://developers.cloudflare.com/fundamentals/manage-members/roles/)). Moving a zone between accounts later means re-adding it, changing nameservers, turning DNSSEC off first and reissuing certificates, so start in the right account.
+- The zone for `suntzurc.com` lives in **the client's own Cloudflare account**, billed to them. Itaca joins as a member with the **Administrator** role plus **API Token Provisioning** ([roles](https://developers.cloudflare.com/fundamentals/manage-members/roles/)). Moving a zone between accounts later means re-adding it, changing nameservers, turning DNSSEC off first and reissuing certificates, so start in the right account.
 - People sign in to the dashboard with Itaca's SSO ([dashboard SSO](https://developers.cloudflare.com/fundamentals/manage-members/dashboard-sso/), free on every plan).
 - Deploys use an **account-owned API token** scoped to this zone and to the permissions it needs ([tokens](https://developers.cloudflare.com/fundamentals/api/get-started/account-owned-tokens/)). Never a personal global key.
 - Changes are kept in the account's audit log for 18 months.
@@ -76,7 +76,7 @@ Then deploy (merge to `main` or run the Deploy workflow). From then on, AWS answ
 ## After go-live
 
 ```bash
-curl -sI https://example.com | grep -iE 'cf-ray|strict-transport|x-content-type'
+curl -sI https://suntzurc.com | grep -iE 'cf-ray|strict-transport|x-content-type'
 ```
 
 `cf-ray` in the response means traffic goes through Cloudflare. Also run the domain through https://www.ssllabs.com/ssltest/ (target: A or A+).

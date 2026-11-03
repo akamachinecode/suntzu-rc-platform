@@ -376,7 +376,7 @@ export const EVENTS: WithLinks<NewEvent>[] = [
 /** Where the seeded events come from: the crew's hand-checked calendar. */
 export const CREW_SOURCE: NewSource = {
   slug: "servo-crew",
-  name: "Servo crew, hand-checked calendar",
+  name: "SunTzu RC crew, hand-checked calendar",
   url: "https://github.com/akamachinecode/rc-landing/blob/main/apps/app/src/content/events.ts",
   adapter: "manual",
   trust: "aggregator",

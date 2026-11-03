@@ -139,7 +139,7 @@ export const submissionInput = z
   });
 
 export const submissionResult = z.object({
-  // queued: the crew will check it; known: it's already on Servo; inbox: a person will read it.
+  // queued: the crew will check it; known: it's already on SunTzu RC; inbox: a person will read it.
   outcome: z.enum(["queued", "known", "inbox"]),
   events: z.array(
     z.object({ name: z.string(), startDate: z.iso.date(), slug: z.string().nullable() }),

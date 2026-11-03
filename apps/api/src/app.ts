@@ -32,7 +32,7 @@ export async function createApp(
 /** The OpenAPI document: the contract that apps (web, mobile) and partners build against. */
 export function createOpenApiDocument(app: NestExpressApplication): OpenAPIObject {
   const config = new DocumentBuilder()
-    .setTitle("Servo API")
+    .setTitle("SunTzu RC API")
     .setVersion("1.0.0")
     .addCookieAuth("better-auth.session_token")
     .build();

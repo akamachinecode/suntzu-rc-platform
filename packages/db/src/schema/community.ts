@@ -84,7 +84,7 @@ export const rsvps = pgTable(
 );
 
 /**
- * Who runs a club or track on Servo. A row is a claim until `verifiedAt` is set: by a code sent
+ * Who runs a club or track on SunTzu RC. A row is a claim until `verifiedAt` is set: by a code sent
  * to an address at the host's domain, a code found on its website, or the crew.
  */
 export const hostMembers = pgTable(

@@ -4,7 +4,7 @@ import { StopButton } from "./stop-button";
 
 export const metadata: Metadata = {
   title: "Stop emails",
-  description: "Stop Servo's change alerts, weekly email or monthly club report.",
+  description: "Stop SunTzu RC's change alerts, weekly email or monthly club report.",
   robots: { index: false },
 };
 
@@ -27,7 +27,7 @@ export default async function UnsubscribePage({ searchParams }: PageProps<"/unsu
         {typeof token === "string" && typeof what === "string" && label ? (
           <StopButton token={token} what={what} label={label} />
         ) : (
-          <p className="text-lg">This link is incomplete. Change your emails in My Servo.</p>
+          <p className="text-lg">This link is incomplete. Change your emails in My SunTzu RC.</p>
         )}
       </section>
     </>

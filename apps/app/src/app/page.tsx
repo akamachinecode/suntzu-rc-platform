@@ -279,7 +279,7 @@ export default async function HomePage() {
                 <Link href="/try">Find me a club</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link href="/contact">Ask the Servo crew</Link>
+                <Link href="/contact">Ask the SunTzu RC crew</Link>
               </Button>
             </div>
           </div>

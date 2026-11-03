@@ -30,9 +30,9 @@ li a{display:grid;gap:2px;padding:12px 14px;border-bottom:1px solid #00000022;te
 .when{font-weight:800;font-size:14px}.off{text-decoration:line-through}.name{font-size:15px}.where{font-size:13px;color:#555}
 footer{padding:10px 14px;font-size:12px}.empty{padding:14px}
 </style></head><body>
-<header><h1>${escape(host.name)}: upcoming</h1><a href="${page(`/clubs/${host.slug}`)}" target="_blank" rel="noopener" style="font-size:13px;font-weight:700">Follow on Servo</a></header>
+<header><h1>${escape(host.name)}: upcoming</h1><a href="${page(`/clubs/${host.slug}`)}" target="_blank" rel="noopener" style="font-size:13px;font-weight:700">Follow on SunTzu RC</a></header>
 ${items.length ? `<ul>${items.join("")}</ul>` : `<p class="empty">No upcoming events yet.</p>`}
-<footer>Calendar by <a href="${page("/")}" target="_blank" rel="noopener">Servo</a>, free for RC clubs in Florida.</footer>
+<footer>Calendar by <a href="${page("/")}" target="_blank" rel="noopener">SunTzu RC</a>, free for RC clubs in Florida.</footer>
 </body></html>`;
   return new Response(html, {
     headers: {

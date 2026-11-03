@@ -1,5 +1,5 @@
 # Email: Amazon SES sends from var.email.domain, signed with DKIM. Each stage has its own sending
-# domain (production example.com, staging staging.example.com), so stages never share an SES
+# domain (production suntzurc.com, staging staging.suntzurc.com), so stages never share an SES
 # identity and one can be deleted without touching the others. Until SES production access is
 # granted (docs/LAUNCH.md), SES only sends to verified addresses.
 

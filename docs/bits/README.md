@@ -24,7 +24,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [engine.resolve](./engine.resolve.md)                   | What the sources say becomes events                                      | verified     | `match.test.ts`                     |
 | [auth.email-link](./auth.email-link.md)                 | Someone signs in with a link by email                                    | verified     | none yet                            |
 | [auth.google](./auth.google.md)                         | Someone signs in with Google                                             | not verified | none yet (needs Google credentials) |
-| [account.get](./account.get.md)                         | A member opens My Servo                                                  | verified     | none yet                            |
+| [account.get](./account.get.md)                         | A member opens My SunTzu RC                                              | verified     | none yet                            |
 | [account.update](./account.update.md)                   | A member changes their settings                                          | verified     | none yet                            |
 | [account.delete](./account.delete.md)                   | A member deletes their account                                           | read in code | none yet                            |
 | [follows.toggle](./follows.toggle.md)                   | A member follows or unfollows something                                  | verified     | none yet                            |
@@ -44,7 +44,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [hosts.claim](./hosts.claim.md)                         | Someone claims a club or track                                           | verified     | none yet                            |
 | [hosts.verify](./hosts.verify.md)                       | A claim is proved                                                        | verified     | none yet                            |
 | [organiser.publish](./organiser.publish.md)             | An organiser publishes or changes an event                               | verified     | none yet                            |
-| [organiser.widget](./organiser.widget.md)               | A club's website shows its Servo calendar                                | verified     | none yet                            |
+| [organiser.widget](./organiser.widget.md)               | A club's website shows its SunTzu RC calendar                            | verified     | none yet                            |
 | [places.confirm](./places.confirm.md)                   | A steward confirms a place's details                                     | read in code | none yet                            |
 | [try.request](./try.request.md)                         | A newcomer asks to try RC                                                | verified     | none yet                            |
 | [notify.changes](./notify.changes.md)                   | Followers hear that an event moved or was cancelled                      | verified     | none yet                            |

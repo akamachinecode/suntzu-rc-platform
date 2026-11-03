@@ -12,7 +12,7 @@ export const InjectAuth = () => Inject(AUTH);
 
 /**
  * Better Auth: sessions stored in the database (revocable), cookies for the web app. Endpoints live
- * under /auth. Servo signs people in without passwords (owner's decision, 2026-10-27): a one-time
+ * under /auth. SunTzu RC signs people in without passwords (owner's decision, 2026-10-27): a one-time
  * link by email (POST /auth/sign-in/magic-link) or Google (when GOOGLE_CLIENT_ID is set).
  * Users and permissions are on the "stop and ask Itaca engineering" list.
  */
@@ -22,7 +22,7 @@ export function createAuth(db: Database) {
       ? { google: { clientId: env.GOOGLE_CLIENT_ID, clientSecret: env.GOOGLE_CLIENT_SECRET } }
       : {};
   return betterAuth({
-    appName: "Servo",
+    appName: "SunTzu RC",
     baseURL: env.API_URL,
     basePath: "/auth",
     secret: env.BETTER_AUTH_SECRET,
@@ -42,9 +42,9 @@ export function createAuth(db: Database) {
         sendMagicLink: async ({ email, url }) => {
           await sendMail({
             to: email,
-            subject: "Your Servo sign-in link",
+            subject: "Your SunTzu RC sign-in link",
             ...renderEmail({
-              heading: "Sign in to Servo",
+              heading: "Sign in to SunTzu RC",
               paragraphs: [
                 "Tap the button to sign in. The link works once, for the next 15 minutes.",
                 "If you didn't ask for it, ignore this email: nobody can sign in without it.",

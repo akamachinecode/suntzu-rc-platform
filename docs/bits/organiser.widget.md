@@ -1,4 +1,4 @@
-# organiser.widget — A club's website shows its Servo calendar
+# organiser.widget — A club's website shows its SunTzu RC calendar
 
 - **Trigger:** the club pastes the iframe code from its dashboard.
 - **Who:** anyone visiting the club's site.

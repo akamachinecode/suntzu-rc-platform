@@ -1,7 +1,7 @@
 # Each stage's values are in <stage>.tfvars.json (production.tfvars.json came with the project).
 
 variable "hosts" {
-  description = "Hostnames of this stage. Servo has no separate website: apps/app is the public site. The app and the API must share cookie_domain."
+  description = "Hostnames of this stage. SunTzu RC has no separate website: apps/app is the public site. The app and the API must share cookie_domain."
   type = object({
     app = string
     api = string

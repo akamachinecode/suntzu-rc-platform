@@ -12,6 +12,17 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-03 — The name is SunTzu RC, at suntzurc.com (C3), and it is the example project for 0.3.1
+
+- **What:** the owner chose the name **SunTzu RC** and the domain **suntzurc.com**, replacing the working name "Servo", and asked to keep the project as the example of `create-itaca@0.3.1`.
+  - **Written "SunTzu RC"** on the site, in emails, calendars and share images (the owner asked for a recommendation: it reads at once, "RC" says what it's about, and lowercased without the space it is the domain). The wordmark is lowercase like the decal it was ("suntzu rc"); the footer's big sign-off is smaller so the longer word fits. Change the name in `SITE.name` (`apps/app/src/lib/site.ts`), the wordmark and `email.from` in the `infra/*.tfvars.json` files.
+  - **Domain:** `www.suntzurc.com` (the site; `suntzurc.com` redirects there), `api.suntzurc.com`, staging on `www-staging.` / `api-staging.` and email from `hello@suntzurc.com` (staging from `hello@staging.suntzurc.com`). The domain is registered with Cloudflare Registrar (since 2025-04-05, Cloudflare name servers), so the zone exists.
+  - **The engine's user agent** is now `SunTzuRCBot/0.1 (+https://www.suntzurc.com/contact)`, pointing site owners at the contact page instead of the private repository.
+  - **Kept:** "servo" where it means the part (the figures, the signal bench on the home page, "servo saver"); the internal CSS class `servo-figure`; the AWS CLI profile and project `servo` (the AWS project's real name); the AWS resource prefix `rc-landing` (the repository's name, 2026-10-29); this log's earlier entries, which keep the name they were written with; and `example.com` in tests, where it stands for any address.
+  - **Example project:** `itaca.json` says `exampleOf`, and the README has a section on what to look at when using SunTzu RC as the model for a `platform` project.
+- **Why:** the owner's decision (C3 in `ROADMAP.md`); the last naming step before going live.
+- **Impact:** nothing deployed. If the repository is renamed (for example to `suntzurc`), the resource prefix in `infra/stage.tf` and `infra/bootstrap/main.tf`, the SSM paths and the OIDC subject change with it: do it before the first deploy.
+
 ## 2026-11-03 — Refreshed to the Itaca standard `create-itaca@0.3.1`
 
 - **What:** the owner published `create-itaca@0.3.1` (tag `bea546a` of `itaca-stacks`, 2026-11-03), a version refresh on top of 0.3.0. Servo takes all of it:
@@ -20,7 +31,7 @@ Format:
   - **`multer` override removed:** `@nestjs/platform-express` 12.3.2 depends on `multer` 2.5.0 itself.
   - **GHSA-g3hv-75wg-m249 accepted** (moderate, `minimatch` < 11.0.1) in `pnpm-workspace.yaml` (`audit.ignore`), as in the template: only tooling pulls it in and the fix exists only in `minimatch` 11, which those tools don't support.
 - **Kept on purpose:** **TypeScript 5.9.3** (7.0 is out, and Dependabot proposes 6.0, but the template and `typescript-eslint` stay on 5.9) and **`@types/node` 24**, which matches the Node 24 runtime (`.nvmrc`, the Dockerfiles); `pnpm update --latest` proposes 26.
-- **Why:** staying on the standard; Servo is also the example project for 0.3.1 (see the next entry).
+- **Why:** staying on the standard; the project is also the example for 0.3.1 (see the entry above).
 - **Impact:** `pnpm audit` reports one low advisory with no fix yet (GHSA-gcqx-w48m-w2h4, `deepmerge`, only inside the shadcn CLI); CI's audit (`--prod --audit-level high`) passes. Nothing deployed.
 
 ## 2026-10-29 — The repository lives in the owner's personal GitHub account

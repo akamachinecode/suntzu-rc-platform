@@ -1,16 +1,16 @@
 # 0005 — Search across the whole site
 
-- **Status:** Built 2026-10-29 (approved 2026-10-28); part of Servo 1.0 since 2026-10-29
+- **Status:** Built 2026-10-29 (approved 2026-10-28); part of SunTzu RC 1.0 since 2026-10-29
 - **Requested by:** the owner (Alejandro), 2026-10-28
 - **Approved by:** the owner, 2026-10-28 (past events below and marked; 25 miles, widen to 50 or 100; common Spanish words; searches without results counted anonymously for 90 days; the engine is Itaca's choice)
 
 ## Problem
 
-Someone lands on Servo looking for one thing: an event, a field, a club, a rule. Today each section has its own search box (events and places filter in the browser), and guides, rules and clubs can't be searched at all. Typing "Markham Park", "Hialeah" or "do I need to register my plane" from the home page finds nothing, and the "RC track near me" question that Google answers with spam (`LANDSCAPE.md`) has no answer from the front door.
+Someone lands on SunTzu RC looking for one thing: an event, a field, a club, a rule. Today each section has its own search box (events and places filter in the browser), and guides, rules and clubs can't be searched at all. Typing "Markham Park", "Hialeah" or "do I need to register my plane" from the home page finds nothing, and the "RC track near me" question that Google answers with spam (`LANDSCAPE.md`) has no answer from the front door.
 
 ## Goals
 
-- One search box, on every page, that finds events, places, clubs, guides, rules and Servo's services, and puts the right answer first even with a typo or half a word.
+- One search box, on every page, that finds events, places, clubs, guides, rules and SunTzu RC's services, and puts the right answer first even with a typo or half a word.
 - A town or ZIP code answers "what's near there": fields, tracks, clubs and events within 25 miles, closest first.
 - Search never disagrees with the pages: a cancelled event shows as cancelled the moment its page does, and nothing that isn't public ever appears.
 - New kinds of content (RC models, builds, results) can join the search later without rebuilding it.
@@ -18,7 +18,7 @@ Someone lands on Servo looking for one thing: an event, a field, a club, a rule.
 
 ## Out of scope
 
-- "Ask Servo": answers in plain language written by AI. Later, once search is in use (see `ROADMAP.md`).
+- "Ask SunTzu RC": answers in plain language written by AI. Later, once search is in use (see `ROADMAP.md`).
 - Town pages for Google ("RC events near Orlando"). A separate feature with its own SEO work.
 - Searching members, builds, messages or the crew's queue. Search only covers what's public.
 - A crew screen to edit synonyms and pinned answers: in v1 they live in code and change with a pull request.

@@ -1,6 +1,6 @@
 # AGENTS.md — `apps/api`
 
-The backend of Servo (https://api.example.com): sign-in, business rules and data for the web app and, later, the mobile app. Read the root [`AGENTS.md`](../../AGENTS.md) first.
+The backend of SunTzu RC (https://api.suntzurc.com): sign-in, business rules and data for the web app and, later, the mobile app. Read the root [`AGENTS.md`](../../AGENTS.md) first.
 
 NestJS 12 (Express), Better Auth, Drizzle ORM (`@workspace/db`), Zod (`@workspace/shared`), TypeScript strict, ES modules. Local: `pnpm dev:api` from the root → http://localhost:3001, interactive docs at http://localhost:3001/docs.
 

@@ -3,7 +3,7 @@ import { createAuthClient } from "better-auth/react";
 
 /**
  * Better Auth client for the browser (sign in, sign out, current session). It talks to the API's
- * /auth endpoints; the session cookie it receives is then sent with every API call. Servo signs in
+ * /auth endpoints; the session cookie it receives is then sent with every API call. SunTzu RC signs in
  * with an email link or Google, never a password.
  * Docs: https://www.better-auth.com/docs/concepts/client
  */

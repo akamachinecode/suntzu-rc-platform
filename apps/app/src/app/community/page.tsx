@@ -8,7 +8,7 @@ import { BuildForm } from "./build-form";
 export const metadata: Metadata = {
   title: "The Florida RC community",
   description:
-    "Find a club near you, try RC for the first time, follow your fields and events, run your club on Servo for free, and share your builds.",
+    "Find a club near you, try RC for the first time, follow your fields and events, run your club on SunTzu RC for free, and share your builds.",
 };
 
 export const dynamic = "force-dynamic";
@@ -80,7 +80,7 @@ export default async function CommunityPage() {
     <>
       <PageHeader
         title="The hobby is better with people."
-        lead="Servo is free and built by three RC obsessives in South Florida. Find your people, try it for the first time, keep up with your fields and events, and if you run a club, publish with us."
+        lead="SunTzu RC is free and built by three RC obsessives in South Florida. Find your people, try it for the first time, keep up with your fields and events, and if you run a club, publish with us."
       >
         <ul className="mt-8 flex flex-wrap gap-3">
           {stats.map(([value, label]) =>

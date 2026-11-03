@@ -13,8 +13,8 @@ import { deleteAccount, unfollow } from "./actions";
 import { ProfileForm } from "./profile-form";
 
 export const metadata: Metadata = {
-  title: "My Servo",
-  description: "What you follow, where you're going and how Servo keeps you posted.",
+  title: "My SunTzu RC",
+  description: "What you follow, where you're going and how SunTzu RC keeps you posted.",
   robots: { index: false },
 };
 
@@ -30,7 +30,7 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
     <>
       <header className="mx-auto max-w-7xl px-4 pt-16 pb-10 sm:pt-24">
         <h1 className="text-5xl leading-[0.92] font-black tracking-tight font-wide sm:text-7xl">
-          {me.name ? `Hi, ${me.name.split(" ")[0]}.` : "My Servo"}
+          {me.name ? `Hi, ${me.name.split(" ")[0]}.` : "My SunTzu RC"}
         </h1>
         <p className="mt-6 max-w-[56ch] text-lg text-pretty">
           Everything you follow lands in your own calendar, and we tell you when it changes. Signed
@@ -158,7 +158,7 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
         </h2>
         <p className="mt-3 max-w-[60ch] text-pretty">
           Your email, settings, follows and &ldquo;going&rdquo; are deleted at once. Events and
-          corrections you sent stay on Servo, without your name.
+          corrections you sent stay on SunTzu RC, without your name.
         </p>
         {deletion === "failed" ? (
           <p role="alert" className="mt-3 font-semibold text-destructive">

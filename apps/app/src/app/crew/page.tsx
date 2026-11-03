@@ -31,10 +31,10 @@ export default async function CrewPage() {
       <section className="mx-auto max-w-3xl px-4 py-24">
         <h1 className="text-5xl font-black font-wide">Crew only</h1>
         <p className="mt-4 text-lg">
-          This console is for the Servo crew. Ask the owner to add your email.
+          This console is for the SunTzu RC crew. Ask the owner to add your email.
         </p>
         <Button asChild className="mt-6">
-          <Link href="/me">Back to My Servo</Link>
+          <Link href="/me">Back to My SunTzu RC</Link>
         </Button>
       </section>
     );

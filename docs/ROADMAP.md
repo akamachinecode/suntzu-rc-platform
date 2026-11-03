@@ -1,6 +1,6 @@
 # Roadmap
 
-Status: **approved by the owner, 2026-10-22; Servo 1.0 plan approved 2026-10-27.** This is the working plan for the events engine and the community. The engine's design is in [`EVENTS-ENGINE.md`](./EVENTS-ENGINE.md); this file says what we index, how the community grows and in which order we build. Tick items off here as they land.
+Status: **approved by the owner, 2026-10-22; SunTzu RC 1.0 plan approved 2026-10-27.** This is the working plan for the events engine and the community. The engine's design is in [`EVENTS-ENGINE.md`](./EVENTS-ENGINE.md); this file says what we index, how the community grows and in which order we build. Tick items off here as they land.
 
 ## Why
 
@@ -43,9 +43,9 @@ The community is utility around events and places, not a forum or a social netwo
 | Organiser   | Claim a club or track, verified badge, publish and edit events, see "going", post results | Roles and permissions (Itaca review) and a way to verify identity   |
 | Crew (us)   | Review console: evidence next to the source; approve, merge, correct, reject; moderate    | A `crew` role in the API: the first community piece we build        |
 
-Later: pilot profiles and builds, and "find an instructor" linked to Servo's lessons.
+Later: pilot profiles and builds, and "find an instructor" linked to SunTzu RC's lessons.
 
-## Servo 1.0 — the plan to launch (approved 2026-10-27)
+## SunTzu RC 1.0 — the plan to launch (approved 2026-10-27)
 
 The owner asked to finish the web as version 1: the events and the community, ready to launch in Florida. Each phase is a specification in [`specs/`](./specs/README.md), built slice by slice and ticked off there.
 
@@ -62,7 +62,7 @@ The owner asked to finish the web as version 1: the events and the community, re
 
 **Decisions (owner, 2026-10-27):** version 1 is phases 0–4, public in Florida; profiles and builds, stored results, flying conditions and the app come after. The owner approves what `AGENTS.md` sends to Itaca engineering, and each approval is recorded in `DECISIONS.md`. Sign-in is Google or an email link, no passwords; nothing about a member is public by default. Clubs are verified by an email at their domain or a code on their website, else by the crew. Events and places cover all of Florida from day one; community and promotion start in South Florida.
 
-The tracks below are the earlier order of work. Items that Servo 1.0 covers are mapped to its slices; the rest (discovery with Parallel, outreach) continue after launch.
+The tracks below are the earlier order of work. Items that SunTzu RC 1.0 covers are mapped to its slices; the rest (discovery with Parallel, outreach) continue after launch.
 
 ## Earlier order of work (2026-10-22 and 2026-10-23)
 
@@ -105,7 +105,7 @@ Design: [`DISCOVERY.md`](./DISCOVERY.md). Good coverage of the important events 
 
 - [x] **C1** Region: us-east-2, the AWS project's only region (`infra/`, Terraform since 2026-10-29).
 - [ ] **C2** Worker infrastructure: queue, schedule, S3.
-- [ ] **C3** Name and domain, and the Cloudflare zone.
+- [x] **C3** Name and domain: SunTzu RC, `suntzurc.com` (owner, 2026-11-03; registered with Cloudflare, so the zone exists).
 - [ ] **C4** Discovery API keys; send Parallel the question about their terms.
 - [ ] **C5** Write to AMA District V and to a Florida MultiGP chapter.
 - [ ] **C6** Club Google Calendars: `calendar.google.com/robots.txt` blocks automated reading. Ask DeLand RC (and other clubs) for permission or their feed, and decide with Itaca.

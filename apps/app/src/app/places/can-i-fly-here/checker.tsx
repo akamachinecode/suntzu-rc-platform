@@ -112,7 +112,7 @@ export function Checker({ places, initial }: { places: Place[]; initial?: [numbe
         ) : null}
         {result === "outside" && !pending ? (
           <p className="rounded-xl border-2 border-foreground bg-panel p-6 text-lg">
-            That point is outside Florida. Servo only covers Florida for now.
+            That point is outside Florida. SunTzu RC only covers Florida for now.
           </p>
         ) : null}
         {result === "error" && !pending ? (

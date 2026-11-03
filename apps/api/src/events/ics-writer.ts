@@ -12,7 +12,7 @@ export interface IcsEvent {
   location?: string;
   latitude?: number;
   longitude?: number;
-  /** The event's page on Servo. */
+  /** The event's page on SunTzu RC. */
   url: string;
   description: string;
   updatedAt: Date;
@@ -71,7 +71,7 @@ export function writeIcs(calendar: IcsCalendar, now: Date): string {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Servo//RC events//EN",
+    "PRODID:-//SunTzu RC//RC events//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     `X-WR-CALNAME:${escapeText(calendar.name)}`,

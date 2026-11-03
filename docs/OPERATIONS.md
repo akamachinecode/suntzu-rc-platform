@@ -4,7 +4,7 @@ How to run, change and recover this project. Secrets appear here by name only, n
 
 ## Run locally
 
-See the Quick start in [`README.md`](../README.md). Servo also has:
+See the Quick start in [`README.md`](../README.md). SunTzu RC also has:
 
 - `pnpm db:seed` — loads the hand-checked events, places, hosts and sources into the local database.
 - `pnpm engine [source…]` — runs the events engine once against the real websites (polite: robots.txt, 2 s between requests to the same site). Raw responses go to `ENGINE_SNAPSHOT_DIR` (`.snapshots/`, git-ignored).
@@ -14,17 +14,17 @@ See the Quick start in [`README.md`](../README.md). Servo also has:
 
 ## Deploy and roll back
 
-- **Deploy:** merging to `main` deploys production; `staging` from **Actions → Deploy**. Details in [`DEPLOY.md`](./DEPLOY.md). Nothing is deployed yet: the name and domain (C3) are still open in [`ROADMAP.md`](./ROADMAP.md), and going live is [`LAUNCH.md`](./LAUNCH.md).
+- **Deploy:** merging to `main` deploys production; `staging` from **Actions → Deploy**. Details in [`DEPLOY.md`](./DEPLOY.md). Nothing is deployed yet: going live is the owner's checklist in [`LAUNCH.md`](./LAUNCH.md).
 - **Run a job by hand** (`setup`, `engine`, `notify`, `census`): **Actions → Run a task**. Their schedules are in `infra/jobs.tf`.
 - **Roll back:** revert the change on `main` (`git revert <commit>` in a pull request) and let the normal deploy run. Never change production by hand.
 
 ## Access
 
-| What              | Who has access              | How                                                          |
-| ----------------- | --------------------------- | ------------------------------------------------------------ |
-| GitHub repository | Unknown — ask the owner     | Organization team                                            |
-| AWS account       | The owner (project `servo`) | `aws login --profile servo` (see `DECISIONS.md`, 2026-10-22) |
-| Cloudflare zone   | Not created yet             | Account member, Itaca SSO                                    |
+| What              | Who has access                                         | How                                                          |
+| ----------------- | ------------------------------------------------------ | ------------------------------------------------------------ |
+| GitHub repository | Unknown — ask the owner                                | Organization team                                            |
+| AWS account       | The owner (project `servo`)                            | `aws login --profile servo` (see `DECISIONS.md`, 2026-10-22) |
+| Cloudflare zone   | The owner (`suntzurc.com`, registered with Cloudflare) | Account member, Itaca SSO                                    |
 
 ## Configuration and secrets
 
@@ -39,7 +39,7 @@ Variable names are listed in the `.env.example` files. Real values live in AWS S
 
 ## Keeping dependencies current
 
-Servo's own rule (see `DECISIONS.md`, 2026-10-22): always the latest stable release, once it is at least one day old. Security fixes first: a high or critical advisory gets fixed the day it appears. `pnpm audit` should report nothing; known exceptions are listed with a reason in `pnpm-workspace.yaml`.
+SunTzu RC's own rule (see `DECISIONS.md`, 2026-10-22): always the latest stable release, once it is at least one day old. Security fixes first: a high or critical advisory gets fixed the day it appears. `pnpm audit` should report nothing; known exceptions are listed with a reason in `pnpm-workspace.yaml`.
 
 ## Monitoring
 

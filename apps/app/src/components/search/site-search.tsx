@@ -245,7 +245,7 @@ export function SiteSearch() {
           showCloseButton={false}
           className="top-0 left-0 flex h-dvh max-w-none translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-foreground bg-panel p-0 ring-0 sm:top-[10vh] sm:left-1/2 sm:h-auto sm:max-h-[80vh] sm:max-w-2xl sm:-translate-x-1/2 sm:rounded-xl sm:border-2 sm:shadow-hard-lg"
         >
-          <DialogTitle className="sr-only">Search Servo</DialogTitle>
+          <DialogTitle className="sr-only">Search SunTzu RC</DialogTitle>
           <DialogDescription className="sr-only">
             Events, places, clubs, guides and rules. Results appear as you type; press Enter for
             every result.
@@ -255,7 +255,7 @@ export function SiteSearch() {
             <input
               type="text"
               role="combobox"
-              aria-label="Search Servo"
+              aria-label="Search SunTzu RC"
               aria-expanded={options.length > 0}
               aria-controls={`${id}-list`}
               aria-autocomplete="list"

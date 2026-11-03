@@ -62,8 +62,8 @@ export function ClubForm({ data }: { data: OrganiserHost }) {
           className="mt-1 size-4 accent-foreground"
         />
         <span>
-          <strong>We welcome newcomers.</strong> People who ask to try RC near you on Servo are sent
-          to you.
+          <strong>We welcome newcomers.</strong> People who ask to try RC near you on SunTzu RC are
+          sent to you.
         </span>
       </label>
       <div className="flex items-center gap-4">

@@ -1,4 +1,4 @@
-# 0004 — Launch: Servo 1.0 in Florida
+# 0004 — Launch: SunTzu RC 1.0 in Florida
 
 - **Status:** Approved 2026-10-27 · Built 2026-10-28 (not deployed: the owner deploys with `docs/LAUNCH.md`)
 - **Requested by:** the owner (Alejandro), 2026-10-27
@@ -6,13 +6,13 @@
 
 ## Problem
 
-Everything in specs 0001–0003 runs on a laptop. To launch, Servo needs its infrastructure in the AWS project's region, a name and a domain, the scheduled engine and emails, protection for its public forms, and the legal pages that accounts and emails require.
+Everything in specs 0001–0003 runs on a laptop. To launch, SunTzu RC needs its infrastructure in the AWS project's region, a name and a domain, the scheduled engine and emails, protection for its public forms, and the legal pages that accounts and emails require.
 
 ## Goals
 
 - One reviewed path from a laptop to production: everything that can be prepared in code is ready, and what only the owner can do is a short, ordered checklist.
 - Public forms and sign-in are protected from bots and abuse from day one.
-- People know what Servo does with their data before they create an account.
+- People know what SunTzu RC does with their data before they create an account.
 
 ## Out of scope
 
@@ -21,7 +21,7 @@ Everything in specs 0001–0003 runs on a laptop. To launch, Servo needs its inf
 
 ## User stories
 
-- As the owner, I want a checklist that takes Servo from "works locally" to "public", with nothing left to guess.
+- As the owner, I want a checklist that takes SunTzu RC from "works locally" to "public", with nothing left to guess.
 - As a visitor, I want to read the privacy policy and the terms before signing up.
 
 ## Capabilities touched
@@ -40,7 +40,7 @@ Everything in specs 0001–0003 runs on a laptop. To launch, Servo needs its inf
 
 - When `sst.config.ts` is deployed, then every regional resource is in `us-east-2`, the scheduled jobs exist, and the API has the secrets and permissions it needs (SES, S3, Bedrock), and nothing else.
 - When a public form is sent without a valid Turnstile token in production, then the API refuses it; locally, without keys, forms work.
-- When someone opens `/privacy` or `/terms`, then they read in plain language what Servo stores, why, for how long and how to delete it.
+- When someone opens `/privacy` or `/terms`, then they read in plain language what SunTzu RC stores, why, for how long and how to delete it.
 - When the owner follows `docs/LAUNCH.md`, then every step says what to do, where and how to check it worked.
 
 ## Slices

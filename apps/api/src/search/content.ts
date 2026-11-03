@@ -54,7 +54,7 @@ export function contentDocuments(): ContentDocument[] {
     id: `service:${service.id}`,
     type: "service" as const,
     title: service.title,
-    subtitle: `Servo crew · ${service.short}`,
+    subtitle: `SunTzu RC crew · ${service.short}`,
     body: [service.tag, service.lead, ...service.points].join(" "),
     url: `/learn#${service.id}`,
     weight: 1,

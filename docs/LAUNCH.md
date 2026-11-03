@@ -1,4 +1,4 @@
-# Launch checklist: Servo 1.0
+# Launch checklist: SunTzu RC 1.0
 
 Everything in specs 0001–0005 is built and checked locally (`pnpm check` green, each bit marked in `docs/bits/`). What's left needs the owner: accounts, money, the name and the domain. Do the steps in order; each one says how to check it worked. Nothing here has been deployed yet.
 
@@ -29,14 +29,11 @@ Open pull requests in order: `feat/platform-monorepo` (if it isn't merged yet) �
 
 Merging to `main` deploys production, and the Deploy workflow has to be on `main` before it can deploy `staging` from the Actions tab. So before merging, create the `production` environment with **required reviewers** (you): the production deploy that merging starts then waits for your approval. Leave it waiting (or reject it) until step 6 works on `staging`.
 
-## 2. Choose the name and the domain (C3)
+## 2. The name and the domain (C3) — chosen
 
-1. Choose the final name and buy the domain.
-2. Change it in one place each:
-   - the hostnames, `redirects`, `cookie_domain` and `email` in `infra/production.tfvars.json` and `infra/staging.tfvars.json` (staging sends from its own subdomain, such as `staging.<domain>`);
-   - `SITE.name` and `SITE.description` in `apps/app/src/lib/site.ts` (the site, emails and share images);
-   - `domain` in `itaca.json`.
-3. Search the repository for `example.com` and replace what's left in the docs.
+The owner chose **SunTzu RC** at **suntzurc.com** on 2026-11-03, and it is already in the code: the hostnames, `redirects`, `cookie_domain` and `email` in `infra/production.tfvars.json` and `infra/staging.tfvars.json` (staging sends from `staging.suntzurc.com`), `SITE` in `apps/app/src/lib/site.ts`, the wordmark, and `domain` in `itaca.json`.
+
+The domain is registered with Cloudflare Registrar (since 2025-04-05) and already uses Cloudflare's name servers, so its zone exists. Check in step 3 that it is in **the account the API token will belong to**.
 
 **Check:** `pnpm check` is green.
 
