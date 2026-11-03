@@ -12,6 +12,17 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-03 — Refreshed to the Itaca standard `create-itaca@0.3.1`
+
+- **What:** the owner published `create-itaca@0.3.1` (tag `bea546a` of `itaca-stacks`, 2026-11-03), a version refresh on top of 0.3.0. Servo takes all of it:
+  - **Terraform 1.17.0** in `deploy.yml`, `infra.yml` and `task.yml`; **AWS provider 6.70.0** in `infra/` and `infra/bootstrap/`, with the template's regenerated `.terraform.lock.hcl` files (same providers: AWS, Cloudflare 5.28.1, random 3.9.1).
+  - **Dependencies at their latest stable release**, all older than a day: NestJS 12.3.2 (and `@nestjs/swagger` 12.1.0), Better Auth 1.7.15, Next.js and `eslint-config-next` 16.4.4, AWS SDK 3.1161.0, shadcn 4.23.0, Vitest 5.1.0, ESLint 10.14.0, and patch or minor updates of `cn`, `lucide-react`, `maplibre-gl`, `motion`, `three`, `globals` and `typescript-eslint`.
+  - **`multer` override removed:** `@nestjs/platform-express` 12.3.2 depends on `multer` 2.5.0 itself.
+  - **GHSA-g3hv-75wg-m249 accepted** (moderate, `minimatch` < 11.0.1) in `pnpm-workspace.yaml` (`audit.ignore`), as in the template: only tooling pulls it in and the fix exists only in `minimatch` 11, which those tools don't support.
+- **Kept on purpose:** **TypeScript 5.9.3** (7.0 is out, and Dependabot proposes 6.0, but the template and `typescript-eslint` stay on 5.9) and **`@types/node` 24**, which matches the Node 24 runtime (`.nvmrc`, the Dockerfiles); `pnpm update --latest` proposes 26.
+- **Why:** staying on the standard; Servo is also the example project for 0.3.1 (see the next entry).
+- **Impact:** `pnpm audit` reports one low advisory with no fix yet (GHSA-gcqx-w48m-w2h4, `deepmerge`, only inside the shadcn CLI); CI's audit (`--prod --audit-level high`) passes. Nothing deployed.
+
 ## 2026-10-29 — The repository lives in the owner's personal GitHub account
 
 - **What:** the code is on GitHub at **`akamachinecode/rc-landing`** (private), the owner's personal account, instead of `ITACA-TECHNOLOGIES/rc-landing`. Every reference moved with it: `itaca.json`, `AGENTS.md`, the GitHub, OIDC, deploy, Terraform and launch docs, the engine's user agent (`ServoBot/0.1 (+https://github.com/akamachinecode/rc-landing)`) and the seeded crew source's link.
