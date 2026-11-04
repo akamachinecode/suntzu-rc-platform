@@ -8,6 +8,7 @@ NestJS 12 (Express), Better Auth, Drizzle ORM (`@workspace/db`), Zod (`@workspac
 
 ```text
 src/
+  otel.ts            OpenTelemetry tracing, loaded before everything else (node --import)
   main.ts            starts the server (port $PORT, default 3001)
   app.ts             app setup: CORS, Better Auth routes (/auth/*), body parser, OpenAPI document
   app.module.ts      registers every module
@@ -15,7 +16,8 @@ src/
   auth/              Better Auth setup and the global guard (deny by default, @Public(), @CurrentUser())
   db/db.module.ts    the Drizzle client (@InjectDb())
   common/zod.ts      ZodPipe (validate input) and openApi() (document it)
-  common/trace.ts    trace ID per request (x-request-id), one log line per request, @Bit()
+  common/trace.ts    trace ID per request (x-request-id), one log line per request, @Bit(), errors into traces
+  common/logger.ts   JSON log lines with the trace ID (production)
   health/            GET /health for the load balancer
   notes/             reference business module: copy it for each domain
   migrate.ts         applies database migrations (runs before every start in production)
@@ -37,7 +39,8 @@ openapi.json         the API contract (generated, committed)
 - **Every route names its bit** with `@Bit("area.action")`, matching `docs/bits/<area>.<action>.md`. Logs carry the bit and the request's trace ID (`x-request-id`), so a bit can be followed end to end.
 - **Database changes** only through `packages/db`: edit `src/schema/`, run `pnpm db:generate`, commit the new SQL migration. Never edit a migration that has been merged.
 - Imports between files use the `.js` extension (`import { x } from "./x.js"`): this is an ES module project compiled by `tsc`.
-- Don't log personal data (emails, names, tokens). Errors go to stdout; CloudWatch collects them in production.
+- **Logs and errors:** log with Nest's `Logger` (`new Logger("Notes")`), never `console.log`; in production each line is JSON with the request's `trace_id`. Don't log personal data (emails, names, tokens). Expected failures throw an `HttpException` (`NotFoundException`, `BadRequestException`…): they are answered, not logged. Anything else is a bug: Nest answers 500, logs it with `level: "error"` and records it in the trace, and the error alarm counts it (docs/OPERATIONS.md, "Monitoring"). Never catch an error only to hide it.
+- **Tracing is automatic** for HTTP, NestJS, database queries and outgoing `fetch` calls (`src/otel.ts`). Database queries are traced with placeholders (`$1`), never with values; don't add values or personal data to spans.
 - **Better Auth:** configuration in `src/auth/auth.ts`, endpoints under `/auth/*` (https://www.better-auth.com/docs). Plugins such as email OTP, two-factor, admin or organizations are added there — changes to auth are on the "stop and ask" list.
 
 ### Standard choices

@@ -57,7 +57,7 @@ The domain is registered with Cloudflare Registrar (since 2025-04-05) and alread
 2. Check the plan and the spend limit in AWS Settings → Billing. Each stage runs an always-on RDS database and two Fargate containers (site and API) behind a load balancer, roughly 75 USD a month, plus the scheduled jobs, S3, SES and Bedrock by use: estimate it with the AWS Pricing Calculator before the first deploy, and delete `staging` once production works if you don't need it.
 3. **SES:** request production access (SES console → Account dashboard → Request production access). It takes about a day; until then SES only sends to verified addresses.
 4. **Bedrock:** in the Bedrock console of us-east-2, turn on model access for Claude Opus 5.5 and Claude Opus 4.8 (the fallback). Without it, pasted flyers go to the crew's inbox instead.
-5. **Terraform state, deploy role and image registries:** install [Terraform](https://developer.hashicorp.com/terraform/install) 1.16 or newer, then follow steps 1 and 2 of [`TERRAFORM.md`](./TERRAFORM.md) with `export AWS_PROFILE=servo`.
+5. **Terraform state, deploy role and image registries:** install [Terraform](https://developer.hashicorp.com/terraform/install) 1.16 or newer, then follow steps 1 and 2 of [`TERRAFORM.md`](./TERRAFORM.md) with `export AWS_PROFILE=servo`. `infra/bootstrap` also turns on CloudWatch Transaction Search, where traces are stored (`infra/bootstrap/traces.tf`).
 6. **GitHub environments** `production` (with required reviewers, step 1) and `staging`: step 3 of "One-time setup" in [`DEPLOY.md`](./DEPLOY.md).
 
 **Check:** `aws sts get-caller-identity --profile servo` answers with the project's account, and `terraform -chdir=infra/bootstrap output deploy_role_arn` shows the role.
@@ -94,6 +94,15 @@ aws ssm put-parameter --type SecureString --name /rc-landing/staging/google-clie
 
 **Check:** `aws ssm get-parameters-by-path --path /rc-landing/staging --query 'Parameters[].Name'` lists them.
 
+## 5b. Who gets the alarms
+
+Every stage needs someone to alert, or it refuses to deploy. In `infra/staging.tfvars.json` and `infra/production.tfvars.json`, fill `alerts` (details in "Monitoring" in [`OPERATIONS.md`](./OPERATIONS.md)):
+
+- `"emails": ["you@example.com"]`: AWS sends one confirmation email per alert topic; click **Confirm subscription** in each after the first deploy.
+- Optional Slack: authorize the workspace once in the AWS console → **Amazon Q Developer in chat applications**, then add `"slack": { "team_id": "T…", "channel_id": "C…" }` and invite `@Amazon Q` to the channel.
+- `monthly_budget` (production only, 150 USD): a warning when the month's AWS bill is forecast to pass it.
+- In Cloudflare, keep **Bot Fight Mode** off (Security → Bots): it blocks the uptime checks.
+
 ## 6. First deploy, to `staging`
 
 Run **Actions → Deploy → Run workflow** with stage `staging`. The first deploy takes 15–25 minutes (database, network, certificates); the plan is in the run's summary. Then:
@@ -105,10 +114,12 @@ Run **Actions → Deploy → Run workflow** with stage `staging`. The first depl
    - signing in at `/sign-in` with a crew address sends an email that arrives, and `/crew` opens;
    - `/places/can-i-fly-here` answers for a point near Miami;
    - ⌘K (or `/`) opens search on any page, and `/search?q=markam park` puts Markham Park first;
-   - in CloudWatch, after their first scheduled run, the `/ecs/rc-landing-staging/engine` log ends with a `resolve:` line and `/ecs/rc-landing-staging/notify` with `notify:`.
+   - in CloudWatch, after their first scheduled run, the `/ecs/rc-landing-staging/engine` log ends with a `resolve:` line and `/ecs/rc-landing-staging/notify` with `notify:`;
+   - **monitoring:** every address in `alerts.emails` confirmed its subscriptions; CloudWatch → Alarms lists the `rc-landing-staging-` alarms in `OK` (the `-down` ones are in us-east-1); after opening a page, CloudWatch → Transaction Search shows its trace with the API calls and database queries inside; then rehearse one alarm (`aws cloudwatch set-alarm-state --alarm-name rc-landing-staging-api-5xx --state-value ALARM --state-reason Rehearsal --profile servo`) and check it arrives;
+   - once per account, keep spans 30 days: `aws logs put-retention-policy --log-group-name aws/spans --retention-in-days 30 --profile servo`.
 3. In `/crew`, approve the RCSignup races and anything else waiting (the engine found 10 Florida races that wait for a person, because RCSignup is a listing, not the organiser).
 
-Everything runs in us-east-2 (there is no CloudFront, so no certificate in us-east-1). If a resource is refused, check the spend limit and the plan in AWS Settings, then ask Itaca engineering.
+Everything runs in us-east-2 (there is no CloudFront, so no certificate in us-east-1), except the uptime checks' alarms and their alert topic, which AWS keeps in us-east-1. If a resource is refused, check the spend limit and the plan in AWS Settings, then ask Itaca engineering.
 
 ## 7. Production
 

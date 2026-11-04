@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
-import { APP_INTERCEPTOR } from "@nestjs/core";
+import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
 import { AuthModule } from "./auth/auth.module.js";
-import { BitInterceptor } from "./common/trace.js";
+import { BitInterceptor, TraceExceptionFilter } from "./common/trace.js";
 import { CrewModule } from "./crew/crew.module.js";
 import { DbModule } from "./db/db.module.js";
 import { EventsModule } from "./events/events.module.js";
@@ -31,6 +31,9 @@ import { SubmissionsModule } from "./submissions/submissions.module.js";
     SearchModule,
   ],
   controllers: [HealthController],
-  providers: [{ provide: APP_INTERCEPTOR, useClass: BitInterceptor }],
+  providers: [
+    { provide: APP_INTERCEPTOR, useClass: BitInterceptor },
+    { provide: APP_FILTER, useClass: TraceExceptionFilter },
+  ],
 })
 export class AppModule {}

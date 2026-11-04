@@ -31,3 +31,26 @@ variable "image_tag" {
   description = "Tag of the images to run (<stage>-<commit>). Set by the deploy workflow."
   type        = string
 }
+
+variable "alerts" {
+  description = "Who receives the alarms and how much is monitored (docs/OPERATIONS.md)."
+  type = object({
+    # At least one recipient: email addresses, a Slack channel or a Teams channel.
+    emails = optional(list(string), [])
+    slack = optional(object({
+      team_id    = string
+      channel_id = string
+    }))
+    teams = optional(object({
+      tenant_id  = string
+      team_id    = string
+      channel_id = string
+    }))
+    # Monthly AWS bill (USD) that triggers a warning; production only.
+    monthly_budget = optional(number)
+    # Check the app and the API from the internet (Route 53, about $2.75 per hostname a month).
+    uptime = optional(bool, true)
+    # Share of new traces to keep, from 0 to 1.
+    trace_sample_ratio = optional(number, 1)
+  })
+}

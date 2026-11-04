@@ -9,6 +9,7 @@ The public site and web application of SunTzu RC (https://www.suntzurc.com). Rea
 - Add dependencies to this app only: `pnpm --filter @workspace/app add <pkg>`.
 - Public pages (home, guides, events, community) live here too: SunTzu RC has no separate Astro site. Keep them Server Components and indexable.
 - SunTzu RC specifics (content, Anatomy figures, forms): see "SunTzu RC project notes" in the root `AGENTS.md`.
+- **Errors and traces are automatic:** `src/instrumentation.ts` records every server error (page, Server Action, route handler) in the request's trace and as a JSON log line with `level: "error"`, which the error alarm counts; `src/instrumentation.node.ts` sends the traces (docs/OPERATIONS.md, "Monitoring"). Don't catch errors just to hide them, and never put personal data (emails, names, tokens) in error messages or logs.
 
 ## Stack: web application (`web-app`)
 

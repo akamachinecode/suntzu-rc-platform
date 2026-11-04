@@ -1,4 +1,5 @@
 import "server-only";
+import { isSpanContextValid, trace } from "@opentelemetry/api";
 import { createApiClient } from "@workspace/api-client";
 import { headers } from "next/headers";
 import { env } from "@/lib/env";
@@ -12,8 +13,13 @@ import { env } from "@/lib/env";
  */
 export async function getApi() {
   const incoming = await headers();
-  // One trace ID per page request, so the API's log lines can be matched to it.
-  const requestId = incoming.get("x-request-id") ?? incoming.get("cf-ray") ?? crypto.randomUUID();
+  // One trace ID per page request, so the API's log lines can be matched to it. With tracing on
+  // (production) it is the page's trace, which `fetch` also passes along in `traceparent`.
+  const span = trace.getActiveSpan()?.spanContext();
+  const requestId =
+    span && isSpanContextValid(span)
+      ? span.traceId
+      : (incoming.get("x-request-id") ?? incoming.get("cf-ray") ?? crypto.randomUUID());
   return createApiClient({
     baseUrl: env.API_URL,
     headers: { cookie: incoming.get("cookie") ?? "", "x-request-id": requestId },

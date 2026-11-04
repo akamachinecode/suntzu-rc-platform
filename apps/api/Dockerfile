@@ -30,5 +30,5 @@ USER api
 EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
   CMD wget -qO- http://127.0.0.1:3001/health || exit 1
-# Apply pending database migrations, then start the API.
-CMD ["sh", "-c", "node dist/migrate.js && exec node dist/main.js"]
+# Apply pending database migrations, then start the API with tracing loaded first (src/otel.ts).
+CMD ["sh", "-c", "node dist/migrate.js && exec node --import ./dist/otel.js dist/main.js"]

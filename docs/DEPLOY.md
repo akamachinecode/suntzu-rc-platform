@@ -33,6 +33,8 @@ Images are stored in Amazon ECR (`rc-landing-app`, `rc-landing-api`) and logs go
 
 **More than one app container:** each container keeps its own page cache. Before raising the count, ask Itaca engineering to add a shared cache handler.
 
+**Monitoring is part of every stage:** alarms on the site, the API, the scheduled jobs, the load balancer and the database, uptime checks from the internet and traces of every request. Before the first deploy of a stage, set who receives the alarms (`alerts` in `infra/<stage>.tfvars.json`; a stage with nobody to alert refuses to deploy) and run `infra/bootstrap` once per AWS account so traces are stored. See "Monitoring" in [`OPERATIONS.md`](./OPERATIONS.md). Monitoring adds about 10–15 USD a month per stage.
+
 ## How deploys happen
 
 - **Production:** merging to `main` runs [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml): it builds both images, runs `terraform apply` on `infra/` with `infra/production.tfvars.json`, then checks the new version is running. The plan is in the run's summary.

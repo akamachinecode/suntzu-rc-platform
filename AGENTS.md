@@ -152,6 +152,7 @@ packages/ui/          shared shadcn/ui components + theme (brand colors, radius)
 
 - **Database structure changes that delete or rename data** (dropping columns or tables, changing types) and anything touching user accounts, sessions or permissions in `apps/api/src/auth`.
 - **Background jobs, queues, scheduled tasks, websockets or file uploads:** they need new AWS pieces in `infra/` (Terraform) — ask Itaca engineering.
+- **Alarms, alert recipients and tracing** (`alerts` in `infra/<stage>.tfvars.json`, `infra/modules/alerts`, `apps/api/src/otel.ts`, `apps/app/src/instrumentation*.ts`): turning one off can leave production unwatched. Adding a recipient is fine.
 
 Explain to the user why the request needs an engineer, write down what you found in `docs/DECISIONS.md`, and don't improvise a workaround.
 
