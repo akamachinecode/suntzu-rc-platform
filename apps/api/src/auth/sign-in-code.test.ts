@@ -58,12 +58,14 @@ const available = url !== undefined && (await reachable(url));
 
 describe.runIf(available)("sign-in code", () => {
   const name = "suntzurc_auth_code";
-  const testUrl = url!.replace(/\/[^/?]+(\?|$)/, `/${name}$1`);
-  const admin = createDb(url!);
+  // A skipped describe still runs its body, so nothing here may assume the database exists.
+  const testUrl = (url ?? "").replace(/\/[^/?]+(\?|$)/, `/${name}$1`);
+  let admin: ReturnType<typeof createDb>;
   let test: ReturnType<typeof createDb>;
   let auth: Auth;
 
   beforeAll(async () => {
+    admin = createDb(url!);
     await admin.db.execute(sql.raw(`drop database if exists ${name} with (force)`));
     await admin.db.execute(sql.raw(`create database ${name}`));
     await runMigrations(testUrl);

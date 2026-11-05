@@ -142,8 +142,9 @@ const available = url !== undefined && (await reachable(url));
 
 describe.runIf(available)("golden searches", () => {
   const name = "servo_search_golden";
-  const testUrl = url!.replace(/\/[^/?]+(\?|$)/, `/${name}$1`);
-  const admin = createDb(url!);
+  // A skipped describe still runs its body, so nothing here may assume the database exists.
+  const testUrl = (url ?? "").replace(/\/[^/?]+(\?|$)/, `/${name}$1`);
+  let admin: ReturnType<typeof createDb>;
   let test: ReturnType<typeof createDb>;
   let db: Database;
   const fixtures = new URL("./fixtures/", import.meta.url);
@@ -157,6 +158,7 @@ describe.runIf(available)("golden searches", () => {
   );
 
   beforeAll(async () => {
+    admin = createDb(url!);
     await admin.db.execute(sql.raw(`drop database if exists ${name} with (force)`));
     await admin.db.execute(sql.raw(`create database ${name}`));
     await runMigrations(testUrl);
