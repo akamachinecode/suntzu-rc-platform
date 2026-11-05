@@ -5,5 +5,6 @@
   "awsRegion": "us-east-1",
   "github": "ITACA-TECHNOLOGIES/rc-landing",
   "createdWith": "create-itaca@0.2.0 (unreleased platform branch, commit f4d3b9e), migrated from web-app 0.1.0",
+  "refreshedWith": "create-itaca@0.2.3 (2026-10-27)",
   "createdAt": "2026-10-20"
 }

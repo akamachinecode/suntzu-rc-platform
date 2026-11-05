@@ -35,7 +35,18 @@ pnpm dev
 
 ## Working with AI agents
 
-Open this folder in Claude Code, Cursor, GitHub Copilot or Codex — they read [`AGENTS.md`](./AGENTS.md) automatically. Describe what you need in business terms ("add a pricing page with three plans", "add a contact section with our office addresses") and let the agent follow the standard. Before committing, run `pnpm check`.
+Open this folder in Claude Code, Cursor, GitHub Copilot or Codex — they read [`AGENTS.md`](./AGENTS.md) automatically. Describe what you need in business terms ("add a pricing page with three plans", "add a contact section with our office addresses") and let the agent follow the standard. It will suggest the right way of working for each request:
+
+| Skill       | Use it to…                                                        |
+| ----------- | ----------------------------------------------------------------- |
+| `/guide`    | See what you can ask for and where to start                       |
+| `/plan`     | Plan something new before building it (questions → spec → slices) |
+| `/fix`      | Fix something that's broken, with proof                           |
+| `/document` | Document the project or a part of it                              |
+| `/ship`     | Deliver a finished change as a pull request, ready for review     |
+| `/takeover` | Pick up someone else's unfinished work                            |
+
+Before committing, run `pnpm check`.
 
 ## Scripts
 
@@ -50,7 +61,11 @@ Open this folder in Claude Code, Cursor, GitHub Copilot or Codex — they read [
 
 ## Documentation
 
-- [`AGENTS.md`](./AGENTS.md) — rules and recipes for AI agents (and humans)
+- [`AGENTS.md`](./AGENTS.md) — rules and recipes for AI agents (and humans), including which skill to use for each kind of request
+- [`docs/SYSTEM.md`](./docs/SYSTEM.md) — the map: what runs where and how the pieces connect
+- [`docs/bits/`](./docs/bits/README.md) — the catalog of bits: each piece of behaviour, end to end
+- [`docs/specs/`](./docs/specs/README.md) — specifications of features, written with `/plan`
+- [`docs/OPERATIONS.md`](./docs/OPERATIONS.md) — running, deploying, rolling back, access and backups
 - [`docs/DEPLOY.md`](./docs/DEPLOY.md) — how this project is deployed to AWS
 - [`docs/CLOUDFLARE.md`](./docs/CLOUDFLARE.md) — domain, DNS, TLS and security settings
 - [`docs/GITHUB.md`](./docs/GITHUB.md) — repository setup and protections

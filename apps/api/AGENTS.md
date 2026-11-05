@@ -15,6 +15,7 @@ src/
   auth/              Better Auth setup and the global guard (deny by default, @Public(), @CurrentUser())
   db/db.module.ts    the Drizzle client (@InjectDb())
   common/zod.ts      ZodPipe (validate input) and openApi() (document it)
+  common/trace.ts    trace ID per request (x-request-id), one log line per request, @Bit()
   health/            GET /health for the load balancer
   notes/             reference business module: copy it for each domain
   migrate.ts         applies database migrations (runs before every start in production)
@@ -31,6 +32,7 @@ openapi.json         the API contract (generated, committed)
 - **Deny by default.** Every route requires a signed-in user unless it has `@Public()`. Get the user with `@CurrentUser()`. Never accept a user or owner ID from the request body as proof of who is calling.
 - **Scope every query to the caller** (e.g. `where owner_id = user.id`), and answer 404 — not 403 — for records that belong to someone else, as `notes.service.ts` does.
 - **Validate every input** with a schema from `@workspace/shared` and `new ZodPipe(schema)`; document bodies and responses with `@ApiBody` / `@ApiOkResponse` and `openApi(schema)`, so the generated client stays exact.
+- **Every route names its bit** with `@Bit("area.action")`, matching `docs/bits/<area>.<action>.md`. Logs carry the bit and the request's trace ID (`x-request-id`), so a bit can be followed end to end.
 - **Database changes** only through `packages/db`: edit `src/schema/`, run `pnpm db:generate`, commit the new SQL migration. Never edit a migration that has been merged.
 - Imports between files use the `.js` extension (`import { x } from "./x.js"`): this is an ES module project compiled by `tsc`.
 - Don't log personal data (emails, names, tokens). Errors go to stdout; CloudWatch collects them in production.

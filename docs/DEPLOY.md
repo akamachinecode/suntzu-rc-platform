@@ -29,6 +29,8 @@ Known limits for `apps/app` (October 2026): Cache Components aren't supported (d
 
 **Server secrets:** `pnpm sst secret set <Name> <value> --stage production`, then add the secret to `link` and `environment` of the component that needs it in `sst.config.ts`.
 
+**Origin lock:** the API's load balancer only accepts Cloudflare's IP ranges (fetched from Cloudflare at every deploy), and once `OriginVerifyHeader` is set, it only forwards requests that carry the header and answers 403 to the rest. The app's CloudFront distribution checks the same header. Set the secret per stage, after the Cloudflare transform rule exists (see `CLOUDFLARE.md`).
+
 ## How deploys happen
 
 - **Production:** merging to `main` runs [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) → `sst deploy --stage production`.

@@ -8,7 +8,7 @@ Instructions for AI coding agents (Claude Code, Cursor, GitHub Copilot, Codex, G
 - **Stack:** `platform` — Itaca Technologies standard stack (details below)
 - **Hosting:** AWS (`sst`) with Cloudflare in front (DNS, CDN, WAF)
 - **Code:** GitHub `ITACA-TECHNOLOGIES/rc-landing`
-- **Created with:** `create-itaca@0.1.0` (`web-app`) on 2026-10-20, moved to the `platform` stack (create-itaca 0.2.0, unreleased branch) on 2026-10-21 (see `itaca.json` and `docs/DECISIONS.md`)
+- **Created with:** `create-itaca@0.1.0` (`web-app`) on 2026-10-20, moved to the `platform` stack (create-itaca 0.2.0, unreleased branch) on 2026-10-21 and refreshed to `create-itaca@0.2.3` on 2026-10-27 (see `itaca.json` and `docs/DECISIONS.md`)
 
 This project follows the Itaca standard so that any Itaca engineer can take it over without surprises. Staying inside the standard matters more than any single feature.
 
@@ -19,6 +19,39 @@ The person prompting you may not be a developer (sales, operations, a client). S
 - Use plain language and reply in the language they write in. After each change, say what changed and how to see it (`pnpm dev`, then open the local URL).
 - Don't ask them to pick libraries, frameworks or architecture — this file already decides. Ask about the business need instead (who uses it, what data, what should happen).
 - If something can't be done well inside this stack (see "When to stop"), say so plainly and suggest involving Itaca engineering.
+
+## How we work: pick the right skill first
+
+Before acting on a request, decide what kind it is. If a skill fits, suggest it in one plain sentence (what will happen and why) and wait for a yes. You propose, you don't block: if the person says "just do it", do it and note that in the pull request. Skills live in `.claude/skills/<name>/SKILL.md`; if your tool doesn't load skills by itself, open that file and follow it.
+
+| The request is…                                                           | Do this                                                 |
+| ------------------------------------------------------------------------- | ------------------------------------------------------- |
+| A question, or "how does X work?"                                         | Answer it. Read `docs/SYSTEM.md` and `docs/bits/` first |
+| A small, clear change (a text, a colour, a link)                          | Make it, then `/ship`                                   |
+| Something new, or it touches data, users, payments or an external service | `/plan` first                                           |
+| Something is broken                                                       | `/fix`                                                  |
+| A part of the project nobody has documented, or docs that are out of date | `/document`                                             |
+| Someone else's pull request, branch or unfinished work                    | `/takeover`                                             |
+| Anything on the "When to stop" list below                                 | Stop and ask Itaca engineering                          |
+| The person doesn't know where to start, or asks what they can do          | `/guide`                                                |
+
+Example: "This is a new feature and it touches user data, so I suggest doing it with /plan: I'll ask a few questions, show you the plan on one page and build it in parts once you approve it. Shall we?"
+
+## Documentation
+
+Every Itaca project keeps the same documents, so anyone (a person or an agent) can find their way around. Update them in the same pull request as the change they describe.
+
+| File                                                     | What it holds                                                      |
+| -------------------------------------------------------- | ------------------------------------------------------------------ |
+| `README.md`                                              | What the project is and how to start it                            |
+| `docs/SYSTEM.md`                                         | The map: pieces, where they run, integrations and environments     |
+| `docs/bits/`                                             | The catalog of **bits**, one file per bit (see below)              |
+| `docs/specs/`                                            | Specifications written with `/plan`, one per feature               |
+| `docs/DECISIONS.md`                                      | Why things are the way they are. Read it before every task         |
+| `docs/OPERATIONS.md`                                     | Running, deploying, rolling back, access, backups and secret names |
+| `docs/DEPLOY.md`, `docs/CLOUDFLARE.md`, `docs/GITHUB.md` | Setup guides for hosting, domain and repository                    |
+
+A **bit** is the smallest piece of behaviour someone can trigger and check end to end: "a visitor sends the contact form", "an owner adds a property". Like a trace in a distributed system, it crosses every layer it touches. When a change creates or modifies a bit, create or update `docs/bits/<id>.md` (copy `docs/bits/_template.md`) and its row in `docs/bits/README.md`.
 
 ## Golden rules (non-negotiable)
 
@@ -36,6 +69,7 @@ The person prompting you may not be a developer (sales, operations, a client). S
 ## Servo project notes
 
 - **Why Servo exists:** three RC enthusiasts want the hobby to grow, with a genuinely useful, free, well-made platform people can take part in. **`docs/LANDSCAPE.md`** has what already exists, what other hobbies teach, and the product principles that follow (free to take part, organisers get something back, visible trust, a path for newcomers). Check new features against those principles.
+- **Servo 1.0** is planned in `docs/specs/0001`–`0004` (events, places, community, launch) and summarised in `docs/ROADMAP.md`: build slice by slice and tick each one off in its spec.
 - **Read `docs/EVENTS-ENGINE.md`** before working on events, sources or ingestion. The plan: an engine that monitors the web for RC events (Florida first), merges duplicates, verifies them and publishes them; the worker that runs it will live in `apps/api`. **`docs/ROADMAP.md`** is the approved build order (what we index, the community ladder, tracks and milestones): tick items off there as they land.
 - **Content** is typed data in `apps/app/src/content/` (services, events, places, rules, history, guides) until the events engine moves events and places into the database. Every factual item carries a source link; keep it that way and re-check dates before editing.
 - **Anatomy figures**: use the project skill in `.claude/skills/anatomy` (read its `SKILL.md`). The kit is vendored in `apps/app/src/components/iso/`; figures live in `apps/app/src/components/figures/<name>/` following `references/react.md`. Light theme only, XT60 yellow is the single lit accent (see `.servo-figure` in `apps/app/src/app/globals.css`). Run the line check before shipping a figure.

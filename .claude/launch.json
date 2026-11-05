@@ -38,6 +38,28 @@
         "3002"
       ],
       "port": 3002
+    },
+    {
+      "name": "servo-api-4011",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "dev:api"
+      ],
+      "port": 4011
+    },
+    {
+      "name": "servo-app-4010",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@workspace/app",
+        "exec",
+        "next",
+        "dev",
+        "--port",
+        "4010"
+      ],
+      "port": 4010
     }
   ]
 }

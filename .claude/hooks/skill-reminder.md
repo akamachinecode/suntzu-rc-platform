@@ -1,0 +1,1 @@
+Itaca workflow reminder: before acting on this message, check the "How we work" table in AGENTS.md. If a skill fits (/plan, /fix, /document, /ship, /takeover, /guide) and the person hasn't already chosen one or asked you to just do it, suggest it in one plain sentence and wait for a yes. Answer questions directly.

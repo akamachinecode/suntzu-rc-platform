@@ -13,7 +13,8 @@ export default $config({
       protect: input?.stage === "production",
       providers: {
         aws: { region: "us-east-1" },
-        cloudflare: true,
+        // Pinned like every dependency (at least 7 days old); upgrade it together with SST.
+        cloudflare: { package: "@pulumi/cloudflare", version: "6.22.1" },
       },
     };
   },
@@ -34,10 +35,19 @@ export default $config({
     const vpc = new sst.aws.Vpc("Vpc", { nat: "ec2" });
 
     // PostgreSQL on Amazon RDS, in the private subnets.
-    const database = new sst.aws.Postgres("Database", { vpc, version: "17" });
+    const database = new sst.aws.Postgres("Database", { vpc, version: "18" });
 
     // Secrets: `pnpm sst secret set BetterAuthSecret "$(openssl rand -base64 32)" --stage <stage>`.
     const authSecret = new sst.Secret("BetterAuthSecret");
+    // Secret header that Cloudflare adds to every request (origin lock). "off" until enabled:
+    //   pnpm sst secret set OriginVerifyHeader <value> --stage <stage>
+    const originVerify = new sst.Secret("OriginVerifyHeader", "off");
+    // Cloudflare's published IP ranges: the API's load balancer only accepts connections from them.
+    const cloudflareIps = (await (
+      await fetch("https://api.cloudflare.com/client/v4/ips")
+    ).json()) as {
+      result: { ipv4_cidrs: string[]; ipv6_cidrs: string[] };
+    };
 
     // apps/api: Docker container on AWS Fargate (always on, no servers to maintain) behind a
     // load balancer. It applies database migrations when it starts.
@@ -56,11 +66,30 @@ export default $config({
       },
       loadBalancer: {
         domain: { name: host("api"), dns },
-        rules: [
-          { listen: "80/http", redirect: "443/https" },
-          { listen: "443/https", forward: "3001/http" },
-        ],
+        // With the origin lock on, only requests carrying Cloudflare's secret header are forwarded;
+        // the load balancer answers 403 to everything else.
+        rules: originVerify.value.apply((secret) => [
+          { listen: "80/http" as const, redirect: "443/https" as const },
+          secret === "off"
+            ? { listen: "443/https" as const, forward: "3001/http" as const }
+            : {
+                listen: "443/https" as const,
+                forward: "3001/http" as const,
+                conditions: { header: { name: "x-origin-verify", values: [secret] } },
+              },
+        ]),
         health: { "3001/http": { path: "/health" } },
+      },
+      transform: {
+        loadBalancerSecurityGroup: (args) => {
+          args.ingress = [80, 443].map((port) => ({
+            protocol: "tcp",
+            fromPort: port,
+            toPort: port,
+            cidrBlocks: cloudflareIps.result.ipv4_cidrs,
+            ipv6CidrBlocks: cloudflareIps.result.ipv6_cidrs,
+          }));
+        },
       },
     });
 
@@ -69,7 +98,7 @@ export default $config({
     const app = new sst.aws.Nextjs("App", {
       path: "apps/app",
       // OpenNext 4.x is required for Next.js 16 (SST's default is 3.x).
-      openNextVersion: "4.1.8",
+      openNextVersion: "4.1.12",
       domain: isProduction
         ? { name: host("www"), redirects: ["example.com"], dns }
         : { name: host("www"), dns },
@@ -78,8 +107,20 @@ export default $config({
         NEXT_PUBLIC_API_URL: apiUrl,
         API_URL: apiUrl,
       },
+      edge: { viewerRequest: { injection: originLock(originVerify) } },
     });
 
     return { app: app.url, api: api.url };
   },
 });
+
+// Origin lock (docs/CLOUDFLARE.md): CloudFront Function code that answers 403 to requests that
+// didn't come through Cloudflare. Inactive while the OriginVerifyHeader secret is "off".
+function originLock(secret: sst.Secret) {
+  return $interpolate`if ("${secret.value}" !== "off") {
+    var originVerify = event.request.headers["x-origin-verify"];
+    if (!originVerify || originVerify.value !== "${secret.value}") {
+      return { statusCode: 403, statusDescription: "Forbidden" };
+    }
+  }`;
+}

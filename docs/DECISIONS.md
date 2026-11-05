@@ -12,6 +12,19 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-27 — Refreshed to the Itaca standard `create-itaca@0.2.3`
+
+- **What:** Servo takes everything new in the `platform` stack 0.2.3 that applies to it:
+  - **How we work:** the skills `/plan`, `/fix`, `/ship`, `/document`, `/takeover` and `/guide` in `.claude/skills/`, a prompt hook that reminds agents to pick one (`.claude/settings.json`), and the "How we work" and "Documentation" sections of `AGENTS.md`.
+  - **Standard documents:** `docs/SYSTEM.md` (the map), `docs/OPERATIONS.md`, `docs/specs/` (one specification per feature, written with `/plan`) and `docs/bits/` (the catalog of bits, one file per piece of behaviour; every existing route and command now has one).
+  - **Tracing:** every API request gets a trace ID (`x-request-id`, else Cloudflare's `cf-ray`) and one log line with its bit (`@Bit()` on every route, `apps/api/src/common/trace.ts`). `getApi()` forwards the page's trace ID; `getPublicApi()` doesn't, on purpose, because headers are part of the fetch cache key.
+  - **Security:** `pnpm audit` is clean. `multer` 2.5.0 is forced by an override until NestJS 12.3 is old enough to install (it was published today); `body-parser` 2.4.0 and `fast-uri` 3.1.9 came in through a lockfile update; `esbuild` 0.25.12 is forced under `drizzle-kit`'s deprecated loaders.
+  - **Updates:** Next.js 16.4.3, Better Auth 1.7.13 (1.7.14 is still inside the one-day window), SST 4.17.2, OpenNext 4.1.12, ESLint 10.13.0 in the API.
+  - **Infrastructure (approved by the owner today):** `sst.config.ts` pins the Cloudflare provider (6.22.1) and adds the **origin lock**: the API's load balancer accepts only Cloudflare's IP ranges, and once the `OriginVerifyHeader` secret is set, the API and the site answer 403 to requests that didn't come through Cloudflare. RDS moves to PostgreSQL 18, the version local Docker already runs. CI caches the Next.js build.
+- **Kept on purpose:** no `apps/web` (Servo's public pages are the product, see 2026-10-21); Servo's own button, input and textarea styles; ESLint 10 in `apps/app` (the template stays on 9 because `eslint-config-next`'s plugins still declare `eslint ^9`; `pnpm lint` passes on 10, see 2026-10-22); Vitest and `pnpm test`; the `www` host for the site; the `us-east-1` region until C1 is settled in the launch spec.
+- **Why:** staying inside the Itaca standard is what lets any Itaca engineer take Servo over. The new way of working (specs and bits) is how Servo 1.0 gets built.
+- **Impact:** new SST secret `OriginVerifyHeader` (defaults to `off`; set it only after the Cloudflare transform rule exists, see `CLOUDFLARE.md`). Nothing deployed.
+
 ## 2026-10-23 — Events on the web: from the database, on a map, in your calendar (roadmap P1)
 
 - **What:**

@@ -6,6 +6,7 @@ import { DocumentBuilder, type OpenAPIObject, SwaggerModule } from "@nestjs/swag
 import { toNodeHandler } from "better-auth/node";
 import { AppModule } from "./app.module.js";
 import { type Auth, AUTH } from "./auth/auth.js";
+import { traceRequests } from "./common/trace.js";
 import { env } from "./env.js";
 
 /** Builds the configured application (shared by main.ts and openapi.ts). */
@@ -18,7 +19,8 @@ export async function createApp(
   });
   // Order matters: CORS first (it also answers the browser's preflight requests), then Better
   // Auth, which reads the raw request body itself, then the JSON body parser for other routes.
-  app.enableCors({ origin: [env.APP_URL], credentials: true });
+  app.use(traceRequests);
+  app.enableCors({ origin: [env.APP_URL], credentials: true, exposedHeaders: ["x-request-id"] });
   const http = app.getHttpAdapter().getInstance();
   http.disable("x-powered-by");
   http.all("/auth/*splat", toNodeHandler(app.get<Auth>(AUTH)));
