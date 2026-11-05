@@ -110,7 +110,7 @@ export const manualEvent = z
     discipline,
     startDate: z.iso.date("Pick the first day."),
     endDate: z.union([z.literal(""), z.iso.date()]).optional(),
-    // A place Servo knows, or where it is in words ("Orlando, FL").
+    // A place SunTzu RC knows, or where it is in words ("Orlando, FL").
     place: z.string().trim().max(120).optional(),
     placeText: z.string().trim().max(200).optional(),
     // The crew can name the host; organisers always publish as their own club.

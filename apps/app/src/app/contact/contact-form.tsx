@@ -6,7 +6,7 @@ import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { Turnstile } from "@/components/turnstile";
-import { TOPICS, type Topic } from "@/content/services";
+import { TOPICS, type Topic } from "@workspace/shared";
 import { type ContactState, submitContact } from "./actions";
 
 const initialState: ContactState = { status: "idle" };

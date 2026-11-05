@@ -93,3 +93,34 @@ variable "secrets" {
   type        = map(string)
   default     = {}
 }
+
+variable "alarms" {
+  description = "SNS topics (modules/alerts) and load balancer for the service's alarms; null for none."
+  type = object({
+    critical      = string
+    warning       = string
+    load_balancer = string
+    # Thresholds: p95 response time in seconds, and error log lines in 5 minutes.
+    slow_seconds = optional(number, 2)
+    error_logs   = optional(number, 10)
+  })
+  default = null
+}
+
+variable "telemetry" {
+  description = "Tracing through an OpenTelemetry Collector next to the service; null for none."
+  type = object({
+    collector_image = string
+    # Stage, recorded on every span (deployment.environment.name).
+    environment = string
+    # Share of new traces to keep, from 0 to 1.
+    sample_ratio = optional(number, 1)
+    # Optional copy to another OTLP/HTTP backend: its base URL and an SSM SecureString parameter
+    # holding the value of its Authorization header.
+    remote = optional(object({
+      endpoint                = string
+      authorization_parameter = string
+    }))
+  })
+  default = null
+}

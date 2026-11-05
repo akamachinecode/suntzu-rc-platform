@@ -13,7 +13,9 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function PlacesPage() {
+export default async function PlacesPage({ searchParams }: PageProps<"/places">) {
+  // "?near=me" (the "Near me" shortcut in search): closest first, as soon as the page opens.
+  const nearMe = (await searchParams).near === "me";
   const { data: places } = await getPublicApi().GET("/places");
   return (
     <>
@@ -32,7 +34,7 @@ export default async function PlacesPage() {
       </PageHeader>
       <section aria-label="Places" className="mx-auto max-w-7xl px-4 pb-24">
         {places ? (
-          <PlacesExplorer places={places} />
+          <PlacesExplorer places={places} nearMe={nearMe} />
         ) : (
           <p className="rounded-xl border-2 border-foreground bg-panel p-6 text-lg shadow-hard">
             The map is taking a break. Try again in a minute.

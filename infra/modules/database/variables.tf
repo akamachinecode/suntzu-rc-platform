@@ -27,3 +27,12 @@ variable "engine_version" {
   type        = string
   default     = "17"
 }
+
+variable "alarms" {
+  description = "SNS topics (modules/alerts) for the database's alarms and events; null for none."
+  type = object({
+    critical = string
+    warning  = string
+  })
+  default = null
+}

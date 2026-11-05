@@ -30,3 +30,11 @@ variable "protect" {
   description = "Refuse to delete the load balancer (production)."
   type        = bool
 }
+
+variable "alarms" {
+  description = "SNS topic (modules/alerts) for the load balancer's alarm; null for none."
+  type = object({
+    critical = string
+  })
+  default = null
+}

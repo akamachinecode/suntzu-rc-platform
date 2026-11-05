@@ -147,7 +147,7 @@ export default async function ClubPage({ params }: PageProps<"/clubs/[slug]">) {
               href={`/organise?club=${host.slug}`}
               className="font-semibold underline underline-offset-4"
             >
-              Claim it on Servo
+              Claim it on SunTzu RC
             </Link>{" "}
             to publish events and keep its page right. Free, forever.
           </p>

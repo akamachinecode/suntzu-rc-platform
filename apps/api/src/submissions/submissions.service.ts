@@ -181,7 +181,7 @@ export class SubmissionsService {
         adapter: "submission",
         trust: "community",
         status: "active",
-        permission: "Sent to Servo by a member.",
+        permission: "Sent to SunTzu RC by a member.",
       })
       .onConflictDoNothing()
       .returning();

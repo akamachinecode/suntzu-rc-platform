@@ -3,3 +3,7 @@ export * from "./notes.js";
 export * from "./community.js";
 export * from "./crew.js";
 export * from "./organise.js";
+export * from "./search.js";
+export * from "./content/guides.js";
+export * from "./content/rules.js";
+export * from "./content/services.js";

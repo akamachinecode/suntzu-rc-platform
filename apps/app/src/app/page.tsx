@@ -10,8 +10,7 @@ import { SignalBench } from "@/components/home/signal-bench";
 import { ToyStage } from "@/components/home/toy-stage";
 import { Button } from "@workspace/ui/components/button";
 import { getPublicApi } from "@/lib/api";
-import { GUIDES, IN_THE_WORKS } from "@/content/guides";
-import { SERVICES } from "@/content/services";
+import { GUIDES, IN_THE_WORKS, SERVICES } from "@workspace/shared";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -280,7 +279,7 @@ export default async function HomePage() {
                 <Link href="/try">Find me a club</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link href="/contact">Ask the Servo crew</Link>
+                <Link href="/contact">Ask the SunTzu RC crew</Link>
               </Button>
             </div>
           </div>

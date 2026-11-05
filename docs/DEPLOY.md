@@ -1,25 +1,25 @@
 # Deploy — AWS via Terraform
 
-Production URL: https://www.example.com · AWS region `us-east-2` (the AWS project's only region) · DNS and proxy in Cloudflare.
+Production URL: https://www.suntzurc.com · AWS region `us-east-2` (the AWS project's only region) · DNS and proxy in Cloudflare.
 
 Infrastructure is code: [`infra/`](../infra), explained in [`TERRAFORM.md`](./TERRAFORM.md). Nothing is deployed yet: going live is the owner's checklist in [`LAUNCH.md`](./LAUNCH.md).
 
 **What runs where:** `infra/` deploys everything, behind Cloudflare, in `us-east-2` only (no CloudFront, so nothing in us-east-1).
 
-| Part           | Production URL                                          | Runs on                                                                                          | Terraform              |
-| -------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ---------------------- |
-| `apps/app`     | https://www.example.com (`example.com` redirects there) | Next.js standalone server in a Docker container on AWS Fargate                                   | `infra/main.tf`        |
-| `apps/api`     | https://api.example.com                                 | NestJS in a Docker container on AWS Fargate                                                      | `infra/main.tf`        |
-| Scheduled jobs | —                                                       | the API's image on Fargate, started by EventBridge Scheduler: engine, notify, census (and setup) | `infra/jobs.tf`        |
-| Database       | —                                                       | Amazon RDS for PostgreSQL 18 in private subnets, reachable only from the API and the jobs        | `infra/main.tf`        |
-| Email          | —                                                       | Amazon SES, sending from `example.com` (staging: `staging.example.com`) with DKIM in Cloudflare  | `infra/email.tf`       |
-| Snapshots      | —                                                       | a private S3 bucket with the raw pages and feeds the engine reads                                | `infra/storage.tf`     |
-| Network        | —                                                       | one VPC; the app and the API share a load balancer that accepts only Cloudflare                  | `infra/modules/`       |
-| Permissions    | —                                                       | the API and the jobs may use the snapshots bucket, SES and Claude on Bedrock, and nothing else   | `infra/permissions.tf` |
+| Part           | Production URL                                            | Runs on                                                                                           | Terraform              |
+| -------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------- |
+| `apps/app`     | https://www.suntzurc.com (`suntzurc.com` redirects there) | Next.js standalone server in a Docker container on AWS Fargate                                    | `infra/main.tf`        |
+| `apps/api`     | https://api.suntzurc.com                                  | NestJS in a Docker container on AWS Fargate                                                       | `infra/main.tf`        |
+| Scheduled jobs | —                                                         | the API's image on Fargate, started by EventBridge Scheduler: engine, notify, census (and setup)  | `infra/jobs.tf`        |
+| Database       | —                                                         | Amazon RDS for PostgreSQL 18 in private subnets, reachable only from the API and the jobs         | `infra/main.tf`        |
+| Email          | —                                                         | Amazon SES, sending from `suntzurc.com` (staging: `staging.suntzurc.com`) with DKIM in Cloudflare | `infra/email.tf`       |
+| Snapshots      | —                                                         | a private S3 bucket with the raw pages and feeds the engine reads                                 | `infra/storage.tf`     |
+| Network        | —                                                         | one VPC; the app and the API share a load balancer that accepts only Cloudflare                   | `infra/modules/`       |
+| Permissions    | —                                                         | the API and the jobs may use the snapshots bucket, SES and Claude on Bedrock, and nothing else    | `infra/permissions.tf` |
 
 Images are stored in Amazon ECR (`rc-landing-app`, `rc-landing-api`) and logs go to CloudWatch (`/ecs/rc-landing-<stage>/<app|api|engine|notify|census|setup>`, 30 days).
 
-**Domains are required for every stage**, because the app and the API must share a parent domain for the sign-in cookie (`cookie_domain` in `infra/<stage>.tfvars.json`): production uses `www.` / `api.example.com`, staging uses `www-staging.` / `api-staging.example.com`. All stages share the cookie domain, so sign in to staging and production in different browser profiles.
+**Domains are required for every stage**, because the app and the API must share a parent domain for the sign-in cookie (`cookie_domain` in `infra/<stage>.tfvars.json`): production uses `www.` / `api.suntzurc.com`, staging uses `www-staging.` / `api-staging.suntzurc.com`. All stages share the cookie domain, so sign in to staging and production in different browser profiles.
 
 **Database migrations** run when a new API container starts (`apps/api/src/migrate.ts`), before it accepts traffic. A failed migration stops the new version from starting, the previous one keeps serving, and the deploy fails.
 
@@ -27,11 +27,13 @@ Images are stored in Amazon ECR (`rc-landing-app`, `rc-landing-api`) and logs go
 
 **Running a job by hand:** **Actions → Run a task → Run workflow**, pick the stage and the task (`setup`, `engine`, `notify` or `census`). It runs with the version deployed now, waits for it to finish and fails if the task fails.
 
-**Email:** each stage sends from its own domain (`email` in `infra/<stage>.tfvars.json`: production `example.com`, staging `staging.example.com`), with its own SES identity and DKIM and DMARC records in Cloudflare. Until SES production access is granted ([`LAUNCH.md`](./LAUNCH.md)), SES only sends to verified addresses.
+**Email:** each stage sends from its own domain (`email` in `infra/<stage>.tfvars.json`: production `suntzurc.com`, staging `staging.suntzurc.com`), with its own SES identity and DKIM and DMARC records in Cloudflare. Until SES production access is granted ([`LAUNCH.md`](./LAUNCH.md)), SES only sends to verified addresses.
 
 **Cost:** each stage has a fixed floor even without users: the load balancer, the RDS instance, the app and API containers and their public IPs (roughly 75 USD a month), plus the jobs, SES, S3 and Bedrock by use. Delete stages you don't use.
 
 **More than one app container:** each container keeps its own page cache. Before raising the count, ask Itaca engineering to add a shared cache handler.
+
+**Monitoring is part of every stage:** alarms on the site, the API, the scheduled jobs, the load balancer and the database, uptime checks from the internet and traces of every request. Before the first deploy of a stage, set who receives the alarms (`alerts` in `infra/<stage>.tfvars.json`; a stage with nobody to alert refuses to deploy) and run `infra/bootstrap` once per AWS account so traces are stored. See "Monitoring" in [`OPERATIONS.md`](./OPERATIONS.md). Monitoring adds about 10–15 USD a month per stage.
 
 ## How deploys happen
 
@@ -43,7 +45,7 @@ Images are stored in Amazon ECR (`rc-landing-app`, `rc-landing-api`) and logs go
 ## One-time setup
 
 1. **AWS account:** state bucket, deploy role and container registries, steps 1 and 2 of [`TERRAFORM.md`](./TERRAFORM.md).
-2. **Cloudflare:** the zone for `example.com` must exist in Itaca's Cloudflare account (see [`CLOUDFLARE.md`](./CLOUDFLARE.md)). Create an account-owned API token with **Zone → Zone → Read** and **Zone → DNS → Edit**, restricted to that zone.
+2. **Cloudflare:** the zone for `suntzurc.com` must exist in Itaca's Cloudflare account (see [`CLOUDFLARE.md`](./CLOUDFLARE.md)). Create an account-owned API token with **Zone → Zone → Read** and **Zone → DNS → Edit**, restricted to that zone.
 3. **GitHub environments `production` and `staging`** (the same for both, with `--env staging`):
 
    ```bash
@@ -74,7 +76,7 @@ Secrets live in AWS Systems Manager Parameter Store, under `/rc-landing/<stage>/
   | `google-client-secret` | `SecureString` | "Continue with Google" (the API side)                             |
 
   ```bash
-  aws ssm put-parameter --type SecureString --name /rc-landing/production/crew-emails --value 'ana@example.com,ben@example.com'
+  aws ssm put-parameter --type SecureString --name /rc-landing/production/crew-emails --value 'ana@suntzurc.com,ben@suntzurc.com'
   ```
 
   A new parameter reaches the API at the next deploy. To change the value of one that already exists, add `--overwrite`, then restart the API so it reads it (the jobs read it at their next run):

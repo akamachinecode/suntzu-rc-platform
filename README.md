@@ -1,17 +1,19 @@
-# Servo
+# SunTzu RC
+
+The free calendar, map and community of RC in Florida: events read from organisers' own pages, every field and track from the FAA registers, clubs that publish for free, and guides that take planes, helicopters and cars apart. https://www.suntzurc.com
 
 Built on the **Itaca Technologies standard stack** `platform`, hosted on **AWS (Terraform)** behind **Cloudflare**, with code on **GitHub**.
 
 **Stack:** a pnpm monorepo with one Next.js app (public site and signed-in screens) and the API behind it (ready for a mobile app):
 
-| Folder                                         | What                                      | Built on                           | Dev URL               | Production              |
-| ---------------------------------------------- | ----------------------------------------- | ---------------------------------- | --------------------- | ----------------------- |
-| [`apps/app`](./apps/app)                       | Public site and web application           | Next.js 16 (App Router) · React 19 | http://localhost:3000 | https://www.example.com |
-| [`apps/api`](./apps/api)                       | Backend: sign-in, business rules, data    | NestJS · Better Auth · OpenAPI     | http://localhost:3001 | https://api.example.com |
-| [`packages/db`](./packages/db)                 | Database schema and migrations            | PostgreSQL · Drizzle ORM           | —                     | Amazon RDS              |
-| [`packages/shared`](./packages/shared)         | Validation schemas shared by API and apps | Zod                                | —                     | —                       |
-| [`packages/api-client`](./packages/api-client) | Typed API client (generated from OpenAPI) | openapi-fetch                      | —                     | —                       |
-| [`packages/ui`](./packages/ui)                 | Shared shadcn/ui components and theme     | Tailwind CSS 4 · shadcn/ui         | —                     | —                       |
+| Folder                                         | What                                      | Built on                           | Dev URL               | Production               |
+| ---------------------------------------------- | ----------------------------------------- | ---------------------------------- | --------------------- | ------------------------ |
+| [`apps/app`](./apps/app)                       | Public site and web application           | Next.js 16 (App Router) · React 19 | http://localhost:3000 | https://www.suntzurc.com |
+| [`apps/api`](./apps/api)                       | Backend: sign-in, business rules, data    | NestJS · Better Auth · OpenAPI     | http://localhost:3001 | https://api.suntzurc.com |
+| [`packages/db`](./packages/db)                 | Database schema and migrations            | PostgreSQL · Drizzle ORM           | —                     | Amazon RDS               |
+| [`packages/shared`](./packages/shared)         | Validation schemas shared by API and apps | Zod                                | —                     | —                        |
+| [`packages/api-client`](./packages/api-client) | Typed API client (generated from OpenAPI) | openapi-fetch                      | —                     | —                        |
+| [`packages/ui`](./packages/ui)                 | Shared shadcn/ui components and theme     | Tailwind CSS 4 · shadcn/ui         | —                     | —                        |
 
 First run (needs Docker for the local database):
 
@@ -24,6 +26,22 @@ pnpm dev
 ```
 
 `db:seed` loads the hand-checked events, places and sources, `census` the FAA's fields, airports and airspace for Florida, and `engine` reads every active source. Then open http://localhost:3000 and sign in with any email: locally the sign-in link is printed in the API's console instead of being emailed. Put your address in `CREW_EMAILS` (`apps/api/.env`) to open the crew console at `/crew`. API docs: http://localhost:3001/docs.
+
+## Example project for `create-itaca@0.3.1`
+
+SunTzu RC is the reference project for the `platform` stack with the `terraform` deploy target of `create-itaca@0.3.1`: a real product built entirely inside the Itaca standard. Use it to see how the template grows:
+
+| To see…                                                                    | Look at                                                                                                       |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| A feature end to end (schema → contract → API → screen)                    | `packages/db/src/schema/`, `packages/shared/`, `apps/api/src/search/`, `apps/app/src/app/search/`             |
+| Specs written with `/plan` and built slice by slice                        | [`docs/specs/`](./docs/specs)                                                                                 |
+| The catalog of bits, one per piece of behaviour                            | [`docs/bits/`](./docs/bits/README.md)                                                                         |
+| Terraform beyond the template: email, S3, scheduled jobs, optional secrets | [`infra/`](./infra) (`email.tf`, `storage.tf`, `jobs.tf`, `secrets.tf`), [`docs/DEPLOY.md`](./docs/DEPLOY.md) |
+| Running a job by hand from GitHub Actions                                  | [`.github/workflows/task.yml`](./.github/workflows/task.yml)                                                  |
+| Every deviation from the template, and why                                 | [`docs/DECISIONS.md`](./docs/DECISIONS.md) (search for "on purpose")                                          |
+| Going live, step by step                                                   | [`docs/LAUNCH.md`](./docs/LAUNCH.md)                                                                          |
+
+Deviations on purpose: no `apps/web` (the public pages are the product, so they live in `apps/app` on `www`), PostgreSQL 18, Vitest, and AWS resources prefixed with the repository's name (`rc-landing`). `itaca.json` records the version.
 
 ## Quick start
 
@@ -67,7 +85,7 @@ Before committing, run `pnpm check`.
 - [`docs/bits/`](./docs/bits/README.md) — the catalog of bits: each piece of behaviour, end to end
 - [`docs/specs/`](./docs/specs/README.md) — specifications of features, written with `/plan`
 - [`docs/OPERATIONS.md`](./docs/OPERATIONS.md) — running, deploying, rolling back, access and backups
-- [`docs/LAUNCH.md`](./docs/LAUNCH.md) — the owner's checklist to take Servo 1.0 live
+- [`docs/LAUNCH.md`](./docs/LAUNCH.md) — the owner's checklist to take SunTzu RC 1.0 live
 - [`docs/DEPLOY.md`](./docs/DEPLOY.md) — how this project is deployed to AWS
 - [`docs/CLOUDFLARE.md`](./docs/CLOUDFLARE.md) — domain, DNS, TLS and security settings
 - [`docs/GITHUB.md`](./docs/GITHUB.md) — repository setup and protections

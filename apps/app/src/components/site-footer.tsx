@@ -2,9 +2,7 @@ import { ArrowUp, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@workspace/ui/components/button";
 import { Wordmark } from "@/components/wordmark";
-import { GUIDES, IN_THE_WORKS } from "@/content/guides";
-import { AMA, FAA_RULES } from "@/content/rules";
-import { SERVICES } from "@/content/services";
+import { GUIDES, IN_THE_WORKS, AMA, FAA_RULES, SERVICES } from "@workspace/shared";
 import { SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -140,8 +138,8 @@ export function SiteFooter() {
 
       {/* the big sign-off */}
       <div aria-hidden="true" className="overflow-hidden px-4">
-        {/* Nudged right: the o's side bearing leaves more air on that side than the s does. */}
-        <Wordmark className="mx-auto block max-w-7xl translate-x-[0.08em] text-center text-[clamp(6rem,27vw,24rem)] leading-[0.78] text-primary select-none" />
+        {/* Fills the width: "suntzu rc" is 4.67em wide, so the size is the room left over 4.8. */}
+        <Wordmark className="mx-auto block max-w-7xl text-center text-[length:min(calc((100vw_-_2rem)/4.8),16.5rem)] leading-[0.78] whitespace-nowrap text-primary select-none" />
       </div>
 
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-sm text-background/60 sm:flex-row sm:items-center sm:justify-between">

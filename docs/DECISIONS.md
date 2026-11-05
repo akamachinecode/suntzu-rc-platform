@@ -12,6 +12,40 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-03 — A sign-in code next to the link, still no passwords (spec 0006)
+
+- **What:** the owner asked whether to add passwords and decided against them; instead, the sign-in email now carries a **6-digit code** next to the link (spec [0006](./specs/0006-sign-in-code.md), approved today, acting as Itaca engineering for accounts):
+  - **Why a code:** on a phone the link opens in whatever browser the mail app picks (Gmail's own, for example), so the person stays signed out where they asked. The code is typed on the "Check your email" screen and signs in there.
+  - **One email:** the link's email creates the code with Better Auth's `emailOTP` plugin (`createVerificationOTP`, part of `better-auth`: **no new dependency**). Only the latest email's code works; it works once, for 15 minutes like the link, with 3 tries. Stored **hashed**. Not in the subject or the inbox preview (someone who sees a locked phone could use it). After 3 wrong tries, or once expired, the screen offers "Email me a new one".
+  - **Closed routes:** the plugin also brings routes to send a code without a link, verify an email, reset a password and change an email; they answer 404 (`disabledPaths` in `apps/api/src/auth/auth.ts`). Only `POST /auth/sign-in/email-otp` is open (Better Auth limits it to 3 requests a minute).
+  - **Emails** can now have a preview text and a code block (`renderEmail` in `apps/api/src/mail/mail.ts`).
+  - **Header:** the longer wordmark ("suntzu rc") wrapped between 768 and 1280 px; it now stays on one line, and "My SunTzu RC" shows as an icon below 1280 px (its name stays for screen readers).
+- **Kept out:** passwords (owner, 2026-11-03); passkeys, for when members come back often; Sign in with Apple, only if many members use iPhones (a paid Apple developer account).
+- **Why:** the sign-in has to work on phones, where most people will check this weekend's events.
+- **Impact:** no new variables, tables or services. The Cloudflare rate-limit rule for `POST /auth/sign-in/magic-link` (`LAUNCH.md`, step 3) should also cover `POST /auth/sign-in/email-otp`. The pre-launch review of `apps/api/src/auth/` should include it.
+
+## 2026-11-03 — The name is SunTzu RC, at suntzurc.com (C3), and it is the example project for 0.3.1
+
+- **What:** the owner chose the name **SunTzu RC** and the domain **suntzurc.com**, replacing the working name "Servo", and asked to keep the project as the example of `create-itaca@0.3.1`.
+  - **Written "SunTzu RC"** on the site, in emails, calendars and share images (the owner asked for a recommendation: it reads at once, "RC" says what it's about, and lowercased without the space it is the domain). The wordmark is lowercase like the decal it was ("suntzu rc"); the footer's big sign-off is smaller so the longer word fits. Change the name in `SITE.name` (`apps/app/src/lib/site.ts`), the wordmark and `email.from` in the `infra/*.tfvars.json` files.
+  - **Domain:** `www.suntzurc.com` (the site; `suntzurc.com` redirects there), `api.suntzurc.com`, staging on `www-staging.` / `api-staging.` and email from `hello@suntzurc.com` (staging from `hello@staging.suntzurc.com`). The domain is registered with Cloudflare Registrar (since 2025-04-05, Cloudflare name servers), so the zone exists.
+  - **The engine's user agent** is now `SunTzuRCBot/0.1 (+https://www.suntzurc.com/contact)`, pointing site owners at the contact page instead of the private repository.
+  - **Kept:** "servo" where it means the part (the figures, the signal bench on the home page, "servo saver"); the internal CSS class `servo-figure`; the AWS CLI profile and project `servo` (the AWS project's real name); the AWS resource prefix `rc-landing` (the repository's name, 2026-10-29); this log's earlier entries, which keep the name they were written with; and `example.com` in tests, where it stands for any address.
+  - **Example project:** `itaca.json` says `exampleOf`, and the README has a section on what to look at when using SunTzu RC as the model for a `platform` project.
+- **Why:** the owner's decision (C3 in `ROADMAP.md`); the last naming step before going live.
+- **Impact:** nothing deployed. If the repository is renamed (for example to `suntzurc`), the resource prefix in `infra/stage.tf` and `infra/bootstrap/main.tf`, the SSM paths and the OIDC subject change with it: do it before the first deploy.
+
+## 2026-11-03 — Refreshed to the Itaca standard `create-itaca@0.3.1`
+
+- **What:** the owner published `create-itaca@0.3.1` (tag `bea546a` of `itaca-stacks`, 2026-11-03), a version refresh on top of 0.3.0. Servo takes all of it:
+  - **Terraform 1.17.0** in `deploy.yml`, `infra.yml` and `task.yml`; **AWS provider 6.70.0** in `infra/` and `infra/bootstrap/`, with the template's regenerated `.terraform.lock.hcl` files (same providers: AWS, Cloudflare 5.28.1, random 3.9.1).
+  - **Dependencies at their latest stable release**, all older than a day: NestJS 12.3.2 (and `@nestjs/swagger` 12.1.0), Better Auth 1.7.15, Next.js and `eslint-config-next` 16.4.4, AWS SDK 3.1161.0, shadcn 4.23.0, Vitest 5.1.0, ESLint 10.14.0, and patch or minor updates of `cn`, `lucide-react`, `maplibre-gl`, `motion`, `three`, `globals` and `typescript-eslint`.
+  - **`multer` override removed:** `@nestjs/platform-express` 12.3.2 depends on `multer` 2.5.0 itself.
+  - **GHSA-g3hv-75wg-m249 accepted** (moderate, `minimatch` < 11.0.1) in `pnpm-workspace.yaml` (`audit.ignore`), as in the template: only tooling pulls it in and the fix exists only in `minimatch` 11, which those tools don't support.
+- **Kept on purpose:** **TypeScript 5.9.3** (7.0 is out, and Dependabot proposes 6.0, but the template and `typescript-eslint` stay on 5.9) and **`@types/node` 24**, which matches the Node 24 runtime (`.nvmrc`, the Dockerfiles); `pnpm update --latest` proposes 26.
+- **Why:** staying on the standard; the project is also the example for 0.3.1 (see the entry above).
+- **Impact:** `pnpm audit` reports one low advisory with no fix yet (GHSA-gcqx-w48m-w2h4, `deepmerge`, only inside the shadcn CLI); CI's audit (`--prod --audit-level high`) passes. Nothing deployed.
+
 ## 2026-10-29 — The repository lives in the owner's personal GitHub account
 
 - **What:** the code is on GitHub at **`akamachinecode/rc-landing`** (private), the owner's personal account, instead of `ITACA-TECHNOLOGIES/rc-landing`. Every reference moved with it: `itaca.json`, `AGENTS.md`, the GitHub, OIDC, deploy, Terraform and launch docs, the engine's user agent (`ServoBot/0.1 (+https://github.com/akamachinecode/rc-landing)`) and the seeded crew source's link.
@@ -44,6 +78,29 @@ Format:
   - Cost: the fixed floor per stage is the load balancer, RDS and two always-on containers (roughly 75 USD a month), plus the jobs by use; no NAT instance and no Lambda or CloudFront any more.
   - Secrets moved from SST secrets to SSM Parameter Store (`/rc-landing/<stage>/…`); `BetterAuthSecret` is now generated by Terraform. `CLOUDFLARE_ACCOUNT_ID` is no longer needed in GitHub.
   - Not taken from 0.3.0: nothing else in it applies (the EC2 target and the static-site module are for other stacks).
+
+## 2026-10-29 — Search's screens and "searched, not found" (spec 0005, slices 2–4)
+
+- **What:** the owner asked to finish search so that Servo 1.0 ships with it. Built: the results page `/search` (`noindex`, works without JavaScript), the search box on every page (⌘K, Ctrl+K, `/`, the header and the mobile menu) and the crew's "Searched, not found" list. Decisions along the way:
+  - **No new dependency.** The box is the shadcn/ui Dialog (added to `packages/ui`, built on `radix-ui`, which we already had) with our own combobox (arrows, Enter, screen-reader announcements), not `cmdk`: Enter must open the results page when no result is chosen, and `cmdk` always chooses the first one.
+  - **The box asks the API from the browser** (`browserApi` in `apps/app/src/lib/search.ts`): public data, no cookies, cached 5 minutes like the pages. The API already allows the site's origin (CORS).
+  - **"Little" means partial.** The API now says `partial` when no result has every word ("qwxzv hovertank" found four loose matches before). Those searches, and the ones that found nothing, are what the crew sees; a search with one or two exact results is a success and isn't counted. The browser reports them (`POST /search/misses`, public, no Turnstile: there's no form) and the API searches again, so only searches that really fail are counted. Words that look like an email, a phone number or a street address are dropped. Counts are deleted after 90 days by the existing scheduled clean-up (`pnpm notify`), so there's no new job. New table `search_misses` (migration 0009).
+  - **A town or ZIP keeps to its radius.** Slice 1 listed matches from anywhere before what was near ("car track near Hialeah" showed tracks 86 miles away under "within 25 miles"). Now events, places and clubs must be within the radius and come closest first; guides and rules, which hold anywhere, keep their place.
+  - **Shortcuts:** "Near me" opens `/places?near=me` (located in the browser, as before) and "Can I fly here?" for a town opens `/places/can-i-fly-here?at=lat,lng`.
+- **Why:** search is the front door for people who arrive with one thing in mind; the crew learns from what it misses.
+- **Impact:** no new services, costs or environment variables. Suggested Cloudflare rule: `POST /search/misses` at 20 per minute per IP (`LAUNCH.md`, step 3). Itaca engineering should look at the new public `POST` endpoint and the shadcn Dialog in the launch review.
+
+## 2026-10-28 — Search across the whole site runs in PostgreSQL (spec 0005)
+
+- **What:** the owner approved [spec 0005](./specs/0005-search.md): one search box for events, places, clubs, guides, rules and services, with towns and ZIP codes ("near Tampa", "33441"), typos, half-typed words and common Spanish words. Decisions:
+  - **Engine: PostgreSQL**, the database we already run, with the standard extensions `pg_trgm` (typos), `unaccent` (accents), `fuzzystrmatch` (closest spelling), `cube` and `earthdistance` (distance). A comparison on 2026-10-28 ran the same 369 documents and 36 searches on PostgreSQL and Typesense 30.2: tuned, PostgreSQL put the right answer first 32 times and Typesense 31, both in about 3 ms; out of the box Typesense led 24 to 15. Typesense would add a service to host, a bill and a sync that can fall behind the pages; PostgreSQL keeps the index in step with the data inside the database. Its known weakness is ranking a rare word above a common one (fields at "High" schools before the 400 ft rule), covered by pinned answers. Revisit when the index passes about 100,000 documents or that weakness shows in real searches; all search code lives in `apps/api/src/search/` so the engine can change without touching the screens.
+  - **One search document shape** (`search_documents`): type, title, subtitle, text, link, place, dates and weight. Triggers on `events`, `places` and `hosts` keep it current; guides, rules and services are written to it when the API starts. A new kind of content (RC models, builds) adds its own documents and nothing else changes.
+  - **Guides, rules and services move to `packages/shared`** so the API can index them and a mobile app can show them; rules get a stable `id` so pinned answers survive a change of title.
+  - **Query understanding** in code, not in the database: Florida towns and ZIP codes, "events"/"clubs"/"fields" as a type, Spanish words, synonyms ("heli", "1/8" → "8th") and pinned answers ("lessons" → the Lessons service). RDS doesn't allow synonym files, and code keeps them reviewed in git.
+  - **Privacy:** searches without results are counted per day with the words and the number of results only, never the account, IP address or location, and deleted after 90 days (slice 4). Request logs already record only the route.
+  - **The golden searches** are a test; it needs the local database and skips without one.
+- **Why:** someone who lands on Servo should find the event, field, club or rule they mean from the front door, and search must never disagree with the pages.
+- **Impact:** no new dependencies, services or environment variables. A migration creates the extensions (allowed for the RDS master user). Itaca may want a Cloudflare rate-limit rule on `api/search` at launch (open question in the spec).
 
 ## 2026-10-28 — Fixes from an independent security and bug review
 

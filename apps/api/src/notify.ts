@@ -1,4 +1,4 @@
-// Sends Servo's own emails once, from the command line (`pnpm notify`), and on a schedule once
+// Sends SunTzu RC's own emails once, from the command line (`pnpm notify`), and on a schedule once
 // deployed: change alerts and the clean-up every run, the weekly digest on Thursdays and the
 // organisers' report on the first of the month. `pnpm notify digest report` sends those now.
 import { createDb } from "@workspace/db";
@@ -34,7 +34,7 @@ try {
       : 0;
   const purged = await step("purge", () => purge(db, now));
   console.log(
-    `notify: ${alerts} change alerts, ${digests} weekly digests, ${reports} organiser reports; ${purged} old messages deleted`,
+    `notify: ${alerts} change alerts, ${digests} weekly digests, ${reports} organiser reports; ${purged} old messages and searches deleted`,
   );
 } finally {
   await pool.end();

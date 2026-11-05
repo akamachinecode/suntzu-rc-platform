@@ -10,6 +10,16 @@ export * from "drizzle-orm";
 /** Creates the connection pool and the typed Drizzle client. One per process. */
 export function createDb(url: string) {
   const pool = new pg.Pool({ connectionString: url, max: 10 });
+  // An idle connection closed by the server (database restart, failover, maintenance) is replaced
+  // on the next query. Without this listener the error would stop the whole process.
+  pool.on("error", (error) => {
+    console.error(
+      JSON.stringify({
+        level: "error",
+        message: `Idle database connection lost: ${error.message}`,
+      }),
+    );
+  });
   return { db: drizzle(pool, { schema }), pool };
 }
 

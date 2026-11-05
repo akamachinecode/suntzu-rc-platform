@@ -6,7 +6,7 @@
 
 ## Problem
 
-"Where can I fly or race near me?" has no good answer today: AMA's club finder has no map of fields, FAA's map of recognised areas is hard to read, and searches for "RC track near me" return spam. Every event also hangs off a place, and Servo only knows six of them.
+"Where can I fly or race near me?" has no good answer today: AMA's club finder has no map of fields, FAA's map of recognised areas is hard to read, and searches for "RC track near me" return spam. Every event also hangs off a place, and SunTzu RC only knows six of them.
 
 ## Goals
 
@@ -17,7 +17,7 @@
 ## Out of scope
 
 - Private fields that aren't in a public register: they're listed only when their club asks.
-- Official airspace authorisation (LAANC): we explain and link to the FAA's tools; Servo never authorises a flight.
+- Official airspace authorisation (LAANC): we explain and link to the FAA's tools; SunTzu RC never authorises a flight.
 - Live wind and temporary flight restrictions (later: "Conditions" in `ROADMAP.md`).
 
 ## User stories

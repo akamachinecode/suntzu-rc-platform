@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@workspace/ui/components/button";
-import { SERVICES, STEPS } from "@/content/services";
+import { SERVICES, STEPS } from "@workspace/shared";
 
 export const metadata: Metadata = {
   title: "Learn RC in South Florida",

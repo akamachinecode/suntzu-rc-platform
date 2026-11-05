@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
-import { GUIDES, IN_THE_WORKS } from "@/content/guides";
+import { GUIDES, IN_THE_WORKS } from "@workspace/shared";
 
 export const metadata: Metadata = {
   title: "Guides",

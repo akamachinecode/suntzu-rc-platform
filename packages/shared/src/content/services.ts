@@ -1,4 +1,4 @@
-/** What the Servo crew offers. Shown on /learn and summarised on the home page. */
+/** What the SunTzu RC crew offers. Shown on /learn and summarised on the home page. */
 
 export const TOPICS = [
   { value: "lessons", label: "Lessons" },

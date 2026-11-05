@@ -168,7 +168,7 @@ export default function RcPlanesGuide() {
         </h1>
         <p className="mt-5 text-lg text-pretty">
           More than 120 years of radio, balsa and lithium, every part of a modern trainer, and
-          benches you can drive yourself. By the Servo crew, about 15 minutes.
+          benches you can drive yourself. By the SunTzu RC crew, about 15 minutes.
         </p>
       </header>
 

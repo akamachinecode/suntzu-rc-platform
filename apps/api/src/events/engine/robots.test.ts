@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { parseRobots } from "./robots.js";
 
-const agent = "ServoBot/0.1 (+https://example.test)";
+const agent = "SunTzuRCBot/0.1 (+https://example.test)";
 
 describe("parseRobots", () => {
   it("blocks Google Calendar feeds (calendar.google.com, 2026-10-22)", () => {
@@ -34,7 +34,7 @@ describe("parseRobots", () => {
 
   it("uses our own group, with its crawl delay, over the * group", () => {
     const rules = parseRobots(
-      "User-agent: *\nDisallow: /\n\nUser-agent: servobot\nDisallow: /private\nCrawl-delay: 10",
+      "User-agent: *\nDisallow: /\n\nUser-agent: suntzurcbot\nDisallow: /private\nCrawl-delay: 10",
       agent,
     );
     expect(rules.allows("/events")).toBe(true);

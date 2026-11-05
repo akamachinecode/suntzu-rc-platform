@@ -235,7 +235,7 @@ export function DecalSheet({ decals }: { decals: Decal[] }) {
       </div>
 
       <p className="mt-8 text-center text-sm text-muted-foreground lg:absolute lg:inset-x-0 lg:bottom-4 lg:mt-0">
-        Servo decal sheet. Peel, stick, fly.{" "}
+        SunTzu RC decal sheet. Peel, stick, fly.{" "}
         <Link href="/learn" className="font-semibold text-foreground underline underline-offset-4">
           See everything we do
         </Link>

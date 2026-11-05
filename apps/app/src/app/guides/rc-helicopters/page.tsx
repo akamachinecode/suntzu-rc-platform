@@ -183,7 +183,7 @@ export default function RcHelicoptersGuide() {
         </h1>
         <p className="mt-5 text-lg text-pretty">
           Fifty years of learning to hover, every part of a modern 450, and benches you can drive
-          yourself: the swashplate, the tail and the hover. By the Servo crew, about 15 minutes.
+          yourself: the swashplate, the tail and the hover. By the SunTzu RC crew, about 15 minutes.
         </p>
       </header>
 

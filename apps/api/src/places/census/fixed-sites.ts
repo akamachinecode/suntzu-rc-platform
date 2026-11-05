@@ -23,7 +23,7 @@ export const FIXED_SITES_LAYER = `${FAA_SERVICES}/Recreational_Flyer_Fixed_Sites
 export const FIXED_SITES_DATASET =
   "https://udds-faa.opendata.arcgis.com/datasets/faa::recreational-flyer-fixed-sites";
 
-// The register also names a point of contact (POC) and a ZIP code: Servo never asks for them.
+// The register also names a point of contact (POC) and a ZIP code: SunTzu RC never asks for them.
 export const FIXED_SITE_FIELDS = [
   "GLOBALID",
   "SITE_ID",

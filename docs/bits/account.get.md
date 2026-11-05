@@ -1,4 +1,4 @@
-# account.get — A member opens My Servo
+# account.get — A member opens My SunTzu RC
 
 - **Trigger:** a signed-in member opens `/me` (private, `proxy.ts`).
 - **Who:** signed-in members.

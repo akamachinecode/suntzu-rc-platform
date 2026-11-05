@@ -3,7 +3,7 @@
 import { AlertTriangle, CheckCircle2, LocateFixed, MapPin, PlaneLanding } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import type { AirspaceCheck, Place } from "@workspace/shared";
 import { cn } from "@/lib/utils";
 import { checkPoint } from "./actions";
@@ -45,8 +45,9 @@ const VERDICTS: Record<
   },
 };
 
-export function Checker({ places }: { places: Place[] }) {
-  const [point, setPoint] = useState<[number, number] | undefined>();
+/** `initial` is a spot to check on arrival, [longitude, latitude] ("Can I fly near Hialeah?"). */
+export function Checker({ places, initial }: { places: Place[]; initial?: [number, number] }) {
+  const [point, setPoint] = useState<[number, number] | undefined>(initial);
   const [result, setResult] = useState<AirspaceCheck | "outside" | "error" | undefined>();
   const [pending, start] = useTransition();
   const [locating, setLocating] = useState(false);
@@ -55,6 +56,10 @@ export function Checker({ places }: { places: Place[] }) {
     setPoint(next);
     start(async () => setResult(await checkPoint(next[1], next[0])));
   }
+
+  useEffect(() => {
+    if (initial) start(async () => setResult(await checkPoint(initial[1], initial[0])));
+  }, [initial]);
 
   function locate() {
     setLocating(true);
@@ -107,7 +112,7 @@ export function Checker({ places }: { places: Place[] }) {
         ) : null}
         {result === "outside" && !pending ? (
           <p className="rounded-xl border-2 border-foreground bg-panel p-6 text-lg">
-            That point is outside Florida. Servo only covers Florida for now.
+            That point is outside Florida. SunTzu RC only covers Florida for now.
           </p>
         ) : null}
         {result === "error" && !pending ? (

@@ -4,6 +4,9 @@
 # (storage.tf) and the code's AWS permissions (permissions.tf) have their own files.
 # Database: PostgreSQL on Amazon RDS in private subnets, reachable only from the API and the jobs.
 # The app and the API share one load balancer; everything sits behind Cloudflare.
+# Monitoring (docs/OPERATIONS.md, "Monitoring"): alarms on the app, the API, the scheduled jobs, the
+# load balancer and the database go to the stage's alert recipients, the site and the API are
+# checked from the internet, and both send their traces through an OpenTelemetry Collector.
 
 data "aws_region" "current" {}
 
@@ -12,6 +15,36 @@ data "aws_caller_identity" "current" {}
 module "zone" {
   source = "./modules/zone"
   domain = var.hosts.app
+}
+
+locals {
+  # OpenTelemetry Collector (contrib distribution), next to the app and the API. Pinned by digest.
+  collector_image = "otel/opentelemetry-collector-contrib:0.164.0@sha256:340c9ca6a36617084c6661bdc4f0fe92b7cda5a805d61673ec8db375fddc522b"
+}
+
+module "alerts" {
+  source = "./modules/alerts"
+
+  name         = local.name
+  cluster_name = aws_ecs_cluster.main.name
+  emails       = var.alerts.emails
+  slack        = var.alerts.slack
+  teams        = var.alerts.teams
+  # The budget covers the whole AWS account, so only production sets it.
+  monthly_budget = local.is_production ? var.alerts.monthly_budget : null
+}
+
+# The site and the API, checked from the internet through Cloudflare every 30 seconds.
+module "uptime" {
+  source = "./modules/uptime"
+  count  = var.alerts.uptime ? 1 : 0
+
+  name  = local.name
+  topic = module.alerts.critical_us_east_1
+  checks = {
+    app = { host = var.hosts.app, path = "/api/health" }
+    api = { host = var.hosts.api, path = "/health" }
+  }
 }
 
 module "network" {
@@ -29,6 +62,7 @@ module "load_balancer" {
   hosts      = concat([var.hosts.app, var.hosts.api], var.redirects)
   zone_id    = module.zone.id
   protect    = local.is_production
+  alarms     = { critical = module.alerts.critical }
 }
 
 # The bare domain (and any other redirect) goes to the app, keeping the path and the query.
@@ -69,6 +103,7 @@ module "database" {
   parameter_prefix = local.parameter_prefix
   engine_version   = "18"
   protect          = local.is_production
+  alarms           = { critical = module.alerts.critical, warning = module.alerts.warning }
 }
 
 # Created once by infra/bootstrap.
@@ -78,6 +113,19 @@ data "aws_ecr_repository" "app" {
 
 data "aws_ecr_repository" "api" {
   name = "${local.project}-api"
+}
+
+locals {
+  service_alarms = {
+    critical      = module.alerts.critical
+    warning       = module.alerts.warning
+    load_balancer = module.load_balancer.arn_suffix
+  }
+  telemetry = {
+    collector_image = local.collector_image
+    environment     = local.stage
+    sample_ratio    = var.alerts.trace_sample_ratio
+  }
 }
 
 locals {
@@ -119,6 +167,8 @@ module "app" {
   health_check_path     = "/api/health"
   cpu                   = 512
   memory                = 1024
+  alarms                = local.service_alarms
+  telemetry             = local.telemetry
   # Server-only variables. NEXT_PUBLIC_* values are baked into the image at build time (deploy.yml).
   environment = {
     API_URL = "https://${var.hosts.api}"
@@ -144,8 +194,11 @@ module "api" {
   port                  = 3001
   health_check_path     = "/health"
   cpu                   = 256
-  memory                = 512
-  environment           = local.api_environment
+  # The API and its Collector share this memory.
+  memory      = 1024
+  alarms      = local.service_alarms
+  telemetry   = local.telemetry
+  environment = local.api_environment
   # Read from SSM Parameter Store when the container starts (secrets.tf, docs/DEPLOY.md).
   secrets = local.api_secrets
 }

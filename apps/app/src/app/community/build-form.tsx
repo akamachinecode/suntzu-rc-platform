@@ -69,7 +69,7 @@ export function BuildForm() {
             aria-invalid={!!e.consent}
             className="mt-1 size-5 shrink-0 accent-foreground"
           />
-          It&apos;s my own work and Servo can publish it with my first name.
+          It&apos;s my own work and SunTzu RC can publish it with my first name.
         </label>
         {e.consent?.map((error) => (
           <p key={error} className="text-sm text-destructive">

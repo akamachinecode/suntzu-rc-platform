@@ -17,7 +17,7 @@ export function TryForm() {
         <p className="text-2xl font-black font-wide">Sent.</p>
         <p className="text-pretty">
           {state.toCrew
-            ? "No club near you has signed up for newcomers on Servo yet, so the crew got it: we'll find you a club, a track or a shop and write back within a few days."
+            ? "No club near you has signed up for newcomers on SunTzu RC yet, so the crew got it: we'll find you a club, a track or a shop and write back within a few days."
             : `It went to ${state.sentTo?.join(", ")}. Their organisers will write to you by email.`}
         </p>
       </div>
@@ -111,8 +111,8 @@ export function TryForm() {
           aria-invalid={!!state.errors?.consent}
         />
         <span>
-          I agree that Servo passes my name and email to the club (and only the club) so they can
-          reply.
+          I agree that SunTzu RC passes my name and email to the club (and only the club) so they
+          can reply.
         </span>
       </label>
       <div className="sm:col-span-2">{error("consent")}</div>

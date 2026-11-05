@@ -66,3 +66,28 @@ module "job" {
   secrets     = local.api_secrets
   policy_arns = [aws_iam_policy.code.arn]
 }
+
+# A scheduled job that failed: its container exited with an error, or the task never started
+# (docs/OPERATIONS.md#job-failed). It runs again at its next time.
+resource "aws_cloudwatch_event_rule" "job_failed" {
+  name        = "${local.name}-job-failed"
+  description = "A scheduled job of ${local.name} failed. Runbook: docs/OPERATIONS.md#job-failed"
+  event_pattern = jsonencode({
+    source        = ["aws.ecs"]
+    "detail-type" = ["ECS Task State Change"]
+    detail = {
+      clusterArn = [aws_ecs_cluster.main.arn]
+      lastStatus = ["STOPPED"]
+      group      = [for job in keys(local.jobs) : "family:${local.name}-${job}"]
+      "$or" = [
+        { containers = { exitCode = [{ "anything-but" = 0 }] } },
+        { stopCode = ["TaskFailedToStart"] },
+      ]
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "job_failed" {
+  rule = aws_cloudwatch_event_rule.job_failed.name
+  arn  = module.alerts.warning
+}

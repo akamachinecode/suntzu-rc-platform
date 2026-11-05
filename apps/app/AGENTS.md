@@ -1,14 +1,15 @@
 # AGENTS.md — `apps/app`
 
-The public site and web application of Servo (https://www.example.com). Read the root [`AGENTS.md`](../../AGENTS.md) first: its golden rules, monorepo rules and "When to stop" apply here too.
+The public site and web application of SunTzu RC (https://www.suntzurc.com). Read the root [`AGENTS.md`](../../AGENTS.md) first: its golden rules, monorepo rules and "When to stop" apply here too.
 
 - **This app is the screens only.** Data and business rules live in `apps/api`. Read and write through `getApi()` (`src/lib/api.ts`), a typed client that forwards the signed-in user's session; never connect to the database or add server-side business logic here.
 - Sign-in, sign-up and sign-out use `authClient` from `src/lib/auth-client.ts` (Better Auth, served by the API). Private pages are listed in `src/proxy.ts` `matcher`; the API still checks every request.
 - Validate forms with the schemas from `@workspace/shared` (the API validates again).
 - UI components come from `packages/ui`: `import { Button } from "@workspace/ui/components/button"`.
 - Add dependencies to this app only: `pnpm --filter @workspace/app add <pkg>`.
-- Public pages (home, guides, events, community) live here too: Servo has no separate Astro site. Keep them Server Components and indexable.
-- Servo specifics (content, Anatomy figures, forms): see "Servo project notes" in the root `AGENTS.md`.
+- Public pages (home, guides, events, community) live here too: SunTzu RC has no separate Astro site. Keep them Server Components and indexable.
+- SunTzu RC specifics (content, Anatomy figures, forms): see "SunTzu RC project notes" in the root `AGENTS.md`.
+- **Errors and traces are automatic:** `src/instrumentation.ts` records every server error (page, Server Action, route handler) in the request's trace and as a JSON log line with `level: "error"`, which the error alarm counts; `src/instrumentation.node.ts` sends the traces (docs/OPERATIONS.md, "Monitoring"). Don't catch errors just to hide them, and never put personal data (emails, names, tokens) in error messages or logs.
 
 ## Stack: web application (`web-app`)
 

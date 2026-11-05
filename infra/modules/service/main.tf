@@ -86,13 +86,13 @@ resource "aws_ecs_task_definition" "service" {
     cpu_architecture        = "X86_64"
   }
 
-  container_definitions = jsonencode([
-    {
+  container_definitions = jsonencode(concat([
+    merge({
       name         = var.service
       image        = var.image
       essential    = true
       portMappings = [{ containerPort = var.port, protocol = "tcp" }]
-      environment  = [for name, value in var.environment : { name = name, value = value }]
+      environment  = [for name, value in merge(local.telemetry_environment, var.environment) : { name = name, value = value }]
       # Secrets are read from SSM Parameter Store when the container starts; they never appear here.
       secrets = [for name, arn in local.secret_arns : { name = name, valueFrom = arn }]
       logConfiguration = {
@@ -103,8 +103,8 @@ resource "aws_ecs_task_definition" "service" {
           awslogs-stream-prefix = var.service
         }
       }
-    }
-  ])
+    }, local.telemetry ? { dependsOn = [{ containerName = "otel", condition = "START" }] } : {})
+  ], local.telemetry ? [local.collector] : []))
 }
 
 resource "aws_security_group" "service" {
@@ -207,5 +207,5 @@ resource "aws_ecs_service" "service" {
     container_port   = var.port
   }
 
-  depends_on = [aws_lb_listener_rule.service, aws_iam_role_policy.secrets]
+  depends_on = [aws_lb_listener_rule.service, aws_iam_role_policy.secrets, aws_iam_role_policy.remote]
 }

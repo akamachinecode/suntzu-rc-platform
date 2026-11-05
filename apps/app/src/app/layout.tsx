@@ -3,6 +3,7 @@ import { Archivo } from "next/font/google";
 import Link from "next/link";
 import { AccountButton } from "@/components/account/account-button";
 import { MobileNav } from "@/components/mobile-nav";
+import { SiteSearch } from "@/components/search/site-search";
 import { SiteFooter } from "@/components/site-footer";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { Button } from "@workspace/ui/components/button";
@@ -32,21 +33,26 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SmoothScroll>
           <header className="sticky top-0 z-50 bg-background">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4">
-              <Link href="/" aria-label={`${SITE.name} home`} className="text-3xl">
+              <Link
+                href="/"
+                aria-label={`${SITE.name} home`}
+                className="shrink-0 text-2xl xl:text-3xl"
+              >
                 <Wordmark />
               </Link>
-              <nav aria-label="Main" className="hidden gap-7 md:flex">
+              <nav aria-label="Main" className="hidden gap-5 md:flex xl:gap-7">
                 {SITE.nav.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="text-sm font-semibold underline-offset-4 hover:underline"
+                    className="text-sm font-semibold whitespace-nowrap underline-offset-4 hover:underline"
                   >
                     {item.label}
                   </Link>
                 ))}
               </nav>
               <div className="flex items-center gap-3">
+                <SiteSearch />
                 <AccountButton />
                 <Button asChild className="max-lg:hidden">
                   <Link href={SITE.cta.href}>{SITE.cta.label}</Link>

@@ -98,8 +98,8 @@ export default async function ClaimsPage() {
           Newcomers waiting for a club
         </h2>
         <p className="mt-2 max-w-[70ch] text-pretty text-muted-foreground">
-          No club near them takes newcomers on Servo yet. Find them a club, a track or a shop, write
-          to them, then mark it sent.
+          No club near them takes newcomers on SunTzu RC yet. Find them a club, a track or a shop,
+          write to them, then mark it sent.
         </p>
         <ul className="mt-6 grid gap-4">
           {open.length ? (

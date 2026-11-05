@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Prose, SectionTitle, Wide } from "@/components/guides/prose";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@workspace/ui/components/button";
-import { AMA, FAA_RULES, FLORIDA_RULES, PARK_RULES, type Rule } from "@/content/rules";
+import { AMA, FAA_RULES, FLORIDA_RULES, PARK_RULES, type Rule } from "@workspace/shared";
 
 export const metadata: Metadata = {
   title: "Flying RC legally in South Florida",

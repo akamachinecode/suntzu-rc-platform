@@ -35,7 +35,7 @@ export class InboxService {
     try {
       await sendMail({
         to: env.CREW_INBOX,
-        subject: `New ${input.kind === "build" ? "build" : "message"} on Servo${input.topic ? `: ${input.topic}` : ""}`,
+        subject: `New ${input.kind === "build" ? "build" : "message"} on SunTzu RC${input.topic ? `: ${input.topic}` : ""}`,
         ...renderEmail({
           heading: input.kind === "build" ? "Someone shared a build" : "Someone wrote to the crew",
           paragraphs: [

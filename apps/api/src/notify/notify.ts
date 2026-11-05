@@ -18,8 +18,9 @@ import { Logger } from "@nestjs/common";
 import { renderEmail, sendMail } from "../mail/mail.js";
 import { DISCIPLINE_WORDS } from "../mail/words.js";
 import { distanceMeters } from "../places/census/geometry.js";
+import { purgeMisses } from "../search/search.js";
 
-// The emails Servo sends on its own (docs/specs/0003-community.md, slice 6). Each one is written
+// The emails SunTzu RC sends on its own (docs/specs/0003-community.md, slice 6). Each one is written
 // to `notifications` before it goes out, so a run can be repeated (or scheduled every hour) without
 // anyone getting the same email twice.
 
@@ -173,7 +174,7 @@ export async function sendAlerts(db: Database, now = new Date()): Promise<number
             heading: cancelled ? `${event.name} is cancelled` : `${event.name} has changed`,
             paragraphs: [...new Set(lines), "Check the organiser's page before you travel."],
             button: { label: "See the event", url: page(`/events/${event.slug}`) },
-            footer: `You follow this event, its club or its field on Servo. Stop change alerts: ${stop(person.token, "alerts")}`,
+            footer: `You follow this event, its club or its field on SunTzu RC. Stop change alerts: ${stop(person.token, "alerts")}`,
           }),
         })
       )
@@ -256,7 +257,7 @@ export async function sendDigests(db: Database, now = new Date()): Promise<numbe
               `${event.name} · ${formatDates(event.startDate, event.endDate)} · ${place.name}${place.city ? `, ${place.city}` : ""} (${Math.round(miles)} mi) · ${page(`/events/${event.slug}`)}`,
           ),
           button: { label: "The whole weekend", url: page("/events?when=weekend") },
-          footer: `Every Thursday, within ${reader.member.radiusMiles} miles of ${reader.member.zip}${wanted.length ? ` for ${wanted.map((d) => DISCIPLINE_WORDS[d]).join(", ")}` : ""}. Change it in My Servo, or stop it: ${stop(reader.member.emailToken, "digest")}`,
+          footer: `Every Thursday, within ${reader.member.radiusMiles} miles of ${reader.member.zip}${wanted.length ? ` for ${wanted.map((d) => DISCIPLINE_WORDS[d]).join(", ")}` : ""}. Change it in My SunTzu RC, or stop it: ${stop(reader.member.emailToken, "digest")}`,
         }),
       })
     )
@@ -308,12 +309,12 @@ export async function sendReports(db: Database, now = new Date()): Promise<numbe
     if (
       await deliver(db, organiser.id, "report", `${organiser.host.id}:${month}`, {
         to: organiser.email,
-        subject: `${organiser.host.name} on Servo: ${followers?.n ?? 0} following`,
+        subject: `${organiser.host.name} on SunTzu RC: ${followers?.n ?? 0} following`,
         ...(organiser.token && { unsubscribeUrl: oneClick(organiser.token, "report") }),
         ...renderEmail({
           heading: `${organiser.host.name} this month`,
           paragraphs: [
-            `${followers?.n ?? 0} people follow the club on Servo.`,
+            `${followers?.n ?? 0} people follow the club on SunTzu RC.`,
             coming.length
               ? `Coming up: ${coming.map(({ event, going }) => `${event.name} (${formatDates(event.startDate, event.endDate)}, ${going} going)`).join("; ")}.`
               : "Nothing on the calendar yet: publish your next event and followers hear about it.",
@@ -322,7 +323,7 @@ export async function sendReports(db: Database, now = new Date()): Promise<numbe
             label: "Open the club dashboard",
             url: page(`/organise/${organiser.host.slug}`),
           },
-          footer: `You're an organiser of ${organiser.host.name} on Servo.${organiser.token ? ` Stop monthly reports: ${stop(organiser.token, "report")}` : ""}`,
+          footer: `You're an organiser of ${organiser.host.name} on SunTzu RC.${organiser.token ? ` Stop monthly reports: ${stop(organiser.token, "report")}` : ""}`,
         }),
       })
     )
@@ -331,7 +332,7 @@ export async function sendReports(db: Database, now = new Date()): Promise<numbe
   return sent;
 }
 
-/** Messages and "try it" requests are kept for 12 months, then deleted. */
+/** Messages and "try it" requests are kept for 12 months, searches without results 90 days. */
 export async function purge(db: Database, now = new Date()): Promise<number> {
   const cutoff = new Date(now.getTime() - 365 * 86_400_000);
   const gone = await db
@@ -342,5 +343,7 @@ export async function purge(db: Database, now = new Date()): Promise<number> {
     .delete(tryRequests)
     .where(lt(tryRequests.createdAt, cutoff))
     .returning({ id: tryRequests.id });
-  return gone.length + tries.length;
+  // Searches without results are kept 90 days (spec 0005).
+  const misses = await purgeMisses(db, localDate(now, "America/New_York"));
+  return gone.length + tries.length + misses;
 }

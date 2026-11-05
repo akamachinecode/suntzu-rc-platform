@@ -1,8 +1,9 @@
 "use client";
 
-import { MenuIcon, XIcon } from "lucide-react";
+import { MenuIcon, SearchIcon, XIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { openSearch } from "@/components/search/site-search";
 import { SITE } from "@/lib/site";
 
 /** The main navigation on small screens: a toggle that opens a full-width panel under the header. */
@@ -35,6 +36,20 @@ export function MobileNav() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link
+                href="/search"
+                onClick={(event) => {
+                  event.preventDefault();
+                  setOpen(false);
+                  openSearch();
+                }}
+                className="flex items-center gap-3 py-2 text-2xl font-black font-wide"
+              >
+                <SearchIcon aria-hidden="true" className="size-6" />
+                Search
+              </Link>
+            </li>
           </ul>
         </nav>
       ) : null}

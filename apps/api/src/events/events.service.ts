@@ -165,7 +165,7 @@ export class EventsService {
     ].filter(Boolean);
     return writeIcs(
       {
-        name: `Servo: RC events${filters.length ? ` (${filters.join(", ")})` : ""}`,
+        name: `SunTzu RC: RC events${filters.length ? ` (${filters.join(", ")})` : ""}`,
         description: "Upcoming RC events in Florida, checked against each organiser's page.",
         events: upcoming.map(toIcsEvent),
       },
@@ -299,7 +299,7 @@ export function toIcsEvent(event: RcEvent): IcsEvent {
     description: [
       event.summary,
       event.url && `Organiser: ${event.url}`,
-      `On Servo: ${page}`,
+      `On SunTzu RC: ${page}`,
       "Always check the organiser's page before you travel.",
     ]
       .filter(Boolean)

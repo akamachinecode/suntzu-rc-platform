@@ -22,9 +22,10 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [engine.run](./engine.run.md)                           | The engine reads its sources                                             | verified     | engine tests                        |
 | [db.seed](./db.seed.md)                                 | The starting data is loaded                                              | read in code | none yet                            |
 | [engine.resolve](./engine.resolve.md)                   | What the sources say becomes events                                      | verified     | `match.test.ts`                     |
-| [auth.email-link](./auth.email-link.md)                 | Someone signs in with a link by email                                    | verified     | none yet                            |
+| [auth.email-link](./auth.email-link.md)                 | Someone signs in with a link by email                                    | verified     | `sign-in-code.test.ts`              |
+| [auth.email-code](./auth.email-code.md)                 | Someone signs in by typing the code from the email                       | verified     | `sign-in-code.test.ts`              |
 | [auth.google](./auth.google.md)                         | Someone signs in with Google                                             | not verified | none yet (needs Google credentials) |
-| [account.get](./account.get.md)                         | A member opens My Servo                                                  | verified     | none yet                            |
+| [account.get](./account.get.md)                         | A member opens My SunTzu RC                                              | verified     | none yet                            |
 | [account.update](./account.update.md)                   | A member changes their settings                                          | verified     | none yet                            |
 | [account.delete](./account.delete.md)                   | A member deletes their account                                           | read in code | none yet                            |
 | [follows.toggle](./follows.toggle.md)                   | A member follows or unfollows something                                  | verified     | none yet                            |
@@ -44,7 +45,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [hosts.claim](./hosts.claim.md)                         | Someone claims a club or track                                           | verified     | none yet                            |
 | [hosts.verify](./hosts.verify.md)                       | A claim is proved                                                        | verified     | none yet                            |
 | [organiser.publish](./organiser.publish.md)             | An organiser publishes or changes an event                               | verified     | none yet                            |
-| [organiser.widget](./organiser.widget.md)               | A club's website shows its Servo calendar                                | verified     | none yet                            |
+| [organiser.widget](./organiser.widget.md)               | A club's website shows its SunTzu RC calendar                            | verified     | none yet                            |
 | [places.confirm](./places.confirm.md)                   | A steward confirms a place's details                                     | read in code | none yet                            |
 | [try.request](./try.request.md)                         | A newcomer asks to try RC                                                | verified     | none yet                            |
 | [notify.changes](./notify.changes.md)                   | Followers hear that an event moved or was cancelled                      | verified     | none yet                            |
@@ -52,6 +53,8 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [notify.organiser-report](./notify.organiser-report.md) | Organisers get their club's monthly report                               | read in code | none yet                            |
 | [notify.unsubscribe](./notify.unsubscribe.md)           | Someone stops an email with one click                                    | verified     | none yet                            |
 | [submissions.create](./submissions.create.md)           | A member sends an event                                                  | verified     | none yet                            |
+| [search.query](./search.query.md)                       | A visitor searches the whole site                                        | verified     | `query.test.ts`, `golden.test.ts`   |
+| [search.misses](./search.misses.md)                     | The crew sees what people searched for and didn't find                   | verified     | `golden.test.ts`, `query.test.ts`   |
 
 **Status:** `verified` (someone ran it and saw the result) · `read in code` (followed in the code, not run) · `not verified` · `broken`.
 

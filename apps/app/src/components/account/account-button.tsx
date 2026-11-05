@@ -28,7 +28,7 @@ export function AccountButton() {
       <Button asChild variant="outline">
         <Link href="/me">
           <UserRoundIcon aria-hidden="true" />
-          <span className="max-sm:sr-only">My Servo</span>
+          <span className="max-xl:sr-only">My SunTzu RC</span>
         </Link>
       </Button>
     </div>

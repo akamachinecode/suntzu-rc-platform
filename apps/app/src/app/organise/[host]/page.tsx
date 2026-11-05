@@ -34,7 +34,7 @@ export default async function ClubDashboard({ params }: PageProps<"/organise/[ho
       </section>
     );
   }
-  const widget = `<iframe src="${new URL(`/embed/clubs/${data.host.slug}`, SITE.url).toString()}" title="${data.host.name} events on Servo" width="100%" height="480" style="border:0" loading="lazy"></iframe>`;
+  const widget = `<iframe src="${new URL(`/embed/clubs/${data.host.slug}`, SITE.url).toString()}" title="${data.host.name} events on SunTzu RC" width="100%" height="480" style="border:0" loading="lazy"></iframe>`;
 
   return (
     <>

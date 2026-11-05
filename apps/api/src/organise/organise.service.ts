@@ -68,7 +68,8 @@ export class OrganiseService {
       return this.status(host, previous.method, previous.verifiedAt, userId);
 
     if (input.method === "domain-email") {
-      if (!domain) throw new BadRequestException("This club has no website domain on Servo yet.");
+      if (!domain)
+        throw new BadRequestException("This club has no website domain on SunTzu RC yet.");
       if ((previous?.codeAttempts ?? 0) >= MAX_WRONG_CODES) {
         throw new BadRequestException(
           "Too many wrong codes for this club. Ask the crew to check instead.",
@@ -93,12 +94,12 @@ export class OrganiseService {
       codeExpiresAt = new Date(codeSentAt.getTime() + CODE_MINUTES * 60_000);
       await sendMail({
         to: email,
-        subject: `Your code to manage ${host.name} on Servo`,
+        subject: `Your code to manage ${host.name} on SunTzu RC`,
         ...renderEmail({
           heading: `Is this your club?`,
           paragraphs: [
-            `Someone asked to manage ${host.name} on Servo, the free calendar and map of RC in Florida.`,
-            `If it was you, enter this code on Servo: ${code}. It works for ${CODE_MINUTES} minutes.`,
+            `Someone asked to manage ${host.name} on SunTzu RC, the free calendar and map of RC in Florida.`,
+            `If it was you, enter this code on SunTzu RC: ${code}. It works for ${CODE_MINUTES} minutes.`,
             "If it wasn't, ignore this email: nothing changes without the code.",
           ],
           footer: `Sent to an address at ${domain} because it's the club's own domain.`,
@@ -189,14 +190,16 @@ export class OrganiseService {
       .from(hostMembers)
       .where(and(eq(hostMembers.hostId, host.id), eq(hostMembers.userId, userId)));
     if (!member) throw new NotFoundException();
-    if (!host.url) throw new BadRequestException("This club has no website on Servo yet.");
+    if (!host.url) throw new BadRequestException("This club has no website on SunTzu RC yet.");
     const code = websiteCode(host.id, userId);
     const pages = [host.url, new URL("/servo.txt", host.url).toString()];
     for (const page of pages) {
       try {
         // The club's website is set by its organisers: only public addresses (common/public-url.ts).
         const response = await publicFetch(page, {
-          headers: { "User-Agent": "ServoBot/0.1 (club verification requested by its organiser)" },
+          headers: {
+            "User-Agent": "SunTzuRCBot/0.1 (club verification requested by its organiser)",
+          },
           signal: AbortSignal.timeout(10_000),
         });
         if (response.ok && (await response.text()).includes(code)) {

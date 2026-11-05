@@ -19,7 +19,7 @@ const now = new Date("2026-10-23T15:30:00Z");
 
 describe("writeIcs", () => {
   const feed = writeIcs(
-    { name: "Servo: RC events in Florida", description: "Upcoming events", events: [aerofest] },
+    { name: "SunTzu RC: RC events in Florida", description: "Upcoming events", events: [aerofest] },
     now,
   );
 

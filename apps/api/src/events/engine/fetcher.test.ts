@@ -48,7 +48,7 @@ describe("PoliteFetcher", () => {
       "https://club.test/b",
     ]);
     expect(web.requests[2]!.headers).toMatchObject({
-      "User-Agent": expect.stringMatching(/^ServoBot\//),
+      "User-Agent": expect.stringMatching(/^SunTzuRCBot\//),
       "If-None-Match": '"v1"',
     });
   });

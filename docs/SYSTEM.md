@@ -6,22 +6,23 @@ What runs where, and how the pieces connect. Keep it current: a change to a piec
 
 | Piece         | What                                                                                                                           | Code                                       | URL                        |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------ | -------------------------- |
-| Site and app  | Next.js 16: the public pages (home, guides, events, places, community) and the signed-in screens; data only through the API    | `apps/app/`                                | https://www.example.com    |
-| API           | NestJS: sign-in (Better Auth), the public events API and calendar feeds, business rules, data                                  | `apps/api/`                                | https://api.example.com    |
+| Site and app  | Next.js 16: the public pages (home, guides, events, places, community) and the signed-in screens; data only through the API    | `apps/app/`                                | https://www.suntzurc.com   |
+| API           | NestJS: sign-in (Better Auth), the public events API and calendar feeds, search across the site, business rules, data          | `apps/api/`                                | https://api.suntzurc.com   |
 | Events engine | Reads sources (ICS, schema.org JSON-LD, WordPress events API, Wild Apricot RSS, schedule tables) into sightings; `pnpm engine` | `apps/api/src/events/engine/`              | runs from the command line |
 | Places census | Loads the FAA registers (recognised areas, fixed sites, airports, airspace) and Census ZIP codes; `pnpm census`                | `apps/api/src/places/census/`              | runs from the command line |
-| Database      | PostgreSQL (Amazon RDS): users, events, places, hosts, sources and the evidence behind them                                    | `packages/db/`                             | private network only       |
+| Database      | PostgreSQL (Amazon RDS): users, events, places, hosts, sources and the evidence behind them; the search index (triggers)       | `packages/db/`                             | private network only       |
 | Contracts     | Zod schemas shared by API and app; typed client generated from `openapi.json`                                                  | `packages/shared/`, `packages/api-client/` | —                          |
-| Theme and UI  | shadcn/ui components and Servo's brand tokens                                                                                  | `packages/ui/`                             | —                          |
+| Theme and UI  | shadcn/ui components and SunTzu RC's brand tokens                                                                              | `packages/ui/`                             | —                          |
 
-Servo has no separate Astro site (`apps/web`): its public pages are the product, so they live in `apps/app` (see `DECISIONS.md`, 2026-10-21).
+SunTzu RC has no separate Astro site (`apps/web`): its public pages are the product, so they live in `apps/app` (see `DECISIONS.md`, 2026-10-21).
 
 ```text
 Visitor ──► Cloudflare ──┬─► www: AWS (Next.js, apps/app) ──┐  x-request-id
                          └─► api: AWS (NestJS on Fargate) ◄─┘──► PostgreSQL (RDS)
+Visitor's browser ──► api/search (as they type) and api/search/misses (searches that found nothing)
 Calendar apps ──► www/events/calendar.ics ──► api/events/calendar.ics
 Engine (schedule, 4×/day) ──► organisers' sites (robots.txt, 2 s per site) ──► PostgreSQL, S3
-Notify (schedule, hourly) ──► SES ──► members and organisers
+Notify (schedule, hourly) ──► SES ──► members and organisers; deletes old messages and search counts
 Census (schedule, monthly) ──► FAA and Census public data ──► PostgreSQL
 Census (command) ──► FAA open data (ArcGIS) + Census Bureau Gazetteer ──► PostgreSQL
 ```
@@ -50,4 +51,4 @@ Every API request gets a trace ID (`x-request-id`, or Cloudflare's `cf-ray`), re
 | Environment | URL                                           | Deployed from                          |
 | ----------- | --------------------------------------------- | -------------------------------------- |
 | Local       | http://localhost:3000 and :3001 (`README.md`) | `pnpm dev`                             |
-| Production  | https://www.example.com (not deployed yet)    | `main`, see [`DEPLOY.md`](./DEPLOY.md) |
+| Production  | https://www.suntzurc.com (not deployed yet)   | `main`, see [`DEPLOY.md`](./DEPLOY.md) |

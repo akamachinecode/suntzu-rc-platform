@@ -2,7 +2,7 @@ import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
 import { Logger } from "@nestjs/common";
 import { env } from "../env.js";
 
-// Every email Servo sends goes through here: Amazon SES in production, the console locally
+// Every email SunTzu RC sends goes through here: Amazon SES in production, the console locally
 // (MAIL_TRANSPORT=log), so sign-in links and alerts can be followed without sending anything.
 
 export interface Mail {
@@ -49,7 +49,11 @@ export async function sendMail(mail: Mail): Promise<void> {
 
 export interface EmailContent {
   heading: string;
+  /** What the inbox shows under the subject. Without it, mail apps show the start of the body. */
+  preview?: string;
   paragraphs: string[];
+  /** A one-time code, shown large after the paragraphs. Never put one in the subject or preview. */
+  code?: string;
   button?: { label: string; url: string };
   /** Why they got it and how to stop it. */
   footer: string;
@@ -64,15 +68,18 @@ export function renderEmail(content: EmailContent): { text: string; html: string
     content.heading,
     "",
     ...content.paragraphs.flatMap((paragraph) => [paragraph, ""]),
+    ...(content.code ? [`Your code: ${content.code}`, ""] : []),
     ...(content.button ? [`${content.button.label}: ${content.button.url}`, ""] : []),
     "—",
     content.footer,
   ].join("\n");
   const html = `<!doctype html><html><body style="margin:0;background:#f4f1ea;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a">
+${content.preview ? `<div style="display:none;max-height:0;overflow:hidden">${escape(content.preview)}${"&zwnj;&nbsp;".repeat(60)}</div>` : ""}
 <div style="max-width:560px;margin:0 auto;padding:32px 24px">
-<p style="font-size:22px;font-weight:900;letter-spacing:-0.5px;margin:0 0 24px">SERVO</p>
+<p style="font-size:22px;font-weight:900;letter-spacing:-0.5px;margin:0 0 24px">SUNTZU RC</p>
 <h1 style="font-size:24px;line-height:1.2;margin:0 0 16px">${escape(content.heading)}</h1>
 ${content.paragraphs.map((paragraph) => `<p style="font-size:16px;line-height:1.5;margin:0 0 14px">${escape(paragraph)}</p>`).join("\n")}
+${content.code ? `<p style="margin:24px 0 8px;font-size:13px;color:#555">Your code</p><p style="margin:0 0 24px;font-family:'Courier New',Courier,monospace;font-size:34px;font-weight:700;letter-spacing:8px">${escape(content.code)}</p>` : ""}
 ${content.button ? `<p style="margin:24px 0"><a href="${escape(content.button.url)}" style="display:inline-block;background:#ffd400;color:#1a1a1a;font-weight:700;text-decoration:none;padding:12px 18px;border:2px solid #1a1a1a;border-radius:6px">${escape(content.button.label)}</a></p>` : ""}
 <p style="font-size:13px;line-height:1.5;color:#555;margin:32px 0 0;border-top:1px solid #ccc;padding-top:12px">${escape(content.footer)}</p>
 </div></body></html>`;

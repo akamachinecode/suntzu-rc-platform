@@ -6,14 +6,14 @@
 
 ## Problem
 
-RC pilots and racers in Florida find events in a dozen places (club sites, Facebook groups, AMA, RCSignup) and often find out about a change or a cancellation on the day. Servo already shows events from its database, but someone has to type them: the engine reads sources and stores what they say, and nothing turns that into published events.
+RC pilots and racers in Florida find events in a dozen places (club sites, Facebook groups, AMA, RCSignup) and often find out about a change or a cancellation on the day. SunTzu RC already shows events from its database, but someone has to type them: the engine reads sources and stores what they say, and nothing turns that into published events.
 
 ## Goals
 
 - The engine keeps the calendar current on its own: new editions, date changes and cancellations reach the web without anyone typing them, and the crew only sees what needs a person.
 - Every event page stays useful for its whole life: what changed and when, the next edition, results afterwards.
 - Anyone can find "what's on near me this weekend" in seconds, in a list, a month view or a map.
-- Each event shared on social media looks like Servo (a pit-pass image).
+- Each event shared on social media looks like SunTzu RC (a pit-pass image).
 
 ## Out of scope
 
@@ -55,7 +55,7 @@ RC pilots and racers in Florida find events in a dozen places (club sites, Faceb
 - When an event's last day has passed, then it shows as held, and its series shows the next edition as expected.
 - When a crew member opens `/crew`, then they see the open reviews, each with the source's exact words and a link to the page, and can approve, correct, merge or reject it.
 - When someone opens `/events`, then they can search by name, place or club, filter by discipline, kind, beginner-friendly and sanctioning body, switch between list, month and map, and see "this weekend".
-- When an event page is shared, then the preview shows a Servo pit-pass image with the name, dates and place.
+- When an event page is shared, then the preview shows a SunTzu RC pit-pass image with the name, dates and place.
 - When an event has ended, then its page asks "Was this information right?" and the answer reaches the crew.
 
 ## Slices

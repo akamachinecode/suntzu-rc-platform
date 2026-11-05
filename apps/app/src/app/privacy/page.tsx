@@ -3,24 +3,31 @@ import { LegalPage } from "@/components/legal/legal-page";
 
 export const metadata: Metadata = {
   title: "Privacy",
-  description: "What Servo stores about you, why, for how long, and how to delete it.",
+  description: "What SunTzu RC stores about you, why, for how long, and how to delete it.",
 };
 
 // Plain-language policy written for launch (docs/specs/0004-launch.md). The owner should have it
-// reviewed before Servo goes public; see docs/LAUNCH.md.
+// reviewed before SunTzu RC goes public; see docs/LAUNCH.md.
 export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy"
       lead="The short version: we keep as little as we can, nothing about you is public, and you can delete your account whenever you like."
-      updated="October 27, 2026"
+      updated="October 29, 2026"
       sections={[
         {
-          title: "Browsing Servo",
+          title: "Browsing SunTzu RC",
           paragraphs: [
             "You don't need an account to read the calendar, the places or the guides. We don't use advertising or tracking cookies, and we don't sell or share data with advertisers.",
             '"Near me" works out distances in your browser: your location is never sent to us. "Can I fly here?" sends us the point you choose so we can check it; we don\'t store or log it.',
             "Our hosting keeps standard technical logs (the page asked for, the time, a request number) to keep the site running and safe. They don't include your name or email.",
+          ],
+        },
+        {
+          title: "Searching",
+          paragraphs: [
+            "We don't keep a history of what you search for, and searches are never linked to your account. When a search finds nothing (or nothing that matches all its words), we count its words for that day, only the words and the number of results, so we know which events and places to add. Searches that look like an email, a phone number or a street address are never counted. The counts are deleted after 90 days.",
+            "Your last few searches are kept on your own device, in your browser, so search can show them again. They never reach us; clearing your browser's site data removes them.",
           ],
         },
         {
@@ -34,7 +41,7 @@ export default function PrivacyPage() {
         {
           title: "Emails",
           paragraphs: [
-            'We send sign-in links when you ask for one. Change alerts and the weekly "this weekend near you" email are on or off in My Servo, and every one of them has a one-click link to stop it.',
+            'We send sign-in links when you ask for one. Change alerts and the weekly "this weekend near you" email are on or off in My SunTzu RC, and every one of them has a one-click link to stop it.',
             "Emails are sent through Amazon Web Services (Amazon SES).",
           ],
         },
@@ -54,7 +61,7 @@ export default function PrivacyPage() {
         {
           title: "Deleting your data",
           paragraphs: [
-            'Delete your account from My Servo at any time: your email, settings, follows and "going" are deleted at once. Events and corrections you gave to the public calendar stay, without your name.',
+            'Delete your account from My SunTzu RC at any time: your email, settings, follows and "going" are deleted at once. Events and corrections you gave to the public calendar stay, without your name.',
             "To ask what we hold about you, or for anything else about your data, write to us through the contact page.",
           ],
         },

@@ -2,7 +2,7 @@ import { distanceMeters } from "./geometry.js";
 import { editDistance, nameKey } from "./names.js";
 import type { CensusSite, HostCandidate } from "./sites.js";
 
-// How a register's site and organisation find what Servo already knows, so the census never
+// How a register's site and organisation find what SunTzu RC already knows, so the census never
 // adds a second Markham Park or a second Aero Modelers of Perrine. Pure: the loader passes the
 // rows it read from the database.
 

@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { TOPICS } from "@/content/services";
+import { TOPICS } from "@workspace/shared";
 import { getApi } from "@/lib/api";
 
 const topicValues = TOPICS.map((topic) => topic.value) as [string, ...string[]];

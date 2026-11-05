@@ -134,13 +134,13 @@ export async function organiserSource(
     .insert(sources)
     .values({
       slug,
-      name: `${host.name} (on Servo)`,
+      name: `${host.name} (on SunTzu RC)`,
       url: host.url ?? `https://servo.invalid/clubs/${host.slug}`,
       adapter: "manual",
       trust: "organiser",
       status: "active",
       hostId: host.id,
-      permission: "Published on Servo by a verified organiser.",
+      permission: "Published on SunTzu RC by a verified organiser.",
     })
     .returning();
   return created!;
