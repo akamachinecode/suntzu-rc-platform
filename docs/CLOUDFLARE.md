@@ -52,23 +52,26 @@ Do it in that order: if AWS starts requiring the header before Cloudflare sends 
 
 ## How this project connects
 
-### SST (CloudFront behind Cloudflare)
+### Terraform (AWS behind Cloudflare)
 
-SST manages the records itself through the Cloudflare API (`sst.cloudflare.dns({ proxy: true })` in `sst.config.ts`):
+Terraform manages the records itself through the Cloudflare API (`infra/`):
 
-- It creates the ACM validation records (DNS only) and a **proxied** record pointing at the CloudFront distribution. Don't edit them by hand — change `sst.config.ts` instead.
-- SSL/TLS mode must be **Full (strict)**. With Flexible, CloudFront returns 403s or redirect loops.
-- Cloudflare doesn't cache pages here: CloudFront does. Don't add Cloudflare cache rules for HTML, and don't override the Host header.
+- It creates the ACM validation records (DNS only), a **proxied** record for each hostname (`www`, `api` and the bare domain) pointing at the load balancer, and for each stage's sending domain the SES DKIM records and the `_dmarc` record (DNS only). Don't edit them by hand — change `infra/` instead.
+- SSL/TLS mode must be **Full (strict)**. With Flexible, AWS returns 403s or redirect loops.
+- Cloudflare doesn't cache pages here: Next.js decides how its pages are cached. Don't add Cloudflare cache rules for HTML, and don't override the Host header.
+- The load balancer only accepts connections from Cloudflare's IP ranges, read at every deploy.
+- The bare domain redirects to `www` at the load balancer (`infra/main.tf`).
+- Terraform owns each stage's `_dmarc` record (`infra/email.tf`). To get reports in Cloudflare's DMARC Management, add the `rua=` address it gives you to that record in `infra/email.tf`, instead of letting the dashboard edit or add one: two DMARC records cancel each other out.
 - The visitor's real IP reaches AWS in the `CF-Connecting-IP` header.
 
-**Origin lock** (production): `sst.config.ts` has a secret `OriginVerifyHeader`, set to `off` until you enable it. Once the Cloudflare transform rule from "Origin lock" above is in place:
+**Origin lock:** the SSM parameter `/rc-landing/<stage>/origin-verify-header` is `off` until you enable it. Once the Cloudflare transform rule from "Origin lock" above is in place:
 
 ```bash
-pnpm sst secret set OriginVerifyHeader <the same value> --stage production
-pnpm deploy:production   # or merge to main
+aws ssm put-parameter --overwrite --type SecureString \
+  --name /rc-landing/production/origin-verify-header --value <the same value>
 ```
 
-From then on, CloudFront answers 403 to any request that didn't come through Cloudflare. To turn it off again, set the secret back to `off` and deploy.
+Then deploy (merge to `main` or run the Deploy workflow). From then on, AWS answers 403 to any request that didn't come through Cloudflare. To turn it off again, set the parameter back to `off` and deploy.
 
 ## After go-live
 

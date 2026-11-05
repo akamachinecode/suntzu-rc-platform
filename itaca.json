@@ -1,10 +1,10 @@
 {
   "stack": "platform",
-  "deploy": "sst",
+  "deploy": "terraform",
   "domain": "example.com",
   "awsRegion": "us-east-2",
-  "github": "ITACA-TECHNOLOGIES/rc-landing",
+  "github": "akamachinecode/rc-landing",
   "createdWith": "create-itaca@0.2.0 (unreleased platform branch, commit f4d3b9e), migrated from web-app 0.1.0",
-  "refreshedWith": "create-itaca@0.2.3 (2026-10-27)",
+  "refreshedWith": "create-itaca@0.3.0 (2026-10-29)",
   "createdAt": "2026-10-20"
 }

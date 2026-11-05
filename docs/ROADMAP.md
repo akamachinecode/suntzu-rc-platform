@@ -102,7 +102,7 @@ Design: [`DISCOVERY.md`](./DISCOVERY.md). Good coverage of the important events 
 
 ### Track C — the owner and Itaca engineering
 
-- [ ] **C1** Region: move `sst.config.ts` to us-east-2 or deploy to another account.
+- [x] **C1** Region: us-east-2, the AWS project's only region (`infra/`, Terraform since 2026-10-29).
 - [ ] **C2** Worker infrastructure: queue, schedule, S3.
 - [ ] **C3** Name and domain, and the Cloudflare zone.
 - [ ] **C4** Discovery API keys; send Parallel the question about their terms.

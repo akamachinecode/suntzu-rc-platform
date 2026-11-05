@@ -4,33 +4,35 @@ Everything in specs 0001–0004 is built and checked locally (`pnpm check` green
 
 ## 0. What's ready, and what isn't verified
 
-| Ready and verified locally                                        | Written but not verified (needs AWS, Google or a domain)          |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Events engine, resolve, crew console, calendars and feeds         | `sst.config.ts` (never deployed: region, SES, S3, scheduled jobs) |
-| Places, clubs, "Can I fly here?" (FAA data loaded)                | Emails through Amazon SES (locally they're printed)               |
-| Accounts with email links, follows, "going", private calendar     | "Continue with Google" (needs an OAuth client)                    |
-| Organisers: claim, verify, publish, widget                        | AI reading of pasted flyers (needs Bedrock model access)          |
-| Alerts, digest and reports (printed locally), try-it, submissions | Turnstile on public forms (needs keys)                            |
+| Ready and verified locally                                        | Written but not verified (needs AWS, Google or a domain)         |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Events engine, resolve, crew console, calendars and feeds         | `infra/` (Terraform, validated but never applied: SES, S3, jobs) |
+| Places, clubs, "Can I fly here?" (FAA data loaded)                | Emails through Amazon SES (locally they're printed)              |
+| Accounts with email links, follows, "going", private calendar     | "Continue with Google" (needs an OAuth client)                   |
+| Organisers: claim, verify, publish, widget                        | AI reading of pasted flyers (needs Bedrock model access)         |
+| Alerts, digest and reports (printed locally), try-it, submissions | Turnstile on public forms (needs keys)                           |
 
 ## 1. Put the code on GitHub
 
 The local repository has no remote yet, so all of this lives on one laptop.
 
 ```bash
-git remote add origin git@github.com:ITACA-TECHNOLOGIES/rc-landing.git
+git remote add origin git@github.com:akamachinecode/rc-landing.git
 ```
 
 ```bash
-git push -u origin main feat/platform-monorepo chore/stack-0.2.3 feat/servo-1.0
+git push -u origin main feat/platform-monorepo chore/stack-0.2.3 feat/servo-1.0 chore/create-itaca-0.3.0
 ```
 
-Open pull requests in order: `feat/platform-monorepo` (if it isn't merged yet) → `chore/stack-0.2.3` → `feat/servo-1.0`. Protect `main` as in [`GITHUB.md`](./GITHUB.md). **Check:** CI is green on each pull request. Don't merge to `main` before step 6 works on `dev`: merging deploys production.
+Open pull requests in order: `feat/platform-monorepo` (if it isn't merged yet) → `chore/stack-0.2.3` → `feat/servo-1.0` → `chore/create-itaca-0.3.0`. Protect `main` as in [`GITHUB.md`](./GITHUB.md). **Check:** CI is green on each pull request.
+
+Merging to `main` deploys production, and the Deploy workflow has to be on `main` before it can deploy `staging` from the Actions tab. So before merging, create the `production` environment with **required reviewers** (you): the production deploy that merging starts then waits for your approval. Leave it waiting (or reject it) until step 6 works on `staging`.
 
 ## 2. Choose the name and the domain (C3)
 
 1. Choose the final name and buy the domain.
 2. Change it in one place each:
-   - `DOMAIN` at the top of `sst.config.ts`;
+   - the hostnames, `redirects`, `cookie_domain` and `email` in `infra/production.tfvars.json` and `infra/staging.tfvars.json` (staging sends from its own subdomain, such as `staging.<domain>`);
    - `SITE.name` and `SITE.description` in `apps/app/src/lib/site.ts` (the site, emails and share images);
    - `domain` in `itaca.json`.
 3. Search the repository for `example.com` and replace what's left in the docs.
@@ -40,7 +42,7 @@ Open pull requests in order: `feat/platform-monorepo` (if it isn't merged yet) �
 ## 3. Cloudflare
 
 1. Add the domain to Cloudflare in **the right account** (moving it later is painful) and apply the baseline in [`CLOUDFLARE.md`](./CLOUDFLARE.md).
-2. Create an account-owned API token with DNS edit on the zone; keep it for step 5 and for GitHub (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`).
+2. Create an account-owned API token with **Zone → Zone → Read** and **Zone → DNS → Edit** on the zone; keep it for GitHub (`CLOUDFLARE_API_TOKEN`, step 4).
 3. **Turnstile:** create a widget for the domain (Managed mode). Keep the site key and the secret for step 5.
 4. **Rate limiting** (Security → WAF → Rate limiting rules). Public forms reach the API through the site's server, so the API sees the server's address, not the visitor's: limit on the **site's** host, where the visitor connects.
    - `POST` requests to `www.<domain>` (forms are Server Actions): 30 per minute per IP.
@@ -53,70 +55,65 @@ Open pull requests in order: `feat/platform-monorepo` (if it isn't merged yet) �
 ## 4. AWS
 
 1. Sign in: `aws login --profile servo`. Confirm the project's region is **us-east-2**: AWS Settings → View all projects → Overview → Additional info → Region.
-2. Check the plan and the spend limit in AWS Settings → Billing. Servo runs an always-on RDS database, a Fargate service and a small NAT instance, plus Lambda, CloudFront, S3 and SES by use: estimate it with the AWS Pricing Calculator before the first deploy.
+2. Check the plan and the spend limit in AWS Settings → Billing. Each stage runs an always-on RDS database and two Fargate containers (site and API) behind a load balancer, roughly 75 USD a month, plus the scheduled jobs, S3, SES and Bedrock by use: estimate it with the AWS Pricing Calculator before the first deploy, and delete `staging` once production works if you don't need it.
 3. **SES:** request production access (SES console → Account dashboard → Request production access). It takes about a day; until then SES only sends to verified addresses.
 4. **Bedrock:** in the Bedrock console of us-east-2, turn on model access for Claude Opus 5.5 and Claude Opus 4.8 (the fallback). Without it, pasted flyers go to the crew's inbox instead.
-5. **GitHub deploys:** create the deploy role as in [`AWS-GITHUB-OIDC.md`](./AWS-GITHUB-OIDC.md).
+5. **Terraform state, deploy role and image registries:** install [Terraform](https://developer.hashicorp.com/terraform/install) 1.16 or newer, then follow steps 1 and 2 of [`TERRAFORM.md`](./TERRAFORM.md) with `export AWS_PROFILE=servo`.
+6. **GitHub environments** `production` (with required reviewers, step 1) and `staging`: step 3 of "One-time setup" in [`DEPLOY.md`](./DEPLOY.md).
 
-**Check:** `aws sts get-caller-identity --profile servo` answers with the project's account.
+**Check:** `aws sts get-caller-identity --profile servo` answers with the project's account, and `terraform -chdir=infra/bootstrap output deploy_role_arn` shows the role.
 
-## 5. Secrets, for each stage (`dev` first, then `production`)
+## 5. Settings and secrets, for each stage (`staging` first, then `production`)
+
+They live in AWS Parameter Store under `/rc-landing/<stage>/` (see "Secrets and configuration" in [`DEPLOY.md`](./DEPLOY.md)). The database password and the sign-in secret are created by Terraform; these are yours, with `export AWS_PROFILE=servo`:
 
 ```bash
-pnpm sst secret set BetterAuthSecret "$(openssl rand -base64 32)" --stage dev
+aws ssm put-parameter --type SecureString --name /rc-landing/staging/crew-emails --value "you@yourdomain,partner@yourdomain"
 ```
 
 ```bash
-pnpm sst secret set CrewEmails "you@yourdomain,partner@yourdomain" --stage dev
+aws ssm put-parameter --type SecureString --name /rc-landing/staging/crew-inbox --value "crew@yourdomain"
 ```
 
 ```bash
-pnpm sst secret set CrewInbox "crew@yourdomain" --stage dev
+aws ssm put-parameter --type String --name /rc-landing/staging/turnstile-site-key --value "<site key>"
 ```
 
 ```bash
-pnpm sst secret set TurnstileSiteKey "<site key>" --stage dev
+aws ssm put-parameter --type SecureString --name /rc-landing/staging/turnstile-secret-key --value "<secret>"
+```
+
+Optional, for "Continue with Google" (Google Cloud console → Credentials → OAuth client ID, web; authorised redirect URI `https://api-staging.<domain>/auth/callback/google`):
+
+```bash
+aws ssm put-parameter --type SecureString --name /rc-landing/staging/google-client-id --value "<client id>"
 ```
 
 ```bash
-pnpm sst secret set TurnstileSecretKey "<secret>" --stage dev
+aws ssm put-parameter --type SecureString --name /rc-landing/staging/google-client-secret --value "<client secret>"
 ```
 
-Optional, for "Continue with Google" (Google Cloud console → Credentials → OAuth client ID, web; authorised redirect URI `https://api-dev.<domain>/auth/callback/google`):
+**Check:** `aws ssm get-parameters-by-path --path /rc-landing/staging --query 'Parameters[].Name'` lists them.
 
-```bash
-pnpm sst secret set GoogleClientId "<client id>" --stage dev
-```
+## 6. First deploy, to `staging`
 
-```bash
-pnpm sst secret set GoogleClientSecret "<client secret>" --stage dev
-```
+Run **Actions → Deploy → Run workflow** with stage `staging`. The first deploy takes 15–25 minutes (database, network, certificates); the plan is in the run's summary. Then:
 
-**Check:** `pnpm sst secret list --stage dev` shows them.
-
-## 6. First deploy, to `dev`
-
-```bash
-pnpm sst deploy --stage dev
-```
-
-The first deploy takes 15–25 minutes (database, network, certificates). Then:
-
-1. **Load the data once:** run the `Setup` task (seed, FAA census, a first read of every source) from the SST console (`console.sst.dev`, the app's Resources → Setup → Run), or with `aws ecs run-task` using the task definition SST created.
+1. **Load the data once:** run **Actions → Run a task** with stage `staging` and task `setup` (seed, FAA census, a first read of every source). It waits for the task and fails if it does.
 2. **Check:**
-   - `https://www-dev.<domain>` loads, and `/events`, `/places` and `/clubs` show data;
-   - `https://api-dev.<domain>/health` answers `ok`;
+   - `https://www-staging.<domain>` loads, and `/events`, `/places` and `/clubs` show data;
+   - `https://api-staging.<domain>/health` answers `ok`;
    - signing in at `/sign-in` with a crew address sends an email that arrives, and `/crew` opens;
    - `/places/can-i-fly-here` answers for a point near Miami;
-   - in CloudWatch, the `Engine` task's log ends with a `resolve:` line and the `Notify` task's with `notify:`.
+   - in CloudWatch, after their first scheduled run, the `/ecs/rc-landing-staging/engine` log ends with a `resolve:` line and `/ecs/rc-landing-staging/notify` with `notify:`.
 3. In `/crew`, approve the RCSignup races and anything else waiting (the engine found 10 Florida races that wait for a person, because RCSignup is a listing, not the organiser).
 
-If CloudFront's certificate is refused (the AWS project only allows us-east-2, and CloudFront certificates live in us-east-1), ask Itaca engineering: the fallback is a Cloudflare origin certificate on the load balancer and the site.
+Everything runs in us-east-2 (there is no CloudFront, so no certificate in us-east-1). If a resource is refused, check the spend limit and the plan in AWS Settings, then ask Itaca engineering.
 
 ## 7. Production
 
-1. Set the secrets of step 5 with `--stage production` (Google's redirect URI becomes `https://api.<domain>/auth/callback/google`).
-2. Merge the pull requests to `main`: the deploy workflow deploys production. Run `Setup` once, as in step 6.
+1. Set the parameters of step 5 under `/rc-landing/production/` (Google's redirect URI becomes `https://api.<domain>/auth/callback/google`).
+2. Approve the production deploy that is waiting in the Actions tab (or run **Actions → Deploy** with `production`). Run `setup` once, as in step 6, with stage `production`.
 3. **Origin lock:** once everything works, follow "Origin lock" in [`CLOUDFLARE.md`](./CLOUDFLARE.md).
 4. **Email reputation:** after two weeks of clean DMARC reports, move DMARC from `p=none` to `p=quarantine`.
 

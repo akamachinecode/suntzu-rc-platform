@@ -7,7 +7,7 @@ import { ALLOW_ALL, DISALLOW_ALL, parseRobots, type RobotsRules } from "./robots
 // wall (a captcha or region block shown instead of the page) is reported, never worked around.
 
 // The contact URL becomes Servo's own page once the domain exists (roadmap C3).
-export const USER_AGENT = "ServoBot/0.1 (+https://github.com/ITACA-TECHNOLOGIES/rc-landing)";
+export const USER_AGENT = "ServoBot/0.1 (+https://github.com/akamachinecode/rc-landing)";
 
 export interface Page {
   url: string;

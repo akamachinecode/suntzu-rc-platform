@@ -1,6 +1,6 @@
 # Servo
 
-Built on the **Itaca Technologies standard stack** `platform`, hosted on **AWS (`sst`)** behind **Cloudflare**, with code on **GitHub**.
+Built on the **Itaca Technologies standard stack** `platform`, hosted on **AWS (Terraform)** behind **Cloudflare**, with code on **GitHub**.
 
 **Stack:** a pnpm monorepo with one Next.js app (public site and signed-in screens) and the API behind it (ready for a mobile app):
 
