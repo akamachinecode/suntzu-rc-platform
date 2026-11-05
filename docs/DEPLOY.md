@@ -4,11 +4,30 @@ Production URL: https://example.com · AWS region `us-east-1` · DNS and proxy i
 
 Infrastructure is code: [`sst.config.ts`](../sst.config.ts) (SST v4, built on Pulumi). SST keeps its state in the AWS account itself, so anyone with access can deploy from any machine.
 
-**What runs where:** `sst.aws.Nextjs` builds the app with OpenNext 4 and deploys server rendering and Server Actions to AWS Lambda, static assets to S3 and everything behind CloudFront.
+**What runs where:** one `sst.config.ts` deploys everything.
 
-Known limits on this target (October 2026): Cache Components aren't supported (disabled in `next.config.ts`), and image optimization (`/_next/image`) has had issues with Next.js 16 — check it after the first deploy ([anomalyco/sst#6867](https://github.com/anomalyco/sst/issues/6867)). OpenNext is pinned with `openNextVersion` in `sst.config.ts`; upgrade it together with Next.js.
+| Part       | SST component                         | Production URL                                          | Runs on                                                |
+| ---------- | ------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------ |
+| `apps/app` | `sst.aws.Nextjs`                      | https://www.example.com (`example.com` redirects there) | AWS Lambda (OpenNext 4) + S3 + CloudFront              |
+| `apps/api` | `sst.aws.Service` + `sst.aws.Cluster` | https://api.example.com                                 | Docker container on AWS Fargate behind a load balancer |
+| Database   | `sst.aws.Postgres`                    | —                                                       | Amazon RDS for PostgreSQL in private subnets           |
+| Network    | `sst.aws.Vpc`                         | —                                                       | private subnets + a small NAT instance                 |
 
-**Server secrets:** `pnpm sst secret set <Name> <value> --stage production`, then add the secret to `link` in `sst.config.ts`.
+**Domains are required for every stage**, because the app and the API must share a parent domain for the sign-in cookie: production uses `www.` / `api.example.com`, a stage such as `dev` uses `www-dev.` / `api-dev.example.com`. All stages share the cookie domain, so sign in to staging and production in different browser profiles.
+
+**Before the first deploy of a stage**, set the auth secret (once per stage):
+
+```bash
+pnpm sst secret set BetterAuthSecret "$(openssl rand -base64 32)" --stage production
+```
+
+**Database migrations** run when a new API container starts (`apps/api/src/migrate.ts`), before it accepts traffic. A failed migration stops the new version from starting, and the previous one keeps serving.
+
+**Cost:** unlike a Lambda-only app, this stack has a fixed monthly floor even without users (load balancer, RDS instance, NAT instance and one Fargate task). Remove unused stages with `pnpm sst remove --stage <stage>`.
+
+Known limits for `apps/app` (October 2026): Cache Components aren't supported (disabled in `next.config.ts`), and image optimization (`/_next/image`) has had issues with Next.js 16 — check it after the first deploy ([anomalyco/sst#6867](https://github.com/anomalyco/sst/issues/6867)). OpenNext is pinned with `openNextVersion` in `sst.config.ts`; upgrade it together with Next.js.
+
+**Server secrets:** `pnpm sst secret set <Name> <value> --stage production`, then add the secret to `link` and `environment` of the component that needs it in `sst.config.ts`.
 
 ## How deploys happen
 

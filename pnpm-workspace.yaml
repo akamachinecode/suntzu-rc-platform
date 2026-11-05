@@ -20,8 +20,15 @@ blockExoticSubdeps: true
 # Packages listed with `false` were reviewed: they work without their script.
 strictDepBuilds: true
 allowBuilds:
+  "@scarf/scarf": false
+  esbuild: false
   sharp: false
   unrs-resolver: false
 
 # Pin exact versions when adding dependencies (`pnpm add`).
 saveExact: true
+
+# Workspace packages: the apps (web app, API) and the shared packages.
+packages:
+  - apps/*
+  - packages/*

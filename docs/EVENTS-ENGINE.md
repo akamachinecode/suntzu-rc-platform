@@ -1,6 +1,6 @@
 # Events engine — design
 
-Status: **proposal, 2026-10-21.** Nothing here is built yet. Infrastructure pieces (database, queues, scheduled jobs, LLM calls) need Itaca engineering before production; see "What needs Itaca engineering" at the end.
+Status: **proposal, 2026-10-21; build order approved 2026-10-22 in [`ROADMAP.md`](./ROADMAP.md)**, which also covers what we index beyond events and the community plan. Nothing here is built yet. Infrastructure pieces (database, queues, scheduled jobs, LLM calls) need Itaca engineering before production; see "What needs Itaca engineering" at the end.
 
 ## The goal
 
@@ -29,6 +29,8 @@ The edge is not any single scraper. It is the **memory**: every source, every si
 ```
 
 ### 1. Discover — the source graph
+
+Worked out in detail, with the Florida census and the tool choice, in [`DISCOVERY.md`](./DISCOVERY.md).
 
 A **source** is anything that publishes events: an API, a calendar feed, a club site, a track's Facebook page, a forum board. Sources live in a registry, not in code.
 
@@ -153,7 +155,7 @@ The community section uses the same engine:
 | 3     | Alerts and weekly digest, organiser claims, member accounts                                                                                  | Amazon SES, Better Auth   |
 | 4     | Whole US: source discovery at scale, public API                                                                                              | Capacity review           |
 
-Phase 0 proves which sources actually work before anyone pays for infrastructure.
+Phase 0 proves which sources actually work before anyone pays for infrastructure. The current build order (tracks A–C and milestones M1–M5) is in [`ROADMAP.md`](./ROADMAP.md).
 
 ## What needs Itaca engineering
 

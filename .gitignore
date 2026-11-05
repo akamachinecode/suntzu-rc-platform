@@ -13,6 +13,9 @@ out/
 *.tsbuildinfo
 next-env.d.ts
 
+# events engine snapshots (pnpm engine)
+.snapshots/
+
 # environment — only .env.example is committed
 .env
 .env.*

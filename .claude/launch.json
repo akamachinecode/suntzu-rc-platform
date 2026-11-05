@@ -1,6 +1,43 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "servo-dev", "runtimeExecutable": "pnpm", "runtimeArgs": ["dev"], "port": 3000 }
+    {
+      "name": "servo-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "dev"
+      ],
+      "port": 3000
+    },
+    {
+      "name": "servo-app",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "dev:app"
+      ],
+      "port": 3000
+    },
+    {
+      "name": "servo-api",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "dev:api"
+      ],
+      "port": 3001
+    },
+    {
+      "name": "servo-app-3002",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@workspace/app",
+        "exec",
+        "next",
+        "dev",
+        "--port",
+        "3002"
+      ],
+      "port": 3002
+    }
   ]
 }
