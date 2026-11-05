@@ -4,8 +4,10 @@ import {
   EVENT_KINDS,
   EVENT_STATUSES,
   HOST_KINDS,
+  PLACE_ACCESS,
   PLACE_KINDS,
   REGIONS,
+  REGISTERS,
   REVIEW_KINDS,
   REVIEW_STATUSES,
   SOURCE_ADAPTERS,
@@ -50,6 +52,8 @@ export const sourceTrust = pgEnum("source_trust", SOURCE_TRUST);
 export const sourceStatus = pgEnum("source_status", SOURCE_STATUSES);
 export const reviewKind = pgEnum("review_kind", REVIEW_KINDS);
 export const reviewStatus = pgEnum("review_status", REVIEW_STATUSES);
+export const placeAccess = pgEnum("place_access", PLACE_ACCESS);
+export const register = pgEnum("register", REGISTERS);
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -60,18 +64,33 @@ const timestamps = {
 };
 
 /** Clubs, tracks, shops, sanctioning bodies and organisers. */
-export const hosts = pgTable("hosts", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  slug: text("slug").notNull().unique(),
-  name: text("name").notNull(),
-  kind: hostKind("kind").notNull(),
-  amaClubNumber: integer("ama_club_number"),
-  url: text("url"),
-  // Other names the web uses for this host, for matching ("AMPS").
-  aliases: text("aliases").array().notNull().default([]),
-  claimedAt: timestamp("claimed_at", { withTimezone: true }),
-  ...timestamps,
-});
+export const hosts = pgTable(
+  "hosts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    slug: text("slug").notNull().unique(),
+    name: text("name").notNull(),
+    kind: hostKind("kind").notNull(),
+    amaClubNumber: integer("ama_club_number"),
+    url: text("url"),
+    // Other names the web uses for this host, for matching ("AMPS").
+    aliases: text("aliases").array().notNull().default([]),
+    claimedAt: timestamp("claimed_at", { withTimezone: true }),
+    // Set when an organiser proved they run it (spec 0003): shown as "Verified".
+    verifiedAt: timestamp("verified_at", { withTimezone: true }),
+    // The host's own web domain ("ampsrc.com"): an organiser proves control with an email there.
+    domain: text("domain"),
+    summary: text("summary").notNull().default(""),
+    city: text("city"),
+    county: text("county"),
+    disciplines: discipline("disciplines").array().notNull().default([]),
+    acceptsNewcomers: boolean("accepts_newcomers").notNull().default(false),
+    register: register("register").notNull().default("crew"),
+    registerId: text("register_id"),
+    ...timestamps,
+  },
+  (table) => [uniqueIndex("hosts_register_idx").on(table.register, table.registerId)],
+);
 
 /** Flying fields, tracks and venues. */
 export const places = pgTable(
@@ -94,10 +113,63 @@ export const places = pgTable(
     url: text("url"),
     notes: text("notes").notNull().default(""),
     aliases: text("aliases").array().notNull().default([]),
+    disciplines: discipline("disciplines").array().notNull().default([]),
+    access: placeAccess("access").notNull().default("unknown"),
+    // Where its details come from (an FAA record, the club's page) and when someone last checked.
+    register: register("register").notNull().default("crew"),
+    registerId: text("register_id"),
+    sourceUrl: text("source_url"),
+    verifiedAt: timestamp("verified_at", { withTimezone: true }),
     ...timestamps,
   },
-  (table) => [index("places_host_id_idx").on(table.hostId)],
+  (table) => [
+    index("places_host_id_idx").on(table.hostId),
+    uniqueIndex("places_register_idx").on(table.register, table.registerId),
+  ],
 );
+
+/** Airports and heliports in Florida (FAA public data), for "Can I fly here?". */
+export const airports = pgTable("airports", {
+  // FAA location identifier ("MIA", "X51").
+  ident: text("ident").primaryKey(),
+  name: text("name").notNull(),
+  // "airport", "heliport", "seaplane-base"…
+  kind: text("kind").notNull(),
+  city: text("city"),
+  state: text("state").notNull().default("FL"),
+  latitude: doublePrecision("latitude").notNull(),
+  longitude: doublePrecision("longitude").notNull(),
+  // Public use or private (only public-use airports matter for the 5-mile notice).
+  publicUse: boolean("public_use").notNull().default(true),
+  ...timestamps,
+});
+
+/**
+ * Controlled airspace that reaches the ground (class B, C, D and E surface areas) over Florida,
+ * from the FAA's public airspace data. Recreational flyers need LAANC authorisation inside it.
+ */
+export const airspace = pgTable("airspace", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  class: text("class").notNull(),
+  // Lowest altitude in feet above ground (0 = reaches the surface).
+  lowerFt: integer("lower_ft").notNull().default(0),
+  // GeoJSON-style polygon rings: [[[lng, lat], …], …]; holes after the outer ring.
+  rings: jsonb("rings").$type<number[][][]>().notNull(),
+  minLat: doublePrecision("min_lat").notNull(),
+  minLng: doublePrecision("min_lng").notNull(),
+  maxLat: doublePrecision("max_lat").notNull(),
+  maxLng: doublePrecision("max_lng").notNull(),
+  ...timestamps,
+});
+
+/** Centre of each ZIP code (US Census ZCTA, public domain): "near me" without asking for GPS. */
+export const zipCodes = pgTable("zip_codes", {
+  zip: text("zip").primaryKey(),
+  latitude: doublePrecision("latitude").notNull(),
+  longitude: doublePrecision("longitude").notNull(),
+  state: text("state").notNull().default("FL"),
+});
 
 /** Recurring events: every edition of Jets Over Miami belongs to one series. */
 export const series = pgTable("series", {
@@ -227,9 +299,14 @@ export const events = pgTable(
     resultsUrl: text("results_url"),
     // AMA membership, FAA TRUST certificate, landing fee…
     requirements: text("requirements").array().notNull().default([]),
+    // Welcomes newcomers: set by the crew or the organiser, shown as a filter and a badge.
+    beginnerFriendly: boolean("beginner_friendly").notNull().default(false),
     confidence: real("confidence").notNull().default(0),
     // Empty while the event waits in the review queue.
     publishedAt: timestamp("published_at", { withTimezone: true }),
+    // The crew said it isn't a real RC event: it stays hidden, and resolve keeps linking new
+    // sightings of it here so it never comes back as "new".
+    rejectedAt: timestamp("rejected_at", { withTimezone: true }),
     lastCheckedAt: timestamp("last_checked_at", { withTimezone: true }),
     ...timestamps,
   },
@@ -293,6 +370,8 @@ export const reviews = pgTable(
     // What the engine proposes (fields to set, events to merge).
     proposal: jsonb("proposal").$type<Record<string, unknown>>().notNull().default({}),
     note: text("note").notNull().default(""),
+    // The member who suggested it (corrections, submissions); credited, never shown publicly.
+    submittedBy: text("submitted_by").references(() => user.id, { onDelete: "set null" }),
     reviewerId: text("reviewer_id").references(() => user.id, { onDelete: "set null" }),
     decidedAt: timestamp("decided_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -302,6 +381,8 @@ export const reviews = pgTable(
 
 export type Host = typeof hosts.$inferSelect;
 export type NewHost = typeof hosts.$inferInsert;
+export type Airport = typeof airports.$inferSelect;
+export type Airspace = typeof airspace.$inferSelect;
 export type Place = typeof places.$inferSelect;
 export type NewPlace = typeof places.$inferInsert;
 export type Series = typeof series.$inferSelect;

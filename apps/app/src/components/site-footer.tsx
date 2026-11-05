@@ -30,7 +30,11 @@ const COLUMNS: Array<{ title: string; links: FooterLink[] }> = [
     title: "The local scene",
     links: [
       { label: "Events calendar", href: "/events" },
-      { label: "Clubs, fields and tracks", href: "/community#places-title" },
+      { label: "Where to fly and race", href: "/places" },
+      { label: "Can I fly here?", href: "/places/can-i-fly-here" },
+      { label: "Clubs and tracks", href: "/clubs" },
+      { label: "Try RC near you", href: "/try" },
+      { label: "For clubs and tracks", href: "/organise" },
       { label: "Share your build", href: "/community#share-title" },
       { label: "Talk to the crew", href: "/contact" },
     ],
@@ -142,7 +146,14 @@ export function SiteFooter() {
 
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-sm text-background/60 sm:flex-row sm:items-center sm:justify-between">
         <p>
-          © {new Date().getFullYear()} {SITE.name}. Made in {SITE.region}.
+          © {new Date().getFullYear()} {SITE.name}. Made in {SITE.region}.{" "}
+          <Link href="/privacy" className="underline underline-offset-4 hover:text-background">
+            Privacy
+          </Link>{" "}
+          ·{" "}
+          <Link href="/terms" className="underline underline-offset-4 hover:text-background">
+            Terms
+          </Link>
         </p>
         <span aria-hidden="true" className="flex gap-1">
           {INKS.map((ink) => (

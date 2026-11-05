@@ -52,7 +52,7 @@ Each source carries: adapter type, check frequency, trust level (official organi
 
 Two kinds of extractor, cheapest first:
 
-- **Structured adapters** (deterministic, free, exact): official APIs, ICS feeds, WordPress events JSON, schema.org JSON-LD.
+- **Structured adapters** (deterministic, free, exact): official APIs, ICS feeds, WordPress events JSON, schema.org JSON-LD. Built so far (`apps/api/src/events/engine/`, see `docs/bits/engine.run.md`): ICS (2026-10-22), schema.org JSON-LD including lists of events (2026-10-22, lists 2026-10-27), The Events Calendar's REST API for WordPress clubs, Wild Apricot's events RSS and schedule tables such as Extreme Flight's (2026-10-27). A platform that already publishes ICS or JSON-LD gets no reader of its own: its sources are configured on the existing ones.
 - **AI extraction** for everything else: HTML pages, PDF flyers and flyer images (very common in this hobby). A language model fills the same schema and must **quote the text** that supports each field. A field without a quote is discarded. This keeps the model honest and makes review fast.
 
 Output of this step is a **sighting**: "source X, at time T, said event Y happens on date D at place P", with the evidence.
@@ -87,24 +87,25 @@ Every review decision (merge, reject, correct a field) is stored. It tunes sourc
 
 ## Sources for Florida (researched 2026-10-21)
 
-Every source below was checked by hand on 2026-10-21. Terms and robots.txt change; re-check before turning a source on.
+Every source below was checked by hand on 2026-10-21, and rows 4 to 7 again on 2026-10-27 (spec 0001, slice 5; `DECISIONS.md`). Terms and robots.txt change; re-check before turning a source on. What each source's robots.txt and terms said is kept with it, in `permission` (`apps/api/src/events/seed-data.ts`).
 
 ### Start with these
 
-| #   | Source                                                                             | Covers                                | How we read it                                                                                                           |
-| --- | ---------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| 1   | Club and track Google Calendars (e.g. DeLand RC, Coral Springs RC Track)           | Club events, races, practice days     | Public ICS feed found in the site's calendar embed. Needs filtering: board meetings and "Practice" entries are mixed in. |
-| 2   | schema.org `Event` data on club sites (e.g. AMPS, on Wix Events)                   | Club fly-ins                          | JSON-LD in each event page, with ISO dates and address.                                                                  |
-| 3   | [AMA event calendar](https://www.modelaircraft.org/event-calendar), Florida filter | Air, heli, jets, drone racing (~40)   | HTML with state filter. **Ask AMA first**: their terms forbid commercial use of content.                                 |
-| 4   | [RCSignup](https://rcsignup.com/events/) by state                                  | RC car races, the biggest car source  | HTML. robots.txt asks for 10 s between requests and blocks `/api/`.                                                      |
-| 5   | [Extreme Flight event schedule](https://extremeflightrc.com/pages/event-schedule)  | 3D and jet events, many in Florida    | One HTML page, changes about once a season.                                                                              |
-| 6   | [Horizon Hobby events calendar](https://www.horizonhobby.com/rc-events-calendar/)  | Sponsored air and car events, US-wide | HTML.                                                                                                                    |
-| 7   | [ROAR national](https://roarracing.com/national_races.php) and regional races      | Sanctioned car nationals              | HTML, low volume, authoritative.                                                                                         |
-| 8   | [LiveRC](https://live.liverc.com/) track subdomains                                | ~20 Florida car tracks                | Not an events feed: a directory to **discover** tracks, then read each track's own calendar.                             |
+| #   | Source                                                                             | Covers                                | How we read it                                                                                                                                                      |
+| --- | ---------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Club and track Google Calendars (e.g. DeLand RC, Coral Springs RC Track)           | Club events, races, practice days     | Public ICS feed found in the site's calendar embed. Needs filtering: board meetings and "Practice" entries are mixed in.                                            |
+| 2   | schema.org `Event` data on club sites (e.g. AMPS, on Wix Events)                   | Club fly-ins                          | JSON-LD in each event page, with ISO dates and address.                                                                                                             |
+| 3   | [AMA event calendar](https://www.modelaircraft.org/event-calendar), Florida filter | Air, heli, jets, drone racing (~40)   | HTML with state filter. **Ask AMA first**: their terms forbid commercial use of content.                                                                            |
+| 4   | [RCSignup](https://rcsignup.com/rc-races/florida/) by state                        | RC car races, the biggest car source  | **Read since 2026-10-27**: the Florida page lists upcoming races as schema.org data (JSON-LD reader). robots.txt asks for 10 s between requests and blocks `/api/`. |
+| 5   | [Extreme Flight event schedule](https://extremeflightrc.com/pages/event-schedule)  | 3D and jet events, many in Florida    | **Read since 2026-10-27** (schedule-table reader, Florida rows only). One HTML page, changes about once a season.                                                   |
+| 6   | [Horizon Hobby events calendar](https://www.horizonhobby.com/rc-events-calendar/)  | Sponsored air and car events, US-wide | **Blocked**: robots.txt allows it, but the terms forbid re-publishing content without written permission. Ask Horizon.                                              |
+| 7   | [ROAR national](https://roarracing.com/national_races.php) and regional races      | Sanctioned car nationals              | Not read: no dates on the page, hosts listed with personal contacts, regional list empty. ROAR races in Florida come through RCSignup.                              |
+| 8   | [LiveRC](https://live.liverc.com/) track subdomains                                | ~20 Florida car tracks                | Not an events feed: a directory to **discover** tracks, then read each track's own calendar.                                                                        |
+| 9   | Club sites on The Events Calendar (Imperial R/C Club) and Wild Apricot (RCACF)     | Club fly-ins and contests             | **Read since 2026-10-27**: the WordPress events REST API and the Wild Apricot events RSS. Club meetings and work parties are skipped.                               |
 
 ### Only with a partnership or permission
 
-- **MultiGP** (FPV racing): the API needs a chapter key and the listings are blocked in robots.txt. Partner with a Florida chapter.
+- **MultiGP** (FPV racing): the API needs a chapter key and the listings are blocked in robots.txt (re-checked 2026-10-27: the race finder and chapter list load from `/mgp/`, which robots.txt disallows). Partner with a Florida chapter.
 - **FPVScores**: their terms allow gentle automated access for clubs but ask to be contacted before building on their data.
 - **AMA JSON API, Speedhive**: open but undocumented; ask before relying on them.
 
@@ -112,7 +113,7 @@ Every source below was checked by hand on 2026-10-21. Terms and robots.txt chang
 
 - **Facebook** events and groups (where many clubs actually post): API access is for Marketing Partners only. **Reddit** (needs approval), **Meetup** (Pro plan, terms ban commercial scraping), **Eventbrite** (no search API since 2019).
 - **RCGroups** and **RCUniverse**: block bots outright.
-- Sites behind bot walls (Palm Beach RC on DualRates, RC Bush Pilots, Snowbird Nationals, AMA District V blog). We do not try to get around a bot wall.
+- Sites behind bot walls (Palm Beach RC on DualRates, RC Bush Pilots, Snowbird Nationals, AMA District V blog). We do not try to get around a bot wall; the fetcher recognises the common ones and reports them. On 2026-10-27 every DualRates club site (five in Florida, robots.txt included) answered from outside the US with a region block, so they wait as candidates for the US deployment or a word with DualRates.
 
 ### What this means
 

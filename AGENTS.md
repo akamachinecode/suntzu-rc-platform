@@ -71,24 +71,27 @@ A **bit** is the smallest piece of behaviour someone can trigger and check end t
 - **Why Servo exists:** three RC enthusiasts want the hobby to grow, with a genuinely useful, free, well-made platform people can take part in. **`docs/LANDSCAPE.md`** has what already exists, what other hobbies teach, and the product principles that follow (free to take part, organisers get something back, visible trust, a path for newcomers). Check new features against those principles.
 - **Servo 1.0** is planned in `docs/specs/0001`–`0004` (events, places, community, launch) and summarised in `docs/ROADMAP.md`: build slice by slice and tick each one off in its spec.
 - **Read `docs/EVENTS-ENGINE.md`** before working on events, sources or ingestion. The plan: an engine that monitors the web for RC events (Florida first), merges duplicates, verifies them and publishes them; the worker that runs it will live in `apps/api`. **`docs/ROADMAP.md`** is the approved build order (what we index, the community ladder, tracks and milestones): tick items off there as they land.
-- **Content** is typed data in `apps/app/src/content/` (services, events, places, rules, history, guides) until the events engine moves events and places into the database. Every factual item carries a source link; keep it that way and re-check dates before editing.
+- **Content** is typed data in `apps/app/src/content/` (services, rules, history, guides). Events and places live in the database now (the engine, the census, the crew and organisers). Every factual item carries a source link; keep it that way and re-check dates before editing.
 - **Anatomy figures**: use the project skill in `.claude/skills/anatomy` (read its `SKILL.md`). The kit is vendored in `apps/app/src/components/iso/`; figures live in `apps/app/src/components/figures/<name>/` following `references/react.md`. Light theme only, XT60 yellow is the single lit accent (see `.servo-figure` in `apps/app/src/app/globals.css`). Run the line check before shipping a figure.
 - **Versions:** always the latest stable release of every dependency, runtime and service. Apply security and important-fix releases promptly; release candidates and betas don't count. Major upgrades get an entry in `docs/DECISIONS.md` (see 2026-10-22).
-- **Forms** (`/contact`, `/community`) validate with Zod but don't deliver messages yet (see `docs/DECISIONS.md`).
+- **Forms** (`/contact`, builds on `/community`, `/try`, `/submit`) deliver to the crew's inbox at `/crew` (and by email to `CREW_INBOX`); public ones check Cloudflare Turnstile in production.
+- **Accounts** have no passwords (email link or Google). The crew is whoever `CREW_EMAILS` lists. Locally, emails are printed in the API's console (`MAIL_TRANSPORT=log`).
+- **Going live** is the owner's checklist in `docs/LAUNCH.md`; don't deploy on your own.
 
 ## Commands
 
-| Command          | What it does                                                   |
-| ---------------- | -------------------------------------------------------------- |
-| `pnpm dev`       | Local development server                                       |
-| `pnpm build`     | Production build                                               |
-| `pnpm check`     | Format check + lint + typecheck + tests + build. Must pass     |
-| `pnpm format`    | Auto-format every file (Prettier)                              |
-| `pnpm lint`      | ESLint                                                         |
-| `pnpm typecheck` | TypeScript type checking                                       |
-| `pnpm test`      | Unit tests (Vitest)                                            |
-| `pnpm db:seed`   | Load the events engine's starting data into the local database |
-| `pnpm engine`    | Run the events engine once (`pnpm engine <source>` for one)    |
+| Command          | What it does                                                      |
+| ---------------- | ----------------------------------------------------------------- |
+| `pnpm dev`       | Local development server                                          |
+| `pnpm build`     | Production build                                                  |
+| `pnpm check`     | Format check + lint + typecheck + tests + build. Must pass        |
+| `pnpm format`    | Auto-format every file (Prettier)                                 |
+| `pnpm lint`      | ESLint                                                            |
+| `pnpm typecheck` | TypeScript type checking                                          |
+| `pnpm test`      | Unit tests (Vitest)                                               |
+| `pnpm db:seed`   | Load the events engine's starting data into the local database    |
+| `pnpm engine`    | Run the events engine once (`pnpm engine <source>` for one)       |
+| `pnpm census`    | Load the FAA registers and ZIP codes (`pnpm census fria` for one) |
 
 ## Stack: product platform (`platform`)
 
@@ -152,7 +155,7 @@ Explain to the user why the request needs an engineer, write down what you found
 
 <!-- BEGIN AWS Agent Toolkit rules -->
 
-> Added by the AWS Agent Toolkit setup (2026-10-22), from `aws/agent-toolkit-for-aws` `rules/aws-starter-rules.md`. The Servo AWS project runs in **us-east-2** with CLI profile `servo`. Production in `sst.config.ts` still targets `us-east-1`: until Itaca engineering settles that (see `docs/DECISIONS.md`, 2026-10-22), do not deploy, and treat the rules above this block as the ones that win.
+> Added by the AWS Agent Toolkit setup (2026-10-22), from `aws/agent-toolkit-for-aws` `rules/aws-starter-rules.md`. The Servo AWS project runs in **us-east-2** with CLI profile `servo`, and `sst.config.ts` targets it since 2026-10-27 (C1). Deploying is the owner's step, following `docs/LAUNCH.md`; treat the rules above this block as the ones that win.
 
 ## AWS Guidance for the new AWS experience
 

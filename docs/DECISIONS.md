@@ -12,6 +12,153 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-10-28 — Fixes from an independent security and bug review
+
+- **What:** an independent review of the night's work found these, all fixed and tested:
+  - **Club claims:** a new code at most every 5 minutes, and 8 guesses per claim ever (counted atomically before each check, compared in constant time); after that only the crew can verify it. Before, the 6-digit code could be guessed with unlimited retries.
+  - **Crew:** decided from `CREW_EMAILS` on every request, so removing someone takes effect on their open sessions too.
+  - **Links people give us:** IPv6 spellings of internal addresses (`[::ffff:7f00:1]`, NAT64) are refused, and answers are cut at 2 MB.
+  - **Limits:** 10 submitted events and 20 corrections per member an hour. Turnstile refuses public forms in production when its key is missing, and no longer sends the server's address as the visitor's. `LAUNCH.md` rate-limits the site's host, where visitors connect.
+  - **Emails:** a failed send no longer loses the email (the record is removed and the next run retries it) and no longer stops the run; each `notify` step runs on its own.
+  - **Try it:** a club counts as reached only when an email to one of its organisers was sent; otherwise the crew gets the request.
+  - **Dates:** a correction that moves only the first day keeps the event's length, and no change can leave an event ending before it starts (which made future events "held").
+  - **Engine:** events with the same name at two different clubs or fields are a question for the crew, never merged on the name alone; a member's link (community trust) never changes or publishes an event without the crew.
+  - **Small ones:** account deletion says so when it fails; long model names in "share your build" no longer fail; a submitted site's robots.txt is read afresh each time.
+- **Known gap:** DNS could change between the address check and the request (rebinding). Pinning the checked address needs a custom HTTP agent; worth doing before traffic grows.
+
+## 2026-10-28 — Links people give us only reach the public internet
+
+- **What:** member-submitted event links and organisers' club websites are fetched through `publicFetch` (`apps/api/src/common/public-url.ts`): http(s) on ports 80/443 only, no credentials in the URL, every address the host resolves to must be public (no loopback, private, link-local or cloud-metadata ranges, IPv4 or IPv6), and every redirect is checked again before it's followed.
+- **Why:** these requests run inside the VPC next to the ECS metadata endpoint and the database; without the check a link could reach them (SSRF).
+- **Impact:** the engine's own sources (set by the crew) still use plain fetch. Known gap: DNS could change between the check and the request (rebinding); acceptable for v1, worth a resolving agent that pins the checked address later.
+
+## 2026-10-28 — Launch in code: us-east-2, SES, S3, scheduled jobs and the owner's checklist (spec 0004)
+
+- **What:**
+  - **Region (C1):** `sst.config.ts`, `itaca.json` and the deploy workflow move to **us-east-2**, the AWS project's only region. The domain is one constant (`DOMAIN`) at the top of `sst.config.ts`.
+  - **Email:** `sst.aws.Email` sends from the domain through SES, with DKIM and DMARC records in Cloudflare (DNS only). The API and the jobs get `MAIL_TRANSPORT=ses`.
+  - **Engine snapshots** go to an S3 bucket (`ENGINE_SNAPSHOT_DIR=s3://…`; new dependency **`@aws-sdk/client-s3` 3.1157.0**, the Itaca standard for S3): the container's disk isn't writable, and the engine re-reads snapshots when a source answers "not modified".
+  - **Scheduled jobs** (SST `CronV2` running the API image as Fargate tasks, times in Florida): the engine four times a day, `notify` every hour, the census on the 2nd of each month, and a `Setup` task (seed, census, first read) to run once per stage.
+  - **Secrets** (optional ones default to empty, and their feature stays off): `CrewEmails`, `CrewInbox`, `GoogleClientId`, `GoogleClientSecret`, `TurnstileSecretKey`, `TurnstileSiteKey`. Bedrock invoke permissions for the AI extraction.
+  - `docs/LAUNCH.md`: the owner's ordered checklist (GitHub, name and domain, Cloudflare with Turnstile and rate-limiting rules, AWS with SES production access and Bedrock model access, secrets, `dev`, production).
+- **Why:** spec 0004; the owner approved the region, the jobs, S3, SES and Bedrock (acting as Itaca engineering, 2026-10-27).
+- **Impact / risks, for Itaca engineering:**
+  - Nothing was deployed. `sst.config.ts` type-checks against SST's platform types (`pnpm sst install`, then `tsc` on the file: the only errors are inside SST's own sources), but `pnpm sst diff --stage dev` is the real first check.
+  - CloudFront's certificate lives in us-east-1; whether the AWS project allows it is the first thing to check on `dev` (fallback in `LAUNCH.md`).
+  - The Bedrock IAM actions (`bedrock:InvokeModel*`) may need adjusting for the Mantle endpoint.
+
+## 2026-10-27 — Members send events, and AI reads pasted flyers with quotes (spec 0003-3)
+
+- **What:** `/submit` (members): a link is read like any source (politely, robots.txt respected: ICS, JSON-LD, then the AI on the page's text); pasted text (a flyer, a Facebook post) is read by Claude on Amazon Bedrock. The model must quote the text for every field; `verify()` drops any field whose quote isn't in the text word for word, and any event without a quoted name and first day. Results go through resolve with community trust (they wait for the crew, credited to the member), or link to an event we already have. When nothing can be read, the text reaches the crew's inbox.
+- **Why:** principle 2 and 3 in `LANDSCAPE.md`: Facebook-only events reach Servo through people, and trust stays visible (the exact words are in the crew's review).
+- **Impact:**
+  - New dependencies **`@anthropic-ai/sdk` 1.3.0** (structured outputs with Zod, the refusal-fallback middleware) and **`@anthropic-ai/bedrock-sdk` 1.1.0** (the Bedrock Mantle client: Messages API on Bedrock, AWS credentials from the environment) in `apps/api`.
+  - Model `claude-opus-5-5` on Bedrock (`BEDROCK_MODEL_ID=anthropic.claude-opus-5-5`) at `low` effort, with a client-side fallback to `anthropic.claude-opus-4-8` if a request is declined (`BEDROCK_FALLBACK_MODEL_ID`). Off until `BEDROCK_MODEL_ID` is set; model access must be turned on in the Bedrock console of the project's region, and the API's task role needs `bedrock:InvokeModel` (spec 0004).
+  - What the model sees is only the pasted text and today's date; it is told never to return people's names, phones or emails. Not verified against Bedrock tonight: no AWS calls were made.
+
+## 2026-10-27 — Emails Servo sends on its own, and "try it" (specs 0003-5, 0003-6)
+
+- **What:** `pnpm notify` sends change alerts (a followed or "going" event moved or was cancelled), the weekly "this weekend near you" (Thursdays), and organisers' monthly reports (the 1st), and deletes messages and try-it requests older than 12 months. Every email is recorded in `notifications` before it's sent, so runs can repeat without duplicates. Each email has a one-click unsubscribe (`POST /unsubscribe`, RFC 8058); the link in the email opens `/unsubscribe`, which acts only when the button is pressed (mail scanners open links). `/try` sends a newcomer's request to the organisers of up to three nearby clubs that welcome newcomers, with the person's consent, or to the crew.
+- **Why:** spec 0003 slices 5 and 6; principles 5 and 8 in `LANDSCAPE.md`.
+- **Impact:** new column `members.monthly_report` (migration `0005_monthly_report`). Scheduling `pnpm notify` (hourly) and `pnpm engine` needs SST Cron (spec 0004). Production sending needs SES out of the sandbox and a verified domain (`docs/LAUNCH.md`).
+
+## 2026-10-27 — Places, clubs, "Can I fly here?" and the organiser kit (specs 0002-2, 0002-3, 0003-4)
+
+- **What:**
+  - `/places` (every field and track on a map, with search and near me), a page per place (how to visit, who runs it, upcoming events, the rules, the source and last-checked date), `/clubs` and a page per club with its own calendar feed. "Places" is in the main navigation.
+  - `/places/can-i-fly-here`: a point is checked against the FAA's airspace, airports and FRIAs (`GET /airspace/check`). It's guidance with links to B4UFLY and LAANC, never an authorisation; temporary flight restrictions aren't included yet. The point isn't stored or logged.
+  - Organisers claim a club by a code sent to an address at the club's own domain (never a shared domain such as Facebook, Wix or Gmail), a code on its website, or the crew's check. Verified organisers publish and change their club's events (published at once, with organiser trust), confirm their places' details yearly and get an embeddable widget (`/embed/clubs/<slug>`).
+- **Why:** specs 0002 and 0003; principle 2 in `LANDSCAPE.md` (organisers get something back).
+- **Impact:**
+  - `next.config.ts`: `X-Frame-Options: DENY` now applies to every path except `/embed`, which other sites frame on purpose. `Permissions-Policy` allows geolocation for the site itself (`geolocation=(self)`): before, it blocked "Near me" on every page.
+  - A duplicate club from the census ("SRQ R/C Squadron", AMA 780) was merged into the seeded "Sarasota R/C Squadron", which now carries the number and the alias.
+  - Website verification fetches the club's home page and `/servo.txt` once, when the organiser asks.
+
+## 2026-10-27 — The crew console, and every form reaches the crew (specs 0001-2, 0003-3)
+
+- **What:** `/crew` (crew role only): the review queue with each source's exact words next to what we publish, and decisions to publish, correct, merge or reject; "Add an event" by hand (published at once, backed by a `servo-crew` sighting so the engine links to it later); the inbox (contact form and builds) and the feedback from past events. Events the crew rejects keep `rejected_at` and are never published automatically again; "different events" tells resolve never to match that pair. Public forms (`POST /messages`, `POST /events/{slug}/feedback`) check a Cloudflare Turnstile token when `TURNSTILE_SECRET_KEY` is set (production) and the app shows the widget when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is set. Members can suggest corrections (`POST /events/{slug}/corrections`), which wait for the crew.
+- **Why:** spec 0001 slice 2 and spec 0003 slice 3. The contact and build forms were the last pieces that went nowhere.
+- **Impact:** new table column `events.rejected_at` (migration `0004_event_rejected`); messages keep a name and an email for 12 months (purged by `pnpm notify`, spec 0003-6). New variables `TURNSTILE_SECRET_KEY` (API) and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (app); Turnstile is free and part of the standard (`CLOUDFLARE.md`).
+
+## 2026-10-27 — Accounts without passwords, the crew role, follows and a private calendar (specs 0003-1, 0003-2)
+
+- **What:**
+  - **Sign-in:** a one-time link by email (Better Auth magic-link plugin, 15 minutes, works once) or Google (`GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`; the app shows the button when `NEXT_PUBLIC_GOOGLE_SIGN_IN=true`). Email and password sign-in is turned off.
+  - **Roles:** a `role` column on `user` (`member` or `crew`), a Better Auth additional field that requests can't set. The crew is whoever `CREW_EMAILS` lists, synced at every sign-in, so adding or removing someone is a configuration change. `@CrewOnly()` guards crew routes.
+  - **Members:** `/me` (name, optional ZIP, distance, disciplines, change alerts, weekly digest, delete account), follows (events, clubs, places, disciplines), "I'm going", and a private calendar feed at `/calendar/<secret>.ics`. Only counts are public.
+  - **Email:** `apps/api/src/mail/mail.ts` sends through Amazon SES (`MAIL_TRANSPORT=ses`) or prints to the console locally (`log`). New dependency **`@aws-sdk/client-sesv2` 3.1157.0** (the Itaca standard for email). New variables: `MAIL_TRANSPORT`, `MAIL_FROM`, `AWS_REGION`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `CREW_EMAILS`, `CREW_INBOX` (API) and `NEXT_PUBLIC_GOOGLE_SIGN_IN` (app).
+  - **Data model** (migration `0003_community`): `members`, `follows`, `rsvps`, `host_members`, `messages`, `submissions`, `try_requests`, `feedback`, `notifications`; `events.beginner_friendly`; `reviews.submitted_by`.
+- **Why:** spec 0003, with the owner's choices (no passwords; nothing about a member public by default). Approved by the owner acting as Itaca engineering (accounts, personal data, roles, email).
+- **Impact:** personal data now lives in Servo: email, optional name and ZIP, follows and "going". Deleting an account removes all of it (cascades); contributions to the public catalogue stay without the name. For production: verify the sender domain in SES and request production access (`docs/LAUNCH.md`), create the Google OAuth client, set `CREW_EMAILS`. An Itaca review of `apps/api/src/auth/` before launch is still recommended.
+
+## 2026-10-27 — More readers: club platforms and single sites (spec 0001, slice 5)
+
+- **What:**
+  - **Three new readers** in `apps/api/src/events/engine/`, picked by a new `platform` field in `sources.config`: **The Events Calendar** (`the-events-calendar.ts`: the WordPress plugin's public REST API, `/wp-json/tribe/events/v1/events`, page after page), **Wild Apricot** (`wild-apricot.ts`: each site's `/events/RSS`) and **schedule tables** (`schedule-table.ts`: date, name and town under a year heading, as on Extreme Flight's schedule). A new `onlyPlaces` setting keeps only the rows of a region (Extreme Flight lists the whole US).
+  - **Configuration, not code, where the platform already publishes data:** RCSignup's state pages list their races as schema.org `ItemList` data, so the JSON-LD reader now looks inside event lists and RCSignup is a `json-ld` source. Wix (AMPS) was already one.
+  - **The fetcher reports bot walls** (DualRates' region block, SiteGround's captcha, Cloudflare's challenge) instead of reading them as the page. A wall served in place of robots.txt means nothing on that site is read. robots.txt's `Request-rate` is now obeyed like `Crawl-delay` (Wild Apricot asks for one request a minute).
+  - `engine.ts`, the database schema and the web app are unchanged.
+- **Second census sample (2026-10-27):** 39 Florida club and track sites (a public list of Florida flying fields, two ROAR tracks and the sites already known), each probed once through the engine's own fetcher. 5 run **DualRates**, all region-blocked; 1 runs **WordPress with The Events Calendar** (Imperial R/C Club); 1 **Wild Apricot** (RCACF); 2 **Wix** (AMPS; SPARKS R/C has no events page); 3 embed a **Google Calendar** (DeLand, Eglin, Coral Springs); 5 run **WordPress without an events plugin**; 8 are other builders or hand-made pages (GoDaddy, Weebly, Homestead) with no machine-readable events; 9 say no in robots.txt or don't answer it; 2 sit behind a captcha or answer 403; 3 are gone or parked. Nobody in the sample runs **Modern Events Calendar**: its event pages publish schema.org data and an iCal feed, so such a club would be a `json-ld` or `ics` source with no new code (untested).
+- **What each site's robots.txt and terms said** (also in each source's `permission`):
+
+  | Source                                                                                                                         | Status    | robots.txt                                              | Terms                                                                                                                    |
+  | ------------------------------------------------------------------------------------------------------------------------------ | --------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+  | `rcsignup` (Florida races)                                                                                                     | active    | allows `/rc-races/`; Crawl-delay 10; `/api/` disallowed | none published                                                                                                           |
+  | `extreme-flight-schedule`                                                                                                      | active    | allows `/pages/` (Shopify)                              | forbid scraping only "in violation of applicable law"; protect their own text and images. We keep facts and a link       |
+  | `imperial-rc-events` (Imperial R/C Club)                                                                                       | active    | allows `/wp-json/`                                      | none linked from the site                                                                                                |
+  | `rcacf-events` (RCACF)                                                                                                         | active    | allows `/events/`; Request-rate 1/60, Crawl-delay 10    | none; a privacy page only                                                                                                |
+  | 5 DualRates club sites (Palm Beach RC, Martin County Modelers, Sarasota R/C Squadron, Sarasota Silent Flyers, Triple Creek RC) | candidate | unreadable: region block                                | unreadable                                                                                                               |
+  | `eglin-aero-modelers-calendar`                                                                                                 | candidate | Google Calendar's robots.txt disallows feeds            | needs the club's OK, as DeLand                                                                                           |
+  | `roar-nationals`                                                                                                               | candidate | allows all but `/join`                                  | privacy policy only. Not worth a reader: no dates, hosts listed with personal contacts; ROAR races come through RCSignup |
+  | `horizon-hobby-calendar`                                                                                                       | blocked   | allows the page                                         | site for personal, non-commercial use; no re-publication without written permission                                      |
+  | `multigp-races`                                                                                                                | blocked   | disallows `/mgp/`, where races and chapters load from   | (page body empty)                                                                                                        |
+
+- **First live run (2026-10-27):** RCSignup 10 Florida races (Nov 2026 to May 2027), Extreme Flight 3 Florida events (3D Over the Glades, the SPARKS 3D Fun Fly and Jacksonville Jet Madness, all 2026 editions: history for their series), Imperial R/C Club and RCACF 0 (their upcoming entries are only meetings and work parties, skipped; Imperial's 2026 events, the Florida eJets and the Frank Tiano Scale Fly-In among them, are in the test fixture). The DualRates candidate stops at the wall with one request.
+- **Why:** more of Florida's events reach the engine as sightings, each through the cheapest reliable channel, and only where robots.txt and the terms say yes.
+- **Impact:**
+  - **No new dependency.** RSS, a known HTML table and JSON are read with regular expressions and `JSON.parse`; an HTML parser wasn't needed.
+  - **No personal data:** these readers never read descriptions or organisers (Imperial's descriptions name contest directors with their emails; RCACF's notes speak to members). Fixtures (`imperial-rc-events.json`, `rcacf-events.rss`, `extreme-flight-schedule.html`, `rcsignup-florida.html`) are trimmed copies with those fields emptied. The pages downloaded during the census were deleted afterwards.
+  - **DualRates needs a run from the US or a word with DualRates** (roadmap D6): from the dev machine in Europe every DualRates page, robots.txt included, is a region block, so no DualRates reader could be written or tested. Its five Florida clubs are candidates with `platform: "dualrates"`; once a page can be seen, they are likely `json-ld` or `ics` sources (DISCOVERY.md saw schema.org events and iCal on them).
+  - **Horizon Hobby and MultiGP need permission** (roadmap D6). Horizon's calendar is a JSON block in the page (about 230 entries), a short reader once allowed.
+  - RCACF's one request a minute makes its run take a minute; fine for a weekly source.
+  - Follow-up, not done: a one-off read of past editions (The Events Calendar's API takes a `start_date`) would give resolve and series prediction a year of history.
+
+## 2026-10-27 — Places census: FAA registers and Census ZIP codes (spec 0002, slice 1)
+
+- **What:** `pnpm census [dataset…]` (`apps/api/src/census.ts`, code in `apps/api/src/places/census/`, bit `census.import`) loads five public datasets for Florida into the tables of migration `0002_places_census`. No schema change, no new dependency (ZIP files are read with Node's built-in `zlib`).
+
+  | Dataset                                      | Source (all public domain: US government works)                                                                                                                                                             | Into              |
+  | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+  | `fria` FAA-Recognized Identification Areas   | `https://services6.arcgis.com/ssFJjBXIUyZDrSYZ/arcgis/rest/services/FAA_Recognized_Identification_Areas/FeatureServer/0` (FAA UAS Data Delivery System, `udds-faa.opendata.arcgis.com`), `state='FL'`       | `places`, `hosts` |
+  | `fixed-sites` Recreational Flyer Fixed Sites | `https://services6.arcgis.com/ssFJjBXIUyZDrSYZ/arcgis/rest/services/Recreational_Flyer_Fixed_Sites/FeatureServer/0`, `STATE='FL'`                                                                           | `places`, `hosts` |
+  | `airports` airports and heliports            | `https://services6.arcgis.com/ssFJjBXIUyZDrSYZ/arcgis/rest/services/US_Airport/FeatureServer/0` (FAA Aeronautical Data Delivery Service, `adds-faa.opendata.arcgis.com`), `STATE='FL'`, closed ones skipped | `airports`        |
+  | `airspace` controlled airspace               | `https://services6.arcgis.com/ssFJjBXIUyZDrSYZ/arcgis/rest/services/Class_Airspace/FeatureServer/0`, Florida's envelope: class B (all parts), C and D from the surface, E2/E3/E4 surface areas              | `airspace`        |
+  | `zip-codes` ZIP code centres                 | US Census Bureau Gazetteer ZCTA file, latest year published (`https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2026_Gazetteer/2026_Gaz_zcta_national.zip`), ZIPs 320–339 and 341–349               | `zip_codes`       |
+
+- **Stored:** site and organisation names, coordinates (a FRIA's centre, a fixed site's point), the city, a road when the register's title names one, FAA record ids, approval and edit dates, a fixed site's ceiling (in the place's notes) and a link to the FAA's map of the register at the site. **Not stored, and never requested:** the FRIA requester's postal address and ZIP code, a fixed site's point of contact (POC) and ZIP code. One FRIA title begins with a person's name; the census replaces it (`TITLE_FIXES` in `fria.ts`). Fixtures and logs follow the same rule.
+- **How it dedupes:** places by `(register, registerId)`, else the nearest flying field within 300 m, else the same club's field from the other FAA register within 1,200 m (a FRIA is an area and a fixed site a point, up to ~1 km apart for the same field); hosts by record, AMA charter number (from the FRIA title, "Club #1234"), name or alias with spelling ignored, then one or two typos. The four seeded fields that are FRIAs (Silver Field, Markham Park, West Delray, Dyer Park) now carry their FAA record; their names, notes and access are untouched, and the seeded clubs are matched rather than copied. Running twice changes nothing. Places and hosts are never deleted by the census; records that leave a register are listed for the crew.
+- **Decisions taken while building it:**
+  - An AMA club's FRIA is hosted by **the club** (charter number in the title), not by the AMA. Sites of other recognised organisations (FPV Freedom Coalition, Flite Test Community Association) are hosted by that organisation as a `sanctioning-body`. **School FRIAs (64) and school fixed sites are places without a host**: the register names no organisation for them, and they are for the school's own programme (said in the notes).
+  - Every new place has access `permission` (the FAA records say nothing about visiting); `verifiedAt` is the FRIA's approval date or the fixed site's last edit, not the import time, so "last checked" stays honest.
+  - FRIA record ids drop amendment suffixes (`…-FRIA-A1` → `…-FRIA`); fixed sites use the FAA's site id when there is one, else the record's GlobalID.
+  - On later runs, a place or host the census created only gets register facts refreshed (FRIA flag, source link, newer date, a missing host): names, coordinates, notes and access belong to the crew and stewards (principle 4 in `LANDSCAPE.md`).
+  - Class B shelves are kept with their floor in `lower_ft`; the FAA gives shelf floors above sea level, which in Florida (under 350 ft of terrain) is close to above ground. Class D and E areas that are part-time (hours by NOTAM) are stored like the others: the table has no column for hours.
+  - Airports, airspace and ZIP codes are mirrors: rows the register dropped are deleted, unless a response looks incomplete (under half of what we hold).
+  - The seed now marks Silver Field and West Delray as FRIAs too (`seed-data.ts`): `pnpm db:seed` writes every column any seeded place sets, so it used to clear the flag the census had set.
+- **Result (local database, 2026-10-27):** 163 FRIAs and 104 fixed sites in Florida became 187 new places plus 4 seeded places linked to their record (193 places in all) and 91 new hosts (clubs already seeded were matched by charter number or name), 926 airports and heliports (9 closed ones skipped), 122 airspace areas, 1,013 ZIP codes. Eight requests in all; a second run changed nothing.
+- **Impact:** no new environment variables or services. Running it on a schedule (the registers change every few weeks) needs SST Cron: ask Itaca engineering. Possible schema additions for slice 3, not made: a fixed site's ceiling as a number (today in notes), part-time hours for airspace, and the FRIA polygon itself (today only its centre).
+
+## 2026-10-27 — Servo 1.0: the plan to finish the web, and who approves what
+
+- **What:** four specifications in `docs/specs/` (0001 events, 0002 places, 0003 community, 0004 launch) and a new "Servo 1.0" section in `ROADMAP.md`. The owner accepted five recommendations:
+  1. Version 1 is phases 0–4, public in Florida. Profiles and builds with photos, stored results, flying conditions, the mobile app and other states come after.
+  2. **The owner acts as Itaca engineering** for the items `AGENTS.md` sends there (accounts and personal data, roles, emails, uploads, AI, scheduled jobs, region and domain). Each one is recorded here when it is built. An Itaca review before production is still recommended.
+  3. Sign-in with Google or a one-time email link, no passwords. Name and home ZIP code are optional; nothing about a member is public by default.
+  4. Clubs and tracks are verified by an email at the club's own domain or a code placed on its website; otherwise the crew checks by hand.
+  5. Events and places for all of Florida from day one; community and promotion start in South Florida.
+- **Why:** the owner's request to finish events and community as version 1, ready to launch, built as a public platform people want to take part in (`LANDSCAPE.md`).
+- **Impact:** the owner asked for all of it to be built in one go; slices are committed in order on branches `feat/servo-1.0-*`. Deploying stays with the owner (`docs/LAUNCH.md`).
+
 ## 2026-10-27 — Refreshed to the Itaca standard `create-itaca@0.2.3`
 
 - **What:** Servo takes everything new in the `platform` stack 0.2.3 that applies to it:

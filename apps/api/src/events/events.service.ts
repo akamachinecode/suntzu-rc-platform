@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { and, asc, eq, isNotNull, schema, sql, type SQL } from "@workspace/db";
+import { and, asc, count, eq, inArray, isNotNull, ne, schema, sql, type SQL } from "@workspace/db";
 import {
   SOURCE_TRUST,
   type CalendarQuery,
@@ -14,7 +14,10 @@ import { env } from "../env.js";
 import { localDate } from "./engine/read.js";
 import { writeIcs, type IcsEvent } from "./ics-writer.js";
 
-const { events, places, hosts, eventSightings, sightings, sources } = schema;
+const { events, places, hosts, eventSightings, sightings, sources, changes, follows, rsvps } =
+  schema;
+
+const PUBLIC_FIELDS = ["created", "startDate", "endDate", "status", "datePrecision"] as const;
 
 type EventRow = typeof events.$inferSelect;
 type PlaceRow = typeof places.$inferSelect;
@@ -55,6 +58,9 @@ export class EventsService {
     if (query.discipline) conditions.push(eq(events.discipline, query.discipline));
     if (query.kind) conditions.push(eq(events.kind, query.kind));
     if (query.region) conditions.push(eq(events.region, query.region));
+    if (query.host) conditions.push(eq(hosts.slug, query.host));
+    if (query.place) conditions.push(eq(places.slug, query.place));
+    conditions.push(sql`${events.rejectedAt} is null`);
 
     const rows = await this.db
       .select({ event: events, place: places, host: hosts })
@@ -74,10 +80,70 @@ export class EventsService {
       .leftJoin(hosts, eq(events.hostId, hosts.id))
       .where(and(eq(events.slug, slug), isNotNull(events.publishedAt)));
     if (!row) throw new NotFoundException();
+    const [sourceList, history, editions, people] = await Promise.all([
+      this.sourcesOf(row.event.id),
+      this.historyOf(row.event.id),
+      this.editionsOf(row.event),
+      this.peopleOf(row.event.id),
+    ]);
     return {
       ...toEvent(row.event, row.place, row.host),
-      sources: await this.sourcesOf(row.event.id),
+      sources: sourceList,
+      history,
+      editions,
+      people,
     };
+  }
+
+  /** What changed and when, oldest first: dates, status and the day it appeared. */
+  private async historyOf(eventId: string): Promise<EventDetail["history"]> {
+    const rows = await this.db
+      .select()
+      .from(changes)
+      .where(and(eq(changes.eventId, eventId), inArray(changes.field, [...PUBLIC_FIELDS])))
+      .orderBy(asc(changes.createdAt));
+    return rows.map((row) => ({
+      field: row.field as (typeof PUBLIC_FIELDS)[number],
+      from: row.field === "created" ? null : row.oldValue,
+      to: row.field === "created" ? null : row.newValue,
+      at: row.createdAt.toISOString(),
+    }));
+  }
+
+  /** Other published editions of the same series, in date order. */
+  private async editionsOf(event: EventRow): Promise<EventDetail["editions"]> {
+    if (!event.seriesId) return [];
+    const rows = await this.db
+      .select()
+      .from(events)
+      .where(
+        and(
+          eq(events.seriesId, event.seriesId),
+          ne(events.id, event.id),
+          isNotNull(events.publishedAt),
+        ),
+      )
+      .orderBy(asc(events.startDate));
+    return rows.map((row) => ({
+      slug: row.slug,
+      name: row.name,
+      startDate: row.startDate,
+      datePrecision: row.datePrecision,
+      dateText: row.dateText,
+      status: row.status,
+      resultsUrl: row.resultsUrl,
+    }));
+  }
+
+  private async peopleOf(eventId: string): Promise<EventDetail["people"]> {
+    const [[followed], [going]] = await Promise.all([
+      this.db
+        .select({ n: count() })
+        .from(follows)
+        .where(and(eq(follows.target, "event"), eq(follows.targetId, eventId))),
+      this.db.select({ n: count() }).from(rsvps).where(eq(rsvps.eventId, eventId)),
+    ]);
+    return { following: followed?.n ?? 0, going: going?.n ?? 0 };
   }
 
   async places(): Promise<Place[]> {
@@ -86,11 +152,7 @@ export class EventsService {
       .from(places)
       .leftJoin(hosts, eq(places.hostId, hosts.id))
       .orderBy(asc(places.name));
-    return rows.map(({ place, host }) => ({
-      ...toPlaceSummary(place),
-      notes: place.notes,
-      host: host && toHostSummary(host),
-    }));
+    return rows.map(({ place, host }) => toPlace(place, host));
   }
 
   /** An ICS feed of upcoming events with exact dates, filtered like the list. */
@@ -153,7 +215,7 @@ export class EventsService {
   }
 }
 
-function toPlaceSummary(place: PlaceRow) {
+export function toPlaceSummary(place: PlaceRow) {
   return {
     slug: place.slug,
     name: place.name,
@@ -169,11 +231,24 @@ function toPlaceSummary(place: PlaceRow) {
   };
 }
 
-function toHostSummary(host: HostRow) {
+export function toPlace(place: PlaceRow, host: HostRow | null): Place {
+  return {
+    ...toPlaceSummary(place),
+    notes: place.notes,
+    host: host && toHostSummary(host),
+    disciplines: place.disciplines,
+    access: place.access,
+    register: place.register,
+    sourceUrl: place.sourceUrl,
+    verifiedAt: place.verifiedAt?.toISOString() ?? null,
+  };
+}
+
+export function toHostSummary(host: HostRow) {
   return { slug: host.slug, name: host.name, kind: host.kind, url: host.url };
 }
 
-function toEvent(event: EventRow, place: PlaceRow | null, host: HostRow | null): RcEvent {
+export function toEvent(event: EventRow, place: PlaceRow | null, host: HostRow | null): RcEvent {
   return {
     slug: event.slug,
     name: event.name,
@@ -197,13 +272,14 @@ function toEvent(event: EventRow, place: PlaceRow | null, host: HostRow | null):
     entryUrl: event.entryUrl,
     resultsUrl: event.resultsUrl,
     requirements: event.requirements,
+    beginnerFriendly: event.beginnerFriendly,
     confidence: event.confidence,
     lastCheckedAt: event.lastCheckedAt?.toISOString() ?? null,
     updatedAt: event.updatedAt.toISOString(),
   };
 }
 
-function toIcsEvent(event: RcEvent): IcsEvent {
+export function toIcsEvent(event: RcEvent): IcsEvent {
   const place = event.place;
   const where = place
     ? [place.name, place.address, place.city, place.state].filter(Boolean).join(", ")

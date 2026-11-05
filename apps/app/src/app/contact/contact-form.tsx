@@ -5,6 +5,7 @@ import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { Textarea } from "@workspace/ui/components/textarea";
+import { Turnstile } from "@/components/turnstile";
 import { TOPICS, type Topic } from "@/content/services";
 import { type ContactState, submitContact } from "./actions";
 
@@ -65,6 +66,7 @@ export function ContactForm({ topic }: { topic?: Topic }) {
           aria-invalid={!!state.errors?.message}
         />
       </Field>
+      <Turnstile />
       <div className="flex flex-wrap items-center gap-4">
         <Button type="submit" size="lg" disabled={pending}>
           {pending ? "Sending…" : "Send message"}

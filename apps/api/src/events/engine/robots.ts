@@ -1,5 +1,6 @@
 // robots.txt rules (RFC 9309): the group for our user agent, or "*" when there is none; the
 // longest matching rule wins and Allow wins a tie. `*` matches anything, `$` ends the path.
+// Crawl-delay and Request-rate aren't in the RFC, but sites that set them get the slower one.
 
 export interface RobotsRules {
   allows(path: string): boolean;
@@ -51,7 +52,15 @@ export function parseRobots(text: string, userAgent: string): RobotsRules {
       // An empty Disallow allows everything.
       if (value) current.rules.push({ allow: key === "allow", pattern: value });
     } else if (key === "crawl-delay" && Number.isFinite(Number(value))) {
-      current.crawlDelaySeconds = Number(value);
+      current.crawlDelaySeconds = Math.max(current.crawlDelaySeconds ?? 0, Number(value));
+    } else if (key === "request-rate") {
+      // "1/60": one request every 60 s ("1/10m": every 10 minutes).
+      const rate = /^(\d+)\s*\/\s*(\d+)\s*([smh])?/i.exec(value);
+      if (rate && Number(rate[1]) > 0) {
+        const unit = { s: 1, m: 60, h: 3600 }[(rate[3] ?? "s").toLowerCase() as "s" | "m" | "h"];
+        const seconds = (Number(rate[2]) * unit) / Number(rate[1]);
+        current.crawlDelaySeconds = Math.max(current.crawlDelaySeconds ?? 0, seconds);
+      }
     }
   }
 

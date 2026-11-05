@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <atom:link href="http://rcacf.com/page-7741/EventModule/6726889/RSS" rel="self" type="application/rss+xml" />
+    <title>RCACF upcoming events</title>
+    <link>https://rcacf.com/events</link>
+    <description>RCACF upcoming events</description>
+    <dc:creator>RCACF</dc:creator>
+    <generator>Wild Apricot - membership management software and more</generator>
+    <language>en</language>
+    <pubDate>Tue, 27 Oct 2026 17:20:55 GMT</pubDate>
+    <lastBuildDate>Tue, 27 Oct 2026 17:20:55 GMT</lastBuildDate>
+    <item>
+      <pubDate>Sat, 14 Nov 2026 15:00:00 GMT</pubDate>
+      <title>RCACF - Monthly Membership Meeting (11/14/2026)</title>
+      <description />
+      <link>https://rcacf.com/event-6487789</link>
+      <guid>https://rcacf.com/event-6487789</guid>
+      <dc:creator />
+    </item>
+    <item>
+      <pubDate>Sat, 21 Nov 2026 13:30:00 GMT</pubDate>
+      <title>RCACF - Monthly Work Party (11/21/2026)</title>
+      <description />
+      <link>https://rcacf.com/event-6487793</link>
+      <guid>https://rcacf.com/event-6487793</guid>
+      <dc:creator />
+    </item>
+    <item>
+      <pubDate>Sun, 27 Dec 2026 05:00:00 GMT</pubDate>
+      <title>RCACF Event - TBA (12/27/2026)</title>
+      <description>&lt;p&gt;End of year Air Show.&amp;nbsp; Details TBD.&lt;/p&gt;</description>
+      <link>https://rcacf.com/event-6743451</link>
+      <guid>https://rcacf.com/event-6743451</guid>
+      <dc:creator />
+    </item>
+  </channel>
+</rss>

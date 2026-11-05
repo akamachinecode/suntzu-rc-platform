@@ -1,0 +1,1 @@
+ALTER TABLE "members" ADD COLUMN "monthly_report" boolean DEFAULT true NOT NULL;

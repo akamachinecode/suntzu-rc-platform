@@ -76,7 +76,7 @@ The probe recognises the site's platform first (DualRates, Wix, WordPress, Wild 
 
 ### Layer 3 — Events: four ways in
 
-- **a) Watch known channels.** The workhorse: cheap, exact and early, because organisers publish on their own channels first. The readers built on 2026-10-22 (ICS, JSON-LD) are this layer.
+- **a) Watch known channels.** The workhorse: cheap, exact and early, because organisers publish on their own channels first. The readers built on 2026-10-22 (ICS, JSON-LD) and the platform readers of 2026-10-27 (The Events Calendar, Wild Apricot, schedule tables; the second census sample is in `DECISIONS.md`) are this layer.
 - **b) Read aggregators** that already collect events for one discipline (RCSignup for cars, MultiGP for FPV, AMA with permission). Wide coverage per request, but later and less detailed than the organiser.
 - **c) Sweep the open web** on a schedule with a fixed matrix of searches (below), through a search or "find all" API. Finds the long tail and new organisers.
 - **d) Standing monitors**: queries a provider re-runs continuously and that notify us when a new matching page appears. The early-warning system between sweeps.

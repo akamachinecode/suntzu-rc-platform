@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { getApi } from "@/lib/api";
 
 const buildSchema = z.object({
   name: z.string().trim().min(1, "Please enter your name.").max(100),
@@ -18,8 +19,8 @@ export type BuildState = {
 };
 
 /**
- * Community submissions, phase 1: no accounts. The crew reviews each one and publishes it by hand.
- * Phase 2 (member accounts and posts) needs a database and auth — see docs/DECISIONS.md.
+ * Builds reach the crew's inbox (docs/bits/community.share-build.md). The crew picks favourites
+ * and checks with the person before anything goes live.
  */
 export async function submitBuild(_prev: BuildState, formData: FormData): Promise<BuildState> {
   const parsed = buildSchema.safeParse({
@@ -35,8 +36,23 @@ export async function submitBuild(_prev: BuildState, formData: FormData): Promis
     };
   }
 
-  // TODO: deliver to the crew (Amazon SES) — same as the contact form.
-  console.info("Build submission", { name: parsed.data.name, model: parsed.data.model });
+  const api = await getApi();
+  const token = formData.get("cf-turnstile-response");
+  const { error } = await api.POST("/messages", {
+    body: {
+      kind: "build",
+      // The crew's inbox shows the model as the topic (up to 40 characters); the story has it all.
+      topic: parsed.data.model.slice(0, 40),
+      body: `${parsed.data.model}\n\n${parsed.data.story}`,
+      name: parsed.data.name,
+      email: parsed.data.email,
+      link: parsed.data.link,
+      ...(typeof token === "string" && { turnstileToken: token }),
+    },
+  });
+  if (error) {
+    return { status: "error", message: "We couldn't send it. Try again in a minute." };
+  }
 
   return {
     status: "success",

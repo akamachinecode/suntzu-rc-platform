@@ -2,9 +2,10 @@ import type { NewEvent, NewHost, NewPlace, NewSeries, NewSource } from "@workspa
 
 // Starting data for the events engine: the hand-checked calendar and places of
 // apps/app/src/content/events.ts and places.ts (checked 2026-10-20), and the candidate sources
-// researched in docs/EVENTS-ENGINE.md (2026-10-21). Links between rows use slugs; seed.ts
-// turns them into ids. Apps can't import each other, so this is a copy: once /events reads
-// from the API (roadmap A4), the app's events.ts goes away.
+// researched in docs/EVENTS-ENGINE.md (2026-10-21) and in the platform census (2026-10-27,
+// DECISIONS.md). Links between rows use slugs; seed.ts turns them into ids. Apps can't import
+// each other, so this is a copy: once /events reads from the API (roadmap A4), the app's
+// events.ts goes away.
 
 type WithLinks<T> = Omit<T, "hostId" | "placeId" | "seriesId"> & {
   host?: string;
@@ -52,6 +53,54 @@ export const HOSTS: NewHost[] = [
   },
   { slug: "deland-rc", name: "DeLand RC", kind: "club", url: "https://www.delandrc.com" },
   { slug: "ace-of-aces", name: "Ace of Aces", kind: "organiser", url: "https://aceofaces.org/" },
+  // Clubs whose sites the engine reads or will read (platform census, 2026-10-27).
+  {
+    slug: "imperial-rc-club",
+    name: "Imperial R/C Club",
+    kind: "club",
+    url: "https://imperialrcclub.com",
+    aliases: ["IRCC", "Imperial Radio Control Club"],
+  },
+  {
+    slug: "rcacf",
+    name: "Remote Control Association of Central Florida",
+    kind: "club",
+    url: "https://rcacf.com",
+    aliases: ["RCACF"],
+  },
+  {
+    slug: "eglin-aero-modelers",
+    name: "Eglin Aero Modelers",
+    kind: "club",
+    url: "https://eglinaeromodellers.org",
+  },
+  {
+    slug: "martin-county-modelers",
+    name: "Martin County Modelers",
+    kind: "club",
+    url: "https://mcmodelers.com",
+  },
+  {
+    slug: "sarasota-rc-squadron",
+    name: "Sarasota R/C Squadron",
+    kind: "club",
+    url: "https://www.sarasotarc.com",
+    // The FAA register calls it "SRQ R/C Squadron" (AMA club 780): the census matches it here.
+    amaClubNumber: 780,
+    aliases: ["SRQ R/C Squadron"],
+  },
+  {
+    slug: "sarasota-silent-flyers",
+    name: "Sarasota Silent Flyers",
+    kind: "club",
+    url: "https://www.sarasotasilentflyers.com",
+  },
+  {
+    slug: "triple-creek-rc",
+    name: "Triple Creek RC Club",
+    kind: "club",
+    url: "https://www.triplecreekrc.com",
+  },
 ];
 
 // Coordinates: the centre of each field's FAA FRIA area (FAA UAS Data Delivery System, public
@@ -66,6 +115,8 @@ export const PLACES: WithLinks<NewPlace>[] = [
     address: "20044 SW 168th St (west of Krome Ave)",
     city: "Miami",
     county: "Miami-Dade",
+    // FAA record 2022-CBO-00118-FRIA (`pnpm census` links it): the seed must not unset the flag.
+    isFria: true,
     notes: "AMA club 200. Home of Jets Over Miami every December.",
     url: "https://www.amps-rc.com",
     aliases: ["AMPS field"],
@@ -95,6 +146,8 @@ export const PLACES: WithLinks<NewPlace>[] = [
     address: "10875 W Atlantic Ave",
     city: "Delray Beach",
     county: "Palm Beach",
+    // FAA record 2023-CBO-00628-FRIA.
+    isFria: true,
     notes: "AMA club 1016. Hosts 3D Over the Glades each February.",
     url: "https://www.palmbeachrc.com",
     latitude: 26.4647,
@@ -331,7 +384,16 @@ export const CREW_SOURCE: NewSource = {
   permission: "Our own data. Every event links to the organiser's page.",
 };
 
-// Candidates only: the worker (roadmap A3) checks robots.txt and terms before turning one on.
+// Every source says in `permission` what its robots.txt and terms said when it was checked.
+// "active" ones are read by `pnpm engine`; candidates wait for a check, a fix or a yes;
+// blocked ones are never read.
+const DUALRATES_BLOCK =
+  "DualRates club site. From the dev machine (Europe) every page, robots.txt included, " +
+  "answers with DualRates' region block ('Access to this page is currently limited to " +
+  "specific regions and verified networks', checked 2026-10-27), and the engine stops there. " +
+  "Try again from the US deployment, or ask DualRates (roadmap D6); then set followLinks or " +
+  "feedUrl from what the site publishes (schema.org events and iCal, DISCOVERY.md).";
+
 export const SOURCES: WithLinks<NewSource>[] = [
   CREW_SOURCE,
   {
@@ -378,7 +440,7 @@ export const SOURCES: WithLinks<NewSource>[] = [
     region: "south-florida",
     permission:
       "robots.txt allows reading (checked 2026-10-22). Wix event pages carry schema.org data.",
-    config: { followLinks: "^/event-details", discipline: "air" },
+    config: { platform: "wix", followLinks: "^/event-details", discipline: "air" },
   },
   {
     slug: "ama-event-calendar",
@@ -392,14 +454,19 @@ export const SOURCES: WithLinks<NewSource>[] = [
   },
   {
     slug: "rcsignup",
-    name: "RCSignup events (Florida)",
-    url: "https://rcsignup.com/events/",
-    adapter: "html",
+    name: "RCSignup races in Florida",
+    url: "https://rcsignup.com/rc-races/florida/",
+    adapter: "json-ld",
     trust: "aggregator",
+    status: "active",
     region: "florida",
     checkEveryHours: 24,
-    permission: "robots.txt asks for 10 s between requests and blocks /api/.",
-    config: { crawlDelaySeconds: 10 },
+    permission:
+      "robots.txt allows /rc-races/ and asks for 10 s between requests (Crawl-delay 10; /api/ " +
+      "and racer profiles disallowed), checked 2026-10-27. The site publishes no terms of use " +
+      "(home, events and Florida pages checked). The Florida page lists upcoming races as " +
+      "schema.org SportsEvent data; we keep facts and link to each race's RCSignup page.",
+    config: { platform: "rcsignup", discipline: "ground" },
   },
   {
     slug: "extreme-flight-schedule",
@@ -407,7 +474,18 @@ export const SOURCES: WithLinks<NewSource>[] = [
     url: "https://extremeflightrc.com/pages/event-schedule",
     adapter: "html",
     trust: "aggregator",
-    permission: "One page, changes about once a season.",
+    status: "active",
+    region: "florida",
+    permission:
+      "robots.txt (Shopify) allows /pages/, checked 2026-10-27. The terms of service forbid " +
+      "scraping only 'in violation of applicable law' and protect Extreme Flight's own text " +
+      "and images: we keep dates, names and towns with a link, never their text. One page, " +
+      "changes about once a season; US-wide, so only the Florida rows are kept.",
+    config: {
+      platform: "schedule-table",
+      discipline: "air",
+      onlyPlaces: ",\\s*FL$",
+    },
   },
   {
     slug: "horizon-hobby-calendar",
@@ -415,7 +493,13 @@ export const SOURCES: WithLinks<NewSource>[] = [
     url: "https://www.horizonhobby.com/rc-events-calendar/",
     adapter: "html",
     trust: "aggregator",
-    permission: "Check terms and robots.txt.",
+    status: "blocked",
+    permission:
+      "robots.txt allows the page (checked 2026-10-27), but the terms of use say the site is " +
+      "for personal, non-commercial use and forbid reproduction or re-publication of its " +
+      "content without Horizon Hobby's written permission. Ask Horizon first. Once allowed: " +
+      "the page carries its US events (~230 entries) as JSON (the `mobify-data` script: title, start and " +
+      "end date, town), a short reader.",
   },
   {
     slug: "roar-nationals",
@@ -423,7 +507,137 @@ export const SOURCES: WithLinks<NewSource>[] = [
     url: "https://roarracing.com/national_races.php",
     adapter: "html",
     trust: "sanctioning-body",
-    permission: "Check terms and robots.txt.",
+    permission:
+      "robots.txt allows everything but /join (checked 2026-10-27); the site publishes a " +
+      "privacy policy and no terms of use. Not worth a reader: the national page gives no " +
+      "dates and lists each host with a person's name, phone and email, the regional list " +
+      "is empty, and ROAR-sanctioned Florida races reach the engine through RCSignup.",
+  },
+  {
+    slug: "multigp-races",
+    name: "MultiGP races and chapters",
+    url: "https://www.multigp.com/races/upcoming-events/",
+    adapter: "html",
+    trust: "sanctioning-body",
+    status: "blocked",
+    region: "florida",
+    permission:
+      "robots.txt disallows /mgp/ (checked 2026-10-27), and the race finder and the chapter " +
+      "list both load their data from /mgp/races and /mgp/chapters. A partnership with " +
+      "MultiGP or a Florida chapter is the way in (roadmap D6).",
+    config: { discipline: "fpv" },
+  },
+  {
+    slug: "imperial-rc-events",
+    name: "Imperial R/C Club events",
+    url: "https://imperialrcclub.com/events/",
+    adapter: "api",
+    trust: "organiser",
+    status: "active",
+    host: "imperial-rc-club",
+    region: "florida",
+    permission:
+      "robots.txt allows /wp-json/ (only cart, admin and upload logs are disallowed), checked " +
+      "2026-10-27; no terms of use linked from the site. WordPress with The Events Calendar: " +
+      "its public REST API lists upcoming events. Its ?ical=1 export answered empty.",
+    config: {
+      platform: "the-events-calendar",
+      feedUrl: "https://imperialrcclub.com/wp-json/tribe/events/v1/events?per_page=50",
+      discipline: "air",
+    },
+  },
+  {
+    slug: "rcacf-events",
+    name: "RCACF events",
+    url: "https://rcacf.com/events",
+    adapter: "api",
+    trust: "organiser",
+    status: "active",
+    host: "rcacf",
+    region: "florida",
+    permission:
+      "robots.txt allows /events/ and asks for one request a minute (Request-rate 1/60, " +
+      "Crawl-delay 10), checked 2026-10-27; the fetcher waits that long. No terms of use, a " +
+      "privacy page only. Wild Apricot: the events RSS feed is the public machine-readable list.",
+    config: {
+      platform: "wild-apricot",
+      feedUrl: "https://rcacf.com/events/RSS",
+      discipline: "air",
+    },
+  },
+  {
+    slug: "eglin-aero-modelers-calendar",
+    name: "Eglin Aero Modelers calendar",
+    url: "https://eglinaeromodellers.org",
+    adapter: "ics",
+    trust: "organiser",
+    host: "eglin-aero-modelers",
+    region: "florida",
+    permission:
+      "Public Google Calendar embedded on the club's site (checked 2026-10-27), blocked by " +
+      "calendar.google.com/robots.txt like DeLand's. Needs the club's OK first.",
+    config: {
+      platform: "google-calendar",
+      feedUrl:
+        "https://calendar.google.com/calendar/ical/eglinaeromodellersevents%40gmail.com/public/basic.ics",
+      discipline: "air",
+      timezone: "America/Chicago",
+    },
+  },
+  {
+    slug: "palm-beach-rc-site",
+    name: "Palm Beach RC site",
+    url: "https://www.palmbeachrc.com",
+    adapter: "json-ld",
+    trust: "organiser",
+    host: "palm-beach-rc",
+    region: "south-florida",
+    permission: DUALRATES_BLOCK,
+    config: { platform: "dualrates", discipline: "air" },
+  },
+  {
+    slug: "martin-county-modelers-site",
+    name: "Martin County Modelers site",
+    url: "https://mcmodelers.com",
+    adapter: "json-ld",
+    trust: "organiser",
+    host: "martin-county-modelers",
+    region: "florida",
+    permission: DUALRATES_BLOCK,
+    config: { platform: "dualrates", discipline: "air" },
+  },
+  {
+    slug: "sarasota-rc-squadron-site",
+    name: "Sarasota R/C Squadron site",
+    url: "https://www.sarasotarc.com",
+    adapter: "json-ld",
+    trust: "organiser",
+    host: "sarasota-rc-squadron",
+    region: "florida",
+    permission: DUALRATES_BLOCK,
+    config: { platform: "dualrates", discipline: "air" },
+  },
+  {
+    slug: "sarasota-silent-flyers-site",
+    name: "Sarasota Silent Flyers site",
+    url: "https://www.sarasotasilentflyers.com",
+    adapter: "json-ld",
+    trust: "organiser",
+    host: "sarasota-silent-flyers",
+    region: "florida",
+    permission: DUALRATES_BLOCK,
+    config: { platform: "dualrates", discipline: "air" },
+  },
+  {
+    slug: "triple-creek-rc-site",
+    name: "Triple Creek RC Club site",
+    url: "https://www.triplecreekrc.com",
+    adapter: "json-ld",
+    trust: "organiser",
+    host: "triple-creek-rc",
+    region: "florida",
+    permission: DUALRATES_BLOCK,
+    config: { platform: "dualrates", discipline: "air" },
   },
   {
     slug: "liverc",

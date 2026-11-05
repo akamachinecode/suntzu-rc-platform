@@ -8,6 +8,9 @@ See the Quick start in [`README.md`](../README.md). Servo also has:
 
 - `pnpm db:seed` — loads the hand-checked events, places, hosts and sources into the local database.
 - `pnpm engine [source…]` — runs the events engine once against the real websites (polite: robots.txt, 2 s between requests to the same site). Raw responses go to `ENGINE_SNAPSHOT_DIR` (`.snapshots/`, git-ignored).
+- `pnpm census [dataset…]` — loads the public registers for Florida: FAA recognised areas (`fria`) and recreational fixed sites (`fixed-sites`) into places and clubs, then `airports`, controlled `airspace` and `zip-codes`. About eight requests, one at a time; safe to run again (nothing is added twice). Run `pnpm db:seed` first so the hand-checked places are matched, not duplicated. See [`bits/census.import.md`](./bits/census.import.md).
+
+- `pnpm notify [digest] [report]` — sends change alerts (and, on Thursdays or when named, the weekly digest; on the 1st, organisers' reports) and deletes messages older than 12 months. Locally emails are printed, not sent (`MAIL_TRANSPORT=log`).
 
 ## Deploy and roll back
 

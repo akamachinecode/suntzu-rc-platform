@@ -86,3 +86,37 @@ export function milesBetween(a: [number, number], b: [number, number]): number {
     Math.cos(lat1) * Math.cos(lat2) * Math.sin((lon2 - lon1) / 2) ** 2;
   return 3958.8 * 2 * Math.asin(Math.sqrt(h));
 }
+
+/** Friday to Sunday of this weekend (or the coming one), as YYYY-MM-DD in Florida. */
+export function weekendRange(now = new Date()): { from: string; to: string } {
+  const today = new Date(`${floridaDate(now)}T12:00:00Z`);
+  const weekday = today.getUTCDay(); // 0 Sunday … 6 Saturday
+  const friday = new Date(today);
+  friday.setUTCDate(today.getUTCDate() + (weekday === 0 ? -2 : weekday === 6 ? -1 : 5 - weekday));
+  const sunday = new Date(friday);
+  sunday.setUTCDate(friday.getUTCDate() + 2);
+  const iso = (date: Date) => date.toISOString().slice(0, 10);
+  return { from: weekday >= 5 || weekday === 0 ? iso(today) : iso(friday), to: iso(sunday) };
+}
+
+/** True when an event with exact dates runs on at least one day of the range. */
+export function runsBetween(
+  event: Pick<RcEvent, "startDate" | "endDate" | "datePrecision">,
+  from: string,
+  to: string,
+) {
+  if (event.datePrecision !== "day") return false;
+  return event.startDate <= to && (event.endDate ?? event.startDate) >= from;
+}
+
+/** Today's date in Florida as YYYY-MM-DD, the same in every browser and on the server. */
+export function floridaDate(now = new Date()): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+  const part = (type: string) => parts.find((item) => item.type === type)?.value ?? "";
+  return `${part("year")}-${part("month")}-${part("day")}`;
+}

@@ -1,6 +1,6 @@
 # Roadmap
 
-Status: **approved by the owner, 2026-10-22.** This is the working plan for the events engine and the community. The engine's design is in [`EVENTS-ENGINE.md`](./EVENTS-ENGINE.md); this file says what we index, how the community grows and in which order we build. Tick items off here as they land.
+Status: **approved by the owner, 2026-10-22; Servo 1.0 plan approved 2026-10-27.** This is the working plan for the events engine and the community. The engine's design is in [`EVENTS-ENGINE.md`](./EVENTS-ENGINE.md); this file says what we index, how the community grows and in which order we build. Tick items off here as they land.
 
 ## Why
 
@@ -45,7 +45,25 @@ The community is utility around events and places, not a forum or a social netwo
 
 Later: pilot profiles and builds, and "find an instructor" linked to Servo's lessons.
 
-## Order of work
+## Servo 1.0 — the plan to launch (approved 2026-10-27)
+
+The owner asked to finish the web as version 1: the events and the community, ready to launch in Florida. Each phase is a specification in [`specs/`](./specs/README.md), built slice by slice and ticked off there.
+
+| Phase | What                                                                                            | Spec                                             |
+| ----- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| 0     | Stack refreshed to `create-itaca@0.2.3` (skills, docs, tracing, security, origin lock) — done   | `DECISIONS.md`, 2026-10-27                       |
+| 1     | Events that keep themselves current: resolve, crew console, living event page, finding, readers | [`0001-events.md`](./specs/0001-events.md)       |
+| 2     | Places and clubs: census, `/places`, club pages, "Can I fly here?"                              | [`0002-places.md`](./specs/0002-places.md)       |
+| 3     | Community: accounts, follow and "going", contribute, organisers, newcomers, emails              | [`0003-community.md`](./specs/0003-community.md) |
+| 4     | Launch: infrastructure in `us-east-2`, Turnstile, legal pages, the owner's checklist            | [`0004-launch.md`](./specs/0004-launch.md)       |
+
+**Status (2026-10-28):** phases 0–4 are built and checked locally; every slice is ticked in its spec. Going live is the owner's checklist: [`LAUNCH.md`](./LAUNCH.md).
+
+**Decisions (owner, 2026-10-27):** version 1 is phases 0–4, public in Florida; profiles and builds, stored results, flying conditions and the app come after. The owner approves what `AGENTS.md` sends to Itaca engineering, and each approval is recorded in `DECISIONS.md`. Sign-in is Google or an email link, no passwords; nothing about a member is public by default. Clubs are verified by an email at their domain or a code on their website, else by the crew. Events and places cover all of Florida from day one; community and promotion start in South Florida.
+
+The tracks below are the earlier order of work. Items that Servo 1.0 covers are mapped to its slices; the rest (discovery with Parallel, outreach) continue after launch.
+
+## Earlier order of work (2026-10-22 and 2026-10-23)
 
 Building no longer waits on AWS: everything runs on a laptop against the local PostgreSQL in Docker. Deploying comes last.
 
@@ -64,14 +82,14 @@ Building no longer waits on AWS: everything runs on a laptop against the local P
 - [x] **A1** Commit the dependency updates and the AWS agent rules.
 - [x] **A2** Data model and Zod contracts: sources, fetches, sightings, events, event sightings, series, places, hosts, changes, reviews. Seed from `apps/app/src/content/events.ts` and `places.ts`.
 - [x] **A3** Worker run from a command (`pnpm engine`): polite fetcher, ICS and JSON-LD readers, saved fixtures and Vitest tests. First live result: AeroFest and Jets Over Miami read from the AMPS site.
-- [ ] **A3b** Platform readers in the order the census shows they pay off (DualRates, Wix Events, Wild Apricot, WordPress events), then single sites (Extreme Flight, Horizon Hobby, ROAR, RCSignup) after checking robots.txt and terms.
+- [x] **A3b** Platform readers in the order the census shows they pay off (DualRates, Wix Events, Wild Apricot, WordPress events), then single sites (Extreme Flight, Horizon Hobby, ROAR, RCSignup) after checking robots.txt and terms. Done 2026-10-27 (spec 0001, slice 5): The Events Calendar, Wild Apricot, Extreme Flight and RCSignup are read; DualRates is region-blocked, Horizon Hobby (terms) and MultiGP (robots.txt) wait for permission.
 
 ### Track D — discovery, lean
 
 Design: [`DISCOVERY.md`](./DISCOVERY.md). Good coverage of the important events and correct information matter more than finding every last one; we keep one simple estimate of what we miss.
 
 - [ ] **D1** A sample golden set (~50 events checked by hand) to estimate coverage, instead of an exhaustive one.
-- [ ] **D2** Census v1: FAA FRIA and fixed sites, ROAR, RCSignup, LiveRC, AMYA, MultiGP into `hosts` and `places`; channel probe of every website. Also feeds the map of places.
+- [ ] **D2** Census v1: FAA FRIA and fixed sites, ROAR, RCSignup, LiveRC, AMYA, MultiGP into `hosts` and `places`; channel probe of every website. Also feeds the map of places. FAA FRIA and fixed sites done (`pnpm census`, 2026-10-27).
 - [ ] **D3** Leads pipeline with Parallel (season sweep and a few daily monitors), recording which method found each event.
 - [ ] **D4** Simple comparison of Parallel against our own sources on the sample; estimate of what both miss.
 - [ ] **D6** Outreach: AMA, DualRates, MultiGP, RCSignup, Google Calendar clubs.

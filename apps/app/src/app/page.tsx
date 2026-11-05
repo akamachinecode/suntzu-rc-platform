@@ -223,9 +223,15 @@ export default async function HomePage() {
           Fly-ins, races and shows, close to home and a road trip away.
         </p>
         <PitPasses events={upcoming} />
-        <p className="mt-14">
+        <p className="mt-14 flex flex-wrap justify-center gap-4">
           <Button asChild size="lg">
             <Link href="/events">The whole calendar</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link href="/events?when=weekend">This weekend</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link href="/places">Where to fly</Link>
           </Button>
         </p>
       </section>
@@ -267,11 +273,16 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 pb-24">
           <div className="flex flex-col items-start gap-6 rounded-xl border-2 border-foreground bg-primary p-8 shadow-hard-lg sm:flex-row sm:items-center sm:justify-between sm:p-10">
             <p className="max-w-[30ch] text-2xl leading-tight font-black font-wide sm:text-3xl">
-              Got a question before you buy?
+              Ready for your first flight?
             </p>
-            <Button asChild size="lg" variant="outline">
-              <Link href="/contact">Ask the Servo crew</Link>
-            </Button>
+            <div className="flex flex-wrap gap-3">
+              <Button asChild size="lg" variant="outline">
+                <Link href="/try">Find me a club</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link href="/contact">Ask the Servo crew</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>

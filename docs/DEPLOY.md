@@ -1,6 +1,6 @@
 # Deploy — AWS via SST
 
-Production URL: https://example.com · AWS region `us-east-1` · DNS and proxy in Cloudflare.
+Production URL: https://example.com · AWS region `us-east-2` (the AWS project's only region) · DNS and proxy in Cloudflare.
 
 Infrastructure is code: [`sst.config.ts`](../sst.config.ts) (SST v4, built on Pulumi). SST keeps its state in the AWS account itself, so anyone with access can deploy from any machine.
 

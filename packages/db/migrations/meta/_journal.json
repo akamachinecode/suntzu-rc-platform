@@ -15,6 +15,41 @@
       "when": 1792692595549,
       "tag": "0001_events_engine",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793134973726,
+      "tag": "0002_places_census",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793135465541,
+      "tag": "0003_community",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793135994634,
+      "tag": "0004_event_rejected",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793138243941,
+      "tag": "0005_monthly_report",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793139800646,
+      "tag": "0006_claim_attempts",
+      "breakpoints": true
     }
   ]
 }
