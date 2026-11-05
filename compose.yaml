@@ -1,0 +1,22 @@
+# Local development services. `pnpm db:up` starts them, `pnpm db:down` stops them.
+# Production uses Amazon RDS (see infra/); this file is never deployed.
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+    ports:
+      # Another Postgres already on 5432? Run `DB_PORT=5433 pnpm db:up` and change DATABASE_URL.
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d app"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+
+volumes:
+  db-data:

@@ -1,0 +1,88 @@
+name: Run a task
+
+# Runs one of the jobs in infra/jobs.tf by hand, with the version deployed now, and waits for it to
+# finish. `setup` loads the starting data once after a stage's first deploy (docs/LAUNCH.md).
+on:
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: Stage
+        type: choice
+        options: [production, staging]
+        default: production
+      task:
+        description: Task
+        type: choice
+        options: [setup, engine, notify, census]
+        default: setup
+
+permissions:
+  contents: read
+  id-token: write # OIDC: short-lived AWS credentials, no access keys stored in GitHub
+
+concurrency:
+  group: task-${{ inputs.stage }}-${{ inputs.task }}
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-2
+  STAGE: ${{ inputs.stage }}
+  TASK: ${{ inputs.task }}
+
+jobs:
+  run:
+    name: Run ${{ inputs.task }} on ${{ inputs.stage }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    environment: ${{ inputs.stage }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.17.0
+          terraform_wrapper: false
+
+      # Reads what the last deploy created; changes nothing.
+      - name: Read the stage's outputs
+        working-directory: infra
+        env:
+          TF_IN_AUTOMATION: "1"
+        run: |
+          account=$(aws sts get-caller-identity --query Account --output text)
+          terraform init -input=false -backend-config="bucket=rc-landing-tfstate-${account}"
+          terraform workspace select "$STAGE"
+          terraform output -json jobs > "$RUNNER_TEMP/jobs.json"
+          terraform output -raw cluster > "$RUNNER_TEMP/cluster"
+
+      - name: Run the task and wait for it
+        run: |
+          cluster=$(cat "$RUNNER_TEMP/cluster")
+          family=$(jq -r --arg task "$TASK" '.families[$task]' "$RUNNER_TEMP/jobs.json")
+          network=$(jq -c '{awsvpcConfiguration: {subnets: .subnets, securityGroups: .security_groups, assignPublicIp: "ENABLED"}}' "$RUNNER_TEMP/jobs.json")
+          started=$(aws ecs run-task --cluster "$cluster" --task-definition "$family" --launch-type FARGATE \
+            --network-configuration "$network" --started-by "github-${GITHUB_RUN_ID}" --output json)
+          arn=$(echo "$started" | jq -r '.tasks[0].taskArn // empty')
+          if [ -z "$arn" ]; then
+            echo "::error::ECS couldn't start $TASK: $(echo "$started" | jq -c .failures)"
+            exit 1
+          fi
+          echo "Started $arn. Logs: CloudWatch group /ecs/rc-landing-$STAGE/$TASK."
+          # The waiter gives up after 10 minutes; the setup task can take longer.
+          until aws ecs wait tasks-stopped --cluster "$cluster" --tasks "$arn" 2> /dev/null; do
+            echo "Still running…"
+          done
+          code=$(aws ecs describe-tasks --cluster "$cluster" --tasks "$arn" --query 'tasks[0].containers[0].exitCode' --output text)
+          if [ "$code" != "0" ]; then
+            reason=$(aws ecs describe-tasks --cluster "$cluster" --tasks "$arn" --query 'tasks[0].stoppedReason' --output text)
+            echo "::error::$TASK stopped with exit code $code ($reason). Logs: CloudWatch group /ecs/rc-landing-$STAGE/$TASK."
+            exit 1
+          fi
+          echo "$TASK finished."

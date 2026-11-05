@@ -1,0 +1,195 @@
+/*
+ * Styles for the app. The theme (brand colors, fonts, patterns) is shared:
+ * change it in packages/ui/src/styles/globals.css, not here.
+ * Fonts are loaded with next/font in src/app/layout.tsx.
+ */
+@import "@workspace/ui/globals.css";
+@import "lenis/dist/lenis.css";
+
+/*
+ * Anatomy figures (src/components/iso, src/components/figures).
+ * Drawn straight onto the page: the kit's light theme retuned to primer grey, so every
+ * fill matches the page, tops sit a little lighter and sides a little darker.
+ * XT60 yellow is the one lit accent. The frame around each figure is FigureFrame.
+ */
+.iso.servo-figure,
+.iso.servo-figure[data-theme="light"] {
+  --anatomy-mono: var(--font-archivo);
+  --anatomy-page: var(--background);
+  --anatomy-card: var(--background);
+  --anatomy-paper: var(--background);
+  --anatomy-text: var(--foreground);
+  --anatomy-strong: var(--foreground);
+  --anatomy-muted: var(--muted-foreground);
+  --anatomy-face: #eeeeea;
+  --anatomy-top: #f2f2ee;
+  --anatomy-shade-0: #c8c8c2;
+  --anatomy-shade-1: #d0d0ca;
+  --anatomy-shade-2: #d7d7d1;
+  --anatomy-shade-3: #dededa;
+  --anatomy-hi: #1c1c1e;
+  --anatomy-mid: #75756f;
+  --anatomy-lo: #9e9e98;
+  --anatomy-faint: #c2c2bc;
+  --anatomy-dot: #2a2a2c;
+  --anatomy-halo: #6f6f66;
+  --anatomy-halo-opacity: 0.35;
+  --anatomy-lit: #000000;
+  --anatomy-lit-top: #ffc629;
+  --anatomy-lit-shade: #f0b414;
+  margin: 0;
+}
+.servo-figure .servo-plate {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+.servo-figure .tte {
+  cursor: ew-resize;
+  touch-action: pan-y;
+  border-radius: 0.5rem;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.servo-figure .tte .iso-svg {
+  overflow: visible;
+}
+.servo-figure .tte-void {
+  fill: var(--anatomy-shade-0);
+}
+.servo-figure .tte-cable path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.servo-figure .tte-cable-body {
+  stroke: var(--anatomy-hi);
+  stroke-width: 2.6;
+}
+.servo-figure .tte-cable-core {
+  stroke: var(--anatomy-paper);
+  stroke-width: 1.1;
+}
+.servo-figure .tte-holes circle {
+  fill: var(--anatomy-paper);
+  stroke: var(--anatomy-hi);
+  stroke-width: 0.5;
+  opacity: 1;
+}
+
+/* Plane explorer (src/components/guides/plane-explorer.tsx): ink outlines, the part being read in XT60 yellow. */
+.plane path,
+.plane rect,
+.plane circle {
+  fill: var(--panel);
+  stroke: var(--foreground);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  transition: fill 200ms ease;
+}
+.plane .body {
+  fill: var(--muted);
+}
+.plane .rod {
+  fill: none;
+  stroke-width: 1.5;
+}
+.plane .cg circle {
+  fill: none;
+}
+.plane .cg path {
+  fill: none;
+}
+.plane .is-on,
+.plane .is-on circle {
+  fill: var(--primary);
+}
+.plane .rod.is-on {
+  fill: none;
+  stroke: var(--foreground);
+  stroke-width: 3;
+}
+.plane .cg.is-on circle {
+  fill: var(--primary);
+}
+@media (prefers-reduced-motion: reduce) {
+  .plane * {
+    transition: none;
+  }
+}
+
+/* Exploded trainer (src/components/figures/plane-apart): the assembly you point at lights up, the rest steps down. */
+.servo-figure .pla .iso-svg {
+  overflow: visible;
+}
+.servo-figure .pla [data-on] .iso-top {
+  fill: var(--anatomy-lit-top);
+}
+.servo-figure .pla [data-on] .iso-shade {
+  fill: var(--anatomy-lit-shade);
+}
+.servo-figure .pla [data-on] .iso-solid[data-seamless] > .iso-shade,
+.servo-figure .pla [data-on] .iso-solid[data-seamless] > .iso-top {
+  stroke: var(--anatomy-lit-shade);
+}
+.servo-figure .pla [data-on] .iso-edge {
+  stroke: var(--anatomy-lit);
+}
+.servo-figure .pla[data-focus] g[data-asm]:not([data-on]) .iso-line[data-tone="hi"],
+.servo-figure .pla[data-focus] g:not([data-asm]) .iso-line[data-tone="hi"] {
+  stroke: var(--anatomy-mid);
+}
+.servo-figure .pla[data-focus] g:not([data-on]) .iso-line[data-tone="mid"] {
+  stroke: var(--anatomy-lo);
+}
+
+/* Thrust stand (src/components/figures/thrust-stand). */
+.servo-figure .tsd {
+  --tsd-blade: 1;
+  --tsd-disc: 0;
+  cursor: ew-resize;
+  touch-action: pan-y;
+  border-radius: 0.5rem;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.servo-figure .tsd .iso-svg {
+  overflow: visible;
+}
+.servo-figure .tsd-blades {
+  opacity: var(--tsd-blade);
+}
+.servo-figure .tsd-disc {
+  fill: var(--anatomy-shade-1);
+  stroke: var(--anatomy-mid);
+  stroke-width: 0.5;
+  vector-effect: non-scaling-stroke;
+  opacity: var(--tsd-disc);
+}
+.servo-figure .tsd-lcd {
+  font-family: var(--font-archivo);
+  font-size: 4.6px;
+  font-weight: 700;
+  fill: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
+.servo-figure .tsd-lcd-big {
+  font-size: 8px;
+}
+
+/* Balance beam (src/components/figures/balance). */
+.servo-figure .blc {
+  cursor: ew-resize;
+  touch-action: pan-y;
+  border-radius: 0.5rem;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.servo-figure .blc .iso-svg {
+  overflow: visible;
+}
+.servo-figure .blc-needle {
+  stroke-width: 1.1;
+}

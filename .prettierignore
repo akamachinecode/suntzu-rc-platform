@@ -1,10 +1,13 @@
+dist/
 .next/
 out/
 pnpm-lock.yaml
 next-env.d.ts
-src/components/ui/
-.sst/
-sst-env.d.ts
-.open-next/
-src/components/iso/
+packages/ui/src/components/
+# Generated: the API contract, its typed client and the SQL migrations.
+apps/api/openapi.json
+packages/api-client/src/schema.ts
+packages/db/migrations/
+# Vendored Anatomy kit (MIT, github.com/wheresryan22/anatomy) and the skill itself.
+apps/app/src/components/iso/
 .claude/

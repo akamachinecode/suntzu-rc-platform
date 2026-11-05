@@ -1,0 +1,13 @@
+.git
+.github
+**/node_modules
+**/.pnpm-store
+**/.next
+**/.astro
+**/dist
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log
+infra
+docs

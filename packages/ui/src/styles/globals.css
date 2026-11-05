@@ -1,0 +1,201 @@
+/*
+ * Theme for SunTzu RC — Tailwind CSS 4 + shadcn/ui.
+ * Brand colors: change the CSS variables in :root (light) and .dark (dark mode).
+ * Use the tokens in components (bg-primary, text-muted-foreground…), never raw colors.
+ * Shared by every app. Each app loads Archivo with next/font and sets --font-archivo.
+ */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Classes used by the shared components (each app scans its own files). */
+@source "../components";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-archivo);
+  --font-heading: var(--font-archivo);
+  --color-mat: var(--mat);
+  --color-mat-foreground: var(--mat-foreground);
+  --color-mat-grid: var(--mat-grid);
+  --color-panel: var(--panel);
+  --color-sky: var(--sky);
+  --color-lead: var(--lead);
+  --shadow-hard-sm: 3px 3px 0 0 var(--foreground);
+  --shadow-hard: 5px 5px 0 0 var(--foreground);
+  --shadow-hard-lg: 10px 10px 0 0 var(--foreground);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* SunTzu RC brand. Primer grey shell, ink, XT60 connector yellow, cutting-mat green. */
+  --background: #e4e4df;
+  --foreground: #000000;
+  --panel: #fafaf7;
+  --card: #fafaf7;
+  --card-foreground: #000000;
+  --popover: #fafaf7;
+  --popover-foreground: #000000;
+  --primary: #ffc629;
+  --primary-foreground: #000000;
+  --secondary: #fafaf7;
+  --secondary-foreground: #000000;
+  --muted: #d6d6d0;
+  --muted-foreground: #4a4a46;
+  --accent: #ffc629;
+  --accent-foreground: #000000;
+  --destructive: #d42a1f;
+  --mat: #2e6a4e;
+  --mat-foreground: #f4f7f2;
+  --mat-grid: #4b8a6c;
+  /* Two more hobby colours, used sparingly: the sky planes fly in, and a LiPo's red lead. */
+  --sky: #4da3f0;
+  --lead: #f0553c;
+  --border: #000000;
+  --input: #000000;
+  --ring: #000000;
+  --chart-1: #ffc629;
+  --chart-2: #2e6a4e;
+  --chart-3: #000000;
+  --chart-4: #4a4a46;
+  --chart-5: #d42a1f;
+  --radius: 0.5rem;
+  --sidebar: #fafaf7;
+  --sidebar-foreground: #000000;
+  --sidebar-primary: #ffc629;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #d6d6d0;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #000000;
+  --sidebar-ring: #000000;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+    font-variation-settings: "wdth" 100;
+  }
+  :focus-visible {
+    outline: 3px solid var(--foreground);
+    outline-offset: 3px;
+  }
+}
+
+@utility font-wide {
+  font-stretch: 125%;
+}
+
+@utility font-narrow {
+  font-stretch: 75%;
+}
+
+/* Self-healing cutting mat: 1 cm grid with a heavier line every 5 cm. */
+@utility bg-cutting-mat {
+  background-color: var(--mat);
+  background-image:
+    linear-gradient(var(--mat-grid) 2px, transparent 2px),
+    linear-gradient(90deg, var(--mat-grid) 2px, transparent 2px),
+    linear-gradient(color-mix(in oklab, var(--mat-grid) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--mat-grid) 55%, transparent) 1px,
+      transparent 1px
+    );
+  background-size:
+    160px 160px,
+    160px 160px,
+    32px 32px,
+    32px 32px;
+  /* Offset so no grid line lands on the section's edge and reads as a divider. */
+  background-position: 16px 16px;
+}
+
+/* A workshop pegboard: the wall the event passes hang on. */
+@utility bg-pegboard {
+  background-color: var(--muted);
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--foreground) 16%, var(--muted)) 3px,
+    transparent 4px
+  );
+  background-size: 32px 32px;
+  background-position: 16px 16px;
+}

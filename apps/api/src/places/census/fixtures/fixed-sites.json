@@ -1,0 +1,121 @@
+{
+  "features": [
+    {
+      "attributes": {
+        "GLOBALID": "7133de8d-6aa8-457a-901f-14f874a70fc8",
+        "SITE_ID": "",
+        "SITE_NAME": "Saint Augustine RC Flyers-St Johns Solid Waste",
+        "CITY": "Elkton",
+        "STATE": "FL",
+        "LATITUDE": 29.8427,
+        "LONGITUDE": -81.40953,
+        "CEILING": 1200,
+        "LAST_EDIT_DT": "6/3/2025"
+      }
+    },
+    {
+      "attributes": {
+        "GLOBALID": "5ccde476-80d7-49a5-9947-e3c2e4956e78",
+        "SITE_ID": "",
+        "SITE_NAME": "RC Bush Pilots - Dyer Park",
+        "CITY": "West Palm Beach",
+        "STATE": "FL",
+        "LATITUDE": 26.779554,
+        "LONGITUDE": -80.130373,
+        "CEILING": 700,
+        "LAST_EDIT_DT": "6/3/2025"
+      }
+    },
+    {
+      "attributes": {
+        "GLOBALID": "a912e12d-5232-4587-9e32-4e5d50f51cff",
+        "SITE_ID": "",
+        "SITE_NAME": "Tampa RC Aircraft Club Inc - Taylor Rd",
+        "CITY": "Seffner",
+        "STATE": "FL",
+        "LATITUDE": 28.0174590237488,
+        "LONGITUDE": -82.2938373059353,
+        "CEILING": 700,
+        "LAST_EDIT_DT": "6/3/2025"
+      }
+    },
+    {
+      "attributes": {
+        "GLOBALID": "4f3e6f09-c524-4f4f-9724-227e9a6a7792",
+        "SITE_ID": "",
+        "SITE_NAME": "Manatee County Radio Controllers - Carl Wegner Field, Manatee Co RC",
+        "CITY": "Palmetto",
+        "STATE": "FL",
+        "LATITUDE": 27.579578,
+        "LONGITUDE": -82.493001,
+        "CEILING": 1200,
+        "LAST_EDIT_DT": "6/3/2025"
+      }
+    },
+    {
+      "attributes": {
+        "GLOBALID": "92198102-32f5-4d2d-be9d-cac4fb84d594",
+        "SITE_ID": "",
+        "SITE_NAME": "West Field - TORCHS RC Heli Club",
+        "CITY": "Ocoee",
+        "STATE": "FL",
+        "LATITUDE": 28.60875,
+        "LONGITUDE": -81.544551,
+        "CEILING": 700,
+        "LAST_EDIT_DT": "6/3/2025"
+      }
+    },
+    {
+      "attributes": {
+        "GLOBALID": "c3a8cefd-ccb0-4e91-a495-6a72a900dc91",
+        "SITE_ID": "",
+        "SITE_NAME": "One Wing Low Squadron - OWLS - SE 60th St",
+        "CITY": "Morriston",
+        "STATE": "FL",
+        "LATITUDE": 29.241898456139,
+        "LONGITUDE": -82.4834123077665,
+        "CEILING": 1200,
+        "LAST_EDIT_DT": "6/3/2025"
+      }
+    },
+    {
+      "attributes": {
+        "GLOBALID": "399bf04b-4e70-4761-b796-3589881f1c0d",
+        "SITE_ID": "",
+        "SITE_NAME": "Sarasota County Park",
+        "CITY": "Sarasota",
+        "STATE": "FL",
+        "LATITUDE": 27.2968,
+        "LONGITUDE": -82.3897,
+        "CEILING": 1200,
+        "LAST_EDIT_DT": "6/3/2025"
+      }
+    },
+    {
+      "attributes": {
+        "GLOBALID": "e5538b67-61a0-4e8a-ae62-5aa3ea2aafbb",
+        "SITE_ID": "20382",
+        "SITE_NAME": "Moonport Modelers 1",
+        "CITY": "Titusville",
+        "STATE": "FL",
+        "LATITUDE": 28.547716,
+        "LONGITUDE": -80.84839,
+        "CEILING": 200,
+        "LAST_EDIT_DT": "4/1/2019"
+      }
+    },
+    {
+      "attributes": {
+        "GLOBALID": "63fe6cc1-ed11-4089-8944-2d066e93f25d",
+        "SITE_ID": "FL-20063",
+        "SITE_NAME": "Jensen Beach High School/FL-20063",
+        "CITY": "Jensen Beach",
+        "STATE": "FL",
+        "LATITUDE": 27.2408985503601,
+        "LONGITUDE": -80.26655343,
+        "CEILING": 400,
+        "LAST_EDIT_DT": "03/10/2021"
+      }
+    }
+  ]
+}

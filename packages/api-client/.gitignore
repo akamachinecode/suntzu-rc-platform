@@ -1,0 +1,2 @@
+# Generated from apps/api/openapi.json by `pnpm build` (the contract itself is committed).
+src/schema.ts

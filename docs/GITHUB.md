@@ -1,20 +1,20 @@
 # GitHub
 
-Repository: `ITACA-TECHNOLOGIES/rc-landing` (private).
+Repository: `akamachinecode/rc-landing` (private), in the owner's personal GitHub account rather than the Itaca organisation (`DECISIONS.md`, 2026-10-29).
 
 ## 1. Create the repository (if `create-itaca` didn't)
 
 ```bash
 gh auth login
-gh repo create ITACA-TECHNOLOGIES/rc-landing --private --source . --remote origin --push
+gh repo create akamachinecode/rc-landing --private --source . --remote origin --push
 ```
 
 ## 2. Protect `main`
 
-`main` is production. Require Pull Requests and a green CI before merging:
+`main` is production. Require Pull Requests and a green CI before merging. In a personal account, rulesets on a private repository need **GitHub Pro**; on GitHub Free the call below answers 403 and `main` stays unprotected.
 
 ```bash
-gh api -X POST repos/ITACA-TECHNOLOGIES/rc-landing/rulesets --input - <<'JSON'
+gh api -X POST repos/akamachinecode/rc-landing/rulesets --input - <<'JSON'
 {
   "name": "main",
   "target": "branch",
@@ -42,13 +42,12 @@ In **Settings → Advanced Security** (or `Code security`):
 
 ## 4. Deployment secrets and variables
 
-Deploys use the GitHub environment `production` (see [`DEPLOY.md`](./DEPLOY.md)):
+Deploys use one GitHub environment per stage: `production` and `staging` (see [`DEPLOY.md`](./DEPLOY.md)):
 
-| Name                    | Type     | Value                                                     |
-| ----------------------- | -------- | --------------------------------------------------------- |
-| `AWS_DEPLOY_ROLE_ARN`   | variable | IAM role assumed via OIDC ([guide](./AWS-GITHUB-OIDC.md)) |
-| `CLOUDFLARE_ACCOUNT_ID` | variable | Cloudflare account that owns the DNS zone                 |
-| `CLOUDFLARE_API_TOKEN`  | secret   | Token with DNS edit permission on the zone                |
+| Name                   | Type     | Value                                                                                  |
+| ---------------------- | -------- | -------------------------------------------------------------------------------------- |
+| `AWS_DEPLOY_ROLE_ARN`  | variable | IAM role assumed via OIDC, output of `infra/bootstrap` ([guide](./AWS-GITHUB-OIDC.md)) |
+| `CLOUDFLARE_API_TOKEN` | secret   | Token with Zone Read and DNS Edit on the zone                                          |
 
 ## CI
 

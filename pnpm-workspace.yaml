@@ -20,8 +20,33 @@ blockExoticSubdeps: true
 # Packages listed with `false` were reviewed: they work without their script.
 strictDepBuilds: true
 allowBuilds:
+  "@scarf/scarf": false
+  esbuild: false
   sharp: false
   unrs-resolver: false
 
 # Pin exact versions when adding dependencies (`pnpm add`).
 saveExact: true
+
+# Workspace packages: the apps (web app, API) and the shared packages.
+packages:
+  - apps/*
+  - packages/*
+
+# Security exceptions and accepted deprecation warnings, reviewed by Itaca engineering.
+# Each one says why it exists and when to remove it.
+overrides:
+  # GHSA-67mh-4wv8-2f99 (moderate, dev server): esbuild < 0.25.0, pulled in by drizzle-kit 0.31 through @esbuild-kit.
+  # Same esbuild drizzle-kit already uses. Remove when drizzle-kit drops @esbuild-kit (1.0).
+  "@esbuild-kit/core-utils>esbuild": 0.25.12
+allowedDeprecatedVersions:
+  # drizzle-kit 0.31 still depends on these deprecated loaders. Remove with the esbuild override above.
+  "@esbuild-kit/core-utils": "3"
+  "@esbuild-kit/esm-loader": "2"
+audit:
+  ignore:
+    # GHSA-g3hv-75wg-m249 (moderate, DoS with crafted glob patterns): minimatch < 11.0.1, pulled in by
+    # tooling only (ESLint plugins, typescript-eslint, the shadcn CLI), which never matches patterns that
+    # come from users. Fixed only in minimatch 11, which those tools don't support yet, so an override
+    # would break them. Remove when `pnpm why minimatch` shows no version below 11.0.1.
+    - GHSA-g3hv-75wg-m249
