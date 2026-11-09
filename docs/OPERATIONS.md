@@ -20,11 +20,11 @@ See the Quick start in [`README.md`](../README.md). SunTzu RC also has:
 
 ## Access
 
-| What              | Who has access                                         | How                                                          |
-| ----------------- | ------------------------------------------------------ | ------------------------------------------------------------ |
-| GitHub repository | Unknown — ask the owner                                | Organization team                                            |
-| AWS account       | The owner (project `servo`)                            | `aws login --profile servo` (see `DECISIONS.md`, 2026-10-22) |
-| Cloudflare zone   | The owner (`suntzurc.com`, registered with Cloudflare) | Account member, Itaca SSO                                    |
+| What              | Who has access                                         | How                                                                    |
+| ----------------- | ------------------------------------------------------ | ---------------------------------------------------------------------- |
+| GitHub repository | Unknown — ask the owner                                | Organization team                                                      |
+| AWS account       | The owner (project `suntzu-rc`)                        | `aws login --profile suntzu-rc-admin` (see `DECISIONS.md`, 2026-11-10) |
+| Cloudflare zone   | The owner (`suntzurc.com`, registered with Cloudflare) | Account member, Itaca SSO                                              |
 
 ## Configuration and secrets
 

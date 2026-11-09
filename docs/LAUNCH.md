@@ -53,18 +53,18 @@ The domain is registered with Cloudflare Registrar (since 2025-04-05) and alread
 
 ## 4. AWS
 
-1. Sign in: `aws login --profile servo`. Confirm the project's region is **us-east-2**: AWS Settings → View all projects → Overview → Additional info → Region.
-2. Check the plan and the spend limit in AWS Settings → Billing. Each stage runs an always-on RDS database and two Fargate containers (site and API) behind a load balancer, roughly 75 USD a month, plus the scheduled jobs, S3, SES and Bedrock by use: estimate it with the AWS Pricing Calculator before the first deploy, and delete `staging` once production works if you don't need it.
+1. Sign in: `aws login --profile suntzu-rc-admin` (add `--remote` on a machine without a browser). The account is `352587389937`, in **us-east-2**, with advanced features active since 2026-11-10 (`DECISIONS.md`).
+2. Check the credit and the month's spend in Billing and Cost Management (there is no spend limit any more; production's `monthly_budget` warns instead). Each stage runs an always-on RDS database and two Fargate containers (site and API) behind a load balancer, roughly 75 USD a month, plus the scheduled jobs, S3, SES and Bedrock by use: estimate it with the AWS Pricing Calculator before the first deploy, and delete `staging` once production works if you don't need it.
 3. **SES:** request production access (SES console → Account dashboard → Request production access). It takes about a day; until then SES only sends to verified addresses.
 4. **Bedrock:** in the Bedrock console of us-east-2, turn on model access for Claude Opus 5.5 and Claude Opus 4.8 (the fallback). Without it, pasted flyers go to the crew's inbox instead.
-5. **Terraform state, deploy role and image registries:** install [Terraform](https://developer.hashicorp.com/terraform/install) 1.16 or newer, then follow steps 1 and 2 of [`TERRAFORM.md`](./TERRAFORM.md) with `export AWS_PROFILE=servo`. `infra/bootstrap` also turns on CloudWatch Transaction Search, where traces are stored (`infra/bootstrap/traces.tf`).
+5. **Terraform state, deploy role and image registries:** install [Terraform](https://developer.hashicorp.com/terraform/install) 1.16 or newer, then follow steps 1 and 2 of [`TERRAFORM.md`](./TERRAFORM.md) with `export AWS_PROFILE=suntzu-rc-admin`. `infra/bootstrap` also turns on CloudWatch Transaction Search, where traces are stored (`infra/bootstrap/traces.tf`).
 6. **GitHub environments** `production` (with required reviewers, step 1) and `staging`: step 3 of "One-time setup" in [`DEPLOY.md`](./DEPLOY.md).
 
-**Check:** `aws sts get-caller-identity --profile servo` answers with the project's account, and `terraform -chdir=infra/bootstrap output deploy_role_arn` shows the role.
+**Check:** `aws sts get-caller-identity --profile suntzu-rc-admin` answers with the project's account, and `terraform -chdir=infra/bootstrap output deploy_role_arn` shows the role.
 
 ## 5. Settings and secrets, for each stage (`staging` first, then `production`)
 
-They live in AWS Parameter Store under `/rc-landing/<stage>/` (see "Secrets and configuration" in [`DEPLOY.md`](./DEPLOY.md)). The database password and the sign-in secret are created by Terraform; these are yours, with `export AWS_PROFILE=servo`:
+They live in AWS Parameter Store under `/rc-landing/<stage>/` (see "Secrets and configuration" in [`DEPLOY.md`](./DEPLOY.md)). The database password and the sign-in secret are created by Terraform; these are yours, with `export AWS_PROFILE=suntzu-rc-admin`:
 
 ```bash
 aws ssm put-parameter --type SecureString --name /rc-landing/staging/crew-emails --value "you@yourdomain,partner@yourdomain"
@@ -115,8 +115,8 @@ Run **Actions → Deploy → Run workflow** with stage `staging`. The first depl
    - `/places/can-i-fly-here` answers for a point near Miami;
    - ⌘K (or `/`) opens search on any page, and `/search?q=markam park` puts Markham Park first;
    - in CloudWatch, after their first scheduled run, the `/ecs/rc-landing-staging/engine` log ends with a `resolve:` line and `/ecs/rc-landing-staging/notify` with `notify:`;
-   - **monitoring:** every address in `alerts.emails` confirmed its subscriptions; CloudWatch → Alarms lists the `rc-landing-staging-` alarms in `OK` (the `-down` ones are in us-east-1); after opening a page, CloudWatch → Transaction Search shows its trace with the API calls and database queries inside; then rehearse one alarm (`aws cloudwatch set-alarm-state --alarm-name rc-landing-staging-api-5xx --state-value ALARM --state-reason Rehearsal --profile servo`) and check it arrives;
-   - once per account, keep spans 30 days: `aws logs put-retention-policy --log-group-name aws/spans --retention-in-days 30 --profile servo`.
+   - **monitoring:** every address in `alerts.emails` confirmed its subscriptions; CloudWatch → Alarms lists the `rc-landing-staging-` alarms in `OK` (the `-down` ones are in us-east-1); after opening a page, CloudWatch → Transaction Search shows its trace with the API calls and database queries inside; then rehearse one alarm (`aws cloudwatch set-alarm-state --alarm-name rc-landing-staging-api-5xx --state-value ALARM --state-reason Rehearsal --profile suntzu-rc-admin`) and check it arrives;
+   - once per account, keep spans 30 days: `aws logs put-retention-policy --log-group-name aws/spans --retention-in-days 30 --profile suntzu-rc-admin`.
 3. In `/crew`, approve the RCSignup races and anything else waiting (the engine found 10 Florida races that wait for a person, because RCSignup is a listing, not the organiser).
 
 Everything runs in us-east-2 (there is no CloudFront, so no certificate in us-east-1), except the uptime checks' alarms and their alert topic, which AWS keeps in us-east-1. If a resource is refused, check the spend limit and the plan in AWS Settings, then ask Itaca engineering.
