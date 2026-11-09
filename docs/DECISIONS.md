@@ -12,6 +12,15 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-09 — The repository is public for now, with everything GitHub gives public repositories
+
+- **What:** the owner made `akamachinecode/suntzu-rc-platform` (renamed from `rc-landing`; GitHub redirects the old name) **public**, probably for a while, and then turned on what GitHub Free offers public repositories:
+  - a ruleset on `main` (`docs/GITHUB.md`, step 2): pull requests only, no force-push or deletion, and "Format, lint, typecheck, build" and "Secret scan" must pass;
+  - the `production` environment needs the owner's approval and only deploys from `main`; `staging` deploys from any branch, without approval;
+  - secret scanning with push protection, Dependabot alerts and security updates, CodeQL default setup, private vulnerability reporting; merged branches are deleted and auto-merge is allowed.
+- **Why:** unlimited GitHub Actions minutes and those protections, so the whole stack (CI, deploys, scheduled tasks) can be tested for real. Before publishing, the whole history (82 commits, every branch) was checked: no secrets, only `.env.example` files, and no workflow uses `pull_request_target`; the AWS deploy role only trusts this repository's `production` and `staging` environments, by ID.
+- **Impact:** the code and its history are readable by anyone, including the author email of past commits; making it private again doesn't recall forks or clones made meanwhile. No licence: all rights reserved. Making it private again turns off the ruleset and the environment protection on GitHub Free (they need GitHub Pro).
+
 ## 2026-11-03 — A sign-in code next to the link, still no passwords (spec 0006)
 
 - **What:** the owner asked whether to add passwords and decided against them; instead, the sign-in email now carries a **6-digit code** next to the link (spec [0006](./specs/0006-sign-in-code.md), approved today, acting as Itaca engineering for accounts):

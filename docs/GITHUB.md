@@ -1,6 +1,6 @@
 # GitHub
 
-Repository: `akamachinecode/rc-landing` (private), in the owner's personal GitHub account rather than the Itaca organisation (`DECISIONS.md`, 2026-10-29).
+Repository: `akamachinecode/suntzu-rc-platform` (renamed from `rc-landing`; **public** since 2026-11-09, so the ruleset, environment protection and security features below are on), in the owner's personal GitHub account rather than the Itaca organisation (`DECISIONS.md`, 2026-10-29 and 2026-11-09).
 
 ## 1. Create the repository (if `create-itaca` didn't)
 
@@ -11,10 +11,10 @@ gh repo create akamachinecode/rc-landing --private --source . --remote origin --
 
 ## 2. Protect `main`
 
-`main` is production. Require Pull Requests and a green CI before merging. In a personal account, rulesets on a private repository need **GitHub Pro**; on GitHub Free the call below answers 403 and `main` stays unprotected.
+`main` is production. Require Pull Requests and a green CI before merging. In a personal account, rulesets on a private repository need **GitHub Pro**; on GitHub Free the call below answers 403 and `main` stays unprotected. Applied on 2026-11-09, when the repository went public.
 
 ```bash
-gh api -X POST repos/akamachinecode/rc-landing/rulesets --input - <<'JSON'
+gh api -X POST repos/akamachinecode/suntzu-rc-platform/rulesets --input - <<'JSON'
 {
   "name": "main",
   "target": "branch",
