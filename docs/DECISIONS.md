@@ -12,6 +12,20 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-10 — AWS: advanced features activated, because the standard can't deploy without them
+
+- **What:** the owner activated **advanced features** on the AWS organization that holds the project account `352587389937` (now called `suntzu-rc`; the "servo" project of 2026-10-22 is this same account). Activation can't be undone. Then, in the management account, the owner edited the organization policy `AdvancedModeRegionRestrictionSecurityControlPolicy` (`p-7yiz7pzn`): `cloudwatch:*` and `sns:*` were added to the `NotAction` list of its `UsEast1Partitional` statement.
+- **Why:** checked in the account on 2026-11-10, before activating. An account from AWS's new sign-up experience has fixed organization policies that block two things the Itaca standard needs:
+  - **GitHub's OIDC provider:** every `iam:*Provider*` action was denied (even listing), so `infra/bootstrap` couldn't create it and neither Deploy nor "Run a task" could get AWS credentials.
+  - **The uptime alarms:** their CloudWatch alarms and SNS topic must be in us-east-1 (Route 53 health check metrics only exist there), where only reading CloudWatch was allowed and SNS wasn't.
+  - The alternatives were a new classic AWS account (losing this one's credit) or deploying from a laptop without the uptime alarms (outside the standard).
+- **After, checked:** listing OIDC providers works; SNS and CloudWatch answer in us-east-1; everything else is still refused outside us-east-2 (EC2 in us-east-1 and SNS in eu-west-1 were tried). Creating the alarms in us-east-1 is first proven by the first deploy.
+- **Impact:**
+  - **No spend limit any more** (activation removes it). Production's `alerts.monthly_budget` (150 USD) warns instead; the account had 120 USD of credit before activating.
+  - The owner now administers an AWS organization: a management account with a root user, and an "Identity Delegated Admin" account that AWS created. Use the management account only for billing and policies.
+  - **CLI profiles** are `suntzu-rc-admin` and `suntzu-rc-read-only` (role `AgentReadOnly`), kept in the owner's private `agent-config` repository; `servo` is gone. The "new AWS experience" rules in `AGENTS.md` were replaced by a short "AWS account" section.
+  - **For Itaca engineering (create-itaca):** a project from `create-itaca@0.4.0` with the `terraform` deploy can't be deployed to an AWS account created with AWS's default sign-up until advanced features are active and us-east-1 allows CloudWatch and SNS. The template's docs don't say so.
+
 ## 2026-11-09 — The repository is public for now, with everything GitHub gives public repositories
 
 - **What:** the owner made `akamachinecode/suntzu-rc-platform` (renamed from `rc-landing`; GitHub redirects the old name) **public**, probably for a while, and then turned on what GitHub Free offers public repositories:

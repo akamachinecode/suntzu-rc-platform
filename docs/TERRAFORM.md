@@ -31,7 +31,7 @@ aws s3 mb "s3://$BUCKET" --region us-east-2
 
 ```bash
 terraform -chdir=infra/bootstrap init -backend-config="bucket=$BUCKET"
-terraform -chdir=infra/bootstrap apply -var 'github_subject=repo:akamachinecode@<owner-id>/rc-landing@<repo-id>'
+terraform -chdir=infra/bootstrap apply -var 'github_subject=repo:akamachinecode@57374133/suntzu-rc-platform@1438712475'
 ```
 
 - If the account already has GitHub's OIDC provider, add `-var create_oidc_provider=false`.
