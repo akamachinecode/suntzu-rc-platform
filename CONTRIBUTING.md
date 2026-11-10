@@ -15,6 +15,8 @@ Everyone taking part follows the [code of conduct](./CODE_OF_CONDUCT.md).
 
 ## Run it on your computer
 
+The short version is below; [Run it locally](./docs/guides/RUN-LOCALLY.md) has every step explained, things to try and fixes for common problems. New to pull requests? [Your first contribution](./docs/guides/FIRST-CONTRIBUTION.md) walks through one.
+
 You need **Node.js 24** (`nvm use` reads `.nvmrc`), **pnpm** (`corepack enable pnpm`) and **Docker** (for the local database). You don't need an AWS, Cloudflare or Google account.
 
 ```bash

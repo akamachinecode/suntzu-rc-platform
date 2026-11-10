@@ -24,7 +24,8 @@
   #nd-sidebar {
     @apply border-r-2 border-foreground bg-panel;
   }
-  .prose :where(figure.shiki, pre) {
+  /* Fumadocs wraps every code block in a figure: the border goes on the figure only. */
+  .prose :where(figure.shiki) {
     @apply rounded-md border-2 border-foreground shadow-hard-sm;
   }
   .prose :where(table) {

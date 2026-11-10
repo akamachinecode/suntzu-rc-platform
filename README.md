@@ -96,7 +96,9 @@ Everything below is also one website with search: the **[SunTzu RC docs portal](
 
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md), [`SECURITY.md`](./SECURITY.md) — taking part: running it locally, pull requests, behaviour and reporting vulnerabilities
 - [`AGENTS.md`](./AGENTS.md) — rules and recipes for AI agents (and humans), including which skill to use for each kind of request
+- [`docs/guides/`](./docs/guides) — [run it locally](./docs/guides/RUN-LOCALLY.md) and [your first contribution](./docs/guides/FIRST-CONTRIBUTION.md), step by step
 - [`docs/SYSTEM.md`](./docs/SYSTEM.md) — the map: what runs where and how the pieces connect
+- [`docs/DELIVERY.md`](./docs/DELIVERY.md) — from code to production: CI, deploys, Docker images, OIDC and the scheduled jobs
 - [`docs/bits/`](./docs/bits/README.md) — the catalog of bits: each piece of behaviour, end to end
 - [`docs/specs/`](./docs/specs/README.md) — specifications of features, written with `/plan`
 - [`docs/OPERATIONS.md`](./docs/OPERATIONS.md) — running, deploying, rolling back, access and backups
