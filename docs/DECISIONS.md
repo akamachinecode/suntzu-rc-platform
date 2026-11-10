@@ -12,6 +12,13 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-10 — Home performance, step 3: the 3D dioramas lower their sharpness when the device can't keep up
+
+- **What:** each diorama (Air, Rotor, Ground on the home page) starts at the screen's sharpness (up to 2 device pixels per CSS pixel, as before) and measures its own frames. When the median frame of the last 45 is slower than 22 ms (under about 45 fps), it steps down one level, 2 → 1.5 → 1, and never back up, so the picture doesn't flicker. Fast devices never step down. The rule is `apps/app/src/components/scenes/quality.ts`, with its tests.
+- **Measured before deciding:** the dioramas' JavaScript takes 0.4–0.6 ms per frame; their cost is on the graphics chip. Removing the canvases' CSS drop shadow changed nothing, so it stays. The owner chose an adaptive resolution over a lower one for everyone.
+- **Result,** in Chrome without a GPU (software WebGL, a stand-in for a slow device): all three scenes stepped down to 1 by themselves. Standing on each scene: Air 31 → 36 fps, Rotor 37 → 46, Ground 25 → 29. Scrolling through the whole home page: 38 → 44 fps, long tasks 16 → 9 and blocked time 1,127 → 498 ms.
+- **Impact:** no new dependencies. On a slow device the dioramas look slightly softer. Ground is still the slowest, because of its geometry rather than its pixels; if real visitors (RUM) show it, the next steps are 30 frames per second or a still frame on small screens.
+
 ## 2026-11-10 — Home performance, step 2: native scrolling, Lenis removed
 
 - **What:** `lenis` (smooth inertial scroll, added 2026-10-20) is gone from every page, by the owner's decision. Measured in Chrome on the home page: with `lerp: 0.1` a wheel step covered 50% of its distance after 115 ms, 90% after **382 ms** and 99% after 734 ms. The page kept moving for most of a second after the hand stopped, and that delay is what reads as "lag" even when every frame is fast. Without it, the browser scrolls on the frame the wheel moves.

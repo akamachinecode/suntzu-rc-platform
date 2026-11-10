@@ -24,6 +24,7 @@ import {
   WebGLRenderer,
   type Material,
 } from "three";
+import { startRatio } from "./quality";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { mergeGeometries, mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
 
@@ -342,10 +343,13 @@ export function stage(canvas: HTMLCanvasElement, build: Build) {
   );
   camera.lookAt(new Vector3(...target));
 
+  // Device pixels per CSS pixel; ToyStage lowers it on a device that can't keep up (quality.ts).
+  let ratio = startRatio(window.devicePixelRatio);
+
   function resize() {
     const w = Math.max(1, canvas.clientWidth);
     const h = Math.max(1, canvas.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(ratio);
     renderer.setSize(w, h, false);
     const height = Math.max(diorama.view.height, (diorama.view.width * h) / w);
     const half = height / 2;
@@ -373,8 +377,21 @@ export function stage(canvas: HTMLCanvasElement, build: Build) {
     renderer.forceContextLoss();
   }
 
+  /** Draw with fewer (or more) device pixels from the next frame on. */
+  function setPixelRatio(next: number) {
+    ratio = next;
+    resize();
+  }
+
   resize();
-  return { draw, resize, dispose, still: diorama.still };
+  return {
+    draw,
+    resize,
+    dispose,
+    still: diorama.still,
+    pixelRatio: () => ratio,
+    setPixelRatio,
+  };
 }
 
 /* ----------------------------------------------------------------- helpers */

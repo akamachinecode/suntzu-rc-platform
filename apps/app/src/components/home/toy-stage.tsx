@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { nextRatio, WINDOW } from "@/components/scenes/quality";
 import type { Build, Stage } from "@/components/scenes/toy";
 import { cn } from "@/lib/utils";
 
@@ -42,10 +43,20 @@ export function ToyStage({
     let last = 0;
     const still = window.matchMedia("(prefers-reduced-motion: reduce)");
 
+    // Time between the frames drawn since the scene last started running, to lower its
+    // sharpness on a device that can't keep up (scenes/quality.ts).
+    let intervals: number[] = [];
+
     const loop = (now: number) => {
       if (!controls) return;
+      intervals.push(now - last);
       clock += Math.min(0.05, (now - last) / 1000);
       last = now;
+      if (intervals.length >= WINDOW) {
+        const ratio = nextRatio(controls.pixelRatio(), intervals);
+        if (ratio !== controls.pixelRatio()) controls.setPixelRatio(ratio);
+        intervals = [];
+      }
       controls.draw(clock);
       frame = requestAnimationFrame(loop);
     };
@@ -55,6 +66,7 @@ export function ToyStage({
       if (still.matches) {
         controls.draw(controls.still);
       } else if (visible) {
+        intervals = [];
         last = performance.now();
         frame = requestAnimationFrame(loop);
       }
