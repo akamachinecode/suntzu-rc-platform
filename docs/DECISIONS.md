@@ -12,6 +12,12 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-10 — The docs portal: `apps/docs` with Fumadocs, generated from the documents (spec 0007, slice 2)
+
+- **What:** a new app, **`apps/docs`** (`@workspace/docs`, http://localhost:3002, `pnpm dev:docs`), turns every document of the repository into one website with search. New dependencies, only in that app: **`fumadocs-core`, `fumadocs-mdx` and `fumadocs-ui` 16.18.4 / 15.5.3**, and `@types/mdx`; the rest (Next.js 16.4.4, React, Tailwind, `zod`, `lucide-react`, `@workspace/ui`) are the versions the app already uses. `scripts/content.ts` writes the pages to `content/docs/` (git-ignored) before every dev, build and typecheck: the first `# heading` is the title, a short opening paragraph the description, relative links point to other pages or to the file on GitHub, and the sidebar order is its `SECTIONS` list (specs and bits by themselves; an unlisted file in `docs/` lands in "More"). It runs on Node's own TypeScript support (no `tsx`), and its link and title rules are tested with `node --test`. The site is a static export (`out/`), searched in the browser over an index built with it.
+- **Why:** one source of truth (the documents keep living next to the code and are reviewed in the same pull requests), no copy to keep in sync, and a document that can't be published fails `pnpm check`. Fumadocs is built for documentation on our own stack (Next.js, React, Tailwind), so it takes the brand from the shadcn theme variables in `packages/ui`. VitePress (Vue), Docusaurus (its own CSS framework) and MkDocs (Python) would each bring a second stack.
+- **Impact:** `pnpm dev`, `pnpm build` and `pnpm check` include the portal. Fumadocs UI's components are used only inside `apps/docs`, a recorded exception to "UI = shadcn/ui". Fumadocs' stylesheet prints two harmless warnings about `::highlight` during the build (upstream). Publishing on GitHub Pages is slice 3. Locally, dekit runs it as `suntzu-rc/docs`.
+
 ## 2026-11-10 — Open to the community: MIT code, CC BY guides, a reserved name, and a docs portal (spec 0007)
 
 - **What:** the owner approved spec 0007. Slice 1 ships with this entry:

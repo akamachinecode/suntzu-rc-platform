@@ -1,0 +1,4 @@
+# Generated from docs/ and the root documents by scripts/content.ts on every dev and build.
+content/
+# Fumadocs MDX's generated files.
+.source/

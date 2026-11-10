@@ -13,6 +13,7 @@ What runs where, and how the pieces connect. Keep it current: a change to a piec
 | Database      | PostgreSQL (Amazon RDS): users, events, places, hosts, sources and the evidence behind them; the search index (triggers)       | `packages/db/`                             | private network only       |
 | Contracts     | Zod schemas shared by API and app; typed client generated from `openapi.json`                                                  | `packages/shared/`, `packages/api-client/` | —                          |
 | Theme and UI  | shadcn/ui components and SunTzu RC's brand tokens                                                                              | `packages/ui/`                             | —                          |
+| Docs portal   | Every document of the repository as one website with search (Fumadocs, static), generated from `docs/` on each build           | `apps/docs/`                               | GitHub Pages (slice 3)     |
 
 SunTzu RC has no separate Astro site (`apps/web`): its public pages are the product, so they live in `apps/app` (see `DECISIONS.md`, 2026-10-21).
 
@@ -48,7 +49,7 @@ Every API request gets a trace ID (`x-request-id`, or Cloudflare's `cf-ray`), re
 
 ## Environments
 
-| Environment | URL                                           | Deployed from                          |
-| ----------- | --------------------------------------------- | -------------------------------------- |
-| Local       | http://localhost:3000 and :3001 (`README.md`) | `pnpm dev`                             |
-| Production  | https://www.suntzurc.com (not deployed yet)   | `main`, see [`DEPLOY.md`](./DEPLOY.md) |
+| Environment | URL                                                              | Deployed from                          |
+| ----------- | ---------------------------------------------------------------- | -------------------------------------- |
+| Local       | http://localhost:3000 and :3001 (`README.md`), docs portal :3002 | `pnpm dev`                             |
+| Production  | https://www.suntzurc.com (not deployed yet)                      | `main`, see [`DEPLOY.md`](./DEPLOY.md) |

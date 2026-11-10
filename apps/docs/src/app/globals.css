@@ -1,0 +1,33 @@
+/*
+ * Styles for the docs portal. The brand (colours, Archivo, radius) comes from packages/ui;
+ * Fumadocs' shadcn preset maps its own colours onto those tokens. Change the brand there, not here.
+ */
+@import "@workspace/ui/globals.css";
+@import "fumadocs-ui/css/shadcn.css";
+@import "fumadocs-ui/css/preset.css";
+
+@source "../";
+
+/* XT60 yellow is a fill, never a text colour (it's unreadable on primer grey): Fumadocs' "primary"
+   text is ink, and the open page in the sidebar is marked with a yellow fill, like the site's buttons. */
+:root {
+  --color-fd-primary: var(--foreground);
+  --color-fd-primary-foreground: var(--background);
+}
+#nd-sidebar a[data-active="true"] {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* The site's look: ink borders and hard offset shadows on the sidebar, code blocks and tables. */
+@layer components {
+  #nd-sidebar {
+    @apply border-r-2 border-foreground bg-panel;
+  }
+  .prose :where(figure.shiki, pre) {
+    @apply rounded-md border-2 border-foreground shadow-hard-sm;
+  }
+  .prose :where(table) {
+    @apply border-2 border-foreground;
+  }
+}

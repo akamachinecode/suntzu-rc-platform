@@ -15,6 +15,7 @@
     "typecheck": "pnpm --recursive typecheck",
     "test": "pnpm --recursive run test",
     "dev:api": "pnpm --filter @workspace/api dev",
+    "dev:docs": "pnpm --filter @workspace/docs dev",
     "build:packages": "pnpm --filter \"./packages/*\" build",
     "db:up": "docker compose up --detach --wait db",
     "db:down": "docker compose down",

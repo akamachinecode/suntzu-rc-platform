@@ -8,6 +8,9 @@ packages/ui/src/components/
 apps/api/openapi.json
 packages/api-client/src/schema.ts
 packages/db/migrations/
+# The docs portal's pages, generated from the documents by apps/docs/scripts/content.ts.
+apps/docs/content/
+apps/docs/.source/
 # Vendored Anatomy kit (MIT, github.com/wheresryan22/anatomy) and the skill itself.
 apps/app/src/components/iso/
 .claude/
