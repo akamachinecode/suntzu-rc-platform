@@ -1,0 +1,66 @@
+name: Docs portal
+
+# Publishes the docs portal (apps/docs) on GitHub Pages when the documents change on main:
+# https://akamachinecode.github.io/suntzu-rc-platform/ (spec 0007, bit docs.publish).
+# Needs no AWS or Cloudflare access. Pull requests already build it in CI (`pnpm check`).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "apps/docs/**"
+      - "packages/ui/**"
+      - "README.md"
+      - "CONTRIBUTING.md"
+      - "CODE_OF_CONDUCT.md"
+      - "SECURITY.md"
+      - "AGENTS.md"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/docs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One publish at a time; a newer one waits instead of cancelling a publish halfway.
+concurrency:
+  group: docs-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build the portal
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --filter "@workspace/docs..."
+      # The portal lives under the repository's name on GitHub Pages.
+      - run: pnpm --filter @workspace/docs build
+        env:
+          DOCS_BASE_PATH: /suntzu-rc-platform
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: apps/docs/out
+
+  publish:
+    name: Publish on GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write # proves to GitHub Pages that this run is this repository's
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

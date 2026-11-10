@@ -6,15 +6,15 @@ Built on the **Itaca Technologies standard stack** `platform`, hosted on **AWS (
 
 **Stack:** a pnpm monorepo with one Next.js app (public site and signed-in screens) and the API behind it (ready for a mobile app):
 
-| Folder                                         | What                                      | Built on                           | Dev URL               | Production               |
-| ---------------------------------------------- | ----------------------------------------- | ---------------------------------- | --------------------- | ------------------------ |
-| [`apps/app`](./apps/app)                       | Public site and web application           | Next.js 16 (App Router) · React 19 | http://localhost:3000 | https://www.suntzurc.com |
-| [`apps/api`](./apps/api)                       | Backend: sign-in, business rules, data    | NestJS · Better Auth · OpenAPI     | http://localhost:3001 | https://api.suntzurc.com |
-| [`apps/docs`](./apps/docs)                     | Docs portal, built from `docs/`           | Fumadocs · Next.js (static)        | http://localhost:3002 | GitHub Pages             |
-| [`packages/db`](./packages/db)                 | Database schema and migrations            | PostgreSQL · Drizzle ORM           | —                     | Amazon RDS               |
-| [`packages/shared`](./packages/shared)         | Validation schemas shared by API and apps | Zod                                | —                     | —                        |
-| [`packages/api-client`](./packages/api-client) | Typed API client (generated from OpenAPI) | openapi-fetch                      | —                     | —                        |
-| [`packages/ui`](./packages/ui)                 | Shared shadcn/ui components and theme     | Tailwind CSS 4 · shadcn/ui         | —                     | —                        |
+| Folder                                         | What                                      | Built on                           | Dev URL               | Production                                                           |
+| ---------------------------------------------- | ----------------------------------------- | ---------------------------------- | --------------------- | -------------------------------------------------------------------- |
+| [`apps/app`](./apps/app)                       | Public site and web application           | Next.js 16 (App Router) · React 19 | http://localhost:3000 | https://www.suntzurc.com                                             |
+| [`apps/api`](./apps/api)                       | Backend: sign-in, business rules, data    | NestJS · Better Auth · OpenAPI     | http://localhost:3001 | https://api.suntzurc.com                                             |
+| [`apps/docs`](./apps/docs)                     | Docs portal, built from `docs/`           | Fumadocs · Next.js (static)        | http://localhost:3002 | [GitHub Pages](https://akamachinecode.github.io/suntzu-rc-platform/) |
+| [`packages/db`](./packages/db)                 | Database schema and migrations            | PostgreSQL · Drizzle ORM           | —                     | Amazon RDS                                                           |
+| [`packages/shared`](./packages/shared)         | Validation schemas shared by API and apps | Zod                                | —                     | —                                                                    |
+| [`packages/api-client`](./packages/api-client) | Typed API client (generated from OpenAPI) | openapi-fetch                      | —                     | —                                                                    |
+| [`packages/ui`](./packages/ui)                 | Shared shadcn/ui components and theme     | Tailwind CSS 4 · shadcn/ui         | —                     | —                                                                    |
 
 First run (needs Docker for the local database):
 
@@ -91,6 +91,8 @@ SunTzu RC is open: anyone can run it, improve it and send a pull request. Start 
 - **Third-party material** keeps its own licence: the Anatomy figure kit in `apps/app/src/components/iso/` (MIT, see its `LICENSE`), and the facts, quotes and data credited to their sources where they appear (FAA and US Census data are public).
 
 ## Documentation
+
+Everything below is also one website with search: the **[SunTzu RC docs portal](https://akamachinecode.github.io/suntzu-rc-platform/)**, published from these files whenever they change on `main`.
 
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md), [`SECURITY.md`](./SECURITY.md) — taking part: running it locally, pull requests, behaviour and reporting vulnerabilities
 - [`AGENTS.md`](./AGENTS.md) — rules and recipes for AI agents (and humans), including which skill to use for each kind of request

@@ -14,7 +14,8 @@ import {
 
 /** Search runs in the browser over an index built with the site (/api/search), no server needed. */
 export default function DocsSearchDialog(props: SharedProps) {
-  const search = useStaticSearch();
+  // Fetched by the browser, so it needs the base path that next/link adds to page links by itself.
+  const search = useStaticSearch({ from: `${process.env.NEXT_PUBLIC_BASE_PATH}/api/search` });
   return (
     <SearchDialog {...search} {...props}>
       <SearchDialogOverlay />

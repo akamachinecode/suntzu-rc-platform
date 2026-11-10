@@ -64,7 +64,7 @@ The repository has been public since 2026-11-09, but nobody outside the crew can
 
 - [x] 1. **Licence and community files:** `LICENSE` (MIT), the content and brand notice, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant), `SECURITY.md`, `.github/CODEOWNERS`, issue forms, Discussions turned on, README updated. (blocked by: —)
 - [x] 2. **The portal, built locally:** a new `apps/docs` app (Fumadocs on Next.js) with the SunTzu RC theme. It reads `docs/` as it is, links code paths to GitHub, has search, and is built by `pnpm check`. (blocked by: —)
-- [ ] 3. **Published on GitHub Pages:** a workflow that publishes the portal when `main` changes, Pages turned on, the portal's address on the repository page. (blocked by: 2)
+- [x] 3. **Published on GitHub Pages:** a workflow that publishes the portal when `main` changes, Pages turned on, the portal's address on the repository page. (blocked by: 2)
 - [ ] 4. **New guides in the portal:** a home page, "Run it locally", "Your first contribution" (including with an AI agent), and the architecture guide (CI, deploys, Docker, OIDC, scheduled jobs). (blocked by: 2)
 
 Each slice updates the documents it affects in the same pull request (`AGENTS.md`, `README.md`, `docs/SYSTEM.md`, `docs/GITHUB.md`, `docs/DECISIONS.md`).

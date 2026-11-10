@@ -51,7 +51,11 @@ Set up on 2026-11-10 so anyone can take part (`CONTRIBUTING.md`):
 - **Reviewers:** `.github/CODEOWNERS` asks `akamachinecode` to review every pull request. It doesn't block merging (`require_code_owner_review` is off in the ruleset).
 - **Reported content:** in **Settings → Moderation options → Reported content**, accept reports from everyone, so the code of conduct's "Report to repository admins" reaches the maintainers. There's no API for it: set it by hand.
 
-## 5. Deployment secrets and variables
+## 5. Docs portal on GitHub Pages (spec 0007)
+
+Turned on 2026-11-10: **Settings → Pages → Source: GitHub Actions** (`gh api -X POST repos/akamachinecode/suntzu-rc-platform/pages -f build_type=workflow`). That also created the **`github-pages`** environment, which only `main` can deploy. `.github/workflows/docs.yml` builds `apps/docs` and publishes it at https://akamachinecode.github.io/suntzu-rc-platform/. The repository's **About → Website** points there.
+
+## 6. Deployment secrets and variables
 
 Deploys use one GitHub environment per stage: `production` and `staging` (see [`DEPLOY.md`](./DEPLOY.md)):
 
