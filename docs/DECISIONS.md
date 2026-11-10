@@ -12,6 +12,12 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-10 — The docs portal is published on GitHub Pages (spec 0007, slice 3)
+
+- **What:** `.github/workflows/docs.yml` builds `apps/docs` and publishes it at **https://akamachinecode.github.io/suntzu-rc-platform/** when a document, the portal, the theme or the lockfile changes on `main`, or by hand from Actions. GitHub Pages is set to publish from Actions, which created the **`github-pages`** environment (only `main` deploys). The actions are pinned by commit like the others (`upload-pages-artifact` v5.0.0, `deploy-pages` v5.0.1). The site is served under `/suntzu-rc-platform`, so `next.config.ts` reads `DOCS_BASE_PATH` into `basePath` and writes `page/index.html` files (`trailingSlash`).
+- **Why:** free for public repositories, no AWS or Cloudflare pieces, and the deploy only needs GitHub's own short-lived token (`pages: write`, `id-token: write` on the publish job alone).
+- **Impact:** a new workflow in `.github/` (asked for by the owner in spec 0007). Nothing in `infra/`. A move to `docs.suntzurc.com` later needs a CNAME in Cloudflare (Terraform) and `DOCS_BASE_PATH` emptied.
+
 ## 2026-11-10 — The docs portal: `apps/docs` with Fumadocs, generated from the documents (spec 0007, slice 2)
 
 - **What:** a new app, **`apps/docs`** (`@workspace/docs`, http://localhost:3002, `pnpm dev:docs`), turns every document of the repository into one website with search. New dependencies, only in that app: **`fumadocs-core`, `fumadocs-mdx` and `fumadocs-ui` 16.18.4 / 15.5.3**, and `@types/mdx`; the rest (Next.js 16.4.4, React, Tailwind, `zod`, `lucide-react`, `@workspace/ui`) are the versions the app already uses. `scripts/content.ts` writes the pages to `content/docs/` (git-ignored) before every dev, build and typecheck: the first `# heading` is the title, a short opening paragraph the description, relative links point to other pages or to the file on GitHub, and the sidebar order is its `SECTIONS` list (specs and bits by themselves; an unlisted file in `docs/` lands in "More"). It runs on Node's own TypeScript support (no `tsx`), and its link and title rules are tested with `node --test`. The site is a static export (`out/`), searched in the browser over an index built with it.

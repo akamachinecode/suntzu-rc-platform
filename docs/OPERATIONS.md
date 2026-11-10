@@ -17,6 +17,7 @@ See the Quick start in [`README.md`](../README.md). SunTzu RC also has:
 - **Deploy:** merging to `main` deploys production; `staging` from **Actions → Deploy**. Details in [`DEPLOY.md`](./DEPLOY.md). Nothing is deployed yet: going live is the owner's checklist in [`LAUNCH.md`](./LAUNCH.md).
 - **Run a job by hand** (`setup`, `engine`, `notify`, `census`): **Actions → Run a task**. Their schedules are in `infra/jobs.tf`.
 - **Roll back:** revert the change on `main` (`git revert <commit>` in a pull request) and let the normal deploy run. Never change production by hand.
+- **Docs portal** (https://akamachinecode.github.io/suntzu-rc-platform/): published by `.github/workflows/docs.yml` whenever a document changes on `main` (bit `docs.publish`). To publish again by hand: **Actions → Docs portal → Run workflow**. A failed build leaves the previous version online. Rolling back works the same way: revert on `main`.
 
 ## Access
 

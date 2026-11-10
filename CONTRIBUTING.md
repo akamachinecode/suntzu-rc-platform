@@ -35,6 +35,7 @@ pnpm dev
 ## How the project is built
 
 - [`AGENTS.md`](./AGENTS.md) is the rulebook, for people and AI agents alike: the stack, where each kind of code goes and the rules every change follows. Read it before your first change.
+- The **[docs portal](https://akamachinecode.github.io/suntzu-rc-platform/)** has all of the documentation below as one website with search.
 - [`docs/SYSTEM.md`](./docs/SYSTEM.md) is the map of what runs where. [`docs/bits/`](./docs/bits/README.md) lists every piece of behaviour end to end, and [`docs/DECISIONS.md`](./docs/DECISIONS.md) explains why things are the way they are.
 
 The rules that matter most for a pull request:
