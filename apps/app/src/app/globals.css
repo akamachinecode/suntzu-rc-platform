@@ -4,7 +4,6 @@
  * Fonts are loaded with next/font in src/app/layout.tsx.
  */
 @import "@workspace/ui/globals.css";
-@import "lenis/dist/lenis.css";
 
 /*
  * Anatomy figures (src/components/iso, src/components/figures).

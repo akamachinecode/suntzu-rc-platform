@@ -283,10 +283,7 @@ export function SiteSearch() {
             </Button>
           </div>
 
-          <div
-            data-lenis-prevent
-            className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-2 sm:max-h-[60vh]"
-          >
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-2 sm:max-h-[60vh]">
             {q && status === "done" && response?.partial ? (
               <p className="px-4 pt-4 text-sm text-pretty text-muted-foreground">
                 Nothing matches every word. These come closest:

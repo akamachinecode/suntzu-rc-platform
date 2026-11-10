@@ -12,6 +12,13 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-10 — Home performance, step 2: native scrolling, Lenis removed
+
+- **What:** `lenis` (smooth inertial scroll, added 2026-10-20) is gone from every page, by the owner's decision. Measured in Chrome on the home page: with `lerp: 0.1` a wheel step covered 50% of its distance after 115 ms, 90% after **382 ms** and 99% after 734 ms. The page kept moving for most of a second after the hand stopped, and that delay is what reads as "lag" even when every frame is fast. Without it, the browser scrolls on the frame the wheel moves.
+- **Kept:** the scroll-linked animations (the hero servo, the drifting section words) read the page's scroll through Motion and work the same; checked in the browser (the servo horn goes from 0° to −175° over the hero). In-page links still glide, with CSS (`scroll-smooth` on `<html>`, off under `prefers-reduced-motion`). `data-scroll-behavior="smooth"` asks Next.js to keep page changes instant (Next.js 16 no longer does it by default).
+- **Why:** visitors and the owner noticed lag; Lenis added it to every page, not just the home.
+- **Impact:** one dependency less (`lenis`). The scroll-through measurement of the home in a browser without a GPU (34–38 fps) doesn't change, because the 3D dioramas dominate it: they are step 3.
+
 ## 2026-11-10 — Home performance, step 1: the guide covers are SVG files
 
 - **What:** the home page was the slowest page of the site, measured on staging (CloudWatch traces, last 24 h): **687 ms median and 3.2 s at the 95th percentile** to render on the server, against 100–130 ms for `/events` or `/search`, and 1.6 MB of HTML. The cause: the three guide covers (the plane, helicopter and truck from each guide, part-way apart) were drawn as 2,768 SVG elements in every request, and Next.js sends a Server Component's output twice (as HTML and again in the React payload): 669 KB of drawing plus about 877 KB of its copy. Now each cover is an SVG file drawn once from the same figure (`apps/app/src/components/home/covers/`), shown with `next/image`. The figure kit's styles go inside each file, taken from `iso.css`, `globals.css` and the theme, so the files look like the page did (compared pixel by pixel in Chrome).
