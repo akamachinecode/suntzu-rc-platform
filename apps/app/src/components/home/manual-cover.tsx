@@ -1,15 +1,20 @@
 import { PencilLine } from "lucide-react";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { ApartPreview } from "@/components/figures/apart/preview";
-import { SLOTS as CAR_SLOTS } from "@/components/figures/car-apart/art";
-import { CAR_SPEC } from "@/components/figures/car-apart/spec";
-import { SLOTS as HELI_SLOTS } from "@/components/figures/heli-apart/art";
-import { HELI_SPEC } from "@/components/figures/heli-apart/spec";
-import { SLOTS as PLANE_SLOTS } from "@/components/figures/plane-apart/art";
-import { PLANE_SPEC } from "@/components/figures/plane-apart/spec";
+import carCover from "@/components/home/covers/car.svg";
+import heliCover from "@/components/home/covers/heli.svg";
+import planeCover from "@/components/home/covers/plane.svg";
 import { cn } from "@/lib/utils";
 
 type Cover = "plane" | "heli" | "car" | "airspace";
+
+// Each guide's own hero figure, part-way apart with one assembly lit, drawn once into an SVG file
+// (src/components/home/covers/draw.tsx). As images they stay out of the page's HTML and are cached.
+const STILLS: Partial<Record<Cover, StaticImageData>> = {
+  plane: planeCover,
+  heli: heliCover,
+  car: carCover,
+};
 
 // Black type reads on all of these; the green cover takes the mat's light ink.
 const COLOURS: Record<Cover, string> = {
@@ -62,37 +67,9 @@ export function ManualCover({
         <span>{minutes} min</span>
       </span>
       <div className="m-4 rounded-sm border-2 border-foreground bg-panel">
-        {cover === "plane" ? (
+        {STILLS[cover] ? (
           <div aria-hidden="true" className="p-2">
-            <ApartPreview
-              spec={PLANE_SPEC}
-              slots={PLANE_SLOTS}
-              lit="wing"
-              view={[84, 102, 448, 338]}
-              label="The trainer from the guide, part-way apart"
-            />
-          </div>
-        ) : cover === "heli" ? (
-          <div aria-hidden="true" className="p-2">
-            <ApartPreview
-              spec={HELI_SPEC}
-              slots={HELI_SLOTS}
-              apart={0.16}
-              lit="blades"
-              view={[86, 97, 486, 367]}
-              label="The helicopter from the guide, part-way apart"
-            />
-          </div>
-        ) : cover === "car" ? (
-          <div aria-hidden="true" className="p-2">
-            <ApartPreview
-              spec={CAR_SPEC}
-              slots={CAR_SLOTS}
-              apart={0.2}
-              lit="body"
-              view={[136, 123, 412, 311]}
-              label="The truck from the guide, part-way apart"
-            />
+            <Image src={STILLS[cover]} alt="" unoptimized className="block h-auto w-full" />
           </div>
         ) : (
           <Airspace />

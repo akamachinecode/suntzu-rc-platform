@@ -221,6 +221,50 @@ The AWS bill of the month reached, or is forecast to reach, `monthly_budget`.
 
 1. AWS console → Billing → **Cost Explorer**, grouped by service. Common causes: a stage nobody uses, logs or traces growing with traffic (`trace_sample_ratio`), data transfer.
 
+## Performance
+
+Measure first, change one thing, measure again with the same method. The numbers of each fix are in `DECISIONS.md` (2026-11-10, "Home performance").
+
+### How to measure
+
+- **Server, in AWS:** CloudWatch → Logs Insights, log group `aws/spans`, the slowest pages of the last day. `GET /` is the home page; `RSC GET` is the same page reached by clicking a link.
+
+  ```text
+  filter name like /^GET / and resource.attributes.service.name = "app"
+  | stats count(*) as n, pct(durationNano, 50) / 1000000 as p50_ms,
+          pct(durationNano, 95) / 1000000 as p95_ms by attributes.http.route
+  | sort p95_ms desc
+  ```
+
+- **Server, locally:** a production build limited to half a CPU, like the app's Fargate task (`cpu = 512` in `infra/main.tf`). Absolute times are lower than in AWS (a laptop core is faster); compare before and after on the same machine.
+
+  ```bash
+  pnpm --filter @workspace/app build
+  ```
+
+  ```bash
+  cd apps/app && systemd-run --user --scope -p CPUQuota=50% pnpm start
+  ```
+
+  Then, 30 requests after 3 to warm up, the median and the 95th percentile of the full response, and the page's weight:
+
+  ```bash
+  for i in $(seq 33); do curl -s -o /dev/null -w "%{time_total}\n" http://localhost:3000/; done | tail -30 | sort -n | awk '{a[NR]=$1} END {print "p50", a[15]*1000, "ms  p95", a[29]*1000, "ms"}'
+  ```
+
+  ```bash
+  curl -s http://localhost:3000/ | wc -c; curl -s -H 'Accept-Encoding: gzip' http://localhost:3000/ | wc -c
+  ```
+
+- **Browser:** Chrome DevTools → Performance, with CPU throttling at 4× for a mid-range phone. Look at LCP (when the largest thing on screen is painted), long tasks while scrolling (red corners on the frames), and the HTML's size in the Network tab. Test on a real phone too: a desktop GPU hides the cost of WebGL.
+
+### What we learned
+
+- **A drawing written as JSX in a Server Component is sent twice:** once as HTML and once more in the React payload that follows it (`self.__next_f.push`), even when nothing on it runs in the browser. The three guide covers on the home page were 669 KB of SVG and turned the page into 1.6 MB. Drawings that never change go in files (`src/components/home/covers/`), shown with `next/image` from a static import: Next.js gives them a hashed URL under `/_next/static/media/` with a one-year `immutable` cache.
+- **The figure kit's line weights need the `iso-svg` class** on the `<svg>` that holds the drawing: its lines keep the same thickness at any size (`vector-effect: non-scaling-stroke`) only inside it. Without it the lines of a scaled-down image come out thinner. A cover file is also drawn at the width it is shown at, so the two match.
+- **No `--` inside an XML comment.** A browser refuses the whole SVG file as an image (it shows as broken), while the same markup inline in HTML works. `covers.test.tsx` checks it.
+- **`react-dom/server` can't run inside Next.js's server code** (pages and route handlers throw "react-dom/server is not supported in React Server Components"). Files drawn from React components are written by a Vitest test instead (`pnpm --filter @workspace/app covers`), which also fails when a figure changes and its file wasn't redrawn.
+
 ## Known risks
 
 - The engine reads other people's websites. It must stay polite (robots.txt, rate limits, conditional requests) and must never store personal data from calendars or pages (see `DECISIONS.md`, 2026-10-22).

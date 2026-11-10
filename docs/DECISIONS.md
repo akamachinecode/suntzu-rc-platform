@@ -12,6 +12,14 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-10 — Home performance, step 1: the guide covers are SVG files
+
+- **What:** the home page was the slowest page of the site, measured on staging (CloudWatch traces, last 24 h): **687 ms median and 3.2 s at the 95th percentile** to render on the server, against 100–130 ms for `/events` or `/search`, and 1.6 MB of HTML. The cause: the three guide covers (the plane, helicopter and truck from each guide, part-way apart) were drawn as 2,768 SVG elements in every request, and Next.js sends a Server Component's output twice (as HTML and again in the React payload): 669 KB of drawing plus about 877 KB of its copy. Now each cover is an SVG file drawn once from the same figure (`apps/app/src/components/home/covers/`), shown with `next/image`. The figure kit's styles go inside each file, taken from `iso.css`, `globals.css` and the theme, so the files look like the page did (compared pixel by pixel in Chrome).
+- **Measured locally**, production build with half a CPU like Fargate (method in `OPERATIONS.md`, "Performance"): home HTML **1,627 KB → 147 KB** (gzip 334 → 33 KB), server time **63 → 10 ms** median (`/events`: 6 ms). The three files weigh 27, 39 and 46 KB gzipped, load only when the guides come near the screen (`loading="lazy"`) and are cached for a year (`/_next/static/media/`, `immutable`). Staging and production are measured after the next deploy.
+- **New dev dependency:** **`vitest` 5.1.0** in `apps/app` (the Itaca standard for unit tests, the same version as `apps/api`), with `pnpm --filter @workspace/app test` (part of `pnpm check`) and `pnpm --filter @workspace/app covers`, which redraws the files. `covers.test.tsx` fails when a figure changes and its cover wasn't redrawn.
+- **Why:** visitors and the owner noticed lag on the home page; it is the first page anyone sees.
+- **Impact:** no new variables or services. `ApartPreview` is now `ApartPose` (only the groups of a pose). Still to measure and fix, in order: the 3D dioramas while scrolling (about 37 fps), Lenis's smoothing, caching the page itself, a Cloudflare cache rule for the API's public JSON, and real-user measurements (CloudWatch RUM, for Itaca engineering).
+
 ## 2026-11-10 — Cloudflare: deploy token, one DMARC and one SPF record
 
 - **What:**
