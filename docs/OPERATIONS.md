@@ -20,11 +20,12 @@ See the Quick start in [`README.md`](../README.md). SunTzu RC also has:
 
 ## Access
 
-| What              | Who has access                                         | How                                                                    |
-| ----------------- | ------------------------------------------------------ | ---------------------------------------------------------------------- |
-| GitHub repository | Unknown — ask the owner                                | Organization team                                                      |
-| AWS account       | The owner (project `suntzu-rc`)                        | `aws login --profile suntzu-rc-admin` (see `DECISIONS.md`, 2026-11-10) |
-| Cloudflare zone   | The owner (`suntzurc.com`, registered with Cloudflare) | Account member, Itaca SSO                                              |
+| What              | Who has access                                         | How                                                                                                                                                                                                                                         |
+| ----------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GitHub repository | Unknown — ask the owner                                | Organization team                                                                                                                                                                                                                           |
+| AWS account       | The owner (project `suntzu-rc`)                        | `aws login --profile suntzu-rc-admin` (see `DECISIONS.md`, 2026-11-10)                                                                                                                                                                      |
+| Cloudflare zone   | The owner (`suntzurc.com`, registered with Cloudflare) | Account member, Itaca SSO. The zone is in the **ITACA TECHNOLOGIES** account                                                                                                                                                                |
+| Cloudflare token  | GitHub environments `production` and `staging`         | Secret `CLOUDFLARE_API_TOKEN`, account token `suntzu-dns`: DNS Edit and Zone Read on `suntzurc.com` only. **Expires 2027-11-10**: create a new one before then and replace the secret in both environments, or deploys fail at the DNS step |
 
 ## Configuration and secrets
 

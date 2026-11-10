@@ -12,6 +12,17 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-10 — Cloudflare: deploy token, one DMARC and one SPF record
+
+- **What:**
+  - **Deploy token:** account-owned token `suntzu-dns` with **DNS Edit** and **Zone Read** on `suntzurc.com` only, expiring **2027-11-10** (`OPERATIONS.md`, "Access"). It is the `CLOUDFLARE_API_TOKEN` secret of the `production` and `staging` GitHub environments. Checked: it lists the zone and its records and is refused zone settings. The SSL/TLS mode (Full strict) and Bot Fight Mode (off) were set by hand by the owner.
+  - **DNS clean-up, by the owner's request:** `suntzurc.com` had two `_dmarc` TXT records (reports to `managed_services@itacatech.com`, and to Cloudflare's DMARC Management) and two SPF records (`v=spf1 ~all` and Google Workspace's). Two of either invalidates both. Now there is one DMARC record with both report addresses and only Google's SPF record.
+  - **`infra/`:** `email.dmarc_reports` (optional, per stage) adds `rua=` addresses to the `_dmarc` record Terraform writes. Production lists the same two addresses, so its first deploy writes the same record; the hand-made one must be deleted right before it (`LAUNCH.md`, step 7.0).
+- **Why:** deploys need the token for the DNS records (ACM validation, `www`, `api`, the bare domain, SES DKIM and DMARC); the duplicated records already broke SPF for the domain's Google Workspace mail.
+- **Impact:**
+  - Reports to `managed_services@itacatech.com` are probably dropped: `itacatech.com` doesn't publish `suntzurc.com._report._dmarc.itacatech.com`, which receivers check before sending reports to another domain. Cloudflare's address works.
+  - **Open, for the owner:** the zone lives in the **ITACA TECHNOLOGIES** Cloudflare account, while the repository and AWS are the owner's own. Moving it later means re-adding the zone, changing name servers and reissuing certificates; better decided before production.
+
 ## 2026-11-10 — AWS: advanced features activated, because the standard can't deploy without them
 
 - **What:** the owner activated **advanced features** on the AWS organization that holds the project account `352587389937` (now called `suntzu-rc`; the "servo" project of 2026-10-22 is this same account). Activation can't be undone. Then, in the management account, the owner edited the organization policy `AdvancedModeRegionRestrictionSecurityControlPolicy` (`p-7yiz7pzn`): `cloudwatch:*` and `sns:*` were added to the `NotAction` list of its `UsEast1Partitional` statement.

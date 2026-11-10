@@ -123,6 +123,7 @@ Everything runs in us-east-2 (there is no CloudFront, so no certificate in us-ea
 
 ## 7. Production
 
+0. **DMARC:** `_dmarc.suntzurc.com` exists already, made by hand on 2026-11-10 with the same content Terraform will write (`email.dmarc_reports` in `infra/production.tfvars.json`). Delete it in Cloudflare → DNS right before the first production deploy, or Terraform adds a second one and both stop counting.
 1. Set the parameters of step 5 under `/rc-landing/production/` (Google's redirect URI becomes `https://api.<domain>/auth/callback/google`).
 2. Approve the production deploy that is waiting in the Actions tab (or run **Actions → Deploy** with `production`). Run `setup` once, as in step 6, with stage `production`.
 3. **Origin lock:** once everything works, follow "Origin lock" in [`CLOUDFLARE.md`](./CLOUDFLARE.md).
