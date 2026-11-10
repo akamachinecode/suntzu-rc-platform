@@ -20,7 +20,15 @@ const SECTIONS: Section[] = [
   {
     folder: "",
     title: "",
-    files: { "README.md": "index" },
+    files: { "docs/README.md": "index" },
+  },
+  {
+    folder: "guides",
+    title: "Guides",
+    files: {
+      "docs/guides/RUN-LOCALLY.md": "run-locally",
+      "docs/guides/FIRST-CONTRIBUTION.md": "first-contribution",
+    },
   },
   {
     folder: "contributing",
@@ -35,7 +43,11 @@ const SECTIONS: Section[] = [
   {
     folder: "architecture",
     title: "Architecture",
-    files: { "docs/SYSTEM.md": "system", "docs/EVENTS-ENGINE.md": "events-engine" },
+    files: {
+      "docs/SYSTEM.md": "system",
+      "docs/DELIVERY.md": "from-code-to-production",
+      "docs/EVENTS-ENGINE.md": "events-engine",
+    },
   },
   {
     folder: "operations",
@@ -54,6 +66,7 @@ const SECTIONS: Section[] = [
     folder: "project",
     title: "Project",
     files: {
+      "README.md": "overview",
       "docs/LANDSCAPE.md": "landscape",
       "docs/ROADMAP.md": "roadmap",
       "docs/DISCOVERY.md": "discovery",
@@ -66,7 +79,7 @@ const SECTIONS: Section[] = [
 ];
 
 const TITLES: Record<string, string> = {
-  "README.md": "SunTzu RC",
+  "README.md": "The repository",
   "AGENTS.md": "Rules for people and agents",
 };
 
@@ -85,8 +98,9 @@ function markdownFiles(dir: string): string[] {
     .map((f) => `${dir}/${f}`);
 }
 
-// Specs and bits: every file in their folder, in name order.
+// Guides, specs and bits: every file in their folder (listed ones first, the rest in name order).
 for (const [folder, dir] of [
+  ["guides", "docs/guides"],
   ["specs", "docs/specs"],
   ["bits", "docs/bits"],
 ] as const) {

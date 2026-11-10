@@ -44,7 +44,10 @@ Every Itaca project keeps the same documents, so anyone (a person or an agent) c
 | File                                                     | What it holds                                                      |
 | -------------------------------------------------------- | ------------------------------------------------------------------ |
 | `README.md`                                              | What the project is and how to start it                            |
+| `docs/README.md`                                         | The docs portal's home page: where to start                        |
 | `docs/SYSTEM.md`                                         | The map: pieces, where they run, integrations and environments     |
+| `docs/DELIVERY.md`                                       | From code to production: CI, deploys, Docker, OIDC, scheduled jobs |
+| `docs/guides/`                                           | Walk-throughs for newcomers: run it locally, first contribution    |
 | `docs/bits/`                                             | The catalog of **bits**, one file per bit (see below)              |
 | `docs/specs/`                                            | Specifications written with `/plan`, one per feature               |
 | `docs/DECISIONS.md`                                      | Why things are the way they are. Read it before every task         |
