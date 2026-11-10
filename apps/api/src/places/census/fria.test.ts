@@ -123,6 +123,24 @@ describe("readFria", () => {
     expect(JSON.stringify(sites)).not.toContain("Placeholder");
   });
 
+  it("reads dates as ISO strings too, the layer's format since November 2026", () => {
+    const [first] = fixture.features;
+    const asText = (ms: unknown) => new Date(ms as number).toISOString().replace(".000Z", "+00:00");
+    const iso: RawFeature = {
+      ...first!,
+      attributes: {
+        ...first!.attributes,
+        startDate: asText(first!.attributes.startDate),
+        endDate: asText(first!.attributes.endDate),
+      },
+    };
+    expect(readFria(iso, now)).toEqual(readFria(first!, now));
+    expect(readFria(iso, new Date("2031-01-01T00:00:00Z"))).toMatchObject({
+      ok: false,
+      reason: "expired",
+    });
+  });
+
   it("skips areas that have expired", () => {
     const [first] = fixture.features;
     const later = new Date("2031-01-01T00:00:00Z");
