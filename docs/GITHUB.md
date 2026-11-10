@@ -39,8 +39,19 @@ In **Settings → Advanced Security** (or `Code security`):
 - Dependabot alerts and Dependabot security updates: **on** (version updates are configured in `.github/dependabot.yml`).
 - Secret scanning and push protection: **on** where the plan allows it. CI also runs TruffleHog on every push.
 - Code scanning (CodeQL) default setup: **on** where the plan allows it.
+- Private vulnerability reporting: **on**. `SECURITY.md` sends reporters there.
 
-## 4. Deployment secrets and variables
+## 4. Community (spec 0007)
+
+Set up on 2026-11-10 so anyone can take part (`CONTRIBUTING.md`):
+
+- **Licence:** `LICENSE` (MIT); GitHub shows it in the sidebar. Content and brand terms are in the README, "Licence".
+- **Discussions: on**, for questions and ideas (`gh api -X PATCH repos/akamachinecode/suntzu-rc-platform -F has_discussions=true`). Issues are for bugs.
+- **Issue forms:** `.github/ISSUE_TEMPLATE/` has the bug report; blank issues are off, and questions and security reports are sent to Discussions and private reporting.
+- **Reviewers:** `.github/CODEOWNERS` asks `akamachinecode` to review every pull request. It doesn't block merging (`require_code_owner_review` is off in the ruleset).
+- **Reported content:** in **Settings → Moderation options → Reported content**, accept reports from everyone, so the code of conduct's "Report to repository admins" reaches the maintainers. There's no API for it: set it by hand.
+
+## 5. Deployment secrets and variables
 
 Deploys use one GitHub environment per stage: `production` and `staging` (see [`DEPLOY.md`](./DEPLOY.md)):
 

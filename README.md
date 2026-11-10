@@ -78,8 +78,20 @@ Before committing, run `pnpm check`.
 | `pnpm lint`      | ESLint                                  |
 | `pnpm typecheck` | TypeScript                              |
 
+## Contributing
+
+SunTzu RC is open: anyone can run it, improve it and send a pull request. Start with [`CONTRIBUTING.md`](./CONTRIBUTING.md) (running it locally, the rules, how review works), ask questions in [Discussions](https://github.com/akamachinecode/suntzu-rc-platform/discussions), and report security problems privately as [`SECURITY.md`](./SECURITY.md) explains. Everyone follows the [code of conduct](./CODE_OF_CONDUCT.md).
+
+## Licence
+
+- **Code:** [MIT](./LICENSE). Use it, change it and share it, keeping the copyright notice.
+- **Guides and figures:** the text of the guides and other site content in `apps/app/src/content/`, and the drawings in `apps/app/src/components/figures/`, are licensed under [Creative Commons Attribution 4.0 (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/). Reuse them with credit to SunTzu RC and a link to https://www.suntzurc.com.
+- **Name and logo:** the SunTzu RC name, the wordmark (`apps/app/src/components/wordmark.tsx`) and the icons aren't licensed. A copy of the project that runs as its own service needs its own name and logo.
+- **Third-party material** keeps its own licence: the Anatomy figure kit in `apps/app/src/components/iso/` (MIT, see its `LICENSE`), and the facts, quotes and data credited to their sources where they appear (FAA and US Census data are public).
+
 ## Documentation
 
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md), [`SECURITY.md`](./SECURITY.md) — taking part: running it locally, pull requests, behaviour and reporting vulnerabilities
 - [`AGENTS.md`](./AGENTS.md) — rules and recipes for AI agents (and humans), including which skill to use for each kind of request
 - [`docs/SYSTEM.md`](./docs/SYSTEM.md) — the map: what runs where and how the pieces connect
 - [`docs/bits/`](./docs/bits/README.md) — the catalog of bits: each piece of behaviour, end to end
