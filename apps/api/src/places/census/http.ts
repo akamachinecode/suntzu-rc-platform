@@ -79,6 +79,14 @@ export class CensusHttp {
     }
   }
 
+  /**
+   * Waits longer each time before asking again: for a server that says "slow down" inside a normal
+   * answer (ArcGIS answers HTTP 200 with a "Too many requests" error), 30 s, 60 s, 120 s…
+   */
+  async backoff(attempt: number): Promise<void> {
+    await this.sleep(this.pauseMs * 30 * 2 ** attempt);
+  }
+
   private async wait() {
     const wait = this.lastRequest + this.pauseMs - Date.now();
     if (wait > 0) await this.sleep(wait);

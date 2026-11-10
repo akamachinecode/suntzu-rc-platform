@@ -39,6 +39,23 @@ describe("queryAll", () => {
     expect(first.searchParams.get("f")).toBe("json");
   });
 
+  it("waits and asks again when ArcGIS says it is too busy", async () => {
+    const busy = { error: { code: 429, message: "Unable to perform query. Too many requests." } };
+    const { http, urls } = fakeHttp([busy, busy, { features: [feature(1)] }]);
+    const features = await queryAll(http, "https://example.test/FeatureServer/0", {});
+    expect(features.map((f) => f.attributes.id)).toEqual([1]);
+    expect(urls).toHaveLength(3);
+  });
+
+  it("gives up when ArcGIS stays too busy", async () => {
+    const busy = { error: { message: "Unable to perform query. Too many requests." } };
+    const { http, urls } = fakeHttp(Array.from({ length: 10 }, () => busy));
+    await expect(queryAll(http, "https://example.test/FeatureServer/0", {})).rejects.toThrow(
+      /Too many requests/,
+    );
+    expect(urls).toHaveLength(5);
+  });
+
   it("stops on an ArcGIS error", async () => {
     const { http } = fakeHttp([{ error: { code: 400, message: "Invalid query" } }]);
     await expect(queryAll(http, "https://example.test/FeatureServer/0", {})).rejects.toThrow(
