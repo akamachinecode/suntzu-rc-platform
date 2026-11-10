@@ -41,14 +41,22 @@ export const friaQuery: QueryParams = {
   orderByFields: "refNumber",
 };
 
+// A date as the layer gives it, as epoch milliseconds. Until November 2026 the FAA's date fields
+// were esriFieldTypeDate (epoch ms); the layer now uses esriFieldTypeTimestampOffset, which
+// arrives as an ISO 8601 string ("2023-08-29T00:00:00+00:00"). Both are read.
+const layerDate = z
+  .union([z.number(), z.iso.datetime({ offset: true })])
+  .nullable()
+  .transform((value) => (typeof value === "string" ? Date.parse(value) : value));
+
 const attributes = z.object({
   refNumber: z.string().min(1),
   title: z.string().nullable(),
   orgName: z.string().nullable(),
   city: z.string().nullable(),
   state: z.string().nullable(),
-  startDate: z.number().nullable(),
-  endDate: z.number().nullable(),
+  startDate: layerDate,
+  endDate: layerDate,
 });
 
 // Titles that don't work as a public name: a person's name in front of a school, a city code
