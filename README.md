@@ -10,6 +10,7 @@ Built on the **Itaca Technologies standard stack** `platform`, hosted on **AWS (
 | ---------------------------------------------- | ----------------------------------------- | ---------------------------------- | --------------------- | ------------------------ |
 | [`apps/app`](./apps/app)                       | Public site and web application           | Next.js 16 (App Router) · React 19 | http://localhost:3000 | https://www.suntzurc.com |
 | [`apps/api`](./apps/api)                       | Backend: sign-in, business rules, data    | NestJS · Better Auth · OpenAPI     | http://localhost:3001 | https://api.suntzurc.com |
+| [`apps/docs`](./apps/docs)                     | Docs portal, built from `docs/`           | Fumadocs · Next.js (static)        | http://localhost:3002 | GitHub Pages             |
 | [`packages/db`](./packages/db)                 | Database schema and migrations            | PostgreSQL · Drizzle ORM           | —                     | Amazon RDS               |
 | [`packages/shared`](./packages/shared)         | Validation schemas shared by API and apps | Zod                                | —                     | —                        |
 | [`packages/api-client`](./packages/api-client) | Typed API client (generated from OpenAPI) | openapi-fetch                      | —                     | —                        |

@@ -103,6 +103,7 @@ A pnpm monorepo: one Next.js app (the public site and the signed-in screens) on 
 ```text
 apps/app/             public site + web app: Next.js 16 (App Router), UI only    → https://www.suntzurc.com
 apps/api/             backend: NestJS — auth, business rules, data            → https://api.suntzurc.com
+apps/docs/            docs portal: Fumadocs, built from docs/ (static, GitHub Pages)
 packages/db/          database schema and migrations (PostgreSQL + Drizzle), used only by apps/api
 packages/shared/      validation schemas (Zod) and types shared by the API and the apps
 packages/api-client/  typed API client, generated from apps/api/openapi.json
