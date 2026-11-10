@@ -50,6 +50,7 @@ Every Itaca project keeps the same documents, so anyone (a person or an agent) c
 | `docs/DECISIONS.md`                                      | Why things are the way they are. Read it before every task         |
 | `docs/OPERATIONS.md`                                     | Running, deploying, rolling back, access, backups and secret names |
 | `docs/DEPLOY.md`, `docs/CLOUDFLARE.md`, `docs/GITHUB.md` | Setup guides for hosting, domain and repository                    |
+| `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`   | How outside contributors take part; keep commands and CI in sync   |
 
 A **bit** is the smallest piece of behaviour someone can trigger and check end to end: "a visitor sends the contact form", "an owner adds a property". Like a trace in a distributed system, it crosses every layer it touches. When a change creates or modifies a bit, create or update `docs/bits/<id>.md` (copy `docs/bits/_template.md`) and its row in `docs/bits/README.md`.
 
@@ -77,6 +78,7 @@ A **bit** is the smallest piece of behaviour someone can trigger and check end t
 - **Forms** (`/contact`, builds on `/community`, `/try`, `/submit`) deliver to the crew's inbox at `/crew` (and by email to `CREW_INBOX`); public ones check Cloudflare Turnstile in production.
 - **Accounts** have no passwords: one email with a link and a 6-digit code (spec 0006), or Google. The crew is whoever `CREW_EMAILS` lists. Locally, emails are printed in the API's console (`MAIL_TRANSPORT=log`).
 - **Search** (`docs/specs/0005-search.md`): all of it lives in `apps/api/src/search/` (PostgreSQL, no extra service), the screens in `apps/app/src/components/search/` and `/search`. A ranking change must keep the golden searches in `golden.test.ts` at 36 of 36; add a pinned answer in `query.ts` rather than bending the ranking for one search.
+- **Open source** (spec 0007): code under MIT (`LICENSE`), guides and figures under CC BY 4.0, the name and logo reserved (README, "Licence"). Outside pull requests are welcome: keep `CONTRIBUTING.md` true when commands, CI or the local setup change.
 - **Going live** is the owner's checklist in `docs/LAUNCH.md`; don't deploy on your own.
 
 ## Commands

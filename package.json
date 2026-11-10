@@ -2,6 +2,7 @@
   "name": "rc-landing",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "format": "prettier --write .",

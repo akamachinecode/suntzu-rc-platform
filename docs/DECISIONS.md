@@ -12,6 +12,16 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-10 — Open to the community: MIT code, CC BY guides, a reserved name, and a docs portal (spec 0007)
+
+- **What:** the owner approved spec 0007. Slice 1 ships with this entry:
+  - **Licence:** code under **MIT** (`LICENSE`, "The SunTzu RC authors"). The guides and other content in `apps/app/src/content/` and the drawings in `apps/app/src/components/figures/` are under **CC BY 4.0**. The **SunTzu RC name, wordmark and icons are not licensed**, so a copy that runs as its own service needs its own name. Third-party material keeps its licence (the Anatomy kit, MIT; credited sources). Contributions come in under the same terms (no contributor agreement).
+  - **Taking part:** `CONTRIBUTING.md` (local setup without any account, the rules, review), `CODE_OF_CONDUCT.md` (Contributor Covenant 3.0), `SECURITY.md` (GitHub private vulnerability reporting), `.github/CODEOWNERS` (`akamachinecode` reviews everything for now), a bug report form, and **GitHub Discussions** for questions and ideas. We promise a reply within a week, with no guarantee.
+  - **Reports** use what already exists: security through GitHub's private reporting, conduct through GitHub's "Report to repository admins" or the site's contact form. No public email address.
+  - **Docs portal (slices 2–4):** a new app, **`apps/docs`**, built with **Fumadocs** (Next.js, React and Tailwind, like `apps/app`), in English. It reads `docs/` as it is and is published on **GitHub Pages** at `akamachinecode.github.io/suntzu-rc-platform`. Its packages get their own entry when they're added.
+- **Why:** SunTzu RC exists so the hobby can grow with a platform people take part in (`docs/LANDSCAPE.md`). The repository has been public since 2026-11-09, but without a licence nobody could legally reuse the code or contribute to it. MIT suits the project because it is also Itaca's reference project, whose code people copy into others. CC BY keeps the credit for the guides, and keeping the name stops a copy from passing as SunTzu RC.
+- **Impact:** no environment variables, AWS or DNS changes. **Exceptions to the standard, for Itaca engineering to know:** a third app (`apps/docs`), and Fumadocs' own UI components used only inside it instead of shadcn/ui, because it is built for documentation and takes the brand from the shadcn theme variables in `packages/ui`. **Pending:** the two partners' agreement with the licences, before slice 1 is merged. The portal moves to `docs.suntzurc.com` later, with a Cloudflare record in Terraform. **Settings → Moderation options → Reported content** has to be turned on by hand (`docs/GITHUB.md`, step 4).
+
 ## 2026-11-10 — Home performance, step 3: the 3D dioramas lower their sharpness when the device can't keep up
 
 - **What:** each diorama (Air, Rotor, Ground on the home page) starts at the screen's sharpness (up to 2 device pixels per CSS pixel, as before) and measures its own frames. When the median frame of the last 45 is slower than 22 ms (under about 45 fps), it steps down one level, 2 → 1.5 → 1, and never back up, so the picture doesn't flicker. Fast devices never step down. The rule is `apps/app/src/components/scenes/quality.ts`, with its tests.

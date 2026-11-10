@@ -1,0 +1,42 @@
+name: Bug report
+description: Something on the site, the API or the code doesn't work as it should.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. A security problem? Please use the private report instead (see SECURITY.md).
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What did you see, and what did you expect to see instead?
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: The page URL, the API route or the file.
+      placeholder: https://www.suntzurc.com/events
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open …
+        2. Click …
+        3. See …
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and browser
+      description: Only if it's about the site.
+      placeholder: iPhone 16, Safari
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Screenshots, error messages or logs. Remove any personal data first.
