@@ -61,7 +61,7 @@ Terraform manages the records itself through the Cloudflare API (`infra/`):
 - Cloudflare doesn't cache pages here: Next.js decides how its pages are cached. Don't add Cloudflare cache rules for HTML, and don't override the Host header.
 - The load balancer only accepts connections from Cloudflare's IP ranges, read at every deploy.
 - The bare domain redirects to `www` at the load balancer (`infra/main.tf`).
-- Terraform owns each stage's `_dmarc` record (`infra/email.tf`). To get reports in Cloudflare's DMARC Management, add the `rua=` address it gives you to that record in `infra/email.tf`, instead of letting the dashboard edit or add one: two DMARC records cancel each other out.
+- Terraform owns each stage's `_dmarc` record (`infra/email.tf`). Report addresses (`rua=`) go in `email.dmarc_reports` in `infra/<stage>.tfvars.json`: to get reports in Cloudflare's DMARC Management, add the address it gives you there instead of letting the dashboard edit or add a record. Two DMARC records cancel each other out.
 - The visitor's real IP reaches AWS in the `CF-Connecting-IP` header.
 
 **Origin lock:** the SSM parameter `/rc-landing/<stage>/origin-verify-header` is `off` until you enable it. Once the Cloudflare transform rule from "Origin lock" above is in place:

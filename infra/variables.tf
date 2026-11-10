@@ -24,6 +24,8 @@ variable "email" {
   type = object({
     domain = string
     from   = string
+    # Addresses that receive the stage's DMARC aggregate reports (rua), if any.
+    dmarc_reports = optional(list(string), [])
   })
 }
 
