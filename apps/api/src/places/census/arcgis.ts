@@ -43,6 +43,14 @@ const page = z.union([
   z.object({ features: z.array(feature), exceededTransferLimit: z.boolean().optional() }),
 ]);
 
+/** How many times a page is asked again after ArcGIS says it is too busy. */
+export const THROTTLE_RETRIES = 4;
+
+/** ArcGIS rate limits come back as HTTP 200 with an error inside, not as HTTP 429. */
+function throttled(error: { code?: number; message: string }): boolean {
+  return error.code === 429 || /too many requests/i.test(error.message);
+}
+
 /** Every feature a query returns, page by page. */
 export async function queryAll(
   http: CensusHttp,
@@ -51,15 +59,22 @@ export async function queryAll(
   pageSize = 1000,
 ): Promise<RawFeature[]> {
   const features: RawFeature[] = [];
-  for (let offset = 0; ; offset += pageSize) {
+  for (let offset = 0, attempt = 0; ; offset += pageSize, attempt = 0) {
     const url = queryUrl(layerUrl, {
       ...params,
       resultOffset: offset,
       resultRecordCount: pageSize,
     });
-    const parsed = page.safeParse(await http.json(url));
-    if (!parsed.success) throw new Error(`Unexpected response from ${layerUrl} (offset ${offset})`);
-    const body = parsed.data;
+    let body: z.infer<typeof page>;
+    for (;;) {
+      const parsed = page.safeParse(await http.json(url));
+      if (!parsed.success) {
+        throw new Error(`Unexpected response from ${layerUrl} (offset ${offset})`);
+      }
+      body = parsed.data;
+      if (!("error" in body) || !throttled(body.error) || attempt >= THROTTLE_RETRIES) break;
+      await http.backoff(attempt++);
+    }
     if ("error" in body) throw new Error(`ArcGIS error from ${layerUrl}: ${body.error.message}`);
     features.push(...body.features);
     if (!body.exceededTransferLimit && body.features.length < pageSize) return features;
