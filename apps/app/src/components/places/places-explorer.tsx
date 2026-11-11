@@ -1,10 +1,13 @@
 "use client";
 
 import type { Discipline, Place } from "@workspace/shared";
-import { LocateFixed, Search } from "lucide-react";
+import { List, LocateFixed, Map as MapIcon, Search } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { Chip, FilterGroup } from "@/components/filters/chip";
+import { FilterSheet } from "@/components/filters/filter-sheet";
+import { useWide } from "@/components/filters/use-wide";
 import { DISCIPLINE_LABELS, milesBetween } from "@/lib/events";
 import { ACCESS_LABELS, PLACE_KIND_LABELS } from "@/lib/places";
 import { cn } from "@/lib/utils";
@@ -18,33 +21,15 @@ const PlacesMap = dynamic(() => import("./places-map").then((m) => m.PlacesMap),
 
 const PAGE = 60;
 
-function Chip({
-  pressed,
-  onClick,
-  children,
-}: {
-  pressed: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={pressed}
-      onClick={onClick}
-      className={cn(
-        "rounded-md border-2 border-foreground px-4 py-2 text-sm font-semibold shadow-hard-sm",
-        pressed ? "bg-foreground text-background" : "bg-panel",
-      )}
-    >
-      {children}
-    </button>
-  );
-}
-
 const normal = (text: string) => text.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "");
 
-/** Every field and track: search, kind, discipline, "near me" (computed in the browser). */
+/**
+ * Every field and track: search, kind, discipline, "near me" (computed in the browser).
+ *
+ * On a phone the filters fold into one "Filters" button and the map becomes a view of its own
+ * (List · Map), so the places start on the first screen and the map is only loaded when asked
+ * for. From `md` up everything sits on the page as before.
+ */
 export function PlacesExplorer({ places, nearMe }: { places: Place[]; nearMe?: boolean }) {
   const [kind, setKind] = useState<Place["kind"] | "all">("all");
   const [discipline, setDiscipline] = useState<Discipline | "all">("all");
@@ -53,6 +38,8 @@ export function PlacesExplorer({ places, nearMe }: { places: Place[]; nearMe?: b
   const [origin, setOrigin] = useState<[number, number] | undefined>();
   const [locating, setLocating] = useState(false);
   const [limit, setLimit] = useState(PAGE);
+  const [view, setView] = useState<"list" | "map">("list");
+  const wide = useWide();
 
   const kinds = [...new Set(places.map((place) => place.kind))];
   const disciplines = [...new Set(places.flatMap((place) => place.disciplines))];
@@ -82,6 +69,14 @@ export function PlacesExplorer({ places, nearMe }: { places: Place[]; nearMe?: b
     return list;
   }, [places, kind, discipline, friaOnly, query, origin]);
 
+  // How many filters are on, for the phone's "Filters" button.
+  const active = [kind !== "all", discipline !== "all", friaOnly].filter(Boolean).length;
+  function clear() {
+    setKind("all");
+    setDiscipline("all");
+    setFriaOnly(false);
+  }
+
   // The visitor asked for "near me" before the page opened (search's shortcut): once, on arrival.
   useEffect(() => {
     if (!nearMe) return;
@@ -105,6 +100,47 @@ export function PlacesExplorer({ places, nearMe }: { places: Place[]; nearMe?: b
     );
   }
 
+  const nearMeButton = (
+    <button
+      type="button"
+      onClick={locate}
+      aria-pressed={!!origin}
+      className="inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-foreground bg-panel px-4 text-sm font-semibold shadow-hard-sm md:text-base"
+    >
+      <LocateFixed aria-hidden className="size-4" />
+      {origin ? "Back to A–Z" : locating ? "Finding you…" : "Near me"}
+    </button>
+  );
+  const kindChips = (
+    <>
+      <Chip pressed={kind === "all"} onClick={() => setKind("all")}>
+        Everything
+      </Chip>
+      {kinds.map((value) => (
+        <Chip key={value} pressed={kind === value} onClick={() => setKind(value)}>
+          {PLACE_KIND_LABELS[value]}s
+        </Chip>
+      ))}
+    </>
+  );
+  const friaChip = (
+    <Chip pressed={friaOnly} onClick={() => setFriaOnly((value) => !value)}>
+      FAA-recognised (FRIA)
+    </Chip>
+  );
+  const disciplineChips = (
+    <>
+      <Chip pressed={discipline === "all"} onClick={() => setDiscipline("all")}>
+        All disciplines
+      </Chip>
+      {disciplines.map((value) => (
+        <Chip key={value} pressed={discipline === value} onClick={() => setDiscipline(value)}>
+          {DISCIPLINE_LABELS[value]}
+        </Chip>
+      ))}
+    </>
+  );
+
   return (
     <div>
       <div className="grid gap-4">
@@ -123,52 +159,71 @@ export function PlacesExplorer({ places, nearMe }: { places: Place[]; nearMe?: b
               className="h-11 w-full rounded-md border-2 border-foreground bg-panel pr-3 pl-9 shadow-hard-sm"
             />
           </label>
-          <button
-            type="button"
-            onClick={locate}
-            aria-pressed={!!origin}
-            className="inline-flex h-11 items-center gap-2 rounded-md border-2 border-foreground bg-panel px-3 font-semibold shadow-hard-sm"
-          >
-            <LocateFixed aria-hidden className="size-4" />
-            {origin ? "Back to A–Z" : locating ? "Finding you…" : "Near me"}
-          </button>
+          <div className="max-md:hidden">{nearMeButton}</div>
         </div>
-        <div role="group" aria-label="Kind of place" className="flex flex-wrap gap-3">
-          <Chip pressed={kind === "all"} onClick={() => setKind("all")}>
-            Everything
-          </Chip>
-          {kinds.map((value) => (
-            <Chip key={value} pressed={kind === value} onClick={() => setKind(value)}>
-              {PLACE_KIND_LABELS[value]}s
-            </Chip>
-          ))}
-          <Chip pressed={friaOnly} onClick={() => setFriaOnly((value) => !value)}>
-            FAA-recognised (FRIA)
-          </Chip>
+        {/* A phone: every filter behind one button, and "near me" beside it. */}
+        <div className="flex flex-wrap gap-3 md:hidden">
+          <FilterSheet
+            count={active}
+            results={`Show ${shown.length} ${shown.length === 1 ? "place" : "places"}`}
+            onClear={clear}
+          >
+            <FilterGroup label="Kind of place">
+              {kindChips}
+              {friaChip}
+            </FilterGroup>
+            {disciplines.length ? (
+              <FilterGroup label="Discipline">{disciplineChips}</FilterGroup>
+            ) : null}
+          </FilterSheet>
+          {nearMeButton}
+        </div>
+        <div role="group" aria-label="Kind of place" className="hidden flex-wrap gap-3 md:flex">
+          {kindChips}
+          {friaChip}
         </div>
         {disciplines.length ? (
-          <div role="group" aria-label="Discipline" className="flex flex-wrap gap-3">
-            <Chip pressed={discipline === "all"} onClick={() => setDiscipline("all")}>
-              All disciplines
-            </Chip>
-            {disciplines.map((value) => (
-              <Chip key={value} pressed={discipline === value} onClick={() => setDiscipline(value)}>
-                {DISCIPLINE_LABELS[value]}
-              </Chip>
-            ))}
+          <div role="group" aria-label="Discipline" className="hidden flex-wrap gap-3 md:flex">
+            {disciplineChips}
           </div>
         ) : null}
       </div>
 
-      <div className="mt-8">
-        <PlacesMap places={shown.map(({ place }) => place)} {...(origin && { origin })} />
+      <div role="group" aria-label="View" className="mt-6 flex gap-3 md:hidden">
+        <Chip
+          pressed={view === "list"}
+          onClick={() => setView("list")}
+          className="flex-1 justify-center"
+        >
+          <List aria-hidden className="size-4" /> List
+        </Chip>
+        <Chip
+          pressed={view === "map"}
+          onClick={() => setView("map")}
+          className="flex-1 justify-center"
+        >
+          <MapIcon aria-hidden className="size-4" /> Map
+        </Chip>
+      </div>
+
+      <div className={cn("mt-6 md:mt-8", view !== "map" && "max-md:hidden")}>
+        {wide || view === "map" ? (
+          <PlacesMap places={shown.map(({ place }) => place)} {...(origin && { origin })} />
+        ) : (
+          <div className="h-[28rem] w-full rounded-xl border-2 border-foreground bg-muted" />
+        )}
         <p className="mt-3 text-sm text-muted-foreground" aria-live="polite">
           {shown.length} {shown.length === 1 ? "place" : "places"}. Blue: flying fields · red: car
           tracks · yellow: indoor.
         </p>
       </div>
 
-      <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul
+        className={cn(
+          "mt-6 grid gap-4 sm:grid-cols-2 md:mt-10 lg:grid-cols-3",
+          view === "map" && "max-md:hidden",
+        )}
+      >
         {shown.slice(0, limit).map(({ place, miles }) => (
           <li
             key={place.slug}

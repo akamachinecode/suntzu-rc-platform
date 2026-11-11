@@ -1,10 +1,13 @@
 "use client";
 
 import type { Discipline, EventKind, Place, RcEvent } from "@workspace/shared";
-import { CalendarDays, List, LocateFixed, Search } from "lucide-react";
+import { CalendarDays, List, LocateFixed, Map as MapIcon, Search } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { EventCard } from "@/components/events/event-card";
+import { Chip, FilterGroup } from "@/components/filters/chip";
+import { FilterSheet } from "@/components/filters/filter-sheet";
+import { useWide } from "@/components/filters/use-wide";
 import type { MapEvent } from "@/components/events/events-map";
 import { MonthView } from "@/components/events/month-view";
 import {
@@ -25,30 +28,6 @@ const EventsMap = dynamic(() => import("@/components/events/events-map").then((m
 });
 
 type Located = "idle" | "locating" | "denied";
-
-function Chip({
-  pressed,
-  onClick,
-  children,
-}: {
-  pressed: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={pressed}
-      onClick={onClick}
-      className={cn(
-        "rounded-md border-2 border-foreground px-4 py-2 text-sm font-semibold shadow-hard-sm transition-transform active:translate-x-[3px] active:translate-y-[3px] active:shadow-none motion-reduce:transform-none",
-        pressed ? "bg-foreground text-background" : "bg-panel",
-      )}
-    >
-      {children}
-    </button>
-  );
-}
 
 const positionOf = (event: RcEvent): [number, number] | undefined =>
   event.place?.latitude != null && event.place.longitude != null
@@ -72,6 +51,10 @@ const normal = (text: string) =>
 /**
  * The calendar: search, filters, "this weekend", "near me", a map and the list or the month.
  * Your location never leaves the browser.
+ *
+ * On a phone the filters fold into one "Filters" button and the map becomes a view of its own
+ * (List · Map · Month), so the results start on the first screen and the map is only loaded when
+ * asked for. From `md` up everything sits on the page as before.
  */
 export function EventsExplorer({
   events,
@@ -90,7 +73,8 @@ export function EventsExplorer({
   const [beginners, setBeginners] = useState(initial.beginners ?? false);
   const [sanction, setSanction] = useState<string>("all");
   const [query, setQuery] = useState(initial.q ?? "");
-  const [view, setView] = useState<"list" | "month">("list");
+  const [view, setView] = useState<"list" | "map" | "month">("list");
+  const wide = useWide();
   const [origin, setOrigin] = useState<[number, number] | undefined>();
   const [located, setLocated] = useState<Located>("idle");
 
@@ -143,6 +127,22 @@ export function EventsExplorer({
     return withDistance;
   }, [events, discipline, kind, weekend, beginners, sanction, query, range, origin]);
 
+  // How many filters are on, for the phone's "Filters" button.
+  const active = [
+    discipline !== "all",
+    kind !== "all",
+    weekend,
+    beginners,
+    sanction !== "all",
+  ].filter(Boolean).length;
+  function clear() {
+    setDiscipline("all");
+    setKind("all");
+    setWeekend(false);
+    setBeginners(false);
+    setSanction("all");
+  }
+
   const pins: MapEvent[] = shown.flatMap(({ event, position }) =>
     position ? [{ event, position }] : [],
   );
@@ -168,6 +168,74 @@ export function EventsExplorer({
     );
   }
 
+  const nearMe = (
+    <button
+      type="button"
+      onClick={locate}
+      aria-pressed={!!origin}
+      className="inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-foreground bg-panel px-4 py-2 text-sm font-semibold shadow-hard-sm"
+    >
+      <LocateFixed aria-hidden className="size-4" />
+      {origin ? "Back to dates" : located === "locating" ? "Finding you…" : "Near me"}
+    </button>
+  );
+  const sanctionSelect = (className?: string) =>
+    sanctions.length ? (
+      <label className={cn("flex items-center gap-2 text-sm font-semibold", className)}>
+        Sanctioned by
+        <select
+          value={sanction}
+          onChange={(event) => setSanction(event.target.value)}
+          className="h-11 rounded-md border-2 border-foreground bg-panel px-2"
+        >
+          <option value="all">Any</option>
+          {sanctions.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+      </label>
+    ) : null;
+  const disciplineChips = (
+    <>
+      <Chip pressed={discipline === "all"} onClick={() => setDiscipline("all")}>
+        All disciplines
+      </Chip>
+      {disciplines.map((value) => (
+        <Chip key={value} pressed={discipline === value} onClick={() => setDiscipline(value)}>
+          {DISCIPLINE_LABELS[value]}
+        </Chip>
+      ))}
+    </>
+  );
+  const kindChips = (
+    <>
+      <Chip pressed={kind === "all"} onClick={() => setKind("all")}>
+        Everything
+      </Chip>
+      {kinds.map((value) => (
+        <Chip key={value} pressed={kind === value} onClick={() => setKind(value)}>
+          {KIND_LABELS[value].plural}
+        </Chip>
+      ))}
+    </>
+  );
+  const views = (["list", "map", "month"] as const).map((value) => {
+    const Icon = { list: List, map: MapIcon, month: CalendarDays }[value];
+    return (
+      <Chip
+        key={value}
+        pressed={view === value}
+        onClick={() => setView(value)}
+        // From md up the map is always on the page, so there's no map view to pick.
+        className={cn("max-md:flex-1 max-md:justify-center", value === "map" && "md:hidden")}
+      >
+        <Icon aria-hidden className="size-4" /> {value[0]!.toUpperCase() + value.slice(1)}
+      </Chip>
+    );
+  });
+
   return (
     <div>
       <div className="grid gap-4">
@@ -186,84 +254,80 @@ export function EventsExplorer({
               className="h-11 w-full rounded-md border-2 border-foreground bg-panel pr-3 pl-9 shadow-hard-sm"
             />
           </label>
-          <Chip pressed={weekend} onClick={() => setWeekend((value) => !value)}>
-            This weekend
-          </Chip>
-          <Chip pressed={beginners} onClick={() => setBeginners((value) => !value)}>
-            Beginners welcome
-          </Chip>
-          {sanctions.length ? (
-            <label className="flex items-center gap-2 text-sm font-semibold">
-              Sanctioned by
-              <select
-                value={sanction}
-                onChange={(event) => setSanction(event.target.value)}
-                className="h-10 rounded-md border-2 border-foreground bg-panel px-2"
-              >
-                <option value="all">Any</option>
-                {sanctions.map((name) => (
-                  <option key={name} value={name}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          ) : null}
-        </div>
-        <div role="group" aria-label="Filter by discipline" className="flex flex-wrap gap-3">
-          <Chip pressed={discipline === "all"} onClick={() => setDiscipline("all")}>
-            All disciplines
-          </Chip>
-          {disciplines.map((value) => (
-            <Chip key={value} pressed={discipline === value} onClick={() => setDiscipline(value)}>
-              {DISCIPLINE_LABELS[value]}
+          <div className="hidden md:contents">
+            <Chip pressed={weekend} onClick={() => setWeekend((value) => !value)}>
+              This weekend
             </Chip>
-          ))}
-        </div>
-        <div role="group" aria-label="Filter by kind of event" className="flex flex-wrap gap-3">
-          <Chip pressed={kind === "all"} onClick={() => setKind("all")}>
-            Everything
-          </Chip>
-          {kinds.map((value) => (
-            <Chip key={value} pressed={kind === value} onClick={() => setKind(value)}>
-              {KIND_LABELS[value].plural}
+            <Chip pressed={beginners} onClick={() => setBeginners((value) => !value)}>
+              Beginners welcome
             </Chip>
-          ))}
+            {sanctionSelect()}
+          </div>
+        </div>
+        {/* A phone: every filter behind one button, and "near me" beside it. */}
+        <div className="flex flex-wrap gap-3 md:hidden">
+          <FilterSheet
+            count={active}
+            results={`Show ${shown.length} ${shown.length === 1 ? "event" : "events"}`}
+            onClear={clear}
+          >
+            <FilterGroup label="When and who">
+              <Chip pressed={weekend} onClick={() => setWeekend((value) => !value)}>
+                This weekend
+              </Chip>
+              <Chip pressed={beginners} onClick={() => setBeginners((value) => !value)}>
+                Beginners welcome
+              </Chip>
+            </FilterGroup>
+            <FilterGroup label="Discipline">{disciplineChips}</FilterGroup>
+            <FilterGroup label="Kind of event">{kindChips}</FilterGroup>
+            {sanctionSelect("justify-between")}
+          </FilterSheet>
+          {nearMe}
+        </div>
+        <div
+          role="group"
+          aria-label="Filter by discipline"
+          className="hidden flex-wrap gap-3 md:flex"
+        >
+          {disciplineChips}
+        </div>
+        <div
+          role="group"
+          aria-label="Filter by kind of event"
+          className="hidden flex-wrap gap-3 md:flex"
+        >
+          {kindChips}
         </div>
       </div>
 
-      <div className="mt-8">
-        <EventsMap events={pins} places={places} origin={origin} />
+      <div role="group" aria-label="View" className="mt-6 flex gap-3 md:hidden">
+        {views}
+      </div>
+
+      <div className={cn("mt-6 md:mt-8", view !== "map" && "max-md:hidden")}>
+        {wide || view === "map" ? (
+          <EventsMap events={pins} places={places} origin={origin} />
+        ) : (
+          <div className="h-[26rem] w-full rounded-xl border-2 border-foreground bg-muted" />
+        )}
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm">
           <p className="text-muted-foreground" aria-live="polite">
             {pins.length} on the map
             {unmapped ? `, ${unmapped} without an exact place yet` : ""}. Small dots are fields and
             tracks.
           </p>
-          <button
-            type="button"
-            onClick={locate}
-            aria-pressed={!!origin}
-            className="inline-flex items-center gap-2 rounded-md border-2 border-foreground bg-panel px-3 py-1.5 font-semibold shadow-hard-sm"
-          >
-            <LocateFixed aria-hidden className="size-4" />
-            {origin ? "Back to dates" : located === "locating" ? "Finding you…" : "Near me"}
-          </button>
+          <div className="max-md:hidden">{nearMe}</div>
         </div>
-        {located === "denied" ? (
-          <p className="mt-2 text-sm" role="status">
-            We couldn&apos;t get your location. Allow it in your browser to sort events by distance.
-          </p>
-        ) : null}
       </div>
+      {located === "denied" ? (
+        <p className="mt-2 text-sm" role="status">
+          We couldn&apos;t get your location. Allow it in your browser to sort events by distance.
+        </p>
+      ) : null}
 
-      <div role="group" aria-label="View" className="mt-10 flex gap-3">
-        <Chip pressed={view === "list"} onClick={() => setView("list")}>
-          <List aria-hidden className="mr-1 inline size-4" /> List
-        </Chip>
-        <Chip pressed={view === "month"} onClick={() => setView("month")}>
-          <CalendarDays aria-hidden className="mr-1 inline size-4" /> Month
-        </Chip>
+      <div role="group" aria-label="View" className="mt-10 hidden gap-3 md:flex">
+        {views}
       </div>
 
       {view === "month" ? (
@@ -274,7 +338,7 @@ export function EventsExplorer({
 
       <ol
         hidden={view === "month"}
-        className="mt-6 grid gap-6"
+        className={cn("mt-6 grid gap-6", view === "map" && "max-md:hidden")}
         aria-label={origin ? "Events, closest first" : "Events, soonest first"}
       >
         {shown.map(({ event, miles }) => (
@@ -283,7 +347,7 @@ export function EventsExplorer({
           </li>
         ))}
       </ol>
-      {shown.length === 0 && view === "list" ? (
+      {shown.length === 0 && view !== "month" ? (
         <p className="mt-10 text-lg">
           {weekend
             ? "Nothing announced for this weekend with these filters. Try the month view."
