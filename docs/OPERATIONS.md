@@ -273,6 +273,8 @@ Measure first, change one thing, measure again with the same method. The numbers
 
   Check with `document.getAnimations()`: those animations have a `ViewTimeline`.
 
+  Its `ease` applies to the whole timeline. To end early, put that in the curve (`(p) => ease(Math.min(1, p / 0.6))` with the input `[0, 1]`) rather than in the input range, or the compositor and JavaScript disagree.
+
 - **Find the slow step before splitting work.** Wrap each step in `performance.mark` and `performance.measure` in a production build, then read the entries in the browser. A diorama's time was in building its geometry, not in compiling shaders.
 - **Scrolling in headless Chromium:** `Input.synthesizeScrollGesture` with `gestureSourceType: "touch"` doesn't scroll a page emulating a phone. `"mouse"` does, through the same compositor, so use it for flicks.
 - **`react-dom/server` can't run inside Next.js's server code** (pages and route handlers throw "react-dom/server is not supported in React Server Components"). Files drawn from React components are written by a Vitest test instead (`pnpm --filter @workspace/app covers`), which also fails when a figure changes and its file wasn't redrawn.

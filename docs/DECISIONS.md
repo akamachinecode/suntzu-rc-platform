@@ -12,6 +12,18 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-11 — The Air, Rotor and Ground words ease in; two details from the owner's review
+
+- **What:**
+  - The drift words now ease out: they are already moving as the word comes into view and settle onto the margin when the word's top is 40% down the screen. Before, they slid at a steady pace over 65% of the screen, so the start felt slow.
+  - They get `will-change: transform`, so their layer exists before they reach the screen.
+  - The owner asked to remove the small capital line above the Learn page's headline, and the black line between the header and the open phone menu (the one under the menu stays).
+- **Measured** (Chromium, the word's top at a share of the screen → pixels still to slide):
+  - **Phone (390 × 664):** at 95% of the screen, 97 → 81 px still to slide; at 50%, 24 → 0.
+  - **Computer:** the same curve.
+- **Learned:** Motion hands a scroll-linked transform to the browser with its easing on the whole timeline. An `ease` combined with a narrower input range (`[0, 0.6]`) therefore moved one way on the compositor and another in JavaScript. The "done at 60%" now lives in the curve, with the input range `[0, 1]`.
+- **Impact:** none beyond the home's three words and the two details.
+
 ## 2026-11-11 — The crew's review cards read in plain words (spec 0008, slice 4)
 
 - **What:** in `/crew`, each field of "What the source says" and of "Proposed change" reads as words:

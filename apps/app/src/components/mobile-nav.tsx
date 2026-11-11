@@ -52,7 +52,7 @@ export function MobileNav() {
         <nav
           id="mobile-nav"
           aria-label="Main"
-          className="absolute inset-x-0 top-full border-y-2 border-foreground bg-background px-5 py-4 sm:px-6"
+          className="absolute inset-x-0 top-full border-b-2 border-foreground bg-background px-5 py-4 sm:px-6"
         >
           <ul className="grid gap-1">
             {SITE.nav.map((item) => (
