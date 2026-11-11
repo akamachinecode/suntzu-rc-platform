@@ -12,6 +12,16 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-11 — Filters for a thumb on events and places (spec 0008, slice 5)
+
+- **What:** on a phone (below Tailwind's `md`, 768 px), `/events` and `/places` show the search box, then one row with **Filters** (with how many are on) and **Near me**, then a **List · Map** switch (plus **Month** on events).
+  - **Filters** opens a panel from the bottom of the screen in the page's gray (the shadcn Dialog, restyled). It holds every filter in labelled groups, with "Clear" and "Show 12 events".
+  - **The map is a view of its own:** it is only loaded when opened (the map library and its tiles: 11–13 requests saved on every phone visit that never opens it).
+  - **Shared pieces** are in `src/components/filters/`: the 44 px `Chip` both pages had their own copy of, `FilterSheet`, and `useWide()`, which decides only what to load. CSS decides what shows, so the page doesn't shift as it hydrates.
+- **Measured** at 390 × 844 (iPhone 13 in Chromium): the first event now starts 628 px down and the first place 684 px, on the first screen. Before, they sat below four rows of filters and a 416 px map: 1,392 px and 1,372 px down (measured on staging). Desktops are unchanged.
+- **Why:** the owner asked for filters that suit a phone; most visitors are on one.
+- **Impact:** no new dependencies, variables or services.
+
 ## 2026-11-11 — "Learn with us", redesigned (spec 0008, slice 3)
 
 - **What:** `/learn` now opens with the headline and "Book a lesson", plus a menu of the five services that jumps to each. Each service has its own colour band, like Air, Rotor and Ground on the home page:
