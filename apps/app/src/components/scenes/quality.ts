@@ -14,6 +14,15 @@ export const WINDOW = 45;
 /** A median frame longer than this (ms) is under about 45 fps. */
 export const SLOW_FRAME_MS = 22;
 
+/**
+ * On a phone a diorama draws at most 30 times a second, so it shares the graphics chip with the
+ * page's scrolling; its frames are then 33 ms apart by design.
+ */
+export const PHONE_FRAME_MS = 1000 / 30;
+
+/** A phone's median frame longer than this (ms) is under about 22 fps. */
+export const PHONE_SLOW_FRAME_MS = 45;
+
 /** The pixel ratio a diorama starts at on this screen. */
 export function startRatio(devicePixelRatio: number) {
   return Math.min(devicePixelRatio, RATIOS[0]);
@@ -22,11 +31,12 @@ export function startRatio(devicePixelRatio: number) {
 /**
  * The pixel ratio to draw at next, given the time between the last frames (ms). The median
  * ignores one-off hitches (a page load, a long task), so only steady slowness steps down.
+ * `slowMs` is what counts as slow: `PHONE_SLOW_FRAME_MS` when frames are capped at 30 fps.
  */
-export function nextRatio(current: number, intervals: readonly number[]) {
+export function nextRatio(current: number, intervals: readonly number[], slowMs = SLOW_FRAME_MS) {
   if (intervals.length < WINDOW) return current;
   const sorted = [...intervals].sort((a, b) => a - b);
   const median = sorted[Math.floor(sorted.length / 2)] ?? 0;
-  if (median <= SLOW_FRAME_MS) return current;
+  if (median <= slowMs) return current;
   return RATIOS.find((ratio) => ratio < current) ?? current;
 }
