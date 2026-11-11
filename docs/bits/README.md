@@ -31,7 +31,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [follows.toggle](./follows.toggle.md)                   | A member follows or unfollows something                                  | verified     | none yet                            |
 | [rsvp.toggle](./rsvp.toggle.md)                         | A member says they're going                                              | verified     | none yet                            |
 | [me.calendar](./me.calendar.md)                         | A member's calendar app reads their private feed                         | verified     | none yet                            |
-| [crew.queue](./crew.queue.md)                           | The crew sees what needs a person                                        | verified     | none yet                            |
+| [crew.queue](./crew.queue.md)                           | The crew sees what needs a person                                        | verified     | `format.test.ts`                    |
 | [crew.decide](./crew.decide.md)                         | The crew decides a review                                                | verified     | none yet                            |
 | [crew.add-event](./crew.add-event.md)                   | The crew adds an event by hand                                           | read in code | none yet                            |
 | [messages.create](./messages.create.md)                 | A visitor writes to the crew                                             | read in code | none yet                            |

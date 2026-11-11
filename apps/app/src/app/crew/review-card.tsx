@@ -9,6 +9,7 @@ import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { formatWhen } from "@/lib/events";
 import { correct, type CorrectState, decide } from "./actions";
+import { readEvidence, readValue } from "./format";
 
 const KIND_TITLES: Record<CrewReview["kind"], string> = {
   "new-event": "New event",
@@ -33,6 +34,36 @@ const FIELD_LABELS: Record<string, string> = {
   datePrecision: "Date precision",
   dateText: "Date text",
 };
+
+/** The source's exact words behind one field, folded away until asked for. */
+function SourceWords({ text }: { text: string }) {
+  const evidence = readEvidence(text);
+  return (
+    <details className="group mt-1.5">
+      <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-1 text-xs font-semibold text-muted-foreground underline underline-offset-4 pointer-fine:min-h-0 [&::-webkit-details-marker]:hidden">
+        <span className="group-open:hidden">Source&apos;s words</span>
+        <span className="hidden group-open:inline">Hide the source&apos;s words</span>
+      </summary>
+      {"lines" in evidence ? (
+        <dl className="mt-2 grid gap-1 rounded-md border-2 border-dashed border-foreground/30 p-2 text-xs">
+          {evidence.lines.map(([path, value], index) => (
+            <div
+              key={`${path}-${index}`}
+              className="grid gap-x-2 sm:grid-cols-[minmax(0,10rem)_1fr]"
+            >
+              <dt className="text-muted-foreground">{path}</dt>
+              <dd className="break-words">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : (
+        <q className="mt-2 block rounded-md border-2 border-dashed border-foreground/30 p-2 text-xs break-words">
+          {evidence.text}
+        </q>
+      )}
+    </details>
+  );
+}
 
 /** One review: what the source said (with its exact words) next to what we publish today. */
 export function ReviewCard({ review }: { review: CrewReview }) {
@@ -71,14 +102,12 @@ export function ReviewCard({ review }: { review: CrewReview }) {
             </p>
             <dl className="mt-3 grid gap-2 text-sm">
               {Object.entries(fields).map(([key, value]) => (
-                <div key={key} className="grid grid-cols-[7rem_1fr] gap-2">
+                <div key={key} className="grid gap-x-2 gap-y-0.5 sm:grid-cols-[7rem_1fr]">
                   <dt className="font-semibold">{FIELD_LABELS[key] ?? key}</dt>
                   <dd className="break-words">
-                    {String(value)}
+                    {readValue(key, value)}
                     {evidence[key as keyof typeof evidence] ? (
-                      <q className="mt-1 block font-mono text-xs text-muted-foreground">
-                        {evidence[key as keyof typeof evidence]}
-                      </q>
+                      <SourceWords text={evidence[key as keyof typeof evidence]!} />
                     ) : null}
                   </dd>
                 </div>
@@ -130,7 +159,7 @@ export function ReviewCard({ review }: { review: CrewReview }) {
               {proposal.map(([key, value]) => (
                 <div key={key} className="grid grid-cols-[7rem_1fr] gap-2">
                   <dt>{FIELD_LABELS[key] ?? key}</dt>
-                  <dd className="font-semibold break-words">{String(value ?? "—")}</dd>
+                  <dd className="font-semibold break-words">{readValue(key, value)}</dd>
                 </div>
               ))}
             </dl>
