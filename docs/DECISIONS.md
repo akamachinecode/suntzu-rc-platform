@@ -12,6 +12,12 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-11 — Phones: the menu and search in the page's gray, and the home without "You move a stick" (spec 0008, slice 1)
+
+- **What:** on phones the menu panel and the full-screen search use the page's gray (`bg-background`) instead of the white panel colour; larger screens keep the white search box. The menu now closes when a page is chosen (also the page already open), on Escape, on a tap outside it, and whenever the page changes. The home's cutting-mat section "You move a stick. Six parts do the rest." (the working bench of 2026-10-20) is gone on every screen, with its component (`signal-bench.tsx`): the guides now follow Ground.
+- **Why:** the owner found the white panels out of place, the menu staying open after a tap broken, and the bench section forced; a shorter home is also lighter to scroll on a phone (slice 2 measures it).
+- **Impact:** no new dependencies, variables or services. The plane guide still shows the six parts inside a real plane.
+
 ## 2026-11-10 — The docs portal is published on GitHub Pages (spec 0007, slice 3)
 
 - **What:** `.github/workflows/docs.yml` builds `apps/docs` and publishes it at **https://akamachinecode.github.io/suntzu-rc-platform/** when a document, the portal, the theme or the lockfile changes on `main`, or by hand from Actions. GitHub Pages is set to publish from Actions, which created the **`github-pages`** environment (only `main` deploys). The actions are pinned by commit like the others (`upload-pages-artifact` v5.0.0, `deploy-pages` v5.0.1). The site is served under `/suntzu-rc-platform`, so `next.config.ts` reads `DOCS_BASE_PATH` into `basePath` and writes `page/index.html` files (`trailingSlash`).

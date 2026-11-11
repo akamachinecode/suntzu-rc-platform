@@ -6,7 +6,6 @@ import { DecalSheet } from "@/components/home/decal-sheet";
 import { DraftCover, ManualCover } from "@/components/home/manual-cover";
 import { PitPasses } from "@/components/home/pit-passes";
 import { SectionTitle } from "@/components/home/section-title";
-import { SignalBench } from "@/components/home/signal-bench";
 import { ToyStage } from "@/components/home/toy-stage";
 import { Button } from "@workspace/ui/components/button";
 import { getPublicApi } from "@/lib/api";
@@ -159,27 +158,6 @@ export default async function HomePage() {
             </div>
           </article>
         ))}
-      </section>
-
-      <section
-        id="inside"
-        aria-labelledby="inside-title"
-        className="scroll-mt-16 overflow-hidden bg-cutting-mat text-mat-foreground"
-      >
-        <div className="mx-auto max-w-7xl px-4 py-24">
-          <SectionTitle
-            id="inside-title"
-            lead="You move a stick."
-            tag="Six parts do the rest."
-            tone="primary"
-          />
-          <SignalBench />
-          <p className="mt-10 text-center">
-            <Button asChild size="lg">
-              <Link href="/guides/rc-planes#parts">See them inside a real plane</Link>
-            </Button>
-          </p>
-        </div>
       </section>
 
       <section aria-labelledby="guides-title" className="overflow-x-clip px-4 py-24 text-center">
