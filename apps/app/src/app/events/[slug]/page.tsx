@@ -178,7 +178,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
     "inline-flex items-center gap-2 rounded-md border-2 border-foreground px-4 py-2 font-semibold shadow-hard-sm";
 
   return (
-    <article className="mx-auto max-w-7xl px-4 pt-10 pb-24 sm:pt-16">
+    <article className="mx-auto max-w-7xl px-5 pt-10 pb-24 sm:px-6 sm:pt-16">
       {exact ? (
         <script
           type="application/ld+json"
@@ -191,7 +191,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
 
       <Link
         href="/events"
-        className="inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
+        className="tap inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
       >
         <ArrowLeft aria-hidden className="size-4" />
         All events

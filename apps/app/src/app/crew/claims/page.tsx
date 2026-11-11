@@ -39,7 +39,7 @@ export default async function ClaimsPage() {
   const open = (requests.data ?? []) as unknown as TryRequest[];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 pt-16 pb-24">
+    <div className="mx-auto max-w-7xl px-5 pt-16 pb-24 sm:px-6">
       <Link href="/crew" className="font-semibold underline underline-offset-4">
         ← Crew console
       </Link>

@@ -45,7 +45,7 @@ export function DriftWord({ children, className }: { children: string; className
 
   return (
     <div ref={ref} aria-hidden="true" className={cn("overflow-hidden", className)}>
-      <div className="mx-auto max-w-7xl px-4">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6">
         <motion.p
           key={x.key}
           ref={word}

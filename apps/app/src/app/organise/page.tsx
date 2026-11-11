@@ -55,7 +55,7 @@ export default async function OrganisePage({ searchParams }: PageProps<"/organis
         title="Run a club or track? Publish with us."
         lead="Free, forever. SunTzu RC puts your events in front of every RC pilot and racer in Florida, and gives you something back for it."
       />
-      <section aria-label="What you get" className="mx-auto max-w-7xl px-4 pb-16">
+      <section aria-label="What you get" className="mx-auto max-w-7xl px-5 pb-16 sm:px-6">
         <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
           {PERKS.map(({ icon: Icon, title, body }) => (
             <li
@@ -71,7 +71,7 @@ export default async function OrganisePage({ searchParams }: PageProps<"/organis
       </section>
 
       <section aria-labelledby="claim-title" className="bg-cutting-mat text-mat-foreground">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-6 lg:grid-cols-2">
           <div>
             <h2 id="claim-title" className="text-3xl font-black font-wide">
               Claim your club

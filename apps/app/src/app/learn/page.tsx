@@ -121,7 +121,7 @@ const BANDS: Record<ServiceId, { tone: string; plate?: Plate; shortcuts?: Shortc
 export default function LearnPage() {
   return (
     <>
-      <header className="mx-auto grid max-w-7xl gap-12 px-4 pt-14 pb-20 sm:pt-24 md:grid-cols-[1.2fr_1fr] md:items-center md:gap-16">
+      <header className="mx-auto grid max-w-7xl gap-12 px-5 pt-14 pb-20 sm:px-6 sm:pt-24 md:grid-cols-[1.2fr_1fr] md:items-center md:gap-16">
         <div>
           <p className="text-sm font-bold tracking-[0.2em] text-muted-foreground uppercase">
             Lessons and help, in South Florida
@@ -203,7 +203,7 @@ export default function LearnPage() {
             aria-labelledby={`${service.id}-title`}
             className={cn("scroll-mt-16 border-t-2 border-foreground", band.tone)}
           >
-            <div className="mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:py-24 md:grid-cols-2 md:items-center md:gap-16">
+            <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-6 sm:py-24 md:grid-cols-2 md:items-center md:gap-16">
               <div className={cn(flip && "md:order-2")}>
                 <p className="flex items-center gap-3">
                   <span
@@ -303,7 +303,7 @@ export default function LearnPage() {
 
       <section
         aria-labelledby="how-title"
-        className="relative isolate overflow-x-clip border-t-2 border-foreground px-4 py-24 text-center"
+        className="relative isolate overflow-x-clip border-t-2 border-foreground px-5 py-24 text-center sm:px-6"
       >
         {/* The workshop wall, faded out at the bottom like the home page's. */}
         <div
@@ -317,7 +317,7 @@ export default function LearnPage() {
         <StepTickets steps={STEPS} />
       </section>
 
-      <section aria-labelledby="faq-title" className="mx-auto max-w-3xl px-4 py-24">
+      <section aria-labelledby="faq-title" className="mx-auto max-w-3xl px-5 py-24 sm:px-6">
         <h2
           id="faq-title"
           className="text-center text-4xl leading-[0.95] font-black text-balance font-wide sm:text-5xl"
@@ -354,7 +354,7 @@ export default function LearnPage() {
         </div>
       </section>
 
-      <section aria-labelledby="ready-title" className="mx-auto max-w-7xl px-4 pb-24">
+      <section aria-labelledby="ready-title" className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
         <div className="flex flex-col items-start gap-7 rounded-xl border-2 border-foreground bg-primary p-7 shadow-hard-lg sm:p-12 md:flex-row md:items-center md:justify-between">
           <div>
             <h2

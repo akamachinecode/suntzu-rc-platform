@@ -113,7 +113,7 @@ export default async function HomePage() {
           drift word's own top padding equals the top padding. */}
       <section
         aria-labelledby="crew-title"
-        className="overflow-hidden px-4 pt-20 pb-10 sm:pt-28 sm:pb-18"
+        className="overflow-hidden px-5 pt-20 pb-10 sm:px-6 sm:pt-28 sm:pb-18"
       >
         <DecalSheet decals={SERVICES.map(({ id, short, tag }) => ({ id, short, tag }))} />
       </section>
@@ -130,7 +130,7 @@ export default async function HomePage() {
             className={`scroll-mt-16 ${d.tone}`}
           >
             <DriftWord className="pt-10">{d.word}</DriftWord>
-            <div className="mx-auto grid max-w-7xl items-center gap-6 px-4 pt-6 pb-20 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.45fr)] md:gap-10">
+            <div className="mx-auto grid max-w-7xl items-center gap-6 px-5 pt-6 pb-20 sm:px-6 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.45fr)] md:gap-10">
               <div>
                 <h3 id={`${d.id}-title`} className="text-3xl font-black font-wide sm:text-4xl">
                   {d.title}
@@ -160,7 +160,10 @@ export default async function HomePage() {
         ))}
       </section>
 
-      <section aria-labelledby="guides-title" className="overflow-x-clip px-4 py-24 text-center">
+      <section
+        aria-labelledby="guides-title"
+        className="overflow-x-clip px-5 py-24 text-center sm:px-6"
+      >
         <SectionTitle
           id="guides-title"
           lead="From the bench."
@@ -183,7 +186,7 @@ export default async function HomePage() {
 
       <section
         aria-labelledby="calendar-title"
-        className="relative isolate overflow-x-clip px-4 py-32 text-center"
+        className="relative isolate overflow-x-clip px-5 py-32 text-center sm:px-6"
       >
         {/* The workshop wall fades up out of the page and back into it: no hard edges. */}
         <div
@@ -214,7 +217,7 @@ export default async function HomePage() {
       </section>
 
       <section id="start" aria-labelledby="start-title" className="scroll-mt-16">
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-24 md:grid-cols-[1fr_1.4fr]">
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 py-24 sm:px-6 md:grid-cols-[1fr_1.4fr]">
           <div className="md:sticky md:top-28 md:self-start">
             <h2
               id="start-title"
@@ -247,7 +250,7 @@ export default async function HomePage() {
             ))}
           </ol>
         </div>
-        <div className="mx-auto max-w-7xl px-4 pb-24">
+        <div className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
           <div className="flex flex-col items-start gap-6 rounded-xl border-2 border-foreground bg-primary p-8 shadow-hard-lg sm:flex-row sm:items-center sm:justify-between sm:p-10">
             <p className="max-w-[30ch] text-2xl leading-tight font-black font-wide sm:text-3xl">
               Ready for your first flight?

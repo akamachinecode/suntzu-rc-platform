@@ -28,7 +28,7 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
 
   return (
     <>
-      <header className="mx-auto max-w-7xl px-4 pt-16 pb-10 sm:pt-24">
+      <header className="mx-auto max-w-7xl px-5 pt-16 pb-10 sm:px-6 sm:pt-24">
         <h1 className="text-5xl leading-[0.92] font-black tracking-tight font-wide sm:text-7xl">
           {me.name ? `Hi, ${me.name.split(" ")[0]}.` : "My SunTzu RC"}
         </h1>
@@ -51,7 +51,7 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
         </div>
       </header>
 
-      <section aria-labelledby="going-title" className="mx-auto max-w-7xl px-4 pb-16">
+      <section aria-labelledby="going-title" className="mx-auto max-w-7xl px-5 pb-16 sm:px-6">
         <h2 id="going-title" className="text-3xl font-black font-wide">
           Where you&apos;re going
         </h2>
@@ -75,7 +75,7 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
       </section>
 
       <section aria-labelledby="following-title" className="bg-cutting-mat text-mat-foreground">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-6 lg:grid-cols-2">
           <div>
             <h2 id="following-title" className="text-3xl font-black font-wide">
               What you follow
@@ -143,7 +143,7 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
         </div>
       </section>
 
-      <section aria-labelledby="settings-title" className="mx-auto max-w-3xl px-4 py-16">
+      <section aria-labelledby="settings-title" className="mx-auto max-w-3xl px-5 py-16 sm:px-6">
         <h2 id="settings-title" className="text-3xl font-black font-wide">
           Settings
         </h2>
@@ -152,7 +152,7 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
         </div>
       </section>
 
-      <section aria-labelledby="delete-title" className="mx-auto max-w-3xl px-4 pb-24">
+      <section aria-labelledby="delete-title" className="mx-auto max-w-3xl px-5 pb-24 sm:px-6">
         <h2 id="delete-title" className="text-2xl font-black font-wide">
           Delete your account
         </h2>

@@ -42,7 +42,7 @@ export function CalendarSubscribe({
   }
 
   const button =
-    "inline-flex items-center gap-2 rounded-md border-2 border-foreground px-4 py-2 text-sm font-semibold shadow-hard-sm";
+    "inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-foreground px-4 py-2 text-sm font-semibold shadow-hard-sm";
 
   return (
     <section
@@ -59,7 +59,7 @@ export function CalendarSubscribe({
           <select
             value={discipline}
             onChange={(e) => setDiscipline(e.target.value as Discipline | "all")}
-            className="rounded-md border-2 border-foreground bg-background px-3 py-2"
+            className="h-11 rounded-md border-2 border-foreground bg-background px-3"
           >
             {OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>

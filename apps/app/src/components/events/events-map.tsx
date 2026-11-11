@@ -92,7 +92,9 @@ export function EventsMap({
       if (place.latitude == null || place.longitude == null) continue;
       const dot = document.createElement("button");
       dot.type = "button";
-      dot.className = "size-3 rounded-full border-2 border-foreground bg-panel";
+      // Small dots with a 44 px target around them, so a thumb can hit them.
+      dot.className =
+        "relative size-3 rounded-full border-2 border-foreground bg-panel before:absolute before:-inset-4 before:rounded-full before:content-['']";
       dot.setAttribute("aria-label", `${place.name}, ${place.city ?? ""}`);
       markers.current.push(
         new Marker({ element: dot })
@@ -113,7 +115,7 @@ export function EventsMap({
     for (const { event, position } of events) {
       const pin = document.createElement("button");
       pin.type = "button";
-      pin.className = `size-6 rounded-full border-2 border-foreground shadow-hard-sm ${DISCIPLINE_COLORS[event.discipline]}`;
+      pin.className = `relative size-6 rounded-full border-2 border-foreground shadow-hard-sm before:absolute before:-inset-2.5 before:rounded-full before:content-[''] ${DISCIPLINE_COLORS[event.discipline]}`;
       pin.setAttribute("aria-label", `${event.name}, ${formatWhen(event)}`);
       markers.current.push(
         new Marker({ element: pin })

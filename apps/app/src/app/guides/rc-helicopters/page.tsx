@@ -10,6 +10,7 @@ import { TailTorqueFigure } from "@/components/figures/tail-torque/figure";
 import { HOVER_PITCH as TAIL_PITCH, NEEDED } from "@/components/figures/tail-torque/model";
 import { HeliExplorer, type HeliPart } from "@/components/guides/heli-explorer";
 import { COLUMN, Column, Prose, SectionTitle, Wide } from "@/components/guides/prose";
+import { ThenNow } from "@/components/guides/then-now";
 import { Timeline } from "@/components/guides/timeline";
 import { Button } from "@workspace/ui/components/button";
 import { HELI_HISTORY } from "@/content/heli-history";
@@ -174,7 +175,7 @@ export default function RcHelicoptersGuide() {
     <article>
       <header className={`${COLUMN} pt-10 text-center sm:pt-14`}>
         <p className="font-semibold">
-          <Link href="/guides" className="underline underline-offset-4">
+          <Link href="/guides" className="tap underline underline-offset-4">
             Guides
           </Link>
         </p>
@@ -347,37 +348,11 @@ export default function RcHelicoptersGuide() {
           </p>
         </Column>
         <Wide className="mt-12">
-          <div className="overflow-x-auto rounded-xl border-2 border-foreground bg-panel shadow-hard-lg">
-            <table className="w-full min-w-[40rem] border-collapse text-left">
-              <caption className="sr-only">
-                An RC helicopter around 1980 compared with one today
-              </caption>
-              <thead>
-                <tr className="border-b-2 border-foreground">
-                  <th scope="col" className="p-4 font-semibold">
-                    <span className="sr-only">Aspect</span>
-                  </th>
-                  <th scope="col" className="p-4 text-xl font-black font-wide">
-                    Around 1980
-                  </th>
-                  <th scope="col" className="bg-primary p-4 text-xl font-black font-wide">
-                    Today
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {THEN_NOW.map(([aspect, then, now]) => (
-                  <tr key={aspect} className="border-b-2 border-foreground last:border-b-0">
-                    <th scope="row" className="p-4 align-top font-bold">
-                      {aspect}
-                    </th>
-                    <td className="p-4 align-top text-pretty">{then}</td>
-                    <td className="bg-primary/25 p-4 align-top text-pretty">{now}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ThenNow
+            then="Around 1980"
+            caption="An RC helicopter around 1980 compared with one today"
+            rows={THEN_NOW}
+          />
           <p className="mt-4 text-sm text-muted-foreground">
             From Model Aviation&apos;s helicopter columns (1978 to 2014), the{" "}
             <a href={SOURCES.flybar} className="underline underline-offset-4">

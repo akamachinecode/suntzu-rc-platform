@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
  * Everything in an article shares one column: text, titles, figures, timelines and
  * tables. 45rem of content keeps body text near 80 characters a line.
  */
-export const COLUMN = "mx-auto w-full max-w-[47rem] px-4";
+export const COLUMN = "mx-auto w-full max-w-[48rem] px-5 sm:px-6";
 
 export function Prose({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
@@ -39,5 +39,5 @@ export function Column({ children, className }: { children: React.ReactNode; cla
 
 /** A wider block for reference pages (the rules guide), not for long-form articles. */
 export function Wide({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn("mx-auto max-w-7xl px-4", className)}>{children}</div>;
+  return <div className={cn("mx-auto max-w-7xl px-5 sm:px-6", className)}>{children}</div>;
 }

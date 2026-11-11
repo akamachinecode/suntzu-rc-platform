@@ -16,7 +16,7 @@ export default function SubmitPage() {
         title="Know about an event?"
         lead="Paste the link or the flyer. We read it, check it against the source, and put it on the calendar with your help credited. Run the club? Publish it yourself from your club's page."
       />
-      <section className="mx-auto grid max-w-7xl gap-10 px-4 pb-24 lg:grid-cols-[1.4fr_1fr]">
+      <section className="mx-auto grid max-w-7xl gap-10 px-5 pb-24 sm:px-6 lg:grid-cols-[1.4fr_1fr]">
         <div className="rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard sm:p-8">
           <SubmitForm />
         </div>

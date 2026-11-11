@@ -28,7 +28,7 @@ export default async function CrewPage() {
   if (summary.response.status === 401) redirect("/sign-in?next=/crew");
   if (!summary.data) {
     return (
-      <section className="mx-auto max-w-3xl px-4 py-24">
+      <section className="mx-auto max-w-3xl px-5 py-24 sm:px-6">
         <h1 className="text-5xl font-black font-wide">Crew only</h1>
         <p className="mt-4 text-lg">
           This console is for the SunTzu RC crew. Ask the owner to add your email.
@@ -43,7 +43,7 @@ export default async function CrewPage() {
 
   return (
     <>
-      <header className="mx-auto max-w-7xl px-4 pt-16 pb-8 sm:pt-20">
+      <header className="mx-auto max-w-7xl px-5 pt-16 pb-8 sm:px-6 sm:pt-20">
         <h1 className="text-5xl leading-[0.92] font-black tracking-tight font-wide sm:text-6xl">
           Crew console
         </h1>
@@ -77,7 +77,11 @@ export default async function CrewPage() {
         </nav>
       </header>
 
-      <section id="queue" aria-labelledby="queue-title" className="mx-auto max-w-7xl px-4 pb-16">
+      <section
+        id="queue"
+        aria-labelledby="queue-title"
+        className="mx-auto max-w-7xl px-5 pb-16 sm:px-6"
+      >
         <h2 id="queue-title" className="text-3xl font-black font-wide">
           Queue
         </h2>
@@ -97,7 +101,7 @@ export default async function CrewPage() {
       </section>
 
       <section id="add" aria-labelledby="add-title" className="bg-cutting-mat text-mat-foreground">
-        <div className="mx-auto max-w-4xl px-4 py-16">
+        <div className="mx-auto max-w-4xl px-5 py-16 sm:px-6">
           <h2 id="add-title" className="text-3xl font-black font-wide">
             Add an event
           </h2>
@@ -111,7 +115,11 @@ export default async function CrewPage() {
         </div>
       </section>
 
-      <section id="inbox" aria-labelledby="inbox-title" className="mx-auto max-w-7xl px-4 py-16">
+      <section
+        id="inbox"
+        aria-labelledby="inbox-title"
+        className="mx-auto max-w-7xl px-5 py-16 sm:px-6"
+      >
         <h2 id="inbox-title" className="text-3xl font-black font-wide">
           Inbox
         </h2>
@@ -163,7 +171,7 @@ export default async function CrewPage() {
       <section
         id="feedback"
         aria-labelledby="feedback-title"
-        className="mx-auto max-w-7xl px-4 pb-16"
+        className="mx-auto max-w-7xl px-5 pb-16 sm:px-6"
       >
         <h2 id="feedback-title" className="text-3xl font-black font-wide">
           Feedback after events
@@ -201,7 +209,7 @@ export default async function CrewPage() {
       <section
         id="searches"
         aria-labelledby="searches-title"
-        className="mx-auto max-w-7xl px-4 pb-24"
+        className="mx-auto max-w-7xl px-5 pb-24 sm:px-6"
       >
         <h2 id="searches-title" className="text-3xl font-black font-wide">
           Searched, not found

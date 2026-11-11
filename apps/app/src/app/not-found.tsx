@@ -3,7 +3,7 @@ import { Button } from "@workspace/ui/components/button";
 
 export default function NotFound() {
   return (
-    <section className="mx-auto flex max-w-6xl flex-col items-start gap-4 px-4 py-32">
+    <section className="mx-auto flex max-w-6xl flex-col items-start gap-4 px-5 py-32 sm:px-6">
       <p className="font-mono text-sm text-muted-foreground">404</p>
       <h1 className="font-heading text-4xl font-semibold tracking-tight">Page not found</h1>
       <p className="text-muted-foreground">

@@ -6,6 +6,28 @@
 @import "@workspace/ui/globals.css";
 
 /*
+ * A link in a list (the footer, the clubs, a guide's sources) is a 44 px tall target on a touch
+ * screen, so a thumb finds it; with a mouse it keeps its tight line. Links inside running text
+ * don't need it.
+ */
+@utility tap {
+  @media (pointer: coarse) {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+  }
+}
+
+/* The maps' zoom buttons, 44 px on a touch screen (MapLibre draws them at 29 px). */
+@media (pointer: coarse) {
+  /* Doubled class: MapLibre's own stylesheet loads after this one. */
+  .maplibregl-ctrl.maplibregl-ctrl-group button {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+/*
  * Anatomy figures (src/components/iso, src/components/figures).
  * Drawn straight onto the page: the kit's light theme retuned to primer grey, so every
  * fill matches the page, tops sit a little lighter and sides a little darker.

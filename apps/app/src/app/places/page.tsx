@@ -32,7 +32,7 @@ export default async function PlacesPage({ searchParams }: PageProps<"/places">)
           </Button>
         </div>
       </PageHeader>
-      <section aria-label="Places" className="mx-auto max-w-7xl px-4 pb-24">
+      <section aria-label="Places" className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
         {places ? (
           <PlacesExplorer places={places} nearMe={nearMe} />
         ) : (

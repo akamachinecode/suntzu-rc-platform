@@ -37,7 +37,7 @@ export default async function ClubsPage() {
         title="Find your people."
         lead="Clubs give you instructors, insured fields and someone to help when a servo strips on the flight line. Every club and track in Florida we know of, with its fields and events."
       />
-      <section aria-label="Clubs and tracks" className="mx-auto max-w-7xl px-4 pb-24">
+      <section aria-label="Clubs and tracks" className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
         {ordered.length ? (
           <div className="grid gap-12">
             {ordered.map(([county, list]) => (

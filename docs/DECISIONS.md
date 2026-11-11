@@ -12,6 +12,23 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-11 — A phone pass on every page: room to breathe and 44 px targets (spec 0008, slice 6)
+
+- **What:**
+  - **Gutters:** every page's side margin goes from 16 px to **20 px on phones and 24 px from `sm` up** (`px-5 sm:px-6` on every container, 65 of them in 31 files). The guides' reading column stays 45rem of text (`max-w-[48rem]`).
+  - **Buttons:** on a touch screen (`pointer-coarse:`) the theme's `Button` sizes `default`, `sm` and the icon sizes are 44 px tall. With a mouse nothing changes. This is an edit to `packages/ui/src/components/button.tsx`, which the project already customises (the hard shadow).
+  - **Links in lists** get a new `tap` utility in `globals.css`: a 44 px row on touch screens. It is used in the footer, the back links ("All events"), a guide's sources and the search results. Links inside running text don't need it.
+  - **The header** (logo, search, menu) is 44 px. MapLibre's zoom buttons are 44 px on touch screens. The map dots keep their size but get a 44 px invisible target around them.
+  - **"Then and now" in the three guides** is one component (`components/guides/then-now.tsx`): the table from `sm` up, and one card per aspect on a phone. Before, the 640 px table scrolled sideways inside its box, with "Today" off the screen.
+  - **The home's section stickers** are a little smaller below 400 px, so "Machines, taken apart." fits.
+  - **"Book a session" becomes "Book a lesson"** in the header and footer, matching the Learn page, and opens the contact form on lessons.
+- **Measured** with a script that loads every public page (24 of them) at 390 × 844 (iPhone 13 in Chromium). It counts tap targets under 44 px (a card's stretched link counts as the card) and text closer than 20 px to an edge. Same script, staging before and this branch after:
+  - **Tap targets under 44 px:** 1,363 → 2. The two left are checkboxes inside their labels, which take the tap.
+  - **Text closer than 20 px:** 298 → 1. The one left is a sticker measured while it animates in.
+  - **Sideways scroll:** none before or after.
+- **Why:** the owner asked for every page to breathe more on a phone and to work comfortably with a thumb.
+- **Impact:** no new dependencies, variables or services. Desktops gain 8 px of side margin and are otherwise unchanged.
+
 ## 2026-11-11 — Filters for a thumb on events and places (spec 0008, slice 5)
 
 - **What:** on a phone (below Tailwind's `md`, 768 px), `/events` and `/places` show the search box, then one row with **Filters** (with how many are on) and **Near me**, then a **List · Map** switch (plus **Month** on events).

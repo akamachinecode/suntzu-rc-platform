@@ -220,7 +220,7 @@ export function SiteSearch() {
 
   return (
     <>
-      <Button asChild variant="outline" className="max-sm:size-10 max-sm:px-0">
+      <Button asChild variant="outline" className="max-sm:size-11 max-sm:px-0">
         <Link
           href="/search"
           onClick={(event) => {
@@ -250,7 +250,7 @@ export function SiteSearch() {
             Events, places, clubs, guides and rules. Results appear as you type; press Enter for
             every result.
           </DialogDescription>
-          <div className="flex items-center gap-3 border-b-2 border-foreground px-4">
+          <div className="flex items-center gap-3 border-b-2 border-foreground px-5">
             <Search aria-hidden="true" className="size-5 shrink-0" />
             <input
               type="text"
@@ -285,17 +285,17 @@ export function SiteSearch() {
 
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-2 sm:max-h-[60vh]">
             {q && status === "done" && response?.partial ? (
-              <p className="px-4 pt-4 text-sm text-pretty text-muted-foreground">
+              <p className="px-5 pt-4 text-sm text-pretty text-muted-foreground">
                 Nothing matches every word. These come closest:
               </p>
             ) : null}
             {q && status === "done" && !response?.results.length ? (
-              <p className="px-4 pt-4 text-pretty">
+              <p className="px-5 pt-4 text-pretty">
                 Nothing found for &ldquo;{q}&rdquo;. Try fewer words, a town or a ZIP code.
               </p>
             ) : null}
             {status === "error" ? (
-              <p className="px-4 pt-4 text-pretty">
+              <p className="px-5 pt-4 text-pretty">
                 Search isn&apos;t answering right now. Press Enter to try the results page.
               </p>
             ) : null}
@@ -304,7 +304,7 @@ export function SiteSearch() {
                 <div key={section.key} role="group" aria-labelledby={`${id}-${section.key}`}>
                   <div
                     id={`${id}-${section.key}`}
-                    className="px-4 pt-4 pb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+                    className="px-5 pt-4 pb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase"
                   >
                     {section.label}
                   </div>
@@ -312,7 +312,7 @@ export function SiteSearch() {
                     const at = starts[sectionAt]! + optionAt;
                     const Icon = option.icon;
                     const className = cn(
-                      "flex w-full items-center gap-3 px-4 py-2.5 text-left",
+                      "flex w-full items-center gap-3 px-5 py-2.5 text-left",
                       at === active && "bg-primary",
                       option.muted && at !== active && "text-muted-foreground",
                     );

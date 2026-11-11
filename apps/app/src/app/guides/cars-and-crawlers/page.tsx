@@ -10,6 +10,7 @@ import { ShockFigure } from "@/components/figures/shock/figure";
 import { STOCK_CST, dropOf } from "@/components/figures/shock/model";
 import { CarExplorer, type CarPart } from "@/components/guides/car-explorer";
 import { COLUMN, Column, Prose, SectionTitle, Wide } from "@/components/guides/prose";
+import { ThenNow } from "@/components/guides/then-now";
 import { Timeline } from "@/components/guides/timeline";
 import { Button } from "@workspace/ui/components/button";
 import { CAR_HISTORY } from "@/content/car-history";
@@ -159,7 +160,7 @@ export default function CarsGuide() {
     <article>
       <header className={`${COLUMN} pt-10 text-center sm:pt-14`}>
         <p className="font-semibold">
-          <Link href="/guides" className="underline underline-offset-4">
+          <Link href="/guides" className="tap underline underline-offset-4">
             Guides
           </Link>
         </p>
@@ -372,35 +373,11 @@ export default function CarsGuide() {
           </p>
         </Column>
         <Wide className="mt-12">
-          <div className="overflow-x-auto rounded-xl border-2 border-foreground bg-panel shadow-hard-lg">
-            <table className="w-full min-w-[40rem] border-collapse text-left">
-              <caption className="sr-only">A 1980s RC10 buggy compared with a buggy today</caption>
-              <thead>
-                <tr className="border-b-2 border-foreground">
-                  <th scope="col" className="p-4 font-semibold">
-                    <span className="sr-only">Aspect</span>
-                  </th>
-                  <th scope="col" className="p-4 text-xl font-black font-wide">
-                    1980s
-                  </th>
-                  <th scope="col" className="bg-primary p-4 text-xl font-black font-wide">
-                    Today
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {THEN_NOW.map(([aspect, then, now]) => (
-                  <tr key={aspect} className="border-b-2 border-foreground last:border-b-0">
-                    <th scope="row" className="p-4 align-top font-bold">
-                      {aspect}
-                    </th>
-                    <td className="p-4 align-top text-pretty">{then}</td>
-                    <td className="bg-primary/25 p-4 align-top text-pretty">{now}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ThenNow
+            then="1980s"
+            caption="A 1980s RC10 buggy compared with a buggy today"
+            rows={THEN_NOW}
+          />
           <p className="mx-auto mt-5 max-w-[64ch] text-center text-sm text-pretty text-muted-foreground">
             Sources:{" "}
             <a

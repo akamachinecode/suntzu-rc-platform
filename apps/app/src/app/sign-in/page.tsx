@@ -15,7 +15,7 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
   const target =
     typeof next === "string" && next.startsWith("/") && !next.startsWith("//") ? next : "/me";
   return (
-    <section className="mx-auto max-w-md px-4 py-16 sm:py-24">
+    <section className="mx-auto max-w-md px-5 py-16 sm:px-6 sm:py-24">
       <h1 className="text-5xl leading-[0.92] font-black tracking-tight font-wide">Sign in</h1>
       <p className="mt-4 mb-8 text-lg text-pretty">
         Follow events, clubs and fields, mark where you&apos;re going and get told when something

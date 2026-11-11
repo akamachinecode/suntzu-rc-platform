@@ -20,7 +20,7 @@ export function LegalPage({
   return (
     <>
       <PageHeader title={title} lead={lead} />
-      <article className="mx-auto max-w-3xl px-4 pb-24">
+      <article className="mx-auto max-w-3xl px-5 pb-24 sm:px-6">
         <p className="text-sm text-muted-foreground">Last updated {updated}.</p>
         {sections.map((section) => (
           <section key={section.title} className="mt-10">

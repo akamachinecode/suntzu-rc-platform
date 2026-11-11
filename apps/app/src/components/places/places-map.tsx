@@ -98,7 +98,8 @@ export function PlacesMap({
       if (place.latitude == null || place.longitude == null) continue;
       const dot = document.createElement("button");
       dot.type = "button";
-      dot.className = `size-4 rounded-full border-2 border-foreground ${KIND_STYLE[place.kind]}`;
+      // A 16 px dot with a 44 px target around it, so a thumb can hit it.
+      dot.className = `relative size-4 rounded-full border-2 border-foreground before:absolute before:-inset-[14px] before:rounded-full before:content-[''] ${KIND_STYLE[place.kind]}`;
       dot.setAttribute("aria-label", `${place.name}${place.city ? `, ${place.city}` : ""}`);
       markers.current.push(
         new Marker({ element: dot })

@@ -43,7 +43,7 @@ export function MobileNav() {
         aria-expanded={open}
         aria-controls="mobile-nav"
         onClick={() => setOpenOn(open ? null : pathname)}
-        className="grid size-10 place-items-center rounded-md border-2 border-foreground bg-panel shadow-hard-sm"
+        className="grid size-11 place-items-center rounded-md border-2 border-foreground bg-panel shadow-hard-sm"
       >
         {open ? <XIcon aria-hidden="true" /> : <MenuIcon aria-hidden="true" />}
         <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
@@ -52,7 +52,7 @@ export function MobileNav() {
         <nav
           id="mobile-nav"
           aria-label="Main"
-          className="absolute inset-x-0 top-full border-y-2 border-foreground bg-background px-4 py-4"
+          className="absolute inset-x-0 top-full border-y-2 border-foreground bg-background px-5 py-4 sm:px-6"
         >
           <ul className="grid gap-1">
             {SITE.nav.map((item) => (

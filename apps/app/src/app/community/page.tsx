@@ -96,7 +96,7 @@ export default async function CommunityPage() {
         </ul>
       </PageHeader>
 
-      <section aria-label="Ways in" className="mx-auto max-w-7xl px-4 pb-20">
+      <section aria-label="Ways in" className="mx-auto max-w-7xl px-5 pb-20 sm:px-6">
         <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {DOORS.map(({ icon: Icon, title, body, href, cta }) => (
             <li
@@ -118,7 +118,7 @@ export default async function CommunityPage() {
       </section>
 
       <section aria-labelledby="yours-title" className="bg-cutting-mat text-mat-foreground">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-20 sm:px-6 lg:grid-cols-2">
           <div>
             <h2 id="yours-title" className="text-3xl font-black text-balance font-wide sm:text-5xl">
               Never miss the one that matters.
@@ -149,7 +149,7 @@ export default async function CommunityPage() {
         </div>
       </section>
 
-      <section aria-labelledby="weekend-title" className="mx-auto max-w-7xl px-4 py-20">
+      <section aria-labelledby="weekend-title" className="mx-auto max-w-7xl px-5 py-20 sm:px-6">
         <div className="flex flex-col items-start gap-6 rounded-xl border-2 border-foreground bg-primary p-8 shadow-hard-lg sm:flex-row sm:items-center sm:justify-between sm:p-10">
           <div>
             <h2
@@ -171,7 +171,7 @@ export default async function CommunityPage() {
         </div>
       </section>
 
-      <section aria-labelledby="share-title" className="mx-auto max-w-7xl px-4 pb-24">
+      <section aria-labelledby="share-title" className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
         <div className="grid gap-12 md:grid-cols-[1fr_1.3fr]">
           <div>
             <h2 id="share-title" className="text-3xl font-black text-balance font-wide sm:text-5xl">
