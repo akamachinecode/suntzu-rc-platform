@@ -19,7 +19,10 @@ Format:
   - **Header:** grows by any top safe area. Its height lives in one CSS variable, `--header` in `globals.css` (4rem plus the top safe area). The hero's servo, the guides' sticky panels and timeline, the home's sticky column, the anchor offsets and the exploded figures' scroll all read it, instead of assuming 64 px.
   - **Sides:** the body is padded by the left and right safe areas (the notch, in landscape).
 - **Measured** in Chromium emulating an iPhone's safe areas (47 px top, 34 px bottom): the header is 111 px and the servo sits right under it; the footer gains 34 px and reaches the bottom edge. Without safe areas (desktops, Android) nothing changes: a 64 px header and no extra padding.
-- **Impact:** no new dependencies. To check on a real iPhone in staging.
+- **Also, forms on an iPhone:** in the crew console, "Add an event" grew wider than the screen and the page zoomed out. Two causes:
+  - The forms had no explicit column on phones, so the column grew to its widest field. Every two-column form now starts from `grid-cols-1`, which can't grow past the screen.
+  - Safari's date fields have a width of their own. On iOS only (`@supports (-webkit-touch-callout: none)` in `globals.css`), date and time fields drop Safari's look and fit their column; they still open the date picker.
+- **Impact:** no new dependencies. To check on a real iPhone in staging (this machine has no WebKit to reproduce it).
 
 ## 2026-11-11 — The Air, Rotor and Ground words ease in; two details from the owner's review
 

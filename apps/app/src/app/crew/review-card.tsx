@@ -201,7 +201,7 @@ export function ReviewCard({ review }: { review: CrewReview }) {
       {correcting ? (
         <form
           action={action}
-          className="grid gap-4 rounded-lg border-2 border-dashed border-foreground p-4 sm:grid-cols-2"
+          className="grid grid-cols-1 gap-4 rounded-lg border-2 border-dashed border-foreground p-4 sm:grid-cols-2"
         >
           <div className="grid gap-1">
             <Label htmlFor={`name-${review.id}`}>Name</Label>

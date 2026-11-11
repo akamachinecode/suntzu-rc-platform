@@ -57,7 +57,7 @@ export function CorrectionForm({ slug }: { slug: string }) {
       </p>
     ));
   return (
-    <form action={action} className="grid gap-4 sm:grid-cols-2">
+    <form action={action} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="grid gap-2">
         <Label htmlFor="fix-start">Right first day</Label>
         <Input id="fix-start" name="startDate" type="date" />

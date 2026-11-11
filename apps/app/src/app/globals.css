@@ -27,6 +27,25 @@
   }
 }
 
+/*
+ * On an iPhone, Safari draws a date field with a width of its own that ignores the column it sits
+ * in, so a form grew wider than the screen and the page zoomed out. Without Safari's own look it
+ * fits like any other field (and still opens the date picker). iOS only: Chrome keeps its icon.
+ */
+@supports (-webkit-touch-callout: none) {
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  input[type="month"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
+  }
+  input::-webkit-date-and-time-value {
+    text-align: start;
+  }
+}
+
 /* The maps' zoom buttons, 44 px on a touch screen (MapLibre draws them at 29 px). */
 @media (pointer: coarse) {
   /* Doubled class: MapLibre's own stylesheet loads after this one. */
