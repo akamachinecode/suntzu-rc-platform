@@ -89,7 +89,7 @@ export function ServoHero() {
           instead of sliding under the header. */}
       <div
         ref={pinned}
-        className="sticky top-16 mx-auto grid h-[calc(100svh-4rem)] max-w-7xl [align-content:safe_center] gap-6 px-5 py-4 sm:gap-8 sm:px-6 sm:py-6 md:grid-cols-[1.1fr_1fr] md:items-center md:gap-12"
+        className="sticky top-[var(--header)] mx-auto grid h-[calc(100svh-var(--header))] max-w-7xl [align-content:safe_center] gap-6 px-5 py-4 sm:gap-8 sm:px-6 sm:py-6 md:grid-cols-[1.1fr_1fr] md:items-center md:gap-12"
       >
         <div className="flex flex-col items-start gap-4 sm:gap-5 md:gap-7">
           <h1

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Archivo } from "next/font/google";
 import Link from "next/link";
 import { AccountButton } from "@/components/account/account-button";
@@ -15,6 +15,14 @@ const archivo = Archivo({
   subsets: ["latin"],
   axes: ["wdth"],
 });
+
+// Cover the whole screen, so the footer's colour reaches the bottom edge behind an iPhone's
+// toolbar and home indicator instead of a strip of page grey. The safe areas are padded below.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -34,8 +42,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       data-scroll-behavior="smooth"
       className={`${archivo.variable} scroll-smooth antialiased motion-reduce:scroll-auto`}
     >
-      <body className="flex min-h-dvh flex-col">
-        <header className="sticky top-0 z-50 bg-background">
+      <body className="flex min-h-dvh flex-col pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)]">
+        <header className="sticky top-0 z-50 bg-background pt-[env(safe-area-inset-top)]">
           <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-5 sm:px-6">
             <Link
               href="/"

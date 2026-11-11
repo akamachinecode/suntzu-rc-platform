@@ -25,7 +25,7 @@ export function SectionTitle({ id, children }: { id: string; children: React.Rea
   return (
     <h2
       id={id}
-      className="scroll-mt-24 text-center text-4xl leading-[0.95] font-black tracking-tight text-balance font-wide sm:text-5xl"
+      className="scroll-mt-[calc(var(--header)+2rem)] text-center text-4xl leading-[0.95] font-black tracking-tight text-balance font-wide sm:text-5xl"
     >
       {children}
     </h2>

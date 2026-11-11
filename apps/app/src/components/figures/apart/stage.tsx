@@ -7,7 +7,8 @@ import { cn } from "@/lib/utils";
 import { ApartContext } from "./context";
 import type { ApartSpec } from "./spec";
 
-const HEADER = 72; // the sticky site header plus a little air
+// A little air below the sticky site header, whose height includes any safe area at the top.
+const AIR = 8;
 
 /**
  * The article opener. Nothing is pinned: the machine comes apart during the first
@@ -31,7 +32,13 @@ export function ApartStage({
     const measure = () => {
       const node = track.current;
       if (node)
-        travel.current = Math.max(1, node.getBoundingClientRect().top + window.scrollY - HEADER);
+        travel.current = Math.max(
+          1,
+          node.getBoundingClientRect().top +
+            window.scrollY -
+            (document.querySelector("body > header")?.getBoundingClientRect().height ?? 64) -
+            AIR,
+        );
     };
     measure();
     window.addEventListener("resize", measure);

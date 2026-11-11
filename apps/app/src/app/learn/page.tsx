@@ -198,7 +198,7 @@ export default function LearnPage() {
             key={service.id}
             id={service.id}
             aria-labelledby={`${service.id}-title`}
-            className={cn("scroll-mt-16 border-t-2 border-foreground", band.tone)}
+            className={cn("scroll-mt-[var(--header)] border-t-2 border-foreground", band.tone)}
           >
             <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-6 sm:py-24 md:grid-cols-2 md:items-center md:gap-16">
               <div className={cn(flip && "md:order-2")}>

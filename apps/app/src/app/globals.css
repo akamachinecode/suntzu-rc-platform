@@ -6,6 +6,15 @@
 @import "@workspace/ui/globals.css";
 
 /*
+ * The page covers the whole screen (viewport-fit=cover in layout.tsx), so on an iPhone the
+ * footer's black reaches the bottom edge behind Safari's toolbar. The sticky header grows by the
+ * top safe area when there is one, and everything that sits under it uses this height.
+ */
+:root {
+  --header: calc(4rem + env(safe-area-inset-top, 0px));
+}
+
+/*
  * A link in a list (the footer, the clubs, a guide's sources) is a 44 px tall target on a touch
  * screen, so a thumb finds it; with a mouse it keeps its tight line. Links inside running text
  * don't need it.
