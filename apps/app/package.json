@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
-    "covers": "UPDATE_COVERS=1 vitest run src/components/home/covers"
+    "covers": "UPDATE_COVERS=1 vitest run src/components/home/covers src/components/learn/plates"
   },
   "dependencies": {
     "@opentelemetry/api": "1.10.0",

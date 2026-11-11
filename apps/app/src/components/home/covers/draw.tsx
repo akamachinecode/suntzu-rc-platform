@@ -43,12 +43,15 @@ export type CoverName = keyof typeof COVERS;
 const require = createRequire(import.meta.url);
 const read = (path: string | URL) => readFileSync(path, "utf8");
 
+/** The rules of globals.css a cover needs: the figure on the page and the exploded figures. */
+const COVER_RULES = /^\s*\.(iso\.servo-figure|servo-figure \.pla)/;
+
 /**
- * The styles a cover needs, taken from where the page gets them so the files can't drift:
- * the kit's stylesheet, SunTzu RC's figure overrides in globals.css (the primer-grey tones and
- * the yellow lit assembly) and the theme colours those overrides point at.
+ * The styles a drawn figure needs, taken from where the page gets them so the files can't drift:
+ * the kit's stylesheet, SunTzu RC's figure overrides in globals.css (`rules`: the primer-grey
+ * tones and the yellow lit assembly) and the theme colours those overrides point at.
  */
-function coverStyles() {
+export function figureStyles(rules: RegExp = COVER_RULES) {
   const kit = read(new URL("../../iso/iso.css", import.meta.url));
   const site = read(new URL("../../../app/globals.css", import.meta.url)).replace(
     /\/\*[\s\S]*?\*\//g,
@@ -58,8 +61,8 @@ function coverStyles() {
 
   // Top-level rules for the figure on the page (`.iso.servo-figure`) and the exploded figures (`.pla`).
   // A selector starts after the previous rule or statement (`@import …;`).
-  const rules = [...site.matchAll(/([^{};]+)\{([^{}]*)\}/g)]
-    .filter(([, selector]) => /^\s*\.(iso\.servo-figure|servo-figure \.pla)/.test(selector))
+  const kept = [...site.matchAll(/([^{};]+)\{([^{}]*)\}/g)]
+    .filter(([, selector]) => rules.test(selector))
     .map(([rule]) => rule.trim());
 
   // The theme's light colours (`:root`), for the var(--background)-style values in those rules.
@@ -67,7 +70,7 @@ function coverStyles() {
   const tokens = new Map(
     [...root.matchAll(/--([\w-]+):\s*([^;]+);/g)].map(([, name, value]) => [name, value.trim()]),
   );
-  const resolved = rules
+  const resolved = kept
     .join("\n")
     .replace(/var\(--([\w-]+)\)/g, (match, name: string) => tokens.get(name) ?? match);
 
@@ -97,7 +100,7 @@ export function drawCover(name: CoverName) {
       className="iso servo-figure iso-svg"
       data-theme="light"
     >
-      <style>{coverStyles()}</style>
+      <style>{figureStyles()}</style>
       <g className="pla" data-focus="">
         <ApartPose spec={cover.spec} slots={cover.slots} apart={cover.apart} lit={cover.lit} />
       </g>
