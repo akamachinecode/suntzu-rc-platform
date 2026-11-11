@@ -266,6 +266,15 @@ Measure first, change one thing, measure again with the same method. The numbers
 - **No `--` inside an XML comment.** A browser refuses the whole SVG file as an image (it shows as broken), while the same markup inline in HTML works. `covers.test.tsx` checks it.
 - **Smoothed scrolling is felt as lag.** A scroll library that eases the page towards the wheel's target (Lenis with `lerp: 0.1`) took 382 ms to cover 90% of a wheel step, against one frame for the browser's own scrolling. Measure it by logging `scrollY` on every frame after a wheel event; the browser automation tools here scroll without wheel events, so they can't measure the native case. Smooth in-page links need only CSS (`scroll-behavior: smooth`).
 - **Find where a WebGL scene spends its time before changing it.** Time the `requestAnimationFrame` callbacks (the JavaScript) separately from the frame rate. Here the JavaScript took under 1 ms per frame and the graphics chip took the rest, so the fix was fewer pixels on slow devices (`scenes/quality.ts`), not less code. A browser without a GPU (software WebGL, as in these automation tools) exaggerates the chip's cost: it is useful to compare before and after, but not as an absolute number.
+- **Scroll-linked motion belongs on the compositor.** A transform moved by JavaScript on scroll events stutters on a phone whenever the page is busy, because the browser scrolls on another thread. Motion (14.9) hands it to the browser as a scroll-driven animation when three things hold:
+  - the `useScroll` offsets are at the screen's edges (`"start end"`, `"start start"`, `"end end"`; not `"start 0.35"`);
+  - `useTransform` maps them with arrays rather than a function;
+  - the value is bound as `transform` or `opacity` on an HTML element (not `rotate`, not an SVG element).
+
+  Check with `document.getAnimations()`: those animations have a `ViewTimeline`.
+
+- **Find the slow step before splitting work.** Wrap each step in `performance.mark` and `performance.measure` in a production build, then read the entries in the browser. A diorama's time was in building its geometry, not in compiling shaders.
+- **Scrolling in headless Chromium:** `Input.synthesizeScrollGesture` with `gestureSourceType: "touch"` doesn't scroll a page emulating a phone. `"mouse"` does, through the same compositor, so use it for flicks.
 - **`react-dom/server` can't run inside Next.js's server code** (pages and route handlers throw "react-dom/server is not supported in React Server Components"). Files drawn from React components are written by a Vitest test instead (`pnpm --filter @workspace/app covers`), which also fails when a figure changes and its file wasn't redrawn.
 
 ## Known risks

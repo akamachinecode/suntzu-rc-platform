@@ -130,7 +130,7 @@ export interface Kit {
   palette: Record<Swatch, RGB>;
   /** A mesh in one swatch, with its ink outline. */
   part(geometry: BufferGeometry, swatch: Swatch, options?: PartOptions): Mesh;
-  /** A rounded box centred on the origin. */
+  /** A rounded box centred on the origin. Shared between parts of the same size: don't change it. */
   box(w: number, h: number, d: number, r?: number): BufferGeometry;
   /** A cylinder along Y, centred on the origin. */
   cylinder(rTop: number, rBottom: number, h: number, segments?: number): BufferGeometry;
@@ -216,6 +216,19 @@ export function createKit(palette: Record<Swatch, RGB>, width: { value: number }
     stencilZPass: ReplaceStencilOp,
   });
 
+  // Parts of the same shape (fence posts, palm fronds, wheel lugs) share one geometry, and so
+  // one ink hull, instead of building and welding a copy each. Scenes never change a geometry
+  // the kit gives them, so sharing is safe.
+  const shapes = new Map<string, BufferGeometry>();
+  const shape = (key: string, make: () => BufferGeometry) => {
+    let geometry = shapes.get(key);
+    if (!geometry) {
+      geometry = make();
+      shapes.set(key, geometry);
+    }
+    return geometry;
+  };
+
   // The hull needs one normal per corner, averaged across the faces that meet there, or it
   // splits open at hard edges.
   const hullOf = (geometry: BufferGeometry) => {
@@ -245,13 +258,19 @@ export function createKit(palette: Record<Swatch, RGB>, width: { value: number }
       return mesh;
     },
     box(w, h, d, r = 0.04) {
-      return new RoundedBoxGeometry(w, h, d, 2, Math.min(r, w / 2, h / 2, d / 2));
+      return shape(`box:${w}:${h}:${d}:${r}`, () => {
+        return new RoundedBoxGeometry(w, h, d, 2, Math.min(r, w / 2, h / 2, d / 2));
+      });
     },
     cylinder(rTop, rBottom, h, segments = 24) {
-      return new CylinderGeometry(rTop, rBottom, h, segments);
+      return shape(`cylinder:${rTop}:${rBottom}:${h}:${segments}`, () => {
+        return new CylinderGeometry(rTop, rBottom, h, segments);
+      });
     },
     sphere(r, segments = 20) {
-      return new SphereGeometry(r, segments, Math.round(segments * 0.75));
+      return shape(`sphere:${r}:${segments}`, () => {
+        return new SphereGeometry(r, segments, Math.round(segments * 0.75));
+      });
     },
     shadow,
     bake(group) {
@@ -384,10 +403,18 @@ export function stage(canvas: HTMLCanvasElement, build: Build) {
   }
 
   resize();
+  // Compiling the shaders is the slowest part of the first frame. Where the browser can compile
+  // them in the background (KHR_parallel_shader_compile), this resolves once they are ready, so
+  // the first draw doesn't stop the page; elsewhere it resolves at once.
+  const ready = renderer.compileAsync(scene, camera).then(
+    () => undefined,
+    () => undefined,
+  );
   return {
     draw,
     resize,
     dispose,
+    ready,
     still: diorama.still,
     pixelRatio: () => ratio,
     setPixelRatio,

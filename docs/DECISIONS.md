@@ -12,6 +12,35 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-11 — Home performance, step 4: scroll-linked motion on the compositor, a glide on computers, dioramas built while you read (spec 0008, slice 2)
+
+- **What:**
+  - **Phones:** the hero's horn, prop and wheel and the Air, Rotor and Ground titles are now transforms tied to the scroll, which Motion 14.9 hands to the browser as scroll-driven animations (WAAPI on a `ViewTimeline`). The browser runs them on its compositor, so they keep pace with the finger even while the page is busy. Before, JavaScript moved them on every scroll event, and any busy moment showed as a stutter.
+  - For that, the horn is now its own HTML layer over the servo (an SVG attribute can't be animated off the main thread), and the titles' range is set from the screen's edges.
+  - The hero is sized with `svh` instead of `dvh`, so hiding the address bar no longer re-lays out the page.
+  - **Computers:** a mouse or trackpad (`(hover: hover) and (pointer: fine)`) gets the same parts on a light spring that settles in about a fifth of a second. The owner asked for the smooth feel back on the animations only: the page still scrolls natively (no Lenis, see 2026-11-10). This lives in `src/components/home/scroll-transform.ts`.
+  - **Dioramas:**
+    - They are built one at a time, in page order, after the page has loaded, when the browser is idle and the page hasn't scrolled for 300 ms. One the visitor reaches first is built at once.
+    - Their shaders compile in the background (`compileAsync`).
+    - Parts of the same shape share one geometry and one ink hull. Pixel-identical, and building takes 40–60% less (225/141/283 ms → about 135/82/111 ms with the CPU 4× slower).
+    - On a touch screen they draw at 30 fps and hold still while the page scrolls. `quality.ts` judges a phone slow below about 22 fps.
+- **Measured:** production build, Chromium with the CPU 4× slower, the home scrolled from the top to the guides in 600 px flicks (median of 3; method in `OPERATIONS.md`, "Performance"):
+  - **Phone (Pixel 7 screen), after a moment reading:** 47.9 → 59.3 fps, long tasks 6 → 0, blocked 762 → 0 ms, longest task 334 → 0 ms.
+  - **Phone, scrolling straight after the page loads:** 47.2 → 56.6 fps, long tasks 9 → 5, blocked 855 → 320 ms, longest 360 → 205 ms. These are the dioramas being built between flicks; the horn, prop and titles keep moving through them.
+  - **Computer (1440 × 900):** 44.6 → 49.2 fps, long tasks 26 → 18, blocked 1,169 → 177 ms, longest 373 → 66 ms.
+- **Why:** the owner still saw a strong lag on their phone in the hero's servo and the titles, and missed the smooth feel of the animations.
+- **Impact:** no new dependencies, variables or services. The owner checks it on their phone in staging; if the dioramas still stutter there, phones get a still frame of each scene (spec 0008).
+
+## 2026-11-11 — Spec 0008 approved: phones, a shorter home, the Learn page and plain-word review cards
+
+- **What:** the owner approved spec 0008 and widened it the same day: the hero's lag and smooth motion (slice 2), filters for events and places that suit a phone (slice 5), and a pass over every page on a phone with more room to breathe (slice 6). Decisions it records:
+  - **Lessons are real but have no prices on the site for now:** people ask, and the crew answers.
+  - **The Learn page names nobody** and shows no photos of the three of us.
+  - **The crew stays whoever `CREW_EMAILS` lists.** Members keep helping without publishing (submissions and corrections wait in the crew's queue).
+  - **The 3D dioramas stay 3D on phones,** at 30 fps and still while scrolling; a still frame is the fallback if they stutter on the owner's phone.
+- **Why:** most visitors come on a phone, and the Learn page is where a visitor becomes someone who asks for a lesson.
+- **Impact:** none beyond the slices; nothing needs Itaca engineering.
+
 ## 2026-11-11 — Phones: the menu and search in the page's gray, and the home without "You move a stick" (spec 0008, slice 1)
 
 - **What:** on phones the menu panel and the full-screen search use the page's gray (`bg-background`) instead of the white panel colour; larger screens keep the white search box. The menu now closes when a page is chosen (also the page already open), on Escape, on a tap outside it, and whenever the page changes. The home's cutting-mat section "You move a stick. Six parts do the rest." (the working bench of 2026-10-20) is gone on every screen, with its component (`signal-bench.tsx`): the guides now follow Ground.

@@ -1,13 +1,15 @@
-import { motion, useReducedMotion, type MotionValue } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { useId } from "react";
+import type { ScrollTransform } from "@/components/home/scroll-transform";
 import { cn } from "@/lib/utils";
 
 const ink = { stroke: "var(--foreground)", strokeWidth: 3, strokeLinejoin: "round" } as const;
 
 /**
  * A part lying on the bench beside the hero's servo. It drops in when the page loads, and
- * `spin` turns it in place. The hard shadow sits on the outer box, which never turns, so the
- * shadow stays down and to the right while the part spins.
+ * `spin` (a `rotate(…)` tied to the scroll, see `scroll-transform.ts`) turns it in place. The hard
+ * shadow sits on the outer box, which never turns, so the shadow stays down and to the right
+ * while the part spins.
  */
 export function BenchPart({
   className,
@@ -19,7 +21,7 @@ export function BenchPart({
   className?: string;
   tilt?: number;
   delay?: number;
-  spin?: MotionValue<number>;
+  spin?: ScrollTransform;
   children: React.ReactNode;
 }) {
   const reduce = useReducedMotion();
@@ -34,7 +36,7 @@ export function BenchPart({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ type: "spring", stiffness: 380, damping: 20, delay }}
     >
-      <motion.div style={{ rotate: spin }}>
+      <motion.div key={spin?.key} style={spin ? { transform: spin.value } : undefined}>
         <div style={{ rotate: `${tilt}deg` }}>{children}</div>
       </motion.div>
     </motion.div>
