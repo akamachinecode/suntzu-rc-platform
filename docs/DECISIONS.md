@@ -12,6 +12,18 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-11 — "Learn with us", redesigned (spec 0008, slice 3)
+
+- **What:** `/learn` now opens with the headline and "Book a lesson", plus a menu of the five services that jumps to each. Each service has its own colour band, like Air, Rotor and Ground on the home page:
+  - **Lessons, first model and advanced courses** each show a drawing of one of the guides' figures (thumb to elevator, the balance point, the swashplate), with a link to move it yourself in the guide.
+  - **The scene and the rules** link to the pages that already do that job.
+
+  "How it works" hangs the three steps as pit passes on the pegboard. Five questions people ask before a first lesson use `<details>` (no JavaScript, no new component), and the page closes with a call to book. Every answer restates what the site already says (`src/content/learn.ts`), with no prices and no names (the owner's decision).
+
+- **The drawings are files:** like the home's covers, each figure is drawn once at rest into an SVG file (`src/components/learn/plates/`, cropped to the drawing). The page shows them as lazy images: an interactive figure is 50–130 KB of markup sent twice, and the guides that embed three or four of them weigh 1–1.4 MB. `/learn` is 144 KB of HTML. `pnpm --filter @workspace/app covers` now redraws the plates too, and `plates.test.tsx` fails when a figure changes and its plate wasn't redrawn. `figureStyles()` in `covers/draw.tsx` takes the rules to include; the covers came out byte-identical.
+- **Why:** the Learn page is where a visitor becomes someone who asks for a lesson, and it was the plainest page on the site.
+- **Impact:** no new dependencies, variables or services. Checked on a 390 px phone (no sideways scroll) and at 1440 px.
+
 ## 2026-11-11 — Home performance, step 4: scroll-linked motion on the compositor, a glide on computers, dioramas built while you read (spec 0008, slice 2)
 
 - **What:**

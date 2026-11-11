@@ -88,13 +88,13 @@ Checked while planning: the crew console (`/crew`), with its queue and the conta
 
   On computers, the same parts follow the scroll through a light spring. The owner then checks on their phone in staging. (blocked by: 1, which changes what is measured)
 
-- [ ] 3. **"Learn with us", redesigned:**
-  - A hero with the main button.
-  - The five services in colour bands like Air, Rotor and Ground, each with one of the guides' interactive figures:
+- [x] 3. **"Learn with us", redesigned:**
+  - A hero with the main button, and a menu of the five services.
+  - The five services in colour bands like Air, Rotor and Ground, each with a drawing of one of the guides' figures (drawn once as an image, so the page stays light) and a link to move it yourself in the guide:
     - lessons: thumb to elevator;
     - first model: the balance point;
-    - advanced: the swashplate or gearing.
-  - The scene and the rules link to "Where to fly" and "Can I fly here?".
+    - advanced: the swashplate.
+  - The scene and the rules link to "Where to fly", the clubs, the calendar, "Try it with a club", "Can I fly here?" and "Flying legally".
   - "How it works" as tickets in the home's style, a short list of questions people ask before a first lesson, and a closing call to book. (blocked by: —)
 - [ ] 4. **Crew review cards in plain words:** formatted values next to what we publish, and the source's exact words folded under each field. (blocked by: —)
 - [ ] 5. **Events and places filters for phones:** one row with a "Filters" button (and how many are on) that opens a panel with every filter; the results start on the first screen. Desktops keep today's filters. (blocked by: —)
