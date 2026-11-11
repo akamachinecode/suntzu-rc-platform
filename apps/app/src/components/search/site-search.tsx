@@ -243,7 +243,7 @@ export function SiteSearch() {
       <Dialog open={open} onOpenChange={(next) => (next ? show() : close())}>
         <DialogContent
           showCloseButton={false}
-          className="top-0 left-0 flex h-dvh max-w-none translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-foreground bg-panel p-0 ring-0 sm:top-[10vh] sm:left-1/2 sm:h-auto sm:max-h-[80vh] sm:max-w-2xl sm:-translate-x-1/2 sm:rounded-xl sm:border-2 sm:shadow-hard-lg"
+          className="top-0 left-0 flex h-dvh max-w-none translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-foreground bg-background p-0 ring-0 sm:top-[10vh] sm:left-1/2 sm:h-auto sm:max-h-[80vh] sm:max-w-2xl sm:-translate-x-1/2 sm:rounded-xl sm:border-2 sm:bg-panel sm:shadow-hard-lg"
         >
           <DialogTitle className="sr-only">Search SunTzu RC</DialogTitle>
           <DialogDescription className="sr-only">
