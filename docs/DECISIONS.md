@@ -12,6 +12,23 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-11 — The crew's review cards read in plain words (spec 0008, slice 4)
+
+- **What:** in `/crew`, each field of "What the source says" and of "Proposed change" reads as words:
+  - dates as dates ("Thu, Nov 5, 2026");
+  - kinds and disciplines by name ("Fly-in", "Planes and jets");
+  - the page by its site and path ("delandrc.com/jets-over-deland");
+  - yes/no and statuses capitalised.
+
+  The source's exact words are folded under each field ("Source's words"):
+  - **Structured data** quoted from a page (`"location":{"@type":"Place",…}`) reads as one line per value ("location › address › address locality: DeLand"), without the schema's `@type`.
+  - **A calendar line or a quote from a flyer** stays exactly as written.
+
+  The rules are pure functions in `src/app/crew/format.ts`, tested in `format.test.ts`.
+
+- **Why:** the owner found the cards hard to read: raw JSON next to raw values. Nothing about what the crew can see or decide changes; the crew is still whoever `CREW_EMAILS` lists.
+- **Impact:** no new dependencies, variables or services. Checked on a local review with staging-like evidence, then removed.
+
 ## 2026-11-11 — A phone pass on every page: room to breathe and 44 px targets (spec 0008, slice 6)
 
 - **What:**
