@@ -52,7 +52,7 @@ const INKS = ["bg-primary", "bg-sky", "bg-lead", "bg-mat", "bg-panel"];
 /** The site's sign-off: a finish line, the way in, every page and the official links. */
 export function SiteFooter() {
   return (
-    <footer className="bg-foreground text-background">
+    <footer className="bg-foreground pb-[env(safe-area-inset-bottom)] text-background">
       {/* the finish line */}
       <div
         aria-hidden="true"

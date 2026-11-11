@@ -127,7 +127,7 @@ export default async function HomePage() {
             key={d.id}
             id={d.id}
             aria-labelledby={`${d.id}-title`}
-            className={`scroll-mt-16 ${d.tone}`}
+            className={`scroll-mt-[var(--header)] ${d.tone}`}
           >
             <DriftWord className="pt-10">{d.word}</DriftWord>
             <div className="mx-auto grid max-w-7xl items-center gap-6 px-5 pt-6 pb-20 sm:px-6 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.45fr)] md:gap-10">
@@ -216,9 +216,9 @@ export default async function HomePage() {
         </p>
       </section>
 
-      <section id="start" aria-labelledby="start-title" className="scroll-mt-16">
+      <section id="start" aria-labelledby="start-title" className="scroll-mt-[var(--header)]">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 py-24 sm:px-6 md:grid-cols-[1fr_1.4fr]">
-          <div className="md:sticky md:top-28 md:self-start">
+          <div className="md:sticky md:top-[calc(var(--header)+3rem)] md:self-start">
             <h2
               id="start-title"
               className="text-4xl leading-[0.95] font-black text-balance font-wide sm:text-6xl"

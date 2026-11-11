@@ -30,7 +30,7 @@ export function TryForm() {
       </p>
     ));
   return (
-    <form action={action} className="grid gap-5 sm:grid-cols-2" noValidate>
+    <form action={action} className="grid grid-cols-1 gap-5 sm:grid-cols-2" noValidate>
       <div className="grid gap-2">
         <Label htmlFor="try-name" className="font-semibold">
           Your name

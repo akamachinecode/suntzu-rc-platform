@@ -6,6 +6,44 @@
 @import "@workspace/ui/globals.css";
 
 /*
+ * The page covers the whole screen (viewport-fit=cover in layout.tsx). The sticky header grows
+ * by the top safe area when there is one (an iPhone's status bar), and everything that sits under
+ * it uses this height. Under the status bar the header's gray runs up to the screen's edge, which
+ * makes the space above its buttons look larger than the space below, so it gets a little more
+ * room below them then (--header-air).
+ */
+:root {
+  --header-air: min(0.5rem, env(safe-area-inset-top, 0px));
+  --header: calc(4rem + env(safe-area-inset-top, 0px) + var(--header-air));
+}
+
+/*
+ * On an iPhone, Safari stops the page above its floating toolbar and fills the space under the
+ * toolbar with the page's background color (the root's), which left a gray strip under the
+ * black footer. In the lower half of the page the root takes the footer's color, so the footer
+ * runs to the bottom of the screen; in the upper half it keeps the page's gray, so pulling the
+ * page down at the top still shows gray above the header (page-end.tsx). The body paints the
+ * page's own gray over all of it.
+ */
+html {
+  background-color: var(--background);
+}
+html[data-end] {
+  background-color: var(--foreground);
+}
+
+/*
+ * A drop-down list is as wide as its longest choice (a place's full name), which pushed a form
+ * wider than a phone. Inside a form's column it may shrink, and shows the choice cut short.
+ */
+@layer base {
+  select {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+/*
  * A link in a list (the footer, the clubs, a guide's sources) is a 44 px tall target on a touch
  * screen, so a thumb finds it; with a mouse it keeps its tight line. Links inside running text
  * don't need it.
@@ -15,6 +53,25 @@
     display: inline-flex;
     min-height: 2.75rem;
     align-items: center;
+  }
+}
+
+/*
+ * On an iPhone, Safari draws a date field with a width of its own that ignores the column it sits
+ * in, so a form grew wider than the screen and the page zoomed out. Without Safari's own look it
+ * fits like any other field (and still opens the date picker). iOS only: Chrome keeps its icon.
+ */
+@supports (-webkit-touch-callout: none) {
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  input[type="month"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
+  }
+  input::-webkit-date-and-time-value {
+    text-align: start;
   }
 }
 

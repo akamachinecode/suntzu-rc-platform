@@ -124,7 +124,7 @@ export function CarExplorer({ parts }: { parts: CarPart[] }) {
   return (
     <div className="grid gap-8 md:grid-cols-2 md:gap-16">
       {/* Pinned on every screen size: on phones it shrinks to a strip under the header. */}
-      <div className="sticky top-[4.5rem] z-10 self-start md:top-24">
+      <div className="sticky top-[calc(var(--header)+0.5rem)] z-10 self-start md:top-[calc(var(--header)+2rem)]">
         <div className="flex items-center justify-center gap-6 rounded-xl border-2 border-foreground bg-panel p-3 shadow-hard sm:gap-10 sm:p-4 md:block md:p-6 md:shadow-hard-lg">
           <div className="w-32 shrink-0 sm:w-44 md:w-full">
             <TopView active={active} />

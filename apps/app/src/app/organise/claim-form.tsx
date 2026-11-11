@@ -8,7 +8,7 @@ import { Label } from "@workspace/ui/components/label";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { type ClaimState, startClaim } from "./actions";
 
-const select = "h-11 w-full rounded-md border-2 border-foreground bg-background px-3";
+const select = "h-11 w-full min-w-0 rounded-md border-2 border-foreground bg-background px-3";
 
 /** Claim a club or track: by an email at its domain, a code on its website, or the crew's check. */
 export function ClaimForm({ hosts, preselected }: { hosts: Host[]; preselected?: string }) {

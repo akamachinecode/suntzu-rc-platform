@@ -55,7 +55,7 @@ Checked while planning: the crew console (`/crew`), with its queue and the conta
 - When the home is scrolled on a phone, then:
   - Measured in Chrome with a phone screen and the CPU 4× slower, scrolling from the hero to the guides has fewer long tasks and less blocked time than before, and no task over 100 ms while a title slides in. The before and after numbers are recorded.
   - The servo's horn, the prop, the wheel and the titles move on the browser's compositor (scroll-driven animations), so they keep pace with the finger even while the page is busy.
-  - The 3D dioramas keep their 3D, hold still while the finger is scrolling, resume a moment after it stops, and draw at 30 frames a second on phones. Desktops keep 60.
+  - The 3D dioramas keep their 3D and draw at 30 frames a second on phones. Desktops keep 60. They first held still while the finger was scrolling; after trying it, the owner asked for them to keep moving (2026-11-11).
   - The Air, Rotor and Ground titles slide in smoothly. On a browser that can't animate them natively, they sit in place, without stuttering.
   - The owner scrolls the home on their own phone in staging and it feels smooth. If the dioramas still stutter there, phones show one still frame of each scene instead (the fallback the owner accepted).
 - When the home is scrolled on a computer (a mouse or trackpad), then the same parts glide after the scroll on a light spring, settling in about a fifth of a second, while the page itself scrolls natively.

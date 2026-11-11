@@ -14,7 +14,7 @@ export function ProfileForm({ profile }: { profile: MemberProfile }) {
   const [state, action, pending] = useActionState(updateProfile, initial);
   return (
     <form action={action} className="grid gap-6">
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div className="grid gap-2">
           <Label htmlFor="name" className="font-semibold">
             Your name <span className="font-normal text-muted-foreground">(only for emails)</span>

@@ -16,7 +16,7 @@ export function BuildForm() {
 
   return (
     <form action={formAction} className="grid gap-6" noValidate>
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <Field label="Your name" name="name" errors={e.name}>
           <Input id="name" name="name" autoComplete="name" required aria-invalid={!!e.name} />
         </Field>

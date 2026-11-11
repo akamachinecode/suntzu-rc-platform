@@ -123,10 +123,7 @@ export default function LearnPage() {
     <>
       <header className="mx-auto grid max-w-7xl gap-12 px-5 pt-14 pb-20 sm:px-6 sm:pt-24 md:grid-cols-[1.2fr_1fr] md:items-center md:gap-16">
         <div>
-          <p className="text-sm font-bold tracking-[0.2em] text-muted-foreground uppercase">
-            Lessons and help, in South Florida
-          </p>
-          <h1 className="mt-5 text-5xl leading-[0.92] font-black tracking-tight text-balance font-wide sm:text-7xl">
+          <h1 className="text-5xl leading-[0.92] font-black tracking-tight text-balance font-wide sm:text-7xl">
             Learn RC with people who{" "}
             <Tag tone="primary" className="mt-2">
               still crash.
@@ -201,7 +198,7 @@ export default function LearnPage() {
             key={service.id}
             id={service.id}
             aria-labelledby={`${service.id}-title`}
-            className={cn("scroll-mt-16 border-t-2 border-foreground", band.tone)}
+            className={cn("scroll-mt-[var(--header)] border-t-2 border-foreground", band.tone)}
           >
             <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-6 sm:py-24 md:grid-cols-2 md:items-center md:gap-16">
               <div className={cn(flip && "md:order-2")}>
