@@ -1,6 +1,6 @@
 # 0008 — Phones that feel right, a shorter home and a Learn page worth booking from
 
-- **Status:** Approved 2026-11-11
+- **Status:** Approved 2026-11-11 · Done 2026-11-11 (pull requests #23, #24, #25, #26, #27 and #29)
 - **Requested by:** the owner, 2026-11-11
 - **Approved by:** the owner, 2026-11-11 (who then added the hero's lag, smooth motion, the filters and a phone pass on every page: slices 2, 5 and 6)
 
