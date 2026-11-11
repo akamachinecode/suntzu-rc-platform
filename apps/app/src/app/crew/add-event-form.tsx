@@ -10,7 +10,7 @@ import { Textarea } from "@workspace/ui/components/textarea";
 import { DISCIPLINE_LABELS, KIND_LABELS } from "@/lib/events";
 import { type AddEventState, addEvent } from "./actions";
 
-const select = "h-11 rounded-md border-2 border-foreground bg-background px-3";
+const select = "h-11 w-full min-w-0 rounded-md border-2 border-foreground bg-background px-3";
 
 /**
  * Add an event by hand (from a flyer, a Facebook post, an email). It's published at once; when

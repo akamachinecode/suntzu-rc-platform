@@ -12,6 +12,20 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-11 — The owner's second look on an iPhone: dioramas move while scrolling, the footer's black, the place list and the header
+
+- **What:** four things from the owner's look at staging on their iPhone:
+  - **The dioramas keep moving while the page scrolls.** On phones they held still while the finger was scrolling (step 4, below). The owner saw them stop on every phone browser and wants them moving. They still draw 30 times a second on a touch screen.
+  - **The footer's black under Safari's toolbar.** `viewport-fit=cover` wasn't enough: Safari 26 stops the end of the page above its floating toolbar and fills the space under it with the root's background color, which was the page's gray. In the lower half of the page the root now takes the footer's black (`html[data-end]`, set by `src/components/page-end.tsx`). In the upper half it keeps the gray, so pulling the page down at the top still shows gray above the header. The body paints the page's own gray, so nothing else changes.
+  - **The place list in "Add an event"** was still wider than the screen: a drop-down list is as wide as its longest choice ("West Delray Regional Park flying field, Delray Beach"). Every `<select>` may now shrink to its column (`min-width: 0; max-width: 100%` in `globals.css`); the ones in the crew's form and the organiser's claim form fill it.
+  - **The header's spacing on an iPhone:** under the status bar the header's gray runs up to the screen's edge, so the space above its buttons looked larger than the space below. When there is a top safe area, the header gets 8 px more below its buttons (`--header-air`, part of `--header`). Without one (desktops, Android) it is unchanged.
+- **Measured:**
+  - **Dioramas:** production build, the home scrolled to the guides in 600 px flicks on a phone screen with the CPU 4× slower (median of 3), using this machine's integrated graphics: 59.7 fps with or without the pause, no frame over 50 ms, no long tasks. With software WebGL (no graphics chip) drawing while scrolling cost 59.1 → 50.8 fps, which is the chip's cost being done by the CPU (`OPERATIONS.md`, "What we learned").
+  - **Header** (Chromium, iPhone safe areas): 10 px above the buttons and 18 px below; 64 px and 10/10 without safe areas.
+  - **Page end:** the root is gray at the top and 40% down the home, black at the bottom, gray again back at the top.
+  - **Crew form** at 390 px: the page is 390 px wide and the place list fills the form's 298 px. Without the fix the same page is 462 px wide.
+- **Impact:** no new dependencies. To check on the owner's iPhone in staging (no WebKit on this machine). If the dioramas stutter on their phone, the fallback is still a still frame on phones.
+
 ## 2026-11-11 — The page covers the whole screen on an iPhone (viewport-fit=cover)
 
 - **What:** on the owner's iPhone (Safari with the floating bottom toolbar), the page ended above the toolbar, and the strip below the footer showed the page's gray instead of the footer's black. The page now declares `viewport-fit=cover` (`export const viewport` in `layout.tsx`) and pads the safe areas itself:
@@ -22,7 +36,7 @@ Format:
 - **Also, forms on an iPhone:** in the crew console, "Add an event" grew wider than the screen and the page zoomed out. Two causes:
   - The forms had no explicit column on phones, so the column grew to its widest field. Every two-column form now starts from `grid-cols-1`, which can't grow past the screen.
   - Safari's date fields have a width of their own. On iOS only (`@supports (-webkit-touch-callout: none)` in `globals.css`), date and time fields drop Safari's look and fit their column; they still open the date picker.
-- **Impact:** no new dependencies. To check on a real iPhone in staging (this machine has no WebKit to reproduce it).
+- **Impact:** no new dependencies. To check on a real iPhone in staging (this machine has no WebKit to reproduce it). On the owner's iPhone the strip under the footer stayed gray and the place list stayed too wide: see the entry above.
 
 ## 2026-11-11 — The Air, Rotor and Ground words ease in; two details from the owner's review
 

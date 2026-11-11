@@ -71,8 +71,8 @@ function whenIdle(job: () => Promise<void>) {
 /**
  * A 3D diorama on a transparent canvas. It is built when the browser is idle, runs only while
  * on screen, and shows one still frame under reduced motion. On a phone (a touch screen) it draws
- * 30 times a second and holds still while the page is scrolling, so the scroll keeps the
- * graphics chip to itself. The hard shadow is the same offset ink shadow the hero's parts have.
+ * 30 times a second, scrolling or not, which leaves the graphics chip room for the scroll. The
+ * hard shadow is the same offset ink shadow the hero's parts have.
  */
 export function ToyStage({
   scene,
@@ -95,8 +95,6 @@ export function ToyStage({
     let controls: Stage | null = null;
     let frame = 0;
     let visible = false;
-    let scrolling = false;
-    let scrollTimer = 0;
     let clock = 0;
     let last = 0;
     const still = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -127,7 +125,7 @@ export function ToyStage({
       if (!controls) return;
       if (still.matches) {
         controls.draw(controls.still);
-      } else if (visible && !scrolling) {
+      } else if (visible) {
         intervals = [];
         last = performance.now();
         frame = requestAnimationFrame(loop);
@@ -160,20 +158,6 @@ export function ToyStage({
     };
     whenIdle(load);
 
-    // On a phone, hold still while the page scrolls, and carry on a moment after it stops.
-    const onScroll = () => {
-      if (!scrolling) {
-        scrolling = true;
-        cancelAnimationFrame(frame);
-      }
-      window.clearTimeout(scrollTimer);
-      scrollTimer = window.setTimeout(() => {
-        scrolling = false;
-        run();
-      }, 150);
-    };
-    if (phone) window.addEventListener("scroll", onScroll, { passive: true });
-
     const near = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
@@ -201,8 +185,6 @@ export function ToyStage({
     return () => {
       live = false;
       cancelAnimationFrame(frame);
-      window.clearTimeout(scrollTimer);
-      window.removeEventListener("scroll", onScroll);
       near.disconnect();
       onScreen.disconnect();
       resize.disconnect();

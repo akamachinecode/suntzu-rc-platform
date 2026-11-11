@@ -3,6 +3,7 @@ import { Archivo } from "next/font/google";
 import Link from "next/link";
 import { AccountButton } from "@/components/account/account-button";
 import { MobileNav } from "@/components/mobile-nav";
+import { PageEnd } from "@/components/page-end";
 import { SiteSearch } from "@/components/search/site-search";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@workspace/ui/components/button";
@@ -43,7 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${archivo.variable} scroll-smooth antialiased motion-reduce:scroll-auto`}
     >
       <body className="flex min-h-dvh flex-col pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)]">
-        <header className="sticky top-0 z-50 bg-background pt-[env(safe-area-inset-top)]">
+        <header className="sticky top-0 z-50 bg-background pt-[env(safe-area-inset-top)] pb-[var(--header-air)]">
           <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-5 sm:px-6">
             <Link
               href="/"
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </header>
         <main className="flex-1">{children}</main>
         <SiteFooter />
+        <PageEnd />
       </body>
     </html>
   );
