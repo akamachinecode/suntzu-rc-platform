@@ -59,7 +59,7 @@ export function SiteFooter() {
         className="h-6 bg-[repeating-conic-gradient(var(--foreground)_0_25%,var(--panel)_0_50%)] [background-size:24px_24px]"
       />
 
-      <div className="mx-auto max-w-7xl px-4">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6">
         <div className="flex flex-col gap-8 border-b-2 border-background/15 py-14 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-4xl leading-[0.95] font-black text-balance font-wide sm:text-6xl">
@@ -91,7 +91,7 @@ export function SiteFooter() {
               <h2 className="text-xs font-black tracking-[0.2em] text-primary uppercase">
                 {column.title}
               </h2>
-              <ul className="mt-4 grid gap-2.5">
+              <ul className="mt-4 grid gap-2.5 pointer-coarse:gap-0">
                 {column.links.map((link) => (
                   <li key={link.href}>
                     {link.external ? (
@@ -99,7 +99,7 @@ export function SiteFooter() {
                         href={link.href}
                         target="_blank"
                         rel="noreferrer"
-                        className="group inline-flex items-baseline gap-1 text-background/80 underline-offset-4 hover:text-background hover:underline"
+                        className="group tap inline-flex items-baseline gap-1 text-background/80 underline-offset-4 hover:text-background hover:underline"
                       >
                         {link.label}
                         <ArrowUpRight
@@ -111,7 +111,7 @@ export function SiteFooter() {
                     ) : (
                       <Link
                         href={link.href}
-                        className="text-background/80 underline-offset-4 hover:text-background hover:underline"
+                        className="tap text-background/80 underline-offset-4 hover:text-background hover:underline"
                       >
                         {link.label}
                       </Link>
@@ -137,12 +137,12 @@ export function SiteFooter() {
       </div>
 
       {/* the big sign-off */}
-      <div aria-hidden="true" className="overflow-hidden px-4">
+      <div aria-hidden="true" className="overflow-hidden px-5 sm:px-6">
         {/* Fills the width: "suntzu rc" is 4.67em wide, so the size is the room left over 4.8. */}
-        <Wordmark className="mx-auto block max-w-7xl text-center text-[length:min(calc((100vw_-_2rem)/4.8),16.5rem)] leading-[0.78] whitespace-nowrap text-primary select-none" />
+        <Wordmark className="mx-auto block max-w-7xl text-center text-[length:min(calc((100vw_-_3rem)/4.8),16.5rem)] leading-[0.78] whitespace-nowrap text-primary select-none" />
       </div>
 
-      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-sm text-background/60 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-6 text-sm text-background/60 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <p>
           © {new Date().getFullYear()} {SITE.name}. Made in {SITE.region}.{" "}
           <Link href="/privacy" className="underline underline-offset-4 hover:text-background">
@@ -160,7 +160,7 @@ export function SiteFooter() {
         </span>
         <a
           href="#"
-          className="inline-flex items-center gap-1.5 font-semibold text-background/80 hover:text-background"
+          className="tap inline-flex items-center gap-1.5 font-semibold text-background/80 hover:text-background"
         >
           Back to the top
           <ArrowUp aria-hidden="true" className="size-4" />

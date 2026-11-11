@@ -19,7 +19,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
         title="Tell us what you want to do."
         lead="Lessons, a first model, a course, a club to join or a rule you're unsure about. Write a few lines and one of us will get back to you."
       />
-      <section className="mx-auto max-w-7xl px-4 pb-24">
+      <section className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
         <div className="max-w-2xl rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard-lg sm:p-10">
           <ContactForm topic={isTopic(topic) ? topic : undefined} />
         </div>

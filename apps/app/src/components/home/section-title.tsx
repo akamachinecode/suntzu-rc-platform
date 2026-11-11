@@ -22,7 +22,7 @@ export function SectionTitle({
     <h2
       id={id}
       className={cn(
-        "text-center text-[2.6rem] leading-[0.95] font-black text-balance font-wide sm:text-6xl lg:text-7xl",
+        "text-center text-[2.3rem] leading-[0.95] font-black text-balance font-wide min-[400px]:text-[2.6rem] sm:text-6xl lg:text-7xl",
         className,
       )}
     >

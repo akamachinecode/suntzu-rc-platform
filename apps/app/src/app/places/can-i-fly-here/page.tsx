@@ -31,7 +31,7 @@ export default async function CanIFlyHerePage({
         title="Can I fly here?"
         lead="Tap a spot and get a plain answer: controlled airspace, an airport nearby or an FAA-recognised field, and what that means for you. For planes, helicopters and drones flown for fun."
       />
-      <section aria-label="Check a point" className="mx-auto max-w-7xl px-4 pb-24">
+      <section aria-label="Check a point" className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
         <Checker places={places ?? []} {...(initial && { initial })} />
       </section>
     </>

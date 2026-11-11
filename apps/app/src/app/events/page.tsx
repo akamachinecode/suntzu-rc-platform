@@ -41,7 +41,7 @@ export default async function EventsPage({ searchParams }: PageProps<"/events">)
         title="Where to be, and when."
         lead="Fly-ins, races, competitions and swap meets across Florida. Every event links to its organiser and says when we last checked it; always check their page before you load the truck."
       />
-      <section aria-label="Calendar" className="mx-auto max-w-7xl px-4 pb-16">
+      <section aria-label="Calendar" className="mx-auto max-w-7xl px-5 pb-16 sm:px-6">
         {events.data ? (
           <EventsExplorer
             events={events.data}
@@ -55,10 +55,10 @@ export default async function EventsPage({ searchParams }: PageProps<"/events">)
           </p>
         )}
       </section>
-      <section className="mx-auto max-w-7xl px-4 pb-16">
+      <section className="mx-auto max-w-7xl px-5 pb-16 sm:px-6">
         <CalendarSubscribe />
       </section>
-      <section className="mx-auto max-w-7xl px-4 pb-24">
+      <section className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
         <div className="flex flex-col items-start gap-6 rounded-xl border-2 border-foreground bg-primary p-8 shadow-hard-lg sm:flex-row sm:items-center sm:justify-between sm:p-10">
           <p className="max-w-[36ch] text-2xl leading-tight font-black font-wide sm:text-3xl">
             Running a race, a fly-in or a club open day?

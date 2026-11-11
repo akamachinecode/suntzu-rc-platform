@@ -68,7 +68,7 @@ export function Timeline({ items, label }: { items: Milestone[]; label: string }
               <p className="mt-3 text-sm">
                 <a
                   href={item.source.href}
-                  className="underline underline-offset-4"
+                  className="tap underline underline-offset-4"
                   target="_blank"
                   rel="noreferrer"
                 >

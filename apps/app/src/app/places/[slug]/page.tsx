@@ -47,7 +47,7 @@ export default async function PlacePage({ params }: PageProps<"/places/[slug]">)
   );
 
   return (
-    <article className="mx-auto max-w-7xl px-4 pt-10 pb-24 sm:pt-16">
+    <article className="mx-auto max-w-7xl px-5 pt-10 pb-24 sm:px-6 sm:pt-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -71,7 +71,7 @@ export default async function PlacePage({ params }: PageProps<"/places/[slug]">)
       />
       <Link
         href="/places"
-        className="inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
+        className="tap inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
       >
         <ArrowLeft aria-hidden className="size-4" />
         All places

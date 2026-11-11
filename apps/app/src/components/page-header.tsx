@@ -13,7 +13,7 @@ export function PageHeader({
   children?: React.ReactNode;
 }) {
   return (
-    <header className={cn("mx-auto max-w-7xl px-4 pt-16 pb-12 sm:pt-24", className)}>
+    <header className={cn("mx-auto max-w-7xl px-5 pt-16 pb-12 sm:px-6 sm:pt-24", className)}>
       <h1 className="max-w-4xl text-5xl leading-[0.92] font-black tracking-tight text-balance font-wide sm:text-7xl">
         {title}
       </h1>

@@ -16,7 +16,7 @@ export default function GuidesPage() {
         title="Guides from the bench."
         lead="We take the machines apart so you can see how they work, then put them back together with real numbers. No listicles, no affiliate links."
       />
-      <section aria-label="Published guides" className="mx-auto max-w-7xl px-4 pb-16">
+      <section aria-label="Published guides" className="mx-auto max-w-7xl px-5 pb-16 sm:px-6">
         <ul className="grid gap-8 md:grid-cols-2">
           {GUIDES.map((guide, index) => (
             <li key={guide.href}>
@@ -41,7 +41,7 @@ export default function GuidesPage() {
           ))}
         </ul>
       </section>
-      <section aria-labelledby="works-title" className="mx-auto max-w-7xl px-4 pb-24">
+      <section aria-labelledby="works-title" className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
         <h2 id="works-title" className="text-xl font-bold">
           On the bench right now
         </h2>

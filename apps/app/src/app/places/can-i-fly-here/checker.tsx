@@ -92,7 +92,7 @@ export function Checker({ places, initial }: { places: Place[]; initial?: [numbe
           <button
             type="button"
             onClick={locate}
-            className="inline-flex items-center gap-2 rounded-md border-2 border-foreground bg-panel px-3 py-1.5 font-semibold shadow-hard-sm"
+            className="inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-foreground bg-panel px-3 py-1.5 font-semibold shadow-hard-sm"
           >
             <LocateFixed aria-hidden className="size-4" />
             {locating ? "Finding you…" : "Check where I am"}

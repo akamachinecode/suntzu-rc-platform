@@ -36,11 +36,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-dvh flex-col">
         <header className="sticky top-0 z-50 bg-background">
-          <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4">
+          <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-5 sm:px-6">
             <Link
               href="/"
               aria-label={`${SITE.name} home`}
-              className="shrink-0 text-2xl xl:text-3xl"
+              className="flex h-11 shrink-0 items-center text-2xl xl:text-3xl"
             >
               <Wordmark />
             </Link>

@@ -20,7 +20,7 @@ export default async function NotesPage() {
   if (!notes) throw new Error(`The API answered ${response.status}`);
 
   return (
-    <section className="mx-auto grid max-w-2xl gap-8 px-4 py-16">
+    <section className="mx-auto grid max-w-2xl gap-8 px-5 py-16 sm:px-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="mb-2 font-heading text-4xl font-semibold tracking-tight">Notes</h1>

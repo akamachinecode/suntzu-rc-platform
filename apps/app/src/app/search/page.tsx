@@ -67,7 +67,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
 
   return (
     <>
-      <header className="mx-auto max-w-7xl px-4 pt-16 pb-8 sm:pt-20">
+      <header className="mx-auto max-w-7xl px-5 pt-16 pb-8 sm:px-6 sm:pt-20">
         <h1 className="text-4xl leading-[0.95] font-black tracking-tight text-balance break-words font-wide sm:text-6xl">
           {q ? <>Results for &ldquo;{q}&rdquo;</> : "Search SunTzu RC"}
         </h1>
@@ -75,7 +75,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
       </header>
 
       {!q ? (
-        <section aria-labelledby="start-title" className="mx-auto max-w-7xl px-4 pb-24">
+        <section aria-labelledby="start-title" className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
           <h2 id="start-title" className="text-2xl font-black font-wide">
             Events, fields, tracks, clubs, guides and rules
           </h2>
@@ -98,7 +98,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
         </section>
       ) : (
         <>
-          <nav aria-label="Kinds of result" className="mx-auto max-w-7xl px-4">
+          <nav aria-label="Kinds of result" className="mx-auto max-w-7xl px-5 sm:px-6">
             <ul className="flex flex-wrap gap-2 border-b-2 border-foreground pb-4">
               {[{ key: null, label: "All" } as const, ...SEARCH_GROUPS].map((tab) => {
                 const current = (group?.key ?? null) === tab.key;
@@ -108,7 +108,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
                       href={href({ in: tab.key })}
                       aria-current={current ? "page" : undefined}
                       className={cn(
-                        "inline-block rounded-md border-2 border-foreground px-3 py-1.5 text-sm font-semibold",
+                        "inline-flex min-h-11 items-center rounded-md border-2 border-foreground px-3 py-1.5 text-sm font-semibold",
                         current ? "bg-primary shadow-hard-sm" : "bg-panel",
                       )}
                     >
@@ -121,7 +121,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
           </nav>
 
           {near ? (
-            <div className="mx-auto mt-6 flex max-w-7xl flex-wrap items-center gap-x-5 gap-y-3 px-4">
+            <div className="mx-auto mt-6 flex max-w-7xl flex-wrap items-center gap-x-5 gap-y-3 px-5 sm:px-6">
               <p className="flex items-center gap-2 font-semibold">
                 <MapPin aria-hidden="true" className="size-4" />
                 Within {near.miles} miles of {near.label}, closest first.
@@ -151,7 +151,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
             </div>
           ) : null}
 
-          <section aria-label="Results" className="mx-auto max-w-7xl px-4 pt-8 pb-24">
+          <section aria-label="Results" className="mx-auto max-w-7xl px-5 pt-8 pb-24 sm:px-6">
             {!data ? (
               <p className="rounded-xl border-2 border-foreground bg-panel p-6 text-lg shadow-hard">
                 Search is taking a break. Try again in a minute.
@@ -223,7 +223,7 @@ function ResultItem({ result }: { result: SearchResult }) {
         {result.miles !== null ? <span>{result.miles} mi away</span> : null}
       </p>
       <h3 className="text-lg leading-tight font-bold">
-        <Link href={result.url} className="underline-offset-4 hover:underline">
+        <Link href={result.url} className="tap underline-offset-4 hover:underline">
           {result.title}
         </Link>
       </h3>

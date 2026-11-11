@@ -25,7 +25,7 @@ function RuleList({ rules }: { rules: Rule[] }) {
             href={rule.source.href}
             target="_blank"
             rel="noreferrer"
-            className="mt-4 inline-block text-sm font-semibold underline underline-offset-4"
+            className="mt-4 tap inline-block text-sm font-semibold underline underline-offset-4"
           >
             {rule.source.label}
           </a>

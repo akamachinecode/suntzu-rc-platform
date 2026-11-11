@@ -28,7 +28,7 @@ export default function TryPage() {
         title="Want to try it?"
         lead="The fastest way into RC is a club field on a Saturday morning, with someone who's done it for twenty years holding the other transmitter. We'll put you in touch."
       />
-      <section aria-label="How it works" className="mx-auto max-w-7xl px-4 pb-12">
+      <section aria-label="How it works" className="mx-auto max-w-7xl px-5 pb-12 sm:px-6">
         <ol className="grid gap-5 sm:grid-cols-3">
           {STEPS.map(([title, body], index) => (
             <li
@@ -43,7 +43,7 @@ export default function TryPage() {
         </ol>
       </section>
       <section aria-labelledby="ask-title" className="bg-cutting-mat text-mat-foreground">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-[1fr_1.4fr]">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-6 lg:grid-cols-[1fr_1.4fr]">
           <div>
             <h2 id="ask-title" className="text-3xl font-black font-wide">
               Find me a club

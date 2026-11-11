@@ -23,7 +23,7 @@ export default async function UnsubscribePage({ searchParams }: PageProps<"/unsu
         title="Fewer emails."
         lead="One click and they stop. Everything else in your account stays as it is."
       />
-      <section className="mx-auto max-w-7xl px-4 pb-24">
+      <section className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
         {typeof token === "string" && typeof what === "string" && label ? (
           <StopButton token={token} what={what} label={label} />
         ) : (

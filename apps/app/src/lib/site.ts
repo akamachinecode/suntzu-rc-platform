@@ -13,5 +13,5 @@ export const SITE = {
     { label: "Community", href: "/community" },
     { label: "Guides", href: "/guides" },
   ],
-  cta: { label: "Book a session", href: "/contact" },
+  cta: { label: "Book a lesson", href: "/contact?topic=lessons" },
 } as const;
