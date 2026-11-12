@@ -1,10 +1,82 @@
+<div align="center">
+
 # SunTzu RC
 
-The free calendar, map and community of RC in Florida: events read from organisers' own pages, every field and track from the FAA registers, clubs that publish for free, and guides that take planes, helicopters and cars apart. https://www.suntzurc.com
+**Every RC event, field and track in Florida. In one place. Free, forever.**
 
-Built on the **Itaca Technologies standard stack** `platform`, hosted on **AWS (Terraform)** behind **Cloudflare**, with code on **GitHub**.
+Fly-ins, races, swap meets and club open days, read from the organisers' own pages and checked before they go live. Every flying field and track on one map, with the airspace around it. Guides that take planes, helicopters and cars apart.
 
-**Stack:** a pnpm monorepo with one Next.js app (public site and signed-in screens) and the API behind it (ready for a mobile app):
+**[www.suntzurc.com](https://www.suntzurc.com)** · [Events](https://www.suntzurc.com/events) · [Places](https://www.suntzurc.com/places) · [Can I fly here?](https://www.suntzurc.com/places/can-i-fly-here) · [For clubs](https://www.suntzurc.com/organise) · [Guides](https://www.suntzurc.com/guides)
+
+[![CI](https://github.com/akamachinecode/suntzu-rc-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/akamachinecode/suntzu-rc-platform/actions/workflows/ci.yml)
+[![Licence: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](./LICENSE)
+[![Content: CC BY 4.0](https://img.shields.io/badge/guides-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+
+</div>
+
+---
+
+## The RC hobby, finally on one map
+
+RC in Florida is everywhere and nowhere: a fly-in on a club's Facebook page, a race on a registration site, a swap meet on a flyer at the hobby shop. If you didn't know where to look, you missed it.
+
+SunTzu RC fixes that. It watches the places organisers already publish, merges the duplicates, checks every date, and puts the result on one calendar and one map, for **planes, helicopters, cars, crawlers, FPV and boats**.
+
+## For pilots and racers
+
+- 🗓️ **One calendar for everything.** Every discipline, every corner of Florida. Filter by what you fly and how far you'll drive.
+- 📍 **"Near me", for real.** Search by town or ZIP code and see what's on this weekend, on a map.
+- ✅ **Information you can trust.** Every event shows where it came from and when it was last checked. When an organiser changes a date or cancels, the page changes too.
+- 🔔 **Never miss a change.** Follow an event, a club or a discipline, mark yourself "going", and get an email when something moves.
+- 📆 **In your own calendar.** Subscribe once and every event lands in Google Calendar, Apple Calendar or Outlook, and stays current.
+- 🔎 **One search box** for events, fields, tracks, clubs, guides and rules.
+
+## Can I fly here?
+
+Tap a spot on the map, or use your location, and SunTzu RC tells you in plain words whether it sits in controlled airspace, which airports are nearby, and whether you're at an FAA-recognised identification area (FRIA) or a club field, plus what that means for you. Built on the FAA's own registers, for every inch of Florida.
+
+## For clubs, tracks and shops
+
+**Publish with us. It's free, forever, and you get something back.**
+
+| What you get               | What it does                                                                              |
+| -------------------------- | ----------------------------------------------------------------------------------------- |
+| **A verified page**        | Claim your club or track, get the verified badge and a page Google understands            |
+| **Publish in a minute**    | Your events go live at once, and changes reach everyone who follows or is going           |
+| **A widget for your site** | Paste one line and your own website shows your upcoming events, always current            |
+| **People who show up**     | See how many follow your club and say they're going, and receive newcomers who ask to try |
+| **A monthly report**       | Followers, "going" and what's coming up, in your inbox on the first of each month         |
+
+→ **[Claim your club or track](https://www.suntzurc.com/organise)**
+
+## For newcomers
+
+Curious about RC but don't know where to start? SunTzu RC is the way in:
+
+- **Try it.** Tell us your ZIP code and what you'd like to fly or drive, and a nearby club, track or shop gets in touch. → [suntzurc.com/try](https://www.suntzurc.com/try)
+- **Learn how it works.** Interactive guides take [RC planes](https://www.suntzurc.com/guides/rc-planes), [helicopters](https://www.suntzurc.com/guides/rc-helicopters) and [cars and crawlers](https://www.suntzurc.com/guides/cars-and-crawlers) apart, piece by piece.
+- **Fly legally.** [Flying legally](https://www.suntzurc.com/guides/flying-legally) explains the FAA rules, TRUST and Remote ID without the jargon.
+- **Find your people.** Beginner-friendly events are flagged, and every club page tells you how to visit.
+
+## Why SunTzu RC
+
+SunTzu RC was started by three RC enthusiasts who want the hobby to grow. A few promises we keep:
+
+1. **Free to take part, forever.** Following, "going", alerts and listing an event never cost anything.
+2. **Trust you can see.** Sources and "last checked" dates on every page. Nobody else shows them.
+3. **On the open web.** Every event, club and field is a fast page anyone can find on Google, not locked inside an app.
+4. **Private stays private.** Private fields are never listed without permission, and nothing about a member is public unless they choose it.
+5. **Open source.** The code is MIT and the guides are CC BY 4.0. Anyone can see how it works and help make it better.
+
+## Built to last
+
+SunTzu RC runs on AWS behind Cloudflare, with infrastructure as code (Terraform), continuous integration on every change, monitoring and uptime alarms, daily database backups and automated dependency and security updates. The events engine runs on a schedule, so the calendar keeps itself current without anyone pressing a button.
+
+---
+
+## For developers
+
+SunTzu RC is a pnpm monorepo built on the **Itaca Technologies standard stack** (`platform`): one Next.js app for the public site and signed-in screens, and one API behind it, ready for a mobile app.
 
 | Folder                                         | What                                      | Built on                           | Dev URL               | Production                                                           |
 | ---------------------------------------------- | ----------------------------------------- | ---------------------------------- | --------------------- | -------------------------------------------------------------------- |
@@ -16,7 +88,9 @@ Built on the **Itaca Technologies standard stack** `platform`, hosted on **AWS (
 | [`packages/api-client`](./packages/api-client) | Typed API client (generated from OpenAPI) | openapi-fetch                      | —                     | —                                                                    |
 | [`packages/ui`](./packages/ui)                 | Shared shadcn/ui components and theme     | Tailwind CSS 4 · shadcn/ui         | —                     | —                                                                    |
 
-First run (needs Docker for the local database):
+### Run it locally
+
+Requirements: Node.js 24 (`nvm use`), pnpm (`corepack enable pnpm`) and Docker for the local database.
 
 ```bash
 pnpm install
@@ -28,34 +102,22 @@ pnpm dev
 
 `db:seed` loads the hand-checked events, places and sources, `census` the FAA's fields, airports and airspace for Florida, and `engine` reads every active source. Then open http://localhost:3000 and sign in with any email: locally the sign-in link is printed in the API's console instead of being emailed. Put your address in `CREW_EMAILS` (`apps/api/.env`) to open the crew console at `/crew`. API docs: http://localhost:3001/docs.
 
-## Example project for `create-itaca@0.3.1`
+### Scripts
 
-SunTzu RC is the reference project for the `platform` stack with the `terraform` deploy target of `create-itaca@0.3.1`: a real product built entirely inside the Itaca standard. Use it to see how the template grows:
+| Command        | What it does                                                      |
+| -------------- | ----------------------------------------------------------------- |
+| `pnpm dev`     | Development servers (site, API, docs)                             |
+| `pnpm build`   | Production build                                                  |
+| `pnpm check`   | Format check, lint, typecheck, tests and build. Must pass         |
+| `pnpm format`  | Format every file with Prettier                                   |
+| `pnpm test`    | Unit tests (Vitest)                                               |
+| `pnpm db:seed` | Load the events engine's starting data into the local database    |
+| `pnpm engine`  | Run the events engine once (`pnpm engine <source>` for one)       |
+| `pnpm census`  | Load the FAA registers and ZIP codes (`pnpm census fria` for one) |
 
-| To see…                                                                    | Look at                                                                                                       |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| A feature end to end (schema → contract → API → screen)                    | `packages/db/src/schema/`, `packages/shared/`, `apps/api/src/search/`, `apps/app/src/app/search/`             |
-| Specs written with `/plan` and built slice by slice                        | [`docs/specs/`](./docs/specs)                                                                                 |
-| The catalog of bits, one per piece of behaviour                            | [`docs/bits/`](./docs/bits/README.md)                                                                         |
-| Terraform beyond the template: email, S3, scheduled jobs, optional secrets | [`infra/`](./infra) (`email.tf`, `storage.tf`, `jobs.tf`, `secrets.tf`), [`docs/DEPLOY.md`](./docs/DEPLOY.md) |
-| Running a job by hand from GitHub Actions                                  | [`.github/workflows/task.yml`](./.github/workflows/task.yml)                                                  |
-| Every deviation from the template, and why                                 | [`docs/DECISIONS.md`](./docs/DECISIONS.md) (search for "on purpose")                                          |
-| Going live, step by step                                                   | [`docs/LAUNCH.md`](./docs/LAUNCH.md)                                                                          |
+### Working with AI agents
 
-Deviations on purpose: no `apps/web` (the public pages are the product, so they live in `apps/app` on `www`), PostgreSQL 18, Vitest, and AWS resources prefixed with the repository's name (`rc-landing`). `itaca.json` records the version.
-
-## Quick start
-
-Requirements: Node.js 24 (`nvm use`) and pnpm (`corepack enable pnpm`, or `npm install -g pnpm`).
-
-```bash
-pnpm install
-pnpm dev
-```
-
-## Working with AI agents
-
-Open this folder in Claude Code, Cursor, GitHub Copilot or Codex — they read [`AGENTS.md`](./AGENTS.md) automatically. Describe what you need in business terms ("add a pricing page with three plans", "add a contact section with our office addresses") and let the agent follow the standard. It will suggest the right way of working for each request:
+Open this folder in Claude Code, Cursor, GitHub Copilot or Codex: they read [`AGENTS.md`](./AGENTS.md) automatically. Describe what you need in business terms and the agent follows the standard, suggesting the right way of working for each request:
 
 | Skill       | Use it to…                                                        |
 | ----------- | ----------------------------------------------------------------- |
@@ -66,18 +128,35 @@ Open this folder in Claude Code, Cursor, GitHub Copilot or Codex — they read [
 | `/ship`     | Deliver a finished change as a pull request, ready for review     |
 | `/takeover` | Pick up someone else's unfinished work                            |
 
-Before committing, run `pnpm check`.
+### Reference project for `create-itaca@0.3.1`
 
-## Scripts
+SunTzu RC is the reference project for the `platform` stack with the `terraform` deploy target: a real product built entirely inside the Itaca standard.
 
-| Command          | What it does                            |
-| ---------------- | --------------------------------------- |
-| `pnpm dev`       | Development server                      |
-| `pnpm build`     | Production build                        |
-| `pnpm check`     | Format check, lint, typecheck and build |
-| `pnpm format`    | Format every file with Prettier         |
-| `pnpm lint`      | ESLint                                  |
-| `pnpm typecheck` | TypeScript                              |
+| To see…                                                                    | Look at                                                                                                       |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| A feature end to end (schema → contract → API → screen)                    | `packages/db/src/schema/`, `packages/shared/`, `apps/api/src/search/`, `apps/app/src/app/search/`             |
+| Specs written with `/plan` and built slice by slice                        | [`docs/specs/`](./docs/specs)                                                                                 |
+| The catalog of bits, one per piece of behaviour                            | [`docs/bits/`](./docs/bits/README.md)                                                                         |
+| Terraform beyond the template: email, S3, scheduled jobs, optional secrets | [`infra/`](./infra) (`email.tf`, `storage.tf`, `jobs.tf`, `secrets.tf`), [`docs/DEPLOY.md`](./docs/DEPLOY.md) |
+| Running a job by hand from GitHub Actions                                  | [`.github/workflows/task.yml`](./.github/workflows/task.yml)                                                  |
+| Every deviation from the template, and why                                 | [`docs/DECISIONS.md`](./docs/DECISIONS.md) (search for "on purpose")                                          |
+
+Deviations on purpose: no `apps/web` (the public pages are the product, so they live in `apps/app` on `www`), PostgreSQL 18, Vitest, and AWS resources prefixed with the repository's former name (`rc-landing`). `itaca.json` records the version.
+
+### Documentation
+
+Everything is also one website with search: the **[SunTzu RC docs portal](https://akamachinecode.github.io/suntzu-rc-platform/)**, published from `docs/` whenever it changes on `main`.
+
+- [`docs/guides/`](./docs/guides) — [run it locally](./docs/guides/RUN-LOCALLY.md) and [your first contribution](./docs/guides/FIRST-CONTRIBUTION.md), step by step
+- [`docs/SYSTEM.md`](./docs/SYSTEM.md) — the map: what runs where and how the pieces connect
+- [`docs/EVENTS-ENGINE.md`](./docs/EVENTS-ENGINE.md) — how the engine finds, merges and verifies events
+- [`docs/DELIVERY.md`](./docs/DELIVERY.md) — from code to production: CI, deploys, Docker images, OIDC and the scheduled jobs
+- [`docs/bits/`](./docs/bits/README.md) — the catalog of bits: each piece of behaviour, end to end
+- [`docs/specs/`](./docs/specs/README.md) — specifications of features, written with `/plan`
+- [`docs/OPERATIONS.md`](./docs/OPERATIONS.md) — running, deploying, rolling back, access and backups
+- [`docs/DEPLOY.md`](./docs/DEPLOY.md), [`docs/CLOUDFLARE.md`](./docs/CLOUDFLARE.md), [`docs/GITHUB.md`](./docs/GITHUB.md) — hosting, domain and repository setup
+- [`docs/DECISIONS.md`](./docs/DECISIONS.md) — why things are the way they are
+- [`AGENTS.md`](./AGENTS.md) — rules and recipes for AI agents (and humans)
 
 ## Contributing
 
@@ -89,21 +168,3 @@ SunTzu RC is open: anyone can run it, improve it and send a pull request. Start 
 - **Guides and figures:** the text of the guides and other site content in `apps/app/src/content/`, and the drawings in `apps/app/src/components/figures/`, are licensed under [Creative Commons Attribution 4.0 (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/). Reuse them with credit to SunTzu RC and a link to https://www.suntzurc.com.
 - **Name and logo:** the SunTzu RC name, the wordmark (`apps/app/src/components/wordmark.tsx`) and the icons aren't licensed. A copy of the project that runs as its own service needs its own name and logo.
 - **Third-party material** keeps its own licence: the Anatomy figure kit in `apps/app/src/components/iso/` (MIT, see its `LICENSE`), and the facts, quotes and data credited to their sources where they appear (FAA and US Census data are public).
-
-## Documentation
-
-Everything below is also one website with search: the **[SunTzu RC docs portal](https://akamachinecode.github.io/suntzu-rc-platform/)**, published from these files whenever they change on `main`.
-
-- [`CONTRIBUTING.md`](./CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md), [`SECURITY.md`](./SECURITY.md) — taking part: running it locally, pull requests, behaviour and reporting vulnerabilities
-- [`AGENTS.md`](./AGENTS.md) — rules and recipes for AI agents (and humans), including which skill to use for each kind of request
-- [`docs/guides/`](./docs/guides) — [run it locally](./docs/guides/RUN-LOCALLY.md) and [your first contribution](./docs/guides/FIRST-CONTRIBUTION.md), step by step
-- [`docs/SYSTEM.md`](./docs/SYSTEM.md) — the map: what runs where and how the pieces connect
-- [`docs/DELIVERY.md`](./docs/DELIVERY.md) — from code to production: CI, deploys, Docker images, OIDC and the scheduled jobs
-- [`docs/bits/`](./docs/bits/README.md) — the catalog of bits: each piece of behaviour, end to end
-- [`docs/specs/`](./docs/specs/README.md) — specifications of features, written with `/plan`
-- [`docs/OPERATIONS.md`](./docs/OPERATIONS.md) — running, deploying, rolling back, access and backups
-- [`docs/LAUNCH.md`](./docs/LAUNCH.md) — the owner's checklist to take SunTzu RC 1.0 live
-- [`docs/DEPLOY.md`](./docs/DEPLOY.md) — how this project is deployed to AWS
-- [`docs/CLOUDFLARE.md`](./docs/CLOUDFLARE.md) — domain, DNS, TLS and security settings
-- [`docs/GITHUB.md`](./docs/GITHUB.md) — repository setup and protections
-- [`docs/DECISIONS.md`](./docs/DECISIONS.md) — log of decisions made during development
