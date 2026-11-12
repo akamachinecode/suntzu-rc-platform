@@ -12,6 +12,12 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-12 — The "Flying legally" cover is a drawing of its own
+
+- **What:** the home's fourth guide cover (Manual No. 04, "Flying legally in South Florida") was a flat line sketch, plain next to the three exploded models. It is now an isometric scene drawn with the same kit and palette: an airport desk model under its controlled airspace, the "upside-down wedding cake" (a core from the ground up, wider shelves with higher floors, one ceiling), drawn as glass cut in half so the stepped profile shows, and a club field outside it with the trainer, lit in XT60 yellow, flying over it. The guide has no interactive figure, so the scene lives only in `apps/app/src/components/home/covers/airspace.tsx` and is drawn into `airspace.svg` by the same `pnpm --filter @workspace/app covers` and test as the other covers (2026-11-10).
+- **Why:** the owner asked for a cover at the level of the others.
+- **Impact:** none: no dependency, no page imports the scene (the card shows the SVG file, 123 KB, cached like the others).
+
 ## 2026-11-11 — The owner's second look on an iPhone: dioramas move while scrolling, the footer's black, the place list and the header
 
 - **What:** four things from the owner's look at staging on their iPhone:

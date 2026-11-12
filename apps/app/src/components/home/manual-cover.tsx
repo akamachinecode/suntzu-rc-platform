@@ -1,6 +1,7 @@
 import { PencilLine } from "lucide-react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
+import airspaceCover from "@/components/home/covers/airspace.svg";
 import carCover from "@/components/home/covers/car.svg";
 import heliCover from "@/components/home/covers/heli.svg";
 import planeCover from "@/components/home/covers/plane.svg";
@@ -9,11 +10,14 @@ import { cn } from "@/lib/utils";
 type Cover = "plane" | "heli" | "car" | "airspace";
 
 // Each guide's own hero figure, part-way apart with one assembly lit, drawn once into an SVG file
-// (src/components/home/covers/draw.tsx). As images they stay out of the page's HTML and are cached.
-const STILLS: Partial<Record<Cover, StaticImageData>> = {
+// (src/components/home/covers/draw.tsx). Flying legally has no figure of its own: its cover is an
+// airport under its airspace, drawn for the cover (covers/airspace.tsx). As images they stay out
+// of the page's HTML and are cached.
+const STILLS: Record<Cover, StaticImageData> = {
   plane: planeCover,
   heli: heliCover,
   car: carCover,
+  airspace: airspaceCover,
 };
 
 // Black type reads on all of these; the green cover takes the mat's light ink.
@@ -67,13 +71,9 @@ export function ManualCover({
         <span>{minutes} min</span>
       </span>
       <div className="m-4 rounded-sm border-2 border-foreground bg-panel">
-        {STILLS[cover] ? (
-          <div aria-hidden="true" className="p-2">
-            <Image src={STILLS[cover]} alt="" unoptimized className="block h-auto w-full" />
-          </div>
-        ) : (
-          <Airspace />
-        )}
+        <div aria-hidden="true" className="p-2">
+          <Image src={STILLS[cover]} alt="" unoptimized className="block h-auto w-full" />
+        </div>
       </div>
       <div className="mt-auto px-4 pb-5">
         <h3 className="text-2xl leading-tight font-black text-balance font-wide">{title}</h3>
@@ -101,66 +101,5 @@ export function DraftCover({ titles }: { titles: readonly string[] }) {
         ))}
       </ul>
     </div>
-  );
-}
-
-const ink = { stroke: "var(--foreground)", strokeWidth: 3, strokeLinejoin: "round" } as const;
-
-/** Controlled airspace around an airport, and a trainer flying wide of it. */
-function Airspace() {
-  return (
-    <svg viewBox="0 0 240 170" aria-hidden="true" className="block h-auto w-full">
-      {[44, 70].map((r) => (
-        <circle
-          key={r}
-          cx="110"
-          cy="86"
-          r={r}
-          fill="none"
-          stroke="var(--foreground)"
-          strokeWidth="2"
-          strokeDasharray="6 6"
-        />
-      ))}
-      {/* two parallel runways */}
-      {[-7, 7].map((offset) => (
-        <rect
-          key={offset}
-          x="88"
-          y={81 + offset}
-          width="44"
-          height="8"
-          rx="2"
-          fill="var(--foreground)"
-          transform="rotate(-30 110 86)"
-        />
-      ))}
-      {/* the way round */}
-      <path
-        d="M 16 156 Q 40 168 90 164 Q 236 160 212 46"
-        fill="none"
-        stroke="var(--foreground)"
-        strokeWidth="2"
-        strokeDasharray="2 7"
-        strokeLinecap="round"
-      />
-      <g transform="translate(212 32) rotate(-8)">
-        <path d="M -3 -14 H 3 V 14 H -3 Z" fill="var(--primary)" {...ink} />
-        <path d="M -18 -4 H 18 V 3 H -18 Z" fill="var(--primary)" {...ink} />
-        <path d="M -8 11 H 8" stroke="var(--foreground)" strokeWidth="3" strokeLinecap="round" />
-      </g>
-      {/* north */}
-      <path d="M 22 40 L 30 18 L 38 40 L 30 34 Z" fill="var(--foreground)" />
-      <text
-        x="30"
-        y="56"
-        textAnchor="middle"
-        fontSize="13"
-        fontWeight="900"
-        fill="var(--foreground)"
-      >
-        N
-      </text>
-    </svg>
   );
 }
