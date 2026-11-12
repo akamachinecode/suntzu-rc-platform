@@ -10,6 +10,7 @@ import { SLOTS as HELI_SLOTS } from "@/components/figures/heli-apart/art";
 import { HELI_SPEC } from "@/components/figures/heli-apart/spec";
 import { SLOTS as PLANE_SLOTS } from "@/components/figures/plane-apart/art";
 import { PLANE_SPEC } from "@/components/figures/plane-apart/spec";
+import { AirspaceArt, HEIGHT as AIRSPACE_H, WIDTH as AIRSPACE_W } from "./airspace";
 
 /**
  * Draws the guide covers of the home page as standalone SVG files, with the figure kit's styles
@@ -17,12 +18,21 @@ import { PLANE_SPEC } from "@/components/figures/plane-apart/spec";
  * the site, which shows the files as images. `pnpm --filter @workspace/app covers` rewrites them.
  */
 
-type Cover = {
+type Cover = Exploded | Drawn;
+
+/** A guide's hero figure, part-way apart with one assembly lit. */
+type Exploded = {
   spec: ApartSpec;
   slots: Slot[];
   apart?: number;
   lit: string;
   /** The part of the drawing to keep, as a viewBox: each still is cropped to its pose. */
+  view: [number, number, number, number];
+};
+
+/** A scene drawn only for its cover (airspace.tsx), when the guide has no figure of its own. */
+type Drawn = {
+  Art: () => React.ReactElement;
   view: [number, number, number, number];
 };
 
@@ -36,6 +46,7 @@ export const COVERS = {
     view: [86, 97, 486, 367],
   },
   car: { spec: CAR_SPEC, slots: CAR_SLOTS, apart: 0.2, lit: "body", view: [136, 123, 412, 311] },
+  airspace: { Art: AirspaceArt, view: [0, 0, AIRSPACE_W, AIRSPACE_H] },
 } satisfies Record<string, Cover>;
 
 export type CoverName = keyof typeof COVERS;
@@ -101,9 +112,13 @@ export function drawCover(name: CoverName) {
       data-theme="light"
     >
       <style>{figureStyles()}</style>
-      <g className="pla" data-focus="">
-        <ApartPose spec={cover.spec} slots={cover.slots} apart={cover.apart} lit={cover.lit} />
-      </g>
+      {"Art" in cover ? (
+        <cover.Art />
+      ) : (
+        <g className="pla" data-focus="">
+          <ApartPose spec={cover.spec} slots={cover.slots} apart={cover.apart} lit={cover.lit} />
+        </g>
+      )}
     </svg>,
   );
   // No double hyphen in the comment: XML forbids it, and browsers then refuse the whole image.
