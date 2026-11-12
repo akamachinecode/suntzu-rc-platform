@@ -70,7 +70,7 @@ SunTzu RC was started by three RC enthusiasts who want the hobby to grow. A few 
 
 ## Built to last
 
-SunTzu RC runs on AWS behind Cloudflare, with infrastructure as code (Terraform), continuous integration on every change, monitoring and uptime alarms, daily database backups and automated dependency and security updates. The events engine runs on a schedule, so the calendar keeps itself current without anyone pressing a button.
+SunTzu RC runs on AWS behind Cloudflare, with infrastructure as code (Terraform), continuous integration on every change, monitoring and uptime alarms, daily database backups and automated security scanning (CodeQL, secrets, dependencies) and dependency updates. The events engine runs on a schedule, so the calendar keeps itself current without anyone pressing a button.
 
 ---
 
