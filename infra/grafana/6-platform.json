@@ -1,0 +1,691 @@
+{
+  "uid": "suntzu-rc-platform",
+  "title": "SunTzu RC · 6 Plataforma",
+  "description": "El programador de tareas, ECR, la ingesta de logs y el coste de las consultas de Grafana.",
+  "tags": ["suntzu-rc"],
+  "editable": true,
+  "timezone": "browser",
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "refresh": "5m",
+  "timepicker": {
+    "refresh_intervals": ["5m", "15m", "30m", "1h"]
+  },
+  "graphTooltip": 1,
+  "schemaVersion": 41,
+  "links": [
+    {
+      "title": "SunTzu RC",
+      "type": "dashboards",
+      "tags": ["suntzu-rc"],
+      "asDropdown": false,
+      "includeVars": true,
+      "keepTime": true
+    }
+  ],
+  "panels": [
+    {
+      "type": "text",
+      "title": "",
+      "options": {
+        "mode": "markdown",
+        "content": "### Plataforma: el resto de la cuenta\nLas piezas que no se ven en la web pero la sostienen: el programador de tareas, el registro de imágenes, la ingesta de logs (lo que cuesta CloudWatch Logs) y las llamadas a la API de CloudWatch (lo que cuesta este Grafana)."
+      },
+      "transparent": true,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 3
+      },
+      "id": 1
+    },
+    {
+      "type": "row",
+      "title": "Tareas e imágenes",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 3,
+        "w": 24,
+        "h": 1
+      },
+      "id": 2
+    },
+    {
+      "type": "timeseries",
+      "title": "Arranques del programador",
+      "description": "Cada vez que EventBridge Scheduler intenta arrancar una tarea (engine 4 al día, notify cada hora, census una vez al mes).",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/Scheduler",
+          "metricName": "InvocationAttemptCount",
+          "dimensions": {},
+          "statistic": "Sum",
+          "period": "3600",
+          "matchExact": true,
+          "label": "",
+          "id": "raw16",
+          "expression": "",
+          "hide": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 1,
+          "region": "us-east-2",
+          "expression": "FILL(raw16, 0)",
+          "label": "intentos",
+          "id": "filled16",
+          "period": "",
+          "namespace": "",
+          "metricName": "",
+          "dimensions": {},
+          "statistic": "Average",
+          "hide": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/Scheduler",
+          "metricName": "TargetErrorCount",
+          "dimensions": {},
+          "statistic": "Sum",
+          "period": "3600",
+          "matchExact": true,
+          "label": "",
+          "id": "raw17",
+          "expression": "",
+          "hide": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 1,
+          "region": "us-east-2",
+          "expression": "FILL(raw17, 0)",
+          "label": "errores",
+          "id": "filled17",
+          "period": "",
+          "namespace": "",
+          "metricName": "",
+          "dimensions": {},
+          "statistic": "Average",
+          "hide": false,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/Scheduler",
+          "metricName": "InvocationDroppedCount",
+          "dimensions": {},
+          "statistic": "Sum",
+          "period": "3600",
+          "matchExact": true,
+          "label": "",
+          "id": "raw18",
+          "expression": "",
+          "hide": true,
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 1,
+          "region": "us-east-2",
+          "expression": "FILL(raw18, 0)",
+          "label": "descartados",
+          "id": "filled18",
+          "period": "",
+          "namespace": "",
+          "metricName": "",
+          "dimensions": {},
+          "statistic": "Average",
+          "hide": false,
+          "refId": "F"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 2,
+            "fillOpacity": 60,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 12,
+        "h": 8
+      },
+      "id": 3
+    },
+    {
+      "type": "timeseries",
+      "title": "Descargas de imágenes (ECR)",
+      "description": "Cada vez que un contenedor arranca descarga su imagen: despliegues, reinicios y cada tarea programada.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/ECR",
+          "metricName": "RepositoryPullCount",
+          "dimensions": {
+            "RepositoryName": "*"
+          },
+          "statistic": "Sum",
+          "period": "3600",
+          "matchExact": false,
+          "label": "${PROP('Dim.RepositoryName')}",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 2,
+            "fillOpacity": 60,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 4,
+        "w": 12,
+        "h": 8
+      },
+      "id": 4
+    },
+    {
+      "type": "row",
+      "title": "Lo que cuesta mirar",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 24,
+        "h": 1
+      },
+      "id": 5
+    },
+    {
+      "type": "timeseries",
+      "title": "Logs ingeridos por grupo",
+      "description": "Bytes que entran en CloudWatch Logs cada hora. Es lo que más crece con el tráfico (0,50 USD por GB ingerido). aws/spans son las trazas.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/Logs",
+          "metricName": "IncomingBytes",
+          "dimensions": {
+            "LogGroupName": "*"
+          },
+          "statistic": "Sum",
+          "period": "3600",
+          "matchExact": false,
+          "label": "${PROP('Dim.LogGroupName')}",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 2,
+            "fillOpacity": 60,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 13,
+        "w": 12,
+        "h": 9
+      },
+      "id": 6
+    },
+    {
+      "type": "timeseries",
+      "title": "Llamadas a CloudWatch",
+      "description": "Llamadas a la API de CloudWatch por tipo. GetMetricData son sobre todo las de este Grafana: 0,01 USD por cada 1.000 métricas leídas.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/Usage",
+          "metricName": "CallCount",
+          "dimensions": {
+            "Service": "CloudWatch",
+            "Type": "API",
+            "Class": "None",
+            "Resource": "*"
+          },
+          "statistic": "Sum",
+          "period": "3600",
+          "matchExact": false,
+          "label": "${PROP('Dim.Resource')}",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 2,
+            "fillOpacity": 60,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 13,
+        "w": 12,
+        "h": 9
+      },
+      "id": 7
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "ds",
+        "label": "Data source",
+        "type": "datasource",
+        "query": "cloudwatch",
+        "regex": "/SunTzu/",
+        "hide": 2,
+        "current": {},
+        "options": [],
+        "refresh": 1
+      },
+      {
+        "name": "env",
+        "label": "Entorno",
+        "type": "custom",
+        "query": "staging",
+        "current": {
+          "text": "staging",
+          "value": "staging"
+        },
+        "options": [
+          {
+            "text": "staging",
+            "value": "staging",
+            "selected": true
+          }
+        ],
+        "hide": 0
+      },
+      {
+        "name": "lb",
+        "label": "lb",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/ApplicationELB",
+          "metricName": "RequestCount",
+          "dimensionKey": "LoadBalancer",
+          "dimensionFilters": {}
+        },
+        "regex": "/^app\\/rc-landing-${env}\\/.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "tg_app",
+        "label": "tg_app",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/ApplicationELB",
+          "metricName": "RequestCount",
+          "dimensionKey": "TargetGroup",
+          "dimensionFilters": {}
+        },
+        "regex": "/^targetgroup\\/rc-landing-${env}-app\\/.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "tg_api",
+        "label": "tg_api",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/ApplicationELB",
+          "metricName": "RequestCount",
+          "dimensionKey": "TargetGroup",
+          "dimensionFilters": {}
+        },
+        "regex": "/^targetgroup\\/rc-landing-${env}-api\\/.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "db",
+        "label": "db",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "CPUUtilization",
+          "dimensionKey": "DBInstanceIdentifier",
+          "dimensionFilters": {}
+        },
+        "regex": "/^rc-landing-${env}-.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "hc_app",
+        "label": "hc_app",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "resourceARNs",
+          "region": "us-east-1",
+          "resourceType": "route53:healthcheck",
+          "tags": {
+            "Name": ["rc-landing-${env}-app"]
+          }
+        },
+        "regex": "/healthcheck\\/(.*)/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "hc_api",
+        "label": "hc_api",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "resourceARNs",
+          "region": "us-east-1",
+          "resourceType": "route53:healthcheck",
+          "tags": {
+            "Name": ["rc-landing-${env}-api"]
+          }
+        },
+        "regex": "/healthcheck\\/(.*)/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "fiscalYearStartMonth": 0,
+  "liveNow": false,
+  "weekStart": "monday"
+}

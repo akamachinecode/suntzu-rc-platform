@@ -1,0 +1,802 @@
+{
+  "uid": "suntzu-rc-logs",
+  "title": "SunTzu RC · 4 Logs",
+  "description": "Errores, peticiones por bit, las últimas líneas de cada servicio y las ejecuciones de las tareas programadas.",
+  "tags": ["suntzu-rc"],
+  "editable": true,
+  "timezone": "browser",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "refresh": "5m",
+  "timepicker": {
+    "refresh_intervals": ["5m", "15m", "30m", "1h"]
+  },
+  "graphTooltip": 1,
+  "schemaVersion": 41,
+  "links": [
+    {
+      "title": "SunTzu RC",
+      "type": "dashboards",
+      "tags": ["suntzu-rc"],
+      "asDropdown": false,
+      "includeVars": true,
+      "keepTime": true
+    }
+  ],
+  "panels": [
+    {
+      "type": "text",
+      "title": "",
+      "options": {
+        "mode": "markdown",
+        "content": "### Logs: ¿qué pasó?\nLas líneas que escriben la web, la API y las tareas programadas, guardadas 30 días. Por defecto, **las últimas 24 h**: amplía el rango arriba a la derecha hasta 30 días. Cada consulta cobra por GB leído (0,005 USD); hoy todos los logs juntos no llegan a 1 MB."
+      },
+      "transparent": true,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 3
+      },
+      "id": 1
+    },
+    {
+      "type": "row",
+      "title": "Errores",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 3,
+        "w": 24,
+        "h": 1
+      },
+      "id": 2
+    },
+    {
+      "type": "timeseries",
+      "title": "Errores en el tiempo",
+      "description": "Líneas con level error o fatal de la web y la API, cada 15 min. Vacío = ningún error en el rango elegido.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/app",
+              "name": "/ecs/rc-landing-${env}/app"
+            },
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/api",
+              "name": "/ecs/rc-landing-${env}/api"
+            }
+          ],
+          "logGroupNames": ["/ecs/rc-landing-${env}/app", "/ecs/rc-landing-${env}/api"],
+          "expression": "filter level = \"error\" or level = \"fatal\"\n| stats count(*) as errores by bin(15m)",
+          "statsGroups": [],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 2,
+            "fillOpacity": 60,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 12,
+        "h": 8
+      },
+      "id": 3
+    },
+    {
+      "type": "table",
+      "title": "Errores agrupados por mensaje",
+      "description": "Si hay uno con muchas repeticiones es un solo problema; si son muchos distintos, varios.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/app",
+              "name": "/ecs/rc-landing-${env}/app"
+            },
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/api",
+              "name": "/ecs/rc-landing-${env}/api"
+            }
+          ],
+          "logGroupNames": ["/ecs/rc-landing-${env}/app", "/ecs/rc-landing-${env}/api"],
+          "expression": "filter level = \"error\" or level = \"fatal\"\n| stats count(*) as veces, latest(@timestamp) as ultima by @log, message\n| sort veces desc\n| limit 25",
+          "statsGroups": [],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 4,
+        "w": 12,
+        "h": 8
+      },
+      "id": 4
+    },
+    {
+      "type": "row",
+      "title": "Peticiones a la API",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 24,
+        "h": 1
+      },
+      "id": 5
+    },
+    {
+      "type": "table",
+      "title": "Por bit y respuesta",
+      "description": "Cada fila es una acción de la API (el bit, ver docs/bits) con su código de respuesta y lo que tardó (ms, medido por la propia API).",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/api",
+              "name": "/ecs/rc-landing-${env}/api"
+            }
+          ],
+          "logGroupNames": ["/ecs/rc-landing-${env}/api"],
+          "expression": "filter context = \"Http\"\n| stats count(*) as peticiones, avg(message.ms) as media_ms, pct(message.ms, 95) as p95_ms, max(message.ms) as max_ms by message.bit as bit, message.status as estado\n| sort peticiones desc\n| limit 40",
+          "statsGroups": [],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 13,
+        "w": 14,
+        "h": 10
+      },
+      "id": 6
+    },
+    {
+      "type": "timeseries",
+      "title": "Peticiones por respuesta",
+      "description": "Las mismas peticiones, en el tiempo, por código de respuesta.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/api",
+              "name": "/ecs/rc-landing-${env}/api"
+            }
+          ],
+          "logGroupNames": ["/ecs/rc-landing-${env}/api"],
+          "expression": "filter context = \"Http\"\n| stats count(*) as peticiones by bin(15m), message.status as estado",
+          "statsGroups": ["estado"],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 2,
+            "fillOpacity": 60,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 14,
+        "y": 13,
+        "w": 10,
+        "h": 10
+      },
+      "id": 7
+    },
+    {
+      "type": "row",
+      "title": "Últimas líneas",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 23,
+        "w": 24,
+        "h": 1
+      },
+      "id": 8
+    },
+    {
+      "type": "logs",
+      "title": "API",
+      "description": "Las últimas 200 líneas. Pulsa una para ver todos sus campos, también el trace_id para buscarla en Trazas.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/api",
+              "name": "/ecs/rc-landing-${env}/api"
+            }
+          ],
+          "logGroupNames": ["/ecs/rc-landing-${env}/api"],
+          "expression": "fields @timestamp, @message, @logStream\n| sort @timestamp desc\n| limit 200",
+          "statsGroups": [],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending",
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "prettifyLogMessage": false
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 12
+      },
+      "id": 9
+    },
+    {
+      "type": "logs",
+      "title": "Web",
+      "description": "Las últimas 200 líneas del servidor de Next.js. Next.js casi solo escribe al arrancar (cada despliegue o reinicio) y cuando algo falla: si está vacío en 24 h, amplía el rango.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/app",
+              "name": "/ecs/rc-landing-${env}/app"
+            }
+          ],
+          "logGroupNames": ["/ecs/rc-landing-${env}/app"],
+          "expression": "fields @timestamp, @message, @logStream\n| sort @timestamp desc\n| limit 200",
+          "statsGroups": [],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending",
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "prettifyLogMessage": false
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 12
+      },
+      "id": 10
+    },
+    {
+      "type": "row",
+      "title": "Tareas programadas",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 36,
+        "w": 24,
+        "h": 1
+      },
+      "id": 11
+    },
+    {
+      "type": "table",
+      "title": "Ejecuciones",
+      "description": "Cada fila es una ejecución (un contenedor, un stream de logs): cuándo empezó, su última línea y cuántas líneas mencionan un error. engine: 05, 11, 17 y 23 h UTC · notify: cada hora a y 15 · census: el día 2 de cada mes.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/engine",
+              "name": "/ecs/rc-landing-${env}/engine"
+            },
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/notify",
+              "name": "/ecs/rc-landing-${env}/notify"
+            },
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/census",
+              "name": "/ecs/rc-landing-${env}/census"
+            },
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/setup",
+              "name": "/ecs/rc-landing-${env}/setup"
+            }
+          ],
+          "logGroupNames": [
+            "/ecs/rc-landing-${env}/engine",
+            "/ecs/rc-landing-${env}/notify",
+            "/ecs/rc-landing-${env}/census",
+            "/ecs/rc-landing-${env}/setup"
+          ],
+          "expression": "fields @logStream\n| parse @logStream \"*/*/*\" as tarea, contenedor, ejecucion\n| stats min(@timestamp) as empieza, max(@timestamp) as termina, count(*) as lineas, sum(strcontains(tolower(@message), \"error\")) as con_error by tarea, ejecucion\n| sort empieza desc\n| limit 40",
+          "statsGroups": [],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 37,
+        "w": 14,
+        "h": 12
+      },
+      "id": 12
+    },
+    {
+      "type": "logs",
+      "title": "Últimas líneas de las tareas",
+      "description": "Lo que dijo cada tarea en su última ejecución (texto plano).",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/engine",
+              "name": "/ecs/rc-landing-${env}/engine"
+            },
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/notify",
+              "name": "/ecs/rc-landing-${env}/notify"
+            },
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/census",
+              "name": "/ecs/rc-landing-${env}/census"
+            },
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:/ecs/rc-landing-${env}/setup",
+              "name": "/ecs/rc-landing-${env}/setup"
+            }
+          ],
+          "logGroupNames": [
+            "/ecs/rc-landing-${env}/engine",
+            "/ecs/rc-landing-${env}/notify",
+            "/ecs/rc-landing-${env}/census",
+            "/ecs/rc-landing-${env}/setup"
+          ],
+          "expression": "fields @timestamp, @message, @logStream\n| sort @timestamp desc\n| limit 200",
+          "statsGroups": [],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending",
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "prettifyLogMessage": false
+      },
+      "gridPos": {
+        "x": 14,
+        "y": 37,
+        "w": 10,
+        "h": 12
+      },
+      "id": 13
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "ds",
+        "label": "Data source",
+        "type": "datasource",
+        "query": "cloudwatch",
+        "regex": "/SunTzu/",
+        "hide": 2,
+        "current": {},
+        "options": [],
+        "refresh": 1
+      },
+      {
+        "name": "env",
+        "label": "Entorno",
+        "type": "custom",
+        "query": "staging",
+        "current": {
+          "text": "staging",
+          "value": "staging"
+        },
+        "options": [
+          {
+            "text": "staging",
+            "value": "staging",
+            "selected": true
+          }
+        ],
+        "hide": 0
+      },
+      {
+        "name": "lb",
+        "label": "lb",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/ApplicationELB",
+          "metricName": "RequestCount",
+          "dimensionKey": "LoadBalancer",
+          "dimensionFilters": {}
+        },
+        "regex": "/^app\\/rc-landing-${env}\\/.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "tg_app",
+        "label": "tg_app",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/ApplicationELB",
+          "metricName": "RequestCount",
+          "dimensionKey": "TargetGroup",
+          "dimensionFilters": {}
+        },
+        "regex": "/^targetgroup\\/rc-landing-${env}-app\\/.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "tg_api",
+        "label": "tg_api",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/ApplicationELB",
+          "metricName": "RequestCount",
+          "dimensionKey": "TargetGroup",
+          "dimensionFilters": {}
+        },
+        "regex": "/^targetgroup\\/rc-landing-${env}-api\\/.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "db",
+        "label": "db",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "CPUUtilization",
+          "dimensionKey": "DBInstanceIdentifier",
+          "dimensionFilters": {}
+        },
+        "regex": "/^rc-landing-${env}-.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "hc_app",
+        "label": "hc_app",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "resourceARNs",
+          "region": "us-east-1",
+          "resourceType": "route53:healthcheck",
+          "tags": {
+            "Name": ["rc-landing-${env}-app"]
+          }
+        },
+        "regex": "/healthcheck\\/(.*)/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "hc_api",
+        "label": "hc_api",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "resourceARNs",
+          "region": "us-east-1",
+          "resourceType": "route53:healthcheck",
+          "tags": {
+            "Name": ["rc-landing-${env}-api"]
+          }
+        },
+        "regex": "/healthcheck\\/(.*)/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "fiscalYearStartMonth": 0,
+  "liveNow": false,
+  "weekStart": "monday"
+}

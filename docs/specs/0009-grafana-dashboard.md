@@ -59,10 +59,10 @@ Everything SunTzu RC measures (20 alarms, 8 log groups, request traces and about
 ## Slices
 
 - [x] 1. **Read-only role:** `infra/bootstrap/grafana.tf` with the role Grafana assumes (trust: Grafana's account + external ID; permissions: read CloudWatch metrics and alarms, query the project's logs, read X-Ray traces, list Regions and tags). Applied by the agent with the admin profile after the owner sees the plan. `docs/DECISIONS.md`, `docs/OPERATIONS.md` and `docs/TERRAFORM.md` updated. Role `rc-landing-grafana-read-only`, applied 2026-11-17. (blocked by: —)
-- [ ] 2. **Grafana connected:** CloudWatch data source (us-east-2 by default, us-east-1 for uptime) and Application Signals (X-Ray) data source, created through Grafana's API with a service account token; the "SunTzu RC" folder restricted to the two users. (blocked by: 1, and a Grafana service account token from the owner)
-- [ ] 3. **Overview, Traffic and Database:** the metric dashboards (contents below), saved in `infra/grafana/`. (blocked by: 2)
-- [ ] 4. **Logs and Traces:** the Logs Insights dashboards over the log groups and `aws/spans`, with a trace ID search. (blocked by: 2)
-- [ ] 5. **Platform and the guide:** the scheduler, container image pulls, CloudWatch ingestion and the cost of Grafana's own queries; a "Grafana" section in `docs/OPERATIONS.md` (how to open it, what each dashboard answers, how to update the JSON). (blocked by: 3, 4)
+- [x] 2. **Grafana connected:** CloudWatch data source (us-east-2 by default, us-east-1 for uptime), set up through Grafana's API with a service account token; the "SunTzu RC" folder, visible only to the stack's invited users. Needed an exception in the organization's resource control policy (`DECISIONS.md`, 2026-11-17). The Application Signals (X-Ray) data source is left out (see open questions). (blocked by: —)
+- [x] 3. **Overview, Traffic and Database:** the metric dashboards (contents below), saved in `infra/grafana/`. (blocked by: 2)
+- [x] 4. **Logs and Traces:** the Logs Insights dashboards over the log groups and `aws/spans`, with a trace ID search. (blocked by: 2)
+- [x] 5. **Platform and the guide:** the scheduler, container image pulls, CloudWatch ingestion and the cost of Grafana's own queries; a "Grafana" section in `docs/OPERATIONS.md` (how to open it, what each dashboard answers, how to update the JSON). (blocked by: 3, 4)
 
 ### What each dashboard shows, in order
 
@@ -77,7 +77,7 @@ Each panel carries a one-line description of what it measures and when to worry.
 
 ## Open questions
 
-- Can Grafana's Application Signals data source (formerly X-Ray) open any trace by ID, now that traces are stored by Transaction Search (only 1% indexed as X-Ray summaries)? If not, the Traces dashboard reads `aws/spans` with Logs Insights only. — who should answer: the agent, in slice 2.
+- ~~Can Grafana's Application Signals data source open any trace by ID?~~ Answered 2026-11-17: its plugin couldn't be installed through Grafana's API, and isn't needed: the Traces dashboard reads `aws/spans` with Logs Insights, which holds every span. Installing it by hand (Administration → Plugins) would add a waterfall view; optional.
 - Who is the second user? — who should answer: the owner (they invite them in Grafana).
 
 ## Needs Itaca engineering

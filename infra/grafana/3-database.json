@@ -1,0 +1,1471 @@
+{
+  "uid": "suntzu-rc-database",
+  "title": "SunTzu RC · 3 Base de datos",
+  "description": "PostgreSQL en RDS: CPU y créditos, memoria, conexiones, disco y red.",
+  "tags": ["suntzu-rc"],
+  "editable": true,
+  "timezone": "browser",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "refresh": "5m",
+  "timepicker": {
+    "refresh_intervals": ["5m", "15m", "30m", "1h"]
+  },
+  "graphTooltip": 1,
+  "schemaVersion": 41,
+  "links": [
+    {
+      "title": "SunTzu RC",
+      "type": "dashboards",
+      "tags": ["suntzu-rc"],
+      "asDropdown": false,
+      "includeVars": true,
+      "keepTime": true
+    }
+  ],
+  "panels": [
+    {
+      "type": "text",
+      "title": "",
+      "options": {
+        "mode": "markdown",
+        "content": "### Base de datos: PostgreSQL en RDS\nUna instancia **db.t4g.micro** (2 vCPU a ráfagas, 1 GB de memoria). Todas estas métricas las publica RDS sola. Lo primero que se acaba en una micro suele ser la memoria o los créditos de CPU."
+      },
+      "transparent": true,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 3
+      },
+      "id": 1
+    },
+    {
+      "type": "row",
+      "title": "Procesador y memoria",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 3,
+        "w": 24,
+        "h": 1
+      },
+      "id": 2
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU",
+      "description": "La línea es el umbral de la alarma (80%).",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "CPUUtilization",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "label": "CPU",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "line+area"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 8,
+        "h": 8
+      },
+      "id": 3
+    },
+    {
+      "type": "timeseries",
+      "title": "Créditos de CPU",
+      "description": "Saldo: cuántos créditos quedan (por debajo de 20, alarma). Uso: cuántos gasta cada 5 min. Excedente: créditos tomados prestados cuando el saldo llegó a 0 (se cobran).",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "CPUCreditBalance",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Minimum",
+          "period": "300",
+          "matchExact": true,
+          "label": "saldo",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "CPUCreditUsage",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Sum",
+          "period": "300",
+          "matchExact": true,
+          "label": "uso",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "CPUSurplusCreditBalance",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Maximum",
+          "period": "300",
+          "matchExact": true,
+          "label": "excedente",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 4,
+        "w": 8,
+        "h": 8
+      },
+      "id": 4
+    },
+    {
+      "type": "timeseries",
+      "title": "Memoria libre y swap",
+      "description": "Memoria que PostgreSQL aún puede usar, y swap (memoria pasada a disco: si crece, va lenta). Alarma por debajo de 64 MB.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "FreeableMemory",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "label": "memoria libre",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "SwapUsage",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Maximum",
+          "period": "300",
+          "matchExact": true,
+          "label": "swap",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 4,
+        "w": 8,
+        "h": 8
+      },
+      "id": 5
+    },
+    {
+      "type": "row",
+      "title": "Conexiones y disco",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 24,
+        "h": 1
+      },
+      "id": 6
+    },
+    {
+      "type": "timeseries",
+      "title": "Conexiones abiertas",
+      "description": "La API abre un pequeño grupo de conexiones; las tareas programadas abren las suyas mientras corren. Alarma por encima de 60.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "DatabaseConnections",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Maximum",
+          "period": "300",
+          "matchExact": true,
+          "label": "conexiones",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "line+area"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 60
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 13,
+        "w": 8,
+        "h": 8
+      },
+      "id": 7
+    },
+    {
+      "type": "timeseries",
+      "title": "Disco libre",
+      "description": "Espacio libre. Alarma crítica por debajo de 2 GB.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "FreeStorageSpace",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Minimum",
+          "period": "300",
+          "matchExact": true,
+          "label": "libre",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 13,
+        "w": 8,
+        "h": 8
+      },
+      "id": 8
+    },
+    {
+      "type": "timeseries",
+      "title": "Registro de transacciones",
+      "description": "Espacio que ocupa el registro de cambios (WAL) y cuánto genera por segundo.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "TransactionLogsDiskUsage",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Maximum",
+          "period": "300",
+          "matchExact": true,
+          "label": "ocupa",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "TransactionLogsGeneration",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "label": "genera/s",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 13,
+        "w": 8,
+        "h": 8
+      },
+      "id": 9
+    },
+    {
+      "type": "row",
+      "title": "Lecturas y escrituras",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 21,
+        "w": 24,
+        "h": 1
+      },
+      "id": 10
+    },
+    {
+      "type": "timeseries",
+      "title": "Latencia de disco",
+      "description": "Cuánto tarda cada operación de lectura o escritura en disco.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "ReadLatency",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "label": "lectura",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "WriteLatency",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "label": "escritura",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 22,
+        "w": 8,
+        "h": 8
+      },
+      "id": 11
+    },
+    {
+      "type": "timeseries",
+      "title": "Operaciones por segundo (IOPS)",
+      "description": "Lecturas y escrituras en disco por segundo.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "ReadIOPS",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "label": "lectura",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "WriteIOPS",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "label": "escritura",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "iops",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 22,
+        "w": 8,
+        "h": 8
+      },
+      "id": 12
+    },
+    {
+      "type": "timeseries",
+      "title": "Rendimiento de disco",
+      "description": "Bytes por segundo leídos y escritos.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "ReadThroughput",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "label": "lectura",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "WriteThroughput",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "label": "escritura",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 22,
+        "w": 8,
+        "h": 8
+      },
+      "id": 13
+    },
+    {
+      "type": "timeseries",
+      "title": "Cola de disco",
+      "description": "Operaciones esperando su turno. Cerca de 0 es lo normal.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "DiskQueueDepth",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "label": "cola",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 30,
+        "w": 8,
+        "h": 8
+      },
+      "id": 14
+    },
+    {
+      "type": "timeseries",
+      "title": "Saldo de ráfagas del disco",
+      "description": "Como los créditos de CPU, pero del disco: % de ráfaga de operaciones y de bytes que queda.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "EBSIOBalance%",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Minimum",
+          "period": "300",
+          "matchExact": true,
+          "label": "operaciones",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "EBSByteBalance%",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Minimum",
+          "period": "300",
+          "matchExact": true,
+          "label": "bytes",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 30,
+        "w": 8,
+        "h": 8
+      },
+      "id": 15
+    },
+    {
+      "type": "timeseries",
+      "title": "Red",
+      "description": "Tráfico de red de la base de datos (casi todo, con la API).",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "NetworkReceiveThroughput",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "label": "recibe",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "NetworkTransmitThroughput",
+          "dimensions": {
+            "DBInstanceIdentifier": "$db"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "label": "envía",
+          "id": "",
+          "expression": "",
+          "hide": false,
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 30,
+        "w": 8,
+        "h": 8
+      },
+      "id": 16
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "ds",
+        "label": "Data source",
+        "type": "datasource",
+        "query": "cloudwatch",
+        "regex": "/SunTzu/",
+        "hide": 2,
+        "current": {},
+        "options": [],
+        "refresh": 1
+      },
+      {
+        "name": "env",
+        "label": "Entorno",
+        "type": "custom",
+        "query": "staging",
+        "current": {
+          "text": "staging",
+          "value": "staging"
+        },
+        "options": [
+          {
+            "text": "staging",
+            "value": "staging",
+            "selected": true
+          }
+        ],
+        "hide": 0
+      },
+      {
+        "name": "lb",
+        "label": "lb",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/ApplicationELB",
+          "metricName": "RequestCount",
+          "dimensionKey": "LoadBalancer",
+          "dimensionFilters": {}
+        },
+        "regex": "/^app\\/rc-landing-${env}\\/.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "tg_app",
+        "label": "tg_app",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/ApplicationELB",
+          "metricName": "RequestCount",
+          "dimensionKey": "TargetGroup",
+          "dimensionFilters": {}
+        },
+        "regex": "/^targetgroup\\/rc-landing-${env}-app\\/.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "tg_api",
+        "label": "tg_api",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/ApplicationELB",
+          "metricName": "RequestCount",
+          "dimensionKey": "TargetGroup",
+          "dimensionFilters": {}
+        },
+        "regex": "/^targetgroup\\/rc-landing-${env}-api\\/.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "db",
+        "label": "db",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "CPUUtilization",
+          "dimensionKey": "DBInstanceIdentifier",
+          "dimensionFilters": {}
+        },
+        "regex": "/^rc-landing-${env}-.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "hc_app",
+        "label": "hc_app",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "resourceARNs",
+          "region": "us-east-1",
+          "resourceType": "route53:healthcheck",
+          "tags": {
+            "Name": ["rc-landing-${env}-app"]
+          }
+        },
+        "regex": "/healthcheck\\/(.*)/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "hc_api",
+        "label": "hc_api",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "resourceARNs",
+          "region": "us-east-1",
+          "resourceType": "route53:healthcheck",
+          "tags": {
+            "Name": ["rc-landing-${env}-api"]
+          }
+        },
+        "regex": "/healthcheck\\/(.*)/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      },
+      {
+        "name": "Alarmas de CloudWatch",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "enable": true,
+        "iconColor": "red",
+        "target": {
+          "refId": "Anno",
+          "queryMode": "Annotations",
+          "region": "us-east-2",
+          "prefixMatching": true,
+          "actionPrefix": "",
+          "alarmNamePrefix": "rc-landing-$env",
+          "namespace": "",
+          "metricName": "",
+          "dimensions": {},
+          "statistic": "Average",
+          "period": ""
+        }
+      }
+    ]
+  },
+  "fiscalYearStartMonth": 0,
+  "liveNow": false,
+  "weekStart": "monday"
+}

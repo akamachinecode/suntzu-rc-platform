@@ -104,10 +104,30 @@ aws cloudwatch set-alarm-state --alarm-name rc-landing-production-api-5xx --stat
 
 ### Grafana
 
-One place to see all of the above: the "SunTzu RC" folder in Grafana Cloud (`https://alejandroelbaz.grafana.net`, spec `docs/specs/0009-grafana-dashboard.md`). Grafana reads CloudWatch when a dashboard is open, through the read-only role `rc-landing-grafana-read-only` (`infra/bootstrap/grafana.tf`); it stores nothing and sends no alerts (alarms stay in CloudWatch → SNS).
+One place to see all of the above: the **SunTzu RC** folder in Grafana Cloud (`https://alejandroelbaz.grafana.net`, spec `docs/specs/0009-grafana-dashboard.md`). Grafana reads CloudWatch when a dashboard is open, through the read-only role `rc-landing-grafana-read-only` (`infra/bootstrap/grafana.tf`); it stores nothing and sends no alerts (alarms stay in CloudWatch → SNS).
+
+| Dashboard         | Answers                                                                                                                             |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 1 · Resumen       | Is it healthy? The 20 alarms as tiles with their own thresholds, uptime, traffic, errors and p95, alarm changes as annotations.     |
+| 2 · Tráfico       | The load balancer (responses by class, latency p50/p95/p99, connections, LCU), the containers' CPU and memory, Application Signals. |
+| 3 · Base de datos | PostgreSQL: CPU and credits, memory and swap, connections, storage, disk latency, IOPS, throughput, network.                        |
+| 4 · Logs          | Errors over time and by message, API requests by bit and status, the latest lines of each service, scheduled job runs.              |
+| 5 · Trazas        | One request by trace ID (paste an `x-request-id`), slowest pages, routes and SQL queries, spans with errors.                        |
+| 6 · Plataforma    | The scheduler, image pulls, log bytes ingested per group and CloudWatch API calls (what Grafana's queries cost).                    |
 
 - **Access:** ask the owner for a Grafana invitation. There are no public links.
-- **The role** trusts only Grafana Cloud's AWS account with our stack's external ID. It can read metrics, alarms, the project's log groups and traces, and can't change anything.
+- **Environment:** the "Entorno" selector. Every AWS name (load balancer, target groups, database, health checks) is found from it, so production only needs adding to that selector once it exists.
+- **Time range:** the overview opens on 6 hours, the rest on 24 hours; widen it up to 30 days (how long logs and traces are kept). Dashboards refresh every 5 minutes, only while open.
+- **The dashboards are code:** `infra/grafana/*.json`. Change them in Grafana, then export the JSON (Dashboard → Export → Export as JSON, without "Export for sharing externally") into that file in the same pull request. To publish a file from the repository, with a Grafana service account token in `GRAFANA_TOKEN`:
+
+  ```bash
+  jq '{dashboard: ., folderUid: "suntzu-rc", overwrite: true}' infra/grafana/1-overview.json |
+    curl -s -X POST -H "Authorization: Bearer $GRAFANA_TOKEN" -H "Content-Type: application/json" \
+      https://alejandroelbaz.grafana.net/api/dashboards/db -d @-
+  ```
+
+- **Data source:** "CloudWatch · SunTzu RC", authentication "Grafana Assume Role", the role's ARN, default Region us-east-2 (the uptime panels ask us-east-1 themselves).
+- **The role** trusts only Grafana Cloud's AWS account with our stack's external ID. It can read metrics, alarms, the project's log groups and traces, and can't change anything. The organization's resource control policy has an exception for Grafana's account (`DECISIONS.md`, 2026-11-17).
 
 ### Runbooks
 
