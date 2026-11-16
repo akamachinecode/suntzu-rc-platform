@@ -102,6 +102,13 @@ aws cloudwatch set-alarm-state --alarm-name rc-landing-production-api-5xx --stat
 - **Once per AWS account:** `infra/bootstrap` turns on Transaction Search (`traces.tf`). Then set how long spans are kept: `aws logs put-retention-policy --log-group-name aws/spans --retention-in-days 30`.
 - **A copy for another tool** (Grafana Cloud, Honeycomb, any OTLP/HTTP backend) is a decision for Itaca engineering, written in `docs/DECISIONS.md`, because the data leaves this account. It is set per service with `telemetry.remote` in `infra/main.tf`.
 
+### Grafana
+
+One place to see all of the above: the "SunTzu RC" folder in Grafana Cloud (`https://alejandroelbaz.grafana.net`, spec `docs/specs/0009-grafana-dashboard.md`). Grafana reads CloudWatch when a dashboard is open, through the read-only role `rc-landing-grafana-read-only` (`infra/bootstrap/grafana.tf`); it stores nothing and sends no alerts (alarms stay in CloudWatch → SNS).
+
+- **Access:** ask the owner for a Grafana invitation. There are no public links.
+- **The role** trusts only Grafana Cloud's AWS account with our stack's external ID. It can read metrics, alarms, the project's log groups and traces, and can't change anything.
+
 ### Runbooks
 
 Every alarm links here. First steps for each; if they don't explain it, open the logs and traces of the time it started.
