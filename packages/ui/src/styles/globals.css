@@ -161,7 +161,40 @@
   }
 }
 
+/*
+ * Wide headings (font-stretch 125%) wrap the same before and after Archivo loads. next/font's
+ * "Archivo Fallback" matches Archivo at its normal width only, so until the font arrived a wide
+ * heading was a third narrower, wrapped onto fewer lines, and the page jumped when it swapped
+ * (layout shift 0.13 on the home, 0.19 on an event page; spec 0010, slice 6). This fallback is
+ * Arial (or Liberation Sans, its metric twin on Linux) scaled to wide Archivo's width:
+ * 134.1% for bold and black (the median of the site's 228 wide headings, nearly all font-black;
+ * half fall between 133% and 135.5%), 125.7% below that. Ascent and descent keep Archivo's (87.8% and 21% of the em)
+ * so lines keep their height.
+ */
+@font-face {
+  font-family: "Archivo Wide Fallback";
+  src:
+    local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"),
+    local("LiberationSans-Bold");
+  font-weight: 600 1000;
+  size-adjust: 134.1%;
+  ascent-override: 65.5%;
+  descent-override: 15.7%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Archivo Wide Fallback";
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("LiberationSans");
+  font-weight: 100 599;
+  size-adjust: 125.7%;
+  ascent-override: 69.9%;
+  descent-override: 16.7%;
+  line-gap-override: 0%;
+}
+
 @utility font-wide {
+  font-family: "Archivo", "Archivo Wide Fallback", var(--font-archivo);
   font-stretch: 125%;
 }
 

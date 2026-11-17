@@ -94,7 +94,7 @@ export function ServoHero() {
         <div className="flex flex-col items-start gap-4 sm:gap-5 md:gap-7">
           <h1
             id="hero-title"
-            className="text-[2.6rem] leading-[0.92] font-black tracking-tight text-balance font-wide sm:text-6xl lg:text-7xl xl:text-[5.5rem]"
+            className="font-wide text-[2.6rem] leading-[0.92] font-black tracking-tight text-balance sm:text-6xl lg:text-7xl xl:text-[5.5rem]"
           >
             Small machines. <Tag tone="sky">Serious</Tag> engineering.
           </h1>

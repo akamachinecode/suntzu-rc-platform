@@ -169,7 +169,7 @@ function CheckEmail({
       <div className="grid gap-4">
         <MailCheckIcon aria-hidden="true" className="size-8" />
         {/* Takes the focus when the screen changes, so nobody is sent back to the top. */}
-        <StepHeading className="text-xl font-black font-wide">Check your email</StepHeading>
+        <StepHeading className="font-wide text-xl font-black">Check your email</StepHeading>
         <p id="code-hint" className="text-pretty">
           We sent a sign-in link and a 6-digit code to <strong>{email}</strong>. Tap the link, or
           type the code here to sign in on this screen. Both work once, for 15 minutes.

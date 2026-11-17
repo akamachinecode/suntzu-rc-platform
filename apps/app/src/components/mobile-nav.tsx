@@ -66,7 +66,7 @@ export function MobileNav() {
                   href={item.href}
                   onClick={close}
                   aria-current={item.href === pathname ? "page" : undefined}
-                  className="block py-2 text-2xl font-black font-wide"
+                  className="block py-2 font-wide text-2xl font-black"
                 >
                   {item.label}
                 </Link>
@@ -83,7 +83,7 @@ export function MobileNav() {
                   toggle.current?.focus();
                   openSearch();
                 }}
-                className="flex items-center gap-3 py-2 text-2xl font-black font-wide"
+                className="flex items-center gap-3 py-2 font-wide text-2xl font-black"
               >
                 <SearchIcon aria-hidden="true" className="size-6" />
                 Search

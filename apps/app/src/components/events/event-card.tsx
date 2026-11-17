@@ -18,7 +18,7 @@ export function EventCard({ event, miles }: { event: RcEvent; miles?: number }) 
     <article className="group relative grid gap-5 rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard transition-transform focus-within:-translate-y-0.5 hover:-translate-y-0.5 motion-reduce:transform-none md:grid-cols-[13rem_1fr_auto] md:items-start md:gap-8">
       <div>
         <p
-          className={cn("text-xl leading-tight font-black font-wide", cancelled && "line-through")}
+          className={cn("font-wide text-xl leading-tight font-black", cancelled && "line-through")}
         >
           {formatWhen(event)}
         </p>
@@ -55,7 +55,7 @@ export function EventCard({ event, miles }: { event: RcEvent; miles?: number }) 
         </ul>
       </div>
       {miles !== undefined ? (
-        <p className="text-lg font-black font-wide md:justify-self-end">{Math.round(miles)} mi</p>
+        <p className="font-wide text-lg font-black md:justify-self-end">{Math.round(miles)} mi</p>
       ) : null}
     </article>
   );

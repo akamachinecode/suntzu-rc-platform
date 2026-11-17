@@ -56,7 +56,7 @@ export function CalendarSubscribe({
       aria-labelledby="subscribe-title"
       className="rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard sm:p-8"
     >
-      <h2 id="subscribe-title" className="text-2xl font-black font-wide">
+      <h2 id="subscribe-title" className="font-wide text-2xl font-black">
         {title}
       </h2>
       <p className="mt-2 max-w-[60ch] text-pretty">{lead}</p>

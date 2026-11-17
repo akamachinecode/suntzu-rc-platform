@@ -89,7 +89,7 @@ export default async function PlacePage({ params }: PageProps<"/places/[slug]">)
             </li>
           ) : null}
         </ul>
-        <h1 className="mt-4 max-w-4xl text-5xl leading-[0.92] font-black tracking-tight text-balance font-wide sm:text-7xl">
+        <h1 className="mt-4 max-w-4xl font-wide text-5xl leading-[0.92] font-black tracking-tight text-balance sm:text-7xl">
           {place.name}
         </h1>
         <p className="mt-4 text-xl">
@@ -111,7 +111,7 @@ export default async function PlacePage({ params }: PageProps<"/places/[slug]">)
             aria-labelledby="visit-title"
             className="rounded-xl border-2 border-foreground bg-primary p-6 shadow-hard"
           >
-            <h2 id="visit-title" className="text-xl font-black font-wide">
+            <h2 id="visit-title" className="font-wide text-xl font-black">
               How to visit: {access.label.toLowerCase()}
             </h2>
             <p className="mt-2 max-w-[60ch] text-pretty">{access.detail}</p>
@@ -137,7 +137,7 @@ export default async function PlacePage({ params }: PageProps<"/places/[slug]">)
           </section>
 
           <section aria-labelledby="upcoming-title">
-            <h2 id="upcoming-title" className="text-2xl font-black font-wide">
+            <h2 id="upcoming-title" className="font-wide text-2xl font-black">
               Coming up here
             </h2>
             {place.events.length ? (
@@ -158,7 +158,7 @@ export default async function PlacePage({ params }: PageProps<"/places/[slug]">)
             aria-labelledby="rules-title"
             className="rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard"
           >
-            <h2 id="rules-title" className="text-xl font-black font-wide">
+            <h2 id="rules-title" className="font-wide text-xl font-black">
               Rules that apply
             </h2>
             <ul className="mt-4 grid gap-4">

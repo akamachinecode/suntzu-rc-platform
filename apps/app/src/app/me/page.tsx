@@ -29,7 +29,7 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
   return (
     <>
       <header className="mx-auto max-w-7xl px-5 pt-16 pb-10 sm:px-6 sm:pt-24">
-        <h1 className="text-5xl leading-[0.92] font-black tracking-tight font-wide sm:text-7xl">
+        <h1 className="font-wide text-5xl leading-[0.92] font-black tracking-tight sm:text-7xl">
           {me.name ? `Hi, ${me.name.split(" ")[0]}.` : "My SunTzu RC"}
         </h1>
         <p className="mt-6 max-w-[56ch] text-lg text-pretty">
@@ -52,7 +52,7 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
       </header>
 
       <section aria-labelledby="going-title" className="mx-auto max-w-7xl px-5 pb-16 sm:px-6">
-        <h2 id="going-title" className="text-3xl font-black font-wide">
+        <h2 id="going-title" className="font-wide text-3xl font-black">
           Where you&apos;re going
         </h2>
         {follows?.going.length ? (
@@ -77,7 +77,7 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
       <section aria-labelledby="following-title" className="bg-cutting-mat text-mat-foreground">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-6 lg:grid-cols-2">
           <div>
-            <h2 id="following-title" className="text-3xl font-black font-wide">
+            <h2 id="following-title" className="font-wide text-3xl font-black">
               What you follow
             </h2>
             <p className="mt-3 max-w-[48ch] text-pretty">
@@ -144,7 +144,7 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
       </section>
 
       <section aria-labelledby="settings-title" className="mx-auto max-w-3xl px-5 py-16 sm:px-6">
-        <h2 id="settings-title" className="text-3xl font-black font-wide">
+        <h2 id="settings-title" className="font-wide text-3xl font-black">
           Settings
         </h2>
         <div className="mt-6 rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard sm:p-8">
@@ -153,7 +153,7 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
       </section>
 
       <section aria-labelledby="delete-title" className="mx-auto max-w-3xl px-5 pb-24 sm:px-6">
-        <h2 id="delete-title" className="text-2xl font-black font-wide">
+        <h2 id="delete-title" className="font-wide text-2xl font-black">
           Delete your account
         </h2>
         <p className="mt-3 max-w-[60ch] text-pretty">

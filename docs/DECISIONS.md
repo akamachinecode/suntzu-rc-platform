@@ -55,7 +55,25 @@ Format:
   - **The home's 3D dioramas** show "Pause" in their corner once built; paused, the scene holds its frame. The button is beside the picture, not inside its `role="img"`.
   - Under reduced motion nothing moves, so the buttons don't show.
   - **Tests:** `apps/app/e2e/motion.spec.ts` (the readout stops changing after Pause and moves again after Play; the 3D scenes' button; none under reduced motion).
-- **Why:** the audit (2026-11-17) found these against the guides `security/validate-origins`, `js/coordinate-global-events` and `security/security`; slice 5 against `ui-behaviors/motion`; slice 4 against `accessibility/accessibility`, `ui-components/navbar`, `ui-components/dialog`, `ui-behaviors/motion`, `ui-components/copy-button`, `visual-design/dark-mode` and `privacy/privacy`; slice 3 against `forms/forms`, `accessibility/accessible-error-announcement`, `forms/required-field-feedback`, `forms/sms-otp-form` and `forms/ime-safe-enter-submit`.
+- **Slice 6 (speed),** measured on the production build limited to half a CPU (dekit `suntzu-rc/app-prod`), cold loads on a phone with a 4G-like network (150 ms, 1.6 Mbps) and the CPU 4× slower, median of 3:
+
+  | Page     | Layout shift before → after | Long tasks (ms) before → after |
+  | -------- | --------------------------- | ------------------------------ |
+  | Home     | 0.131 → 0.045               | 294 → 191                      |
+  | Events   | 0.030 → 0.030               | 13 → 13                        |
+  | An event | 0.193 → 0.025               | 43 → 49                        |
+  | A place  | 0.005 → 0.029               | 38 → 13                        |
+  | A guide  | 0.011 → 0.013               | 16 → 15                        |
+  - **Wide headings no longer jump when Archivo loads.** next/font's fallback matches Archivo at its normal width, but headings use `font-stretch: 125%`: before the font arrived they were a third narrower, wrapped onto fewer lines, and everything below jumped (both shifts above were that swap). `font-wide` now falls back to "Archivo Wide Fallback", Arial (or Liberation Sans) scaled to the median width of the site's 228 wide headings (134.1% bold, 125.7% regular), with Archivo's ascent and descent. A heading far from the median can still wrap differently (the place page's 0.029), well under the 0.1 limit.
+  - **The home's events stream on their own** (`<Suspense>` around `UpcomingPasses`): the page no longer waits for the events API before sending anything. Locally the API answers in milliseconds, so the table can't show it; on staging the home's slowest answers (p95 3.2 s) were that wait.
+  - **Loading screens** for events, places and clubs (`loading.tsx`): a click answers at once, and Next.js can prefetch it.
+  - **The 3D dioramas yield** between creating the renderer and building the scene (`scheduler.yield()`, a zero timeout in Safari): the home's long tasks fell by a third.
+  - **Event and place maps** load MapLibre and their tiles only within 200 px of the screen, with an early connection to the tile server.
+  - **Considered and left as they are, with reasons:** `Cache-Control: no-store` on the public pages (it keeps them out of some browsers' back/forward cache, but caching them at build time needs the API during the Docker build; Chrome now restores such pages anyway when no cookie changed); `content-visibility` on guide figures (guides measure 0.013 and 15 ms already); `scrollend` in the diorama queue (it waits for a quiet moment on purpose, it isn't a debounced scroll handler); the dioramas' CSS shadow (measured at 59.7 fps on 2026-11-11).
+  - **Follow-up, not in this spec:** a guide page's HTML is about 1 MB (its figures are inline SVG); worth its own look.
+  - **Tests:** `apps/app/e2e/speed.spec.ts` (no map tiles on a phone until the map is near).
+
+- **Why:** the audit (2026-11-17) found these against the guides `security/validate-origins`, `js/coordinate-global-events` and `security/security`; slice 6 against `visual-design/visually-stable-font-fallbacks`, `performance/out-of-order-html-streaming`, `performance/break-up-long-tasks` and `performance/performance`; slice 5 against `ui-behaviors/motion`; slice 4 against `accessibility/accessibility`, `ui-components/navbar`, `ui-components/dialog`, `ui-behaviors/motion`, `ui-components/copy-button`, `visual-design/dark-mode` and `privacy/privacy`; slice 3 against `forms/forms`, `accessibility/accessible-error-announcement`, `forms/required-field-feedback`, `forms/sms-otp-form` and `forms/ime-safe-enter-submit`.
 - **Impact:** no new dependencies or variables in slice 1. **Itaca engineering:** the redirect check is in `apps/app`, nothing in `apps/api/src/auth` changed. The owner approved, as engineer, the tracing clean-up and the Content-Security-Policy of later slices.
 
 ## 2026-11-17 — Grafana Cloud reads CloudWatch through a read-only role

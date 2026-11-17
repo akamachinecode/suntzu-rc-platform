@@ -73,7 +73,7 @@ export function ApartStage({
                       : "border-transparent hover:border-foreground",
                   )}
                 >
-                  <span className="text-xs font-black font-wide tabular-nums">
+                  <span className="font-wide text-xs font-black tabular-nums">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   {spec.names[asm]?.name}

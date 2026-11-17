@@ -21,7 +21,7 @@ export default function SubmitPage() {
           <SubmitForm />
         </div>
         <aside className="grid content-start gap-4 text-pretty">
-          <h2 className="text-2xl font-black font-wide">How it works</h2>
+          <h2 className="font-wide text-2xl font-black">How it works</h2>
           <p>
             A link to a club page, a calendar or a race listing is read straight away, politely and
             only if the site allows it.

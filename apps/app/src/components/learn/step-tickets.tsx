@@ -49,7 +49,7 @@ export function StepTickets({ steps }: { steps: readonly { title: string; body: 
               Step {index + 1}
             </span>
             <div className="px-6 pt-5">
-              <span aria-hidden="true" className="block text-6xl leading-none font-black font-wide">
+              <span aria-hidden="true" className="block font-wide text-6xl leading-none font-black">
                 {index + 1}
               </span>
               <h3 className="mt-4 text-xl leading-tight font-bold text-balance">{step.title}</h3>

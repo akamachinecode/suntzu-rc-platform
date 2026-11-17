@@ -152,7 +152,7 @@ export function ToyStage({
       if (!live) return;
       let built: Stage;
       try {
-        built = stage(surface, build);
+        built = await stage(surface, build);
       } catch {
         return; // no WebGL: the section reads fine without its diorama
       }

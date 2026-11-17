@@ -36,7 +36,7 @@ export function Timeline({ items, label }: { items: Milestone[]; label: string }
               animate={{ y: 0, opacity: 1 }}
               exit={reduce ? undefined : { y: "-60%", opacity: 0 }}
               transition={{ type: "spring", stiffness: 260, damping: 28 }}
-              className="shrink-0 text-5xl leading-none font-black font-wide tabular-nums sm:text-7xl md:text-8xl lg:text-9xl"
+              className="shrink-0 font-wide text-5xl leading-none font-black tabular-nums sm:text-7xl md:text-8xl lg:text-9xl"
             >
               {year}
             </motion.p>
@@ -64,7 +64,7 @@ export function Timeline({ items, label }: { items: Milestone[]; label: string }
             className="rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard data-[active=true]:bg-primary"
             data-active={index === active}
           >
-            <p className="text-2xl font-black font-wide tabular-nums">{item.year}</p>
+            <p className="font-wide text-2xl font-black tabular-nums">{item.year}</p>
             <h3 className="mt-1 text-xl font-bold text-balance">{item.title}</h3>
             <p className="mt-2 text-pretty">{item.body}</p>
             {item.source ? (

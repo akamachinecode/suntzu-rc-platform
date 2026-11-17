@@ -164,7 +164,7 @@ export default function RcPlanesGuide() {
             Guides
           </Link>
         </p>
-        <h1 className="mt-4 text-4xl leading-[0.92] font-black tracking-tight text-balance font-wide sm:text-6xl">
+        <h1 className="mt-4 font-wide text-4xl leading-[0.92] font-black tracking-tight text-balance sm:text-6xl">
           The RC plane, taken apart.
         </h1>
         <p className="mt-5 text-lg text-pretty">
@@ -341,7 +341,7 @@ export default function RcPlanesGuide() {
         <Prose>
           <h2
             id="florida"
-            className="text-center text-3xl font-black text-balance font-wide sm:text-4xl"
+            className="text-center font-wide text-3xl font-black text-balance sm:text-4xl"
           >
             Flying one in South Florida
           </h2>

@@ -63,7 +63,7 @@ export default async function OrganisePage({ searchParams }: PageProps<"/organis
               className="rounded-xl border-2 border-foreground bg-panel p-5 shadow-hard"
             >
               <Icon aria-hidden className="size-7" />
-              <h2 className="mt-3 text-lg font-black font-wide">{title}</h2>
+              <h2 className="mt-3 font-wide text-lg font-black">{title}</h2>
               <p className="mt-2 text-pretty">{body}</p>
             </li>
           ))}
@@ -73,7 +73,7 @@ export default async function OrganisePage({ searchParams }: PageProps<"/organis
       <section aria-labelledby="claim-title" className="bg-cutting-mat text-mat-foreground">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-6 lg:grid-cols-2">
           <div>
-            <h2 id="claim-title" className="text-3xl font-black font-wide">
+            <h2 id="claim-title" className="font-wide text-3xl font-black">
               Claim your club
             </h2>
             <p className="mt-3 max-w-[50ch] text-pretty">

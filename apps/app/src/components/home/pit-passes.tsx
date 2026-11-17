@@ -67,7 +67,7 @@ export function PitPasses({ events }: { events: RcEvent[] }) {
                   {KIND_LABELS[event.kind].label}
                 </span>
                 <div className="px-5 pt-5">
-                  <span className="block text-4xl leading-none font-black font-wide">{date}</span>
+                  <span className="block font-wide text-4xl leading-none font-black">{date}</span>
                   {year ? (
                     <span className="mt-1.5 block text-sm font-bold text-muted-foreground">
                       {year}

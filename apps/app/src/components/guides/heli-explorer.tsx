@@ -90,7 +90,7 @@ export function HeliExplorer({ parts }: { parts: HeliPart[] }) {
           </div>
           <p
             aria-live="polite"
-            className="w-[12ch] text-lg leading-tight font-black font-wide sm:text-2xl md:mt-2 md:w-auto md:text-center md:text-xl"
+            className="w-[12ch] font-wide text-lg leading-tight font-black sm:text-2xl md:mt-2 md:w-auto md:text-center md:text-xl"
           >
             {current?.name}
           </p>
@@ -105,7 +105,7 @@ export function HeliExplorer({ parts }: { parts: HeliPart[] }) {
             data-active={part.id === active}
             className="rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard transition-colors data-[active=true]:bg-primary"
           >
-            <h3 className="text-2xl font-black font-wide">{part.name}</h3>
+            <h3 className="font-wide text-2xl font-black">{part.name}</h3>
             <p className="mt-2 text-lg text-pretty">{part.does}</p>
             <p className="mt-4 inline-block rounded-md border-2 border-foreground bg-background px-2.5 py-1 font-bold">
               {part.figure}

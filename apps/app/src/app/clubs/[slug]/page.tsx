@@ -68,7 +68,7 @@ export default async function ClubPage({ params }: PageProps<"/clubs/[slug]">) {
             <ShieldCheck aria-hidden className="size-4" /> Verified: its organisers publish here
           </p>
         ) : null}
-        <h1 className="mt-4 max-w-4xl text-5xl leading-[0.92] font-black tracking-tight text-balance font-wide sm:text-7xl">
+        <h1 className="mt-4 max-w-4xl font-wide text-5xl leading-[0.92] font-black tracking-tight text-balance sm:text-7xl">
           {host.name}
         </h1>
         {host.summary ? (
@@ -101,7 +101,7 @@ export default async function ClubPage({ params }: PageProps<"/clubs/[slug]">) {
 
       <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_24rem]">
         <section aria-labelledby="events-title">
-          <h2 id="events-title" className="text-2xl font-black font-wide">
+          <h2 id="events-title" className="font-wide text-2xl font-black">
             Coming up
           </h2>
           {host.events.length ? (
@@ -115,7 +115,7 @@ export default async function ClubPage({ params }: PageProps<"/clubs/[slug]">) {
           )}
         </section>
         <aside aria-labelledby="fields-title" className="grid content-start gap-4">
-          <h2 id="fields-title" className="text-2xl font-black font-wide">
+          <h2 id="fields-title" className="font-wide text-2xl font-black">
             Where they fly
           </h2>
           {host.places.length ? (

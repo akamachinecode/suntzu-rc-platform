@@ -17,7 +17,7 @@ export function TryForm() {
   if (state.status === "done") {
     return (
       <div className="grid gap-3">
-        <StepHeading className="text-2xl font-black font-wide">Sent.</StepHeading>
+        <StepHeading className="font-wide text-2xl font-black">Sent.</StepHeading>
         <p className="text-pretty">
           {state.toCrew
             ? "No club near you has signed up for newcomers on SunTzu RC yet, so the crew got it: we'll find you a club, a track or a shop and write back within a few days."

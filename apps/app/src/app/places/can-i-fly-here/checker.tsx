@@ -126,7 +126,7 @@ export function Checker({ places, initial }: { places: Place[]; initial?: [numbe
               className={cn("rounded-xl border-2 border-foreground p-6 shadow-hard", verdict.tone)}
             >
               <Icon aria-hidden className="size-8" />
-              <h2 className="mt-3 text-2xl leading-tight font-black font-wide">{verdict.title}</h2>
+              <h2 className="mt-3 font-wide text-2xl leading-tight font-black">{verdict.title}</h2>
               <p className="mt-3 text-pretty">{verdict.body}</p>
             </div>
             {result.airspace.length ? (

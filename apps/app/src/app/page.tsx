@@ -4,11 +4,11 @@ import { DriftWord } from "@/components/home/drift-word";
 import { ServoHero } from "@/components/home/servo-hero";
 import { DecalSheet } from "@/components/home/decal-sheet";
 import { DraftCover, ManualCover } from "@/components/home/manual-cover";
-import { PitPasses } from "@/components/home/pit-passes";
+import { UpcomingPasses, UpcomingPassesPlaceholder } from "@/components/home/upcoming-passes";
 import { SectionTitle } from "@/components/home/section-title";
 import { ToyStage } from "@/components/home/toy-stage";
 import { Button } from "@workspace/ui/components/button";
-import { getPublicApi } from "@/lib/api";
+import { Suspense } from "react";
 import { GUIDES, IN_THE_WORKS, SERVICES } from "@workspace/shared";
 import { SITE } from "@/lib/site";
 
@@ -95,16 +95,11 @@ const steps = [
 ] as const;
 
 // Rendered on request (the calendar preview's data is cached for 5 minutes), so the page never
-// depends on the API at build time.
+// depends on the API at build time. The events stream in their own <Suspense>: the page doesn't
+// wait for them.
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
-  // The next three events with announced dates.
-  const { data } = await getPublicApi().GET("/events");
-  const upcoming = (data ?? [])
-    .filter((event) => event.datePrecision === "day" && event.status !== "cancelled")
-    .slice(0, 3);
-
+export default function HomePage() {
   return (
     <>
       <ServoHero />
@@ -132,14 +127,14 @@ export default async function HomePage() {
             <DriftWord className="pt-10">{d.word}</DriftWord>
             <div className="mx-auto grid max-w-7xl items-center gap-6 px-5 pt-6 pb-20 sm:px-6 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.45fr)] md:gap-10">
               <div>
-                <h3 id={`${d.id}-title`} className="text-3xl font-black font-wide sm:text-4xl">
+                <h3 id={`${d.id}-title`} className="font-wide text-3xl font-black sm:text-4xl">
                   {d.title}
                 </h3>
                 <p className="mt-4 max-w-[52ch] text-lg text-pretty">{d.body}</p>
                 <ul className="mt-8 grid max-w-lg gap-5">
                   {d.facts.map(([lead, text]) => (
                     <li key={lead} className="border-l-4 border-foreground pl-4">
-                      <p className="text-xl leading-tight font-black font-wide">{lead}</p>
+                      <p className="font-wide text-xl leading-tight font-black">{lead}</p>
                       <p className="mt-1 text-lg text-pretty">{text}</p>
                     </li>
                   ))}
@@ -202,7 +197,9 @@ export default async function HomePage() {
         <p className="mt-8 text-lg">
           Fly-ins, races and shows, close to home and a road trip away.
         </p>
-        <PitPasses events={upcoming} />
+        <Suspense fallback={<UpcomingPassesPlaceholder />}>
+          <UpcomingPasses />
+        </Suspense>
         <p className="mt-14 flex flex-wrap justify-center gap-4">
           <Button asChild size="lg">
             <Link href="/events">The whole calendar</Link>
@@ -221,7 +218,7 @@ export default async function HomePage() {
           <div className="md:sticky md:top-[calc(var(--header)+3rem)] md:self-start">
             <h2
               id="start-title"
-              className="text-4xl leading-[0.95] font-black text-balance font-wide sm:text-6xl"
+              className="font-wide text-4xl leading-[0.95] font-black text-balance sm:text-6xl"
             >
               Your first season, in five moves.
             </h2>
@@ -238,7 +235,7 @@ export default async function HomePage() {
               >
                 <span
                   aria-hidden="true"
-                  className="grid size-12 place-items-center rounded-full border-2 border-foreground bg-primary text-xl font-black font-wide"
+                  className="grid size-12 place-items-center rounded-full border-2 border-foreground bg-primary font-wide text-xl font-black"
                 >
                   {i + 1}
                 </span>
@@ -252,7 +249,7 @@ export default async function HomePage() {
         </div>
         <div className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
           <div className="flex flex-col items-start gap-6 rounded-xl border-2 border-foreground bg-primary p-8 shadow-hard-lg sm:flex-row sm:items-center sm:justify-between sm:p-10">
-            <p className="max-w-[30ch] text-2xl leading-tight font-black font-wide sm:text-3xl">
+            <p className="max-w-[30ch] font-wide text-2xl leading-tight font-black sm:text-3xl">
               Ready for your first flight?
             </p>
             <div className="flex flex-wrap gap-3">

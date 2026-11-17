@@ -31,7 +31,7 @@ export function SubmitForm() {
     const { outcome, events } = state.result;
     return (
       <div className="grid gap-4">
-        <StepHeading className="text-2xl font-black font-wide">
+        <StepHeading className="font-wide text-2xl font-black">
           {outcome === "known"
             ? "We have it already."
             : outcome === "queued"

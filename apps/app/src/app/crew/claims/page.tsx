@@ -43,10 +43,10 @@ export default async function ClaimsPage() {
       <Link href="/crew" className="font-semibold underline underline-offset-4">
         ← Crew console
       </Link>
-      <h1 className="mt-6 text-5xl font-black font-wide">Claims and try-it</h1>
+      <h1 className="mt-6 font-wide text-5xl font-black">Claims and try-it</h1>
 
       <section aria-labelledby="claims-title" className="mt-10">
-        <h2 id="claims-title" className="text-3xl font-black font-wide">
+        <h2 id="claims-title" className="font-wide text-3xl font-black">
           Clubs to check by hand
         </h2>
         <p className="mt-2 max-w-[70ch] text-pretty text-muted-foreground">
@@ -94,7 +94,7 @@ export default async function ClaimsPage() {
       </section>
 
       <section aria-labelledby="try-title" className="mt-16">
-        <h2 id="try-title" className="text-3xl font-black font-wide">
+        <h2 id="try-title" className="font-wide text-3xl font-black">
           Newcomers waiting for a club
         </h2>
         <p className="mt-2 max-w-[70ch] text-pretty text-muted-foreground">
