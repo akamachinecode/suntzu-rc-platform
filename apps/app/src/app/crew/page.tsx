@@ -140,6 +140,7 @@ export default async function CrewPage() {
                   {new Date(message.createdAt).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
+                    timeZone: "America/New_York",
                   })}
                 </p>
                 <p className="text-pretty whitespace-pre-wrap">{message.body}</p>

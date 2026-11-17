@@ -52,7 +52,7 @@ export const organiserHost = z.object({
 
 export const hostUpdate = z.object({
   summary: z.string().trim().max(600).optional(),
-  url: z.union([z.literal(""), z.url()]).optional(),
+  url: z.union([z.literal(""), z.httpUrl()]).optional(),
   disciplines: z.array(discipline).max(4).optional(),
   acceptsNewcomers: z.boolean().optional(),
 });

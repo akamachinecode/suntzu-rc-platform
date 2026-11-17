@@ -72,7 +72,7 @@ export const messageInput = z.object({
   name: z.string().trim().min(1, "Please enter your name.").max(100),
   email: z.email("Please enter a valid email address."),
   body: z.string().trim().min(10, "Tell us a bit more.").max(5000),
-  link: z.union([z.literal(""), z.url("Paste a full link, starting with https://")]).optional(),
+  link: z.union([z.literal(""), z.httpUrl("Paste a full link, starting with https://")]).optional(),
   turnstileToken: z.string().optional(),
 });
 
@@ -88,10 +88,10 @@ export const correctionInput = z.object({
   startDate: z.union([z.literal(""), z.iso.date()]).optional(),
   endDate: z.union([z.literal(""), z.iso.date()]).optional(),
   cancelled: z.boolean().optional(),
-  url: z.union([z.literal(""), z.url()]).optional(),
+  url: z.union([z.literal(""), z.httpUrl()]).optional(),
   note: z.string().trim().min(5, "Tell us what's wrong.").max(1000),
   sourceUrl: z
-    .union([z.literal(""), z.url("Paste a full link, starting with https://")])
+    .union([z.literal(""), z.httpUrl("Paste a full link, starting with https://")])
     .optional(),
 });
 
@@ -130,7 +130,9 @@ export type TryResult = z.output<typeof tryResult>;
 /** A member sends an event: a link the engine reads, or text (a flyer, a post) the AI reads. */
 export const submissionInput = z
   .object({
-    url: z.union([z.literal(""), z.url("Paste a full link, starting with https://")]).optional(),
+    url: z
+      .union([z.literal(""), z.httpUrl("Paste a full link, starting with https://")])
+      .optional(),
     text: z.string().trim().max(8000).optional(),
   })
   .refine((value) => Boolean(value.url) || (value.text?.length ?? 0) >= 20, {

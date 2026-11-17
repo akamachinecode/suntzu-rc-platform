@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { safeNext } from "@/lib/safe-next";
 import { SignInClient } from "./sign-in-client";
 
 export const metadata: Metadata = {
@@ -12,8 +13,7 @@ export const metadata: Metadata = {
 export default async function SignInPage({ searchParams }: PageProps<"/sign-in">) {
   const { next } = await searchParams;
   // Only redirect inside this app after signing in (never to another site).
-  const target =
-    typeof next === "string" && next.startsWith("/") && !next.startsWith("//") ? next : "/me";
+  const target = safeNext(next);
   return (
     <section className="mx-auto max-w-md px-5 py-16 sm:px-6 sm:py-24">
       <h1 className="text-5xl leading-[0.92] font-black tracking-tight font-wide">Sign in</h1>
