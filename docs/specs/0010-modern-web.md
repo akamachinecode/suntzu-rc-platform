@@ -87,7 +87,7 @@ Everything works fully in the last two years of Safari (iOS and Mac), Chrome, Fi
 - [x] 4. Site-wide accessibility: skip link, focus rings in high contrast, menu and search return focus, current page in the desktop menu, anchors clear the header, reduced motion for dialogs and placeholders, the copy button, `color-scheme`, "Near me" explains itself (blocked by: 3)
 - [x] 5. Pause buttons on the moving figures and 3D scenes (blocked by: 4)
 - [x] 6. Speed: headline before data (Suspense), wide-heading font fallback, 3D scenes yield while building, maps load near view, measured before and after (blocked by: 5)
-- [ ] 7. Layout polish: event cards by container, footer wordmark, fluid headings, CSS clean-ups (blocked by: 6)
+- [x] 7. Layout polish: event cards by container, footer wordmark, fluid headings, CSS clean-ups (blocked by: 6)
 - [ ] 8. Security headers and clean traces: report-only Content-Security-Policy, COOP, HSTS on subdomains, no location or token in traces (blocked by: 7)
 - [ ] 9. Installable site: manifest and app icons, drawn from the wordmark and approved by the owner (blocked by: 8)
 

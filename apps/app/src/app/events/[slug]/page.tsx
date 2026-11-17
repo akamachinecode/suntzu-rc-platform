@@ -217,7 +217,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
             </li>
           ))}
         </ul>
-        <h1 className="mt-4 max-w-4xl font-wide text-5xl leading-[0.92] font-black tracking-tight text-balance sm:text-7xl">
+        <h1 className="mt-4 max-w-4xl font-wide text-display leading-[0.92] font-black tracking-tight text-balance">
           {event.name}
         </h1>
         <p

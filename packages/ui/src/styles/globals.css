@@ -13,6 +13,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Page titles grow with the screen instead of jumping at a breakpoint: 3rem on a phone, 4.5rem
+   from about 1000px. rem plus vw, so zooming the page still makes them bigger (modern web
+   guidance, css/fluid-scaling). */
+@theme {
+  --text-display: clamp(3rem, 2rem + 4vw, 4.5rem);
+  --text-display--line-height: 0.92;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -154,6 +162,12 @@
   html {
     @apply font-sans;
     font-variation-settings: "wdth" 100;
+  }
+  /* Headings break into lines of even length (a class such as text-pretty still wins). */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
   }
   :focus-visible {
     outline: 3px solid var(--foreground);

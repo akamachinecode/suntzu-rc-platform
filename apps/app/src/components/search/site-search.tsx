@@ -264,7 +264,7 @@ export function SiteSearch() {
             const target = returnTo.current?.isConnected ? returnTo.current : button.current;
             target?.focus();
           }}
-          className="top-0 left-0 flex h-dvh max-w-none translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-foreground bg-background p-0 ring-0 sm:top-[10vh] sm:left-1/2 sm:h-auto sm:max-h-[80vh] sm:max-w-2xl sm:-translate-x-1/2 sm:rounded-xl sm:border-2 sm:bg-panel sm:shadow-hard-lg"
+          className="top-0 left-0 flex h-dvh max-w-none translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-foreground bg-background p-0 ring-0 sm:top-[10dvh] sm:left-1/2 sm:h-auto sm:max-h-[80dvh] sm:max-w-2xl sm:-translate-x-1/2 sm:rounded-xl sm:border-2 sm:bg-panel sm:shadow-hard-lg"
         >
           <DialogTitle className="sr-only">Search SunTzu RC</DialogTitle>
           <DialogDescription className="sr-only">
@@ -304,7 +304,7 @@ export function SiteSearch() {
             </Button>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-2 sm:max-h-[60vh]">
+          <div className="min-h-0 flex-1 [scrollbar-gutter:stable] overflow-y-auto overscroll-contain pb-2 sm:max-h-[60dvh]">
             {q && status === "done" && response?.partial ? (
               <p className="px-5 pt-4 text-sm text-pretty text-muted-foreground">
                 Nothing matches every word. These come closest:

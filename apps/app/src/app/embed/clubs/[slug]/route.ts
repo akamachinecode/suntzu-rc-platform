@@ -3,7 +3,8 @@ import { formatWhen, formatWhere } from "@/lib/events";
 import { SITE } from "@/lib/site";
 
 // The organiser's widget (spec 0003): a small page clubs put on their own site with an iframe.
-// It's plain HTML with its own few styles, because it lives inside someone else's page. The
+// It's plain HTML with its own few styles, because it lives inside someone else's page. Text
+// sizes are in rem, so they follow the reader's own text size. The
 // colours are the theme's values (it can't load the site's CSS variables there).
 const escape = (value: string) =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -28,12 +29,12 @@ export async function GET(_request: Request, { params }: RouteContext<"/embed/cl
 <style>
 :root{color-scheme:light}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#000;background:#fafaf7}
 header{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;border-bottom:2px solid #000;background:#ffc629}
-h1{margin:0;font-size:16px;font-weight:800}a{color:inherit}ul{list-style:none;margin:0;padding:0}
+h1{margin:0;font-size:1rem;font-weight:800}a{color:inherit}ul{list-style:none;margin:0;padding:0}
 li a{display:grid;gap:2px;padding:12px 14px;border-bottom:1px solid #00000022;text-decoration:none}li a:hover{background:#e4e4df}
-.when{font-weight:800;font-size:14px}.off{text-decoration:line-through}.name{font-size:15px}.where{font-size:13px;color:#555}
-footer{padding:10px 14px;font-size:12px}.empty{padding:14px}
+.when{font-weight:800;font-size:.875rem}.off{text-decoration:line-through}.name{font-size:.9375rem}.where{font-size:.8125rem;color:#555}
+footer{padding:10px 14px;font-size:.75rem}.empty{padding:14px}
 </style></head><body>
-<header><h1>${escape(host.name)}: upcoming</h1><a href="${page(`/clubs/${encodeURIComponent(host.slug)}`)}" target="_blank" rel="noopener" style="font-size:13px;font-weight:700">Follow on SunTzu RC</a></header>
+<header><h1>${escape(host.name)}: upcoming</h1><a href="${page(`/clubs/${encodeURIComponent(host.slug)}`)}" target="_blank" rel="noopener" style="font-size:.8125rem;font-weight:700">Follow on SunTzu RC</a></header>
 ${items.length ? `<ul>${items.join("")}</ul>` : `<p class="empty">No upcoming events yet.</p>`}
 <footer>Calendar by <a href="${page("/")}" target="_blank" rel="noopener">SunTzu RC</a>, free for RC clubs in Florida.</footer>
 </body></html>`;

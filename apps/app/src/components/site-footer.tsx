@@ -137,9 +137,10 @@ export function SiteFooter() {
       </div>
 
       {/* the big sign-off */}
-      <div aria-hidden="true" className="overflow-hidden px-5 sm:px-6">
-        {/* Fills the width: "suntzu rc" is 4.67em wide, so the size is the room left over 4.8. */}
-        <Wordmark className="mx-auto block max-w-7xl text-center text-[length:min(calc((100vw_-_3rem)/4.8),16.5rem)] leading-[0.78] whitespace-nowrap text-primary select-none" />
+      <div aria-hidden="true" className="@container overflow-hidden px-5 sm:px-6">
+        {/* Fills the width: "suntzu rc" is 4.67em wide, so the size is the room it has (100cqi,
+            inside the padding and the iPhone's side safe areas, unlike 100vw) over 4.8. */}
+        <Wordmark className="mx-auto block max-w-7xl text-center text-[length:min(calc(100cqi/4.8),16.5rem)] leading-[0.78] whitespace-nowrap text-primary select-none" />
       </div>
 
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-6 text-sm text-background/60 sm:flex-row sm:items-center sm:justify-between sm:px-6">
