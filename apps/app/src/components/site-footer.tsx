@@ -111,7 +111,7 @@ export function SiteFooter() {
                     ) : (
                       <Link
                         href={link.href}
-                        className="tap text-background/80 underline-offset-4 hover:text-background hover:underline"
+                        className="tap inline-flex min-h-6 items-center text-background/80 underline-offset-4 hover:text-background hover:underline"
                       >
                         {link.label}
                       </Link>
@@ -121,10 +121,10 @@ export function SiteFooter() {
               </ul>
               {column.title === "Guides" ? (
                 <>
-                  <p className="mt-6 text-xs font-bold tracking-[0.2em] text-background/50 uppercase">
+                  <p className="mt-6 text-xs font-bold tracking-[0.2em] text-background/60 uppercase">
                     In the works
                   </p>
-                  <ul className="mt-2 grid gap-1.5 text-sm text-background/50">
+                  <ul className="mt-2 grid gap-1.5 text-sm text-background/60">
                     {IN_THE_WORKS.map((title) => (
                       <li key={title}>{title}</li>
                     ))}

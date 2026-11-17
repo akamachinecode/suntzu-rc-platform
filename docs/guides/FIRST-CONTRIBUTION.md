@@ -59,7 +59,7 @@ GitHub shows a **Compare & pull request** button after the push. Open it against
 
 ## 7. What happens next
 
-1. **CI runs** on your pull request (about two minutes): `pnpm check` and a secret scan must pass. Your pull request runs without any of the project's secrets, so it can't touch our servers. If something is red, open the failed job, read the error, fix it and push again to the same branch.
+1. **CI runs** on your pull request (about two minutes): `pnpm check`, an accessibility check of every page and a secret scan must pass. Your pull request runs without any of the project's secrets, so it can't touch our servers. If something is red, open the failed job, read the error, fix it and push again to the same branch.
 2. **A maintainer is asked to review** automatically. We aim to answer within a week; it's a spare-time project, so a polite nudge after that is welcome.
 3. **We may ask for changes.** That's normal and not a judgement on you. Push the fixes to the same branch; the pull request updates by itself.
 4. **A maintainer merges it.** Merging to `main` is what reaches the live site ([From code to production](../DELIVERY.md)).

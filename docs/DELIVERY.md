@@ -29,13 +29,14 @@ How a change travels from a pull request to the live site, and who does what on 
 
 ## 1. Checks on every pull request (CI)
 
-[`ci.yml`](../.github/workflows/ci.yml) runs three jobs at the same time, in about two minutes:
+[`ci.yml`](../.github/workflows/ci.yml) runs four jobs at the same time, in about two minutes (the accessibility job takes about eight):
 
-| Job                            | What it does                                                                                                        | Blocks the merge |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------- | ---------------- |
-| Format, lint, typecheck, build | `pnpm check`: formatting, lint, TypeScript, every test and a full build of the API, the site and the portal         | yes              |
-| Secret scan                    | TruffleHog looks for passwords or keys committed by mistake, in the whole history                                   | yes              |
-| Dependency audit               | `pnpm audit`: are any of the libraries we use known to be vulnerable? (it reads published advisories, not our code) | no               |
+| Job                            | What it does                                                                                                                                                                             | Blocks the merge |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| Format, lint, typecheck, build | `pnpm check`: formatting, lint, TypeScript, every test and a full build of the API, the site and the portal                                                                              | yes              |
+| Accessibility                  | `pnpm test:a11y` in Chromium, a phone, WebKit and Firefox: axe-core checks every public page against WCAG 2.2 AA, with both apps running on a throwaway PostgreSQL and the starting data | yes              |
+| Secret scan                    | TruffleHog looks for passwords or keys committed by mistake, in the whole history                                                                                                        | yes              |
+| Dependency audit               | `pnpm audit`: are any of the libraries we use known to be vulnerable? (it reads published advisories, not our code)                                                                      | no               |
 
 [`infra.yml`](../.github/workflows/infra.yml) adds one more job when a pull request touches `infra/`: `terraform fmt` and `terraform validate`, without any access to AWS.
 

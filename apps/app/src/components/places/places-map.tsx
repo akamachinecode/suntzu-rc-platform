@@ -10,7 +10,8 @@ import {
   Popup,
   setWorkerUrl,
 } from "maplibre-gl";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { canDrawMaps, MAP_UNAVAILABLE, MapUnavailable } from "@/components/map-unavailable";
 import { PLACE_KIND_LABELS } from "@/lib/places";
 
 setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-worker.mjs", import.meta.url).href);
@@ -58,21 +59,29 @@ export function PlacesMap({
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<MapLibre | null>(null);
   const markers = useRef<Marker[]>([]);
+  // Checked once: the map is only ever drawn in the browser (next/dynamic with ssr: false).
+  const [drawable] = useState(canDrawMaps);
   const pick = useRef(onPick);
   useEffect(() => {
     pick.current = onPick;
   }, [onPick]);
 
   useEffect(() => {
-    if (!container.current) return;
-    const instance = new MapLibre({
-      container: container.current,
-      style: STYLE,
-      center: focus ?? FLORIDA,
-      zoom: focus ? 11 : 5.4,
-      cooperativeGestures: true,
-      attributionControl: { compact: true },
-    });
+    if (!container.current || !drawable) return;
+    let instance: MapLibre;
+    try {
+      instance = new MapLibre({
+        container: container.current,
+        style: STYLE,
+        center: focus ?? FLORIDA,
+        zoom: focus ? 11 : 5.4,
+        cooperativeGestures: true,
+        attributionControl: { compact: true },
+      });
+    } catch {
+      container.current.textContent = MAP_UNAVAILABLE;
+      return;
+    }
     instance.addControl(new NavigationControl({ showCompass: false }), "top-right");
     instance.on("click", (event) => {
       if (pick.current && !(event.originalEvent.target as HTMLElement).closest("button")) {
@@ -123,6 +132,8 @@ export function PlacesMap({
       instance.fitBounds(bounds, { padding: 50, maxZoom: 10, duration: 600 });
     }
   }, [places, origin, focus]);
+
+  if (!drawable) return <MapUnavailable />;
 
   return (
     <div

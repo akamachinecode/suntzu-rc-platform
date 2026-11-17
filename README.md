@@ -104,16 +104,17 @@ pnpm dev
 
 ### Scripts
 
-| Command        | What it does                                                      |
-| -------------- | ----------------------------------------------------------------- |
-| `pnpm dev`     | Development servers (site, API, docs)                             |
-| `pnpm build`   | Production build                                                  |
-| `pnpm check`   | Format check, lint, typecheck, tests and build. Must pass         |
-| `pnpm format`  | Format every file with Prettier                                   |
-| `pnpm test`    | Unit tests (Vitest)                                               |
-| `pnpm db:seed` | Load the events engine's starting data into the local database    |
-| `pnpm engine`  | Run the events engine once (`pnpm engine <source>` for one)       |
-| `pnpm census`  | Load the FAA registers and ZIP codes (`pnpm census fria` for one) |
+| Command          | What it does                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| `pnpm dev`       | Development servers (site, API, docs)                                                                   |
+| `pnpm build`     | Production build                                                                                        |
+| `pnpm check`     | Format check, lint, typecheck, tests and build. Must pass                                               |
+| `pnpm format`    | Format every file with Prettier                                                                         |
+| `pnpm test`      | Unit tests (Vitest)                                                                                     |
+| `pnpm test:a11y` | Accessibility check of every public page in a browser (Playwright + axe-core), against the running site |
+| `pnpm db:seed`   | Load the events engine's starting data into the local database                                          |
+| `pnpm engine`    | Run the events engine once (`pnpm engine <source>` for one)                                             |
+| `pnpm census`    | Load the FAA registers and ZIP codes (`pnpm census fria` for one)                                       |
 
 ### Working with AI agents
 
