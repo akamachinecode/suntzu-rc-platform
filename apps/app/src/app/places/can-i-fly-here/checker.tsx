@@ -11,7 +11,7 @@ import { checkPoint } from "./actions";
 const PlacesMap = dynamic(() => import("@/components/places/places-map").then((m) => m.PlacesMap), {
   ssr: false,
   loading: () => (
-    <div className="h-[30rem] w-full animate-pulse rounded-xl border-2 border-foreground bg-muted" />
+    <div className="h-[30rem] w-full rounded-xl border-2 border-foreground bg-muted motion-safe:animate-pulse" />
   ),
 });
 

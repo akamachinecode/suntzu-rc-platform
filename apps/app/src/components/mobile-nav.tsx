@@ -19,11 +19,15 @@ export function MobileNav() {
   const open = openOn === pathname;
   const close = () => setOpenOn(null);
   const box = useRef<HTMLDivElement>(null);
+  const toggle = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpenOn(null);
+      if (event.key !== "Escape") return;
+      setOpenOn(null);
+      // The panel (and maybe the focused link) is gone: back to the button that opened it.
+      toggle.current?.focus();
     };
     const onPointer = (event: PointerEvent) => {
       if (!box.current?.contains(event.target as Node)) setOpenOn(null);
@@ -39,6 +43,7 @@ export function MobileNav() {
   return (
     <div ref={box} className="md:hidden">
       <button
+        ref={toggle}
         type="button"
         aria-expanded={open}
         aria-controls="mobile-nav"
@@ -73,6 +78,9 @@ export function MobileNav() {
                 onClick={(event) => {
                   event.preventDefault();
                   close();
+                  // Search returns the focus to whatever had it when it opened: the menu button,
+                  // since this link disappears with the menu.
+                  toggle.current?.focus();
                   openSearch();
                 }}
                 className="flex items-center gap-3 py-2 text-2xl font-black font-wide"

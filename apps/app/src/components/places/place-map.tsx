@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 const PlacesMap = dynamic(() => import("./places-map").then((m) => m.PlacesMap), {
   ssr: false,
   loading: () => (
-    <div className="aspect-square w-full animate-pulse rounded-xl border-2 border-foreground bg-muted" />
+    <div className="aspect-square w-full rounded-xl border-2 border-foreground bg-muted motion-safe:animate-pulse" />
   ),
 });
 

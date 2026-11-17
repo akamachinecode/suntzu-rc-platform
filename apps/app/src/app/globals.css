@@ -192,11 +192,6 @@ html[data-end] {
 .plane .cg.is-on circle {
   fill: var(--primary);
 }
-@media (prefers-reduced-motion: reduce) {
-  .plane * {
-    transition: none;
-  }
-}
 
 /* Exploded trainer (src/components/figures/plane-apart): the assembly you point at lights up, the rest steps down. */
 .servo-figure .pla .iso-svg {
