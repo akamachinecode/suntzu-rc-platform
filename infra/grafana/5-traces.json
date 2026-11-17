@@ -1,0 +1,725 @@
+{
+  "uid": "suntzu-rc-traces",
+  "title": "SunTzu RC · 5 Trazas",
+  "description": "Las peticiones tramo a tramo: lo más lento, las consultas SQL, los errores y el buscador por trace ID.",
+  "tags": ["suntzu-rc"],
+  "editable": true,
+  "timezone": "browser",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "refresh": "5m",
+  "timepicker": {
+    "refresh_intervals": ["5m", "15m", "30m", "1h"]
+  },
+  "graphTooltip": 1,
+  "schemaVersion": 41,
+  "links": [
+    {
+      "title": "SunTzu RC",
+      "type": "dashboards",
+      "tags": ["suntzu-rc"],
+      "asDropdown": false,
+      "includeVars": true,
+      "keepTime": true
+    }
+  ],
+  "panels": [
+    {
+      "type": "text",
+      "title": "",
+      "options": {
+        "mode": "markdown",
+        "content": "### Trazas: ¿dónde se fue el tiempo?\nCada petición deja una **traza**: sus tramos (spans) en la web, en la API y en cada consulta SQL, con el mismo `traceId`. Se guardan en `aws/spans` 30 días. Para seguir una petición concreta, pega su `x-request-id` (cabecera de respuesta de la API) en **Trace ID** arriba."
+      },
+      "transparent": true,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 3
+      },
+      "id": 1
+    },
+    {
+      "type": "row",
+      "title": "Una petición concreta",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 3,
+        "w": 24,
+        "h": 1
+      },
+      "id": 2
+    },
+    {
+      "type": "table",
+      "title": "Tramos de la traza",
+      "description": "Escribe un trace ID arriba (32 caracteres). Ordenados por inicio: ms es lo que tardó cada tramo.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:aws/spans",
+              "name": "aws/spans"
+            }
+          ],
+          "logGroupNames": ["aws/spans"],
+          "expression": "filter traceId = \"${trace_id}\"\n| fields startTimeUnixNano, durationNano / 1000000 as ms, resource.attributes.service.name as servicio, kind, name as tramo, status.code as estado, attributes.db.query.text as sql\n| sort startTimeUnixNano asc\n| limit 200",
+          "statsGroups": [],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "startTimeUnixNano"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ms"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "gauge",
+                  "mode": "basic"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 16
+      },
+      "id": 3
+    },
+    {
+      "type": "row",
+      "title": "Lo más lento",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 20,
+        "w": 24,
+        "h": 1
+      },
+      "id": 4
+    },
+    {
+      "type": "table",
+      "title": "Páginas y rutas más lentas",
+      "description": "Tramos de entrada (SERVER) de la web y la API: cuántas veces, mediana (p50) y p95 en milisegundos.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:aws/spans",
+              "name": "aws/spans"
+            }
+          ],
+          "logGroupNames": ["aws/spans"],
+          "expression": "filter kind = \"SERVER\" and resource.attributes.deployment.environment.name = \"${env}\"\n| stats count(*) as veces, pct(durationNano, 50) / 1000000 as p50_ms, pct(durationNano, 95) / 1000000 as p95_ms, max(durationNano) / 1000000 as max_ms by resource.attributes.service.name as servicio, name as ruta\n| sort p95_ms desc\n| limit 30",
+          "statsGroups": [],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 21,
+        "w": 12,
+        "h": 10
+      },
+      "id": 5
+    },
+    {
+      "type": "table",
+      "title": "Consultas SQL más lentas",
+      "description": "Cada consulta a PostgreSQL (con $1, $2… en lugar de los valores). Ordenadas por tiempo total: veces × media.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:aws/spans",
+              "name": "aws/spans"
+            }
+          ],
+          "logGroupNames": ["aws/spans"],
+          "expression": "filter attributes.db.system.name = \"postgresql\" and resource.attributes.deployment.environment.name = \"${env}\"\n| stats count(*) as veces, avg(durationNano) / 1000000 as media_ms, max(durationNano) / 1000000 as max_ms, sum(durationNano) / 1000000 as total_ms by substr(attributes.db.query.text, 0, 160) as consulta\n| sort total_ms desc\n| limit 30",
+          "statsGroups": [],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 21,
+        "w": 12,
+        "h": 10
+      },
+      "id": 6
+    },
+    {
+      "type": "row",
+      "title": "En el tiempo",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 31,
+        "w": 24,
+        "h": 1
+      },
+      "id": 7
+    },
+    {
+      "type": "timeseries",
+      "title": "Peticiones trazadas por servicio",
+      "description": "Tramos de entrada por servicio cada 15 min.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:aws/spans",
+              "name": "aws/spans"
+            }
+          ],
+          "logGroupNames": ["aws/spans"],
+          "expression": "filter kind = \"SERVER\" and resource.attributes.deployment.environment.name = \"${env}\"\n| stats count(*) as peticiones by bin(15m), resource.attributes.service.name as servicio",
+          "statsGroups": ["servicio"],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 2,
+            "fillOpacity": 60,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 12,
+        "h": 8
+      },
+      "id": 8
+    },
+    {
+      "type": "timeseries",
+      "title": "p95 por servicio (ms)",
+      "description": "El 95% de las peticiones tardan menos que esto.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:aws/spans",
+              "name": "aws/spans"
+            }
+          ],
+          "logGroupNames": ["aws/spans"],
+          "expression": "filter kind = \"SERVER\" and resource.attributes.deployment.environment.name = \"${env}\"\n| stats pct(durationNano, 95) / 1000000 as p95_ms by bin(15m), resource.attributes.service.name as servicio",
+          "statsGroups": ["servicio"],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 32,
+        "w": 12,
+        "h": 8
+      },
+      "id": 9
+    },
+    {
+      "type": "row",
+      "title": "Errores",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 40,
+        "w": 24,
+        "h": 1
+      },
+      "id": 10
+    },
+    {
+      "type": "table",
+      "title": "Tramos con error",
+      "description": "Tramos marcados como ERROR. Copia su traceId en el buscador de arriba para ver la petición entera.",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${ds}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${ds}"
+          },
+          "queryMode": "Logs",
+          "region": "us-east-2",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:us-east-2:352587389937:log-group:aws/spans",
+              "name": "aws/spans"
+            }
+          ],
+          "logGroupNames": ["aws/spans"],
+          "expression": "filter status.code = \"ERROR\" and resource.attributes.deployment.environment.name = \"${env}\"\n| fields @timestamp, resource.attributes.service.name as servicio, name as tramo, durationNano / 1000000 as ms, traceId\n| sort @timestamp desc\n| limit 50",
+          "statsGroups": [],
+          "queryLanguage": "CWLI",
+          "id": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 41,
+        "w": 24,
+        "h": 8
+      },
+      "id": 11
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "ds",
+        "label": "Data source",
+        "type": "datasource",
+        "query": "cloudwatch",
+        "regex": "/SunTzu/",
+        "hide": 2,
+        "current": {},
+        "options": [],
+        "refresh": 1
+      },
+      {
+        "name": "env",
+        "label": "Entorno",
+        "type": "custom",
+        "query": "staging",
+        "current": {
+          "text": "staging",
+          "value": "staging"
+        },
+        "options": [
+          {
+            "text": "staging",
+            "value": "staging",
+            "selected": true
+          }
+        ],
+        "hide": 0
+      },
+      {
+        "name": "lb",
+        "label": "lb",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/ApplicationELB",
+          "metricName": "RequestCount",
+          "dimensionKey": "LoadBalancer",
+          "dimensionFilters": {}
+        },
+        "regex": "/^app\\/rc-landing-${env}\\/.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "tg_app",
+        "label": "tg_app",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/ApplicationELB",
+          "metricName": "RequestCount",
+          "dimensionKey": "TargetGroup",
+          "dimensionFilters": {}
+        },
+        "regex": "/^targetgroup\\/rc-landing-${env}-app\\/.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "tg_api",
+        "label": "tg_api",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/ApplicationELB",
+          "metricName": "RequestCount",
+          "dimensionKey": "TargetGroup",
+          "dimensionFilters": {}
+        },
+        "regex": "/^targetgroup\\/rc-landing-${env}-api\\/.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "db",
+        "label": "db",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "dimensionValues",
+          "region": "us-east-2",
+          "namespace": "AWS/RDS",
+          "metricName": "CPUUtilization",
+          "dimensionKey": "DBInstanceIdentifier",
+          "dimensionFilters": {}
+        },
+        "regex": "/^rc-landing-${env}-.*/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "hc_app",
+        "label": "hc_app",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "resourceARNs",
+          "region": "us-east-1",
+          "resourceType": "route53:healthcheck",
+          "tags": {
+            "Name": ["rc-landing-${env}-app"]
+          }
+        },
+        "regex": "/healthcheck\\/(.*)/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "hc_api",
+        "label": "hc_api",
+        "type": "query",
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${ds}"
+        },
+        "hide": 2,
+        "query": {
+          "refId": "Var",
+          "queryType": "resourceARNs",
+          "region": "us-east-1",
+          "resourceType": "route53:healthcheck",
+          "tags": {
+            "Name": ["rc-landing-${env}-api"]
+          }
+        },
+        "regex": "/healthcheck\\/(.*)/",
+        "refresh": 1,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false,
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "trace_id",
+        "label": "Trace ID",
+        "type": "textbox",
+        "query": "2ed443a9c9ae1a0ecf008e50e3110bcb",
+        "current": {
+          "text": "2ed443a9c9ae1a0ecf008e50e3110bcb",
+          "value": "2ed443a9c9ae1a0ecf008e50e3110bcb"
+        },
+        "hide": 0
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "fiscalYearStartMonth": 0,
+  "liveNow": false,
+  "weekStart": "monday"
+}

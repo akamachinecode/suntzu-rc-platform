@@ -27,9 +27,10 @@ aws s3 mb "s3://$BUCKET" --region us-east-2
 
 ### 2. Deploy role and container registries
 
-`infra/bootstrap` creates GitHub's OIDC provider, the deploy role and the container registries, and secures the state bucket. It replaces steps 1, 3 and 4 of [`AWS-GITHUB-OIDC.md`](./AWS-GITHUB-OIDC.md); use step 2 of that guide to find the repository's subject (without `:environment:production`).
+`infra/bootstrap` creates GitHub's OIDC provider, the deploy role, the container registries and the read-only role Grafana Cloud uses (`grafana.tf`, see `OPERATIONS.md`, "Grafana"), and secures the state bucket. It replaces steps 1, 3 and 4 of [`AWS-GITHUB-OIDC.md`](./AWS-GITHUB-OIDC.md); use step 2 of that guide to find the repository's subject (without `:environment:production`).
 
 ```bash
+export AWS_CA_BUNDLE=$HOME/.aws/ca-bundle.pem  # only if your AWS profile sets ca_bundle with ~
 terraform -chdir=infra/bootstrap init -backend-config="bucket=$BUCKET"
 terraform -chdir=infra/bootstrap apply -var 'github_subject=repo:akamachinecode@57374133/suntzu-rc-platform@1438712475'
 ```

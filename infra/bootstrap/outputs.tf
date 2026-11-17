@@ -6,3 +6,8 @@ output "deploy_role_arn" {
 output "state_bucket" {
   value = local.state_bucket
 }
+
+output "grafana_role_arn" {
+  description = "Paste into 'Assume Role ARN' of Grafana's CloudWatch and Application Signals data sources."
+  value       = try(aws_iam_role.grafana["on"].arn, null)
+}
