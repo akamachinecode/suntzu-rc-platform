@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import { IsoFigure } from "@/components/iso/react/draw";
-import { asksForStillness, useInView, useReadout } from "@/components/iso/react/live";
+import { useFigurePause } from "@/components/figures/figure-pause";
+import { useInView, useReadout } from "@/components/iso/react/live";
 import { LiveSolid, paint } from "../live-solid";
 import { rotorOf, type RotorFrame } from "./frame";
 import { HOVER_PITCH, PITCH, readoutOf, spokenOf } from "./model";
@@ -79,6 +80,8 @@ export function HoverBenchLive({
 }) {
   const { anchor: root, say } = useReadout<HTMLDivElement>();
   const visible = useInView(root);
+  // Pause (in the frame) or reduced motion: no tour, and the drawing settles.
+  const { paused, still } = useFigurePause();
   const pitch = React.useRef(0);
   const target = React.useRef(0);
   const turn = React.useRef(STILL_TURN);
@@ -114,7 +117,7 @@ export function HoverBenchLive({
     const tick = (now: number) => {
       const dt = last.current ? Math.min((now - last.current) / 1000, LONGEST_FRAME) : 1 / 60;
       last.current = now;
-      const calm = asksForStillness();
+      const calm = still();
       if (touring.current) {
         clock.current += dt;
         target.current = tourAt(clock.current);
@@ -130,7 +133,7 @@ export function HoverBenchLive({
       frame.current = calm && pitch.current === want ? 0 : requestAnimationFrame(tick);
     };
     frame.current = requestAnimationFrame(tick);
-  }, [draw]);
+  }, [draw, still]);
 
   const steer = React.useCallback(
     (deg: number) => {
@@ -155,7 +158,7 @@ export function HoverBenchLive({
       stop();
       return;
     }
-    if (idle && !engaged && !asksForStillness()) {
+    if (idle && !engaged && !still() && !paused) {
       const timer = window.setTimeout(() => {
         clock.current = 0;
         touring.current = true;
@@ -169,7 +172,7 @@ export function HoverBenchLive({
     }
     touring.current = false;
     run();
-  }, [visible, idle, engaged, run, stop]);
+  }, [visible, idle, engaged, paused, still, run, stop]);
 
   const pitchAt = (clientX: number) => {
     const box = root.current?.querySelector("svg")?.getBoundingClientRect();

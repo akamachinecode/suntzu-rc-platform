@@ -50,7 +50,12 @@ Format:
   - **The copy button** says when the browser refuses the clipboard, and announces outside itself.
   - **Heading outline:** the event and place lists have a (hidden) heading, so their cards' h3 don't follow the page's h1 directly.
   - **Tests:** `apps/app/e2e/site.spec.ts`.
-- **Why:** the audit (2026-11-17) found these against the guides `security/validate-origins`, `js/coordinate-global-events` and `security/security`; slice 4 against `accessibility/accessibility`, `ui-components/navbar`, `ui-components/dialog`, `ui-behaviors/motion`, `ui-components/copy-button`, `visual-design/dark-mode` and `privacy/privacy`; slice 3 against `forms/forms`, `accessibility/accessible-error-announcement`, `forms/required-field-feedback`, `forms/sms-otp-form` and `forms/ime-safe-enter-submit`.
+- **Slice 5 (pause buttons):** WCAG 2.2.2 asks for a visible way to pause anything that moves by itself for more than five seconds, reduced motion or not.
+  - **Figures with an idle tour** (the bench figures: gearing, diff and shock; balance, hover bench, swashplate, tail torque, thrust stand, thumb to elevator) show "Pause" beside their readout. The button lives in `FigureFrame`, not on the drawing, because the drawing is a slider and a slider's content isn't a place for another control. A paused figure starts no tour, settles where it was going and stops; "Play" brings the tour back (`components/figures/figure-pause.tsx`; each touring figure calls `useFigurePause()`).
+  - **The home's 3D dioramas** show "Pause" in their corner once built; paused, the scene holds its frame. The button is beside the picture, not inside its `role="img"`.
+  - Under reduced motion nothing moves, so the buttons don't show.
+  - **Tests:** `apps/app/e2e/motion.spec.ts` (the readout stops changing after Pause and moves again after Play; the 3D scenes' button; none under reduced motion).
+- **Why:** the audit (2026-11-17) found these against the guides `security/validate-origins`, `js/coordinate-global-events` and `security/security`; slice 5 against `ui-behaviors/motion`; slice 4 against `accessibility/accessibility`, `ui-components/navbar`, `ui-components/dialog`, `ui-behaviors/motion`, `ui-components/copy-button`, `visual-design/dark-mode` and `privacy/privacy`; slice 3 against `forms/forms`, `accessibility/accessible-error-announcement`, `forms/required-field-feedback`, `forms/sms-otp-form` and `forms/ime-safe-enter-submit`.
 - **Impact:** no new dependencies or variables in slice 1. **Itaca engineering:** the redirect check is in `apps/app`, nothing in `apps/api/src/auth` changed. The owner approved, as engineer, the tracing clean-up and the Content-Security-Policy of later slices.
 
 ## 2026-11-17 — Grafana Cloud reads CloudWatch through a read-only role

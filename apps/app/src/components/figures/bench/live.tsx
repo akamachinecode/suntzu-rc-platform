@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import type { SolidPaths, Tone } from "@/components/iso/iso-kit";
-import { asksForStillness, useInView, useReadout } from "@/components/iso/react/live";
+import { useFigurePause } from "@/components/figures/figure-pause";
+import { useInView, useReadout } from "@/components/iso/react/live";
 
 /**
  * What the car guide's benches share: a solid whose paths are rewritten each frame, and one
@@ -112,6 +113,8 @@ export interface BenchOptions {
 export function useBench(options: BenchOptions) {
   const { anchor: root, say } = useReadout<HTMLDivElement>();
   const visible = useInView(root);
+  // Pause (in the frame) or reduced motion: no tour, and the drawing settles.
+  const { paused, still } = useFigurePause();
   const latest = React.useRef(options);
   React.useLayoutEffect(() => {
     latest.current = options;
@@ -154,7 +157,7 @@ export function useBench(options: BenchOptions) {
     const tick = (now: number) => {
       const dt = last.current ? Math.min((now - last.current) / 1000, LONGEST_FRAME) : 1 / 60;
       last.current = now;
-      const calm = asksForStillness();
+      const calm = still();
       const o = latest.current;
       if (touring.current) {
         clock.current += dt;
@@ -171,7 +174,7 @@ export function useBench(options: BenchOptions) {
         !touring.current && value.current === want && !moving ? 0 : requestAnimationFrame(tick);
     };
     frame.current = requestAnimationFrame(tick);
-  }, [draw]);
+  }, [draw, still]);
 
   const steer = React.useCallback(
     (next: number) => {
@@ -197,7 +200,7 @@ export function useBench(options: BenchOptions) {
       stop();
       return;
     }
-    if (idle && !engaged && !asksForStillness()) {
+    if (idle && !engaged && !still() && !paused) {
       const timer = window.setTimeout(() => {
         clock.current = 0;
         touring.current = true;
@@ -211,7 +214,7 @@ export function useBench(options: BenchOptions) {
     }
     touring.current = false;
     run();
-  }, [visible, idle, engaged, run, stop]);
+  }, [visible, idle, engaged, paused, still, run, stop]);
 
   const valueAt = (clientX: number) => {
     const box = root.current?.querySelector("svg")?.getBoundingClientRect();
