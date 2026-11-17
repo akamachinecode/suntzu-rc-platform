@@ -62,7 +62,7 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-5 sm:px-6">
         <div className="flex flex-col gap-8 border-b-2 border-background/15 py-14 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-4xl leading-[0.95] font-black text-balance font-wide sm:text-6xl">
+            <p className="font-wide text-4xl leading-[0.95] font-black text-balance sm:text-6xl">
               Bring the model.
               <br />
               <span className="text-primary">We&apos;ll bring the field.</span>

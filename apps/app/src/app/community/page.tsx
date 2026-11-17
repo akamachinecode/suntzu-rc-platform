@@ -89,7 +89,7 @@ export default async function CommunityPage() {
                 key={label}
                 className="rounded-md border-2 border-foreground bg-panel px-3 py-1.5 font-semibold shadow-hard-sm"
               >
-                <span className="text-xl font-black font-wide">{value}</span> {label}
+                <span className="font-wide text-xl font-black">{value}</span> {label}
               </li>
             ) : null,
           )}
@@ -104,7 +104,7 @@ export default async function CommunityPage() {
               className="relative flex flex-col rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard transition-transform hover:-translate-y-0.5 motion-reduce:transform-none"
             >
               <Icon aria-hidden className="size-8" />
-              <h2 className="mt-4 text-xl font-black font-wide">{title}</h2>
+              <h2 className="mt-4 font-wide text-xl font-black">{title}</h2>
               <p className="mt-2 flex-1 text-pretty">{body}</p>
               <Link
                 href={href}
@@ -120,7 +120,7 @@ export default async function CommunityPage() {
       <section aria-labelledby="yours-title" className="bg-cutting-mat text-mat-foreground">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-20 sm:px-6 lg:grid-cols-2">
           <div>
-            <h2 id="yours-title" className="text-3xl font-black text-balance font-wide sm:text-5xl">
+            <h2 id="yours-title" className="font-wide text-3xl font-black text-balance sm:text-5xl">
               Never miss the one that matters.
             </h2>
             <p className="mt-4 max-w-[50ch] text-lg text-pretty">
@@ -141,7 +141,7 @@ export default async function CommunityPage() {
                 key={title}
                 className="rounded-xl border-2 border-foreground bg-panel p-5 shadow-hard-sm"
               >
-                <p className="font-black font-wide">{title}</p>
+                <p className="font-wide font-black">{title}</p>
                 <p className="mt-1 text-pretty">{body}</p>
               </li>
             ))}
@@ -154,7 +154,7 @@ export default async function CommunityPage() {
           <div>
             <h2
               id="weekend-title"
-              className="max-w-[30ch] text-2xl leading-tight font-black font-wide sm:text-3xl"
+              className="max-w-[30ch] font-wide text-2xl leading-tight font-black sm:text-3xl"
             >
               What&apos;s on this weekend?
             </h2>
@@ -174,7 +174,7 @@ export default async function CommunityPage() {
       <section aria-labelledby="share-title" className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
         <div className="grid gap-12 md:grid-cols-[1fr_1.3fr]">
           <div>
-            <h2 id="share-title" className="text-3xl font-black text-balance font-wide sm:text-5xl">
+            <h2 id="share-title" className="font-wide text-3xl font-black text-balance sm:text-5xl">
               Show us your build
             </h2>
             <p className="mt-5 max-w-[46ch] text-lg text-pretty">

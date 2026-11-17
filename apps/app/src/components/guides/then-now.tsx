@@ -24,10 +24,10 @@ export function ThenNow({
               <th scope="col" className="p-4 font-semibold">
                 <span className="sr-only">Aspect</span>
               </th>
-              <th scope="col" className="p-4 text-xl font-black font-wide">
+              <th scope="col" className="p-4 font-wide text-xl font-black">
                 {then}
               </th>
-              <th scope="col" className="bg-primary p-4 text-xl font-black font-wide">
+              <th scope="col" className="bg-primary p-4 font-wide text-xl font-black">
                 Today
               </th>
             </tr>

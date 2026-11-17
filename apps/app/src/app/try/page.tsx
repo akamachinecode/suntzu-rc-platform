@@ -35,8 +35,8 @@ export default function TryPage() {
               key={title}
               className="rounded-xl border-2 border-foreground bg-panel p-5 shadow-hard"
             >
-              <p className="text-4xl font-black font-wide">{index + 1}</p>
-              <h2 className="mt-2 text-lg font-black font-wide">{title}</h2>
+              <p className="font-wide text-4xl font-black">{index + 1}</p>
+              <h2 className="mt-2 font-wide text-lg font-black">{title}</h2>
               <p className="mt-1 text-pretty">{body}</p>
             </li>
           ))}
@@ -45,7 +45,7 @@ export default function TryPage() {
       <section aria-labelledby="ask-title" className="bg-cutting-mat text-mat-foreground">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-6 lg:grid-cols-[1fr_1.4fr]">
           <div>
-            <h2 id="ask-title" className="text-3xl font-black font-wide">
+            <h2 id="ask-title" className="font-wide text-3xl font-black">
               Find me a club
             </h2>
             <p className="mt-3 max-w-[46ch] text-pretty">

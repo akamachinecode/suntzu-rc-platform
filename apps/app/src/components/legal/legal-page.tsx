@@ -24,7 +24,7 @@ export function LegalPage({
         <p className="text-sm text-muted-foreground">Last updated {updated}.</p>
         {sections.map((section) => (
           <section key={section.title} className="mt-10">
-            <h2 className="text-2xl font-black font-wide">{section.title}</h2>
+            <h2 className="font-wide text-2xl font-black">{section.title}</h2>
             {section.paragraphs.map((paragraph) => (
               <p key={paragraph.slice(0, 40)} className="mt-3 max-w-[68ch] text-lg text-pretty">
                 {paragraph}

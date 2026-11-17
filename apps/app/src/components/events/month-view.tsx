@@ -67,7 +67,7 @@ export function MonthView({ events, today }: { events: RcEvent[]; today: string 
         >
           <ChevronLeft aria-hidden="true" />
         </button>
-        <h2 className="text-2xl font-black font-wide" aria-live="polite">
+        <h2 className="font-wide text-2xl font-black" aria-live="polite">
           {label}
         </h2>
         <button

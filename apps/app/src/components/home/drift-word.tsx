@@ -63,7 +63,7 @@ export function DriftWord({ children, className }: { children: string; className
           style={reduce ? undefined : { transform: x.value }}
           // A layer of its own before it reaches the screen, so its first frame of motion doesn't
           // wait for the browser to draw the word.
-          className="text-[min(22vw,20rem)] leading-[0.8] font-black tracking-tighter whitespace-nowrap font-wide will-change-transform select-none"
+          className="font-wide text-[min(22vw,20rem)] leading-[0.8] font-black tracking-tighter whitespace-nowrap will-change-transform select-none"
         >
           {children}
         </motion.p>

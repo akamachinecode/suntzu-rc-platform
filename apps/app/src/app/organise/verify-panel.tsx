@@ -23,7 +23,7 @@ export function VerifyPanel({ claim }: { claim: ClaimStatus }) {
   return (
     <li className="grid gap-4 rounded-xl border-2 border-foreground bg-panel p-5 shadow-hard">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <h3 className="text-xl font-black font-wide">{claim.host.name}</h3>
+        <h3 className="font-wide text-xl font-black">{claim.host.name}</h3>
         <p className="text-sm font-semibold">
           {claim.verified ? "Verified" : "Waiting to be verified"}
         </p>

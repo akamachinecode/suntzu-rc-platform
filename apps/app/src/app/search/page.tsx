@@ -68,7 +68,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
   return (
     <>
       <header className="mx-auto max-w-7xl px-5 pt-16 pb-8 sm:px-6 sm:pt-20">
-        <h1 className="text-4xl leading-[0.95] font-black tracking-tight text-balance break-words font-wide sm:text-6xl">
+        <h1 className="font-wide text-4xl leading-[0.95] font-black tracking-tight text-balance break-words sm:text-6xl">
           {q ? <>Results for &ldquo;{q}&rdquo;</> : "Search SunTzu RC"}
         </h1>
         <SearchForm q={q} />
@@ -76,7 +76,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
 
       {!q ? (
         <section aria-labelledby="start-title" className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
-          <h2 id="start-title" className="text-2xl font-black font-wide">
+          <h2 id="start-title" className="font-wide text-2xl font-black">
             Events, fields, tracks, clubs, guides and rules
           </h2>
           <p className="mt-2 max-w-[60ch] text-lg text-pretty">
@@ -166,7 +166,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
                 ) : null}
                 {groupResults(data.results).map((each) => (
                   <section key={each.key} aria-labelledby={`group-${each.key}`}>
-                    <h2 id={`group-${each.key}`} className="text-2xl font-black font-wide">
+                    <h2 id={`group-${each.key}`} className="font-wide text-2xl font-black">
                       {each.label}
                     </h2>
                     <ul className="mt-4 grid gap-4 md:grid-cols-2">

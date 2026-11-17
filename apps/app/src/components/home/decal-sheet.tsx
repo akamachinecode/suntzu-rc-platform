@@ -57,7 +57,7 @@ function Sticker({ decal, index }: { decal: Decal; index: number }) {
   const label = (
     <span className="grid justify-items-center gap-1 text-center">
       <Icon aria-hidden="true" className="size-5 lg:size-6" strokeWidth={2.5} />
-      <span className="text-lg leading-none font-black font-wide lg:text-xl">{decal.short}</span>
+      <span className="font-wide text-lg leading-none font-black lg:text-xl">{decal.short}</span>
       <span className="text-[0.7rem] leading-tight font-semibold lg:text-xs">{decal.tag}</span>
     </span>
   );
@@ -163,7 +163,7 @@ const SPARES = [
     at: "lg:right-[28.5%] lg:bottom-[19%]",
     tilt: 8,
     face: (
-      <span className="block rounded-[1.1rem] border-[6px] border-panel bg-lead px-4 pt-1 text-5xl leading-none font-black tracking-tight text-foreground font-wide shadow-[3px_3px_0_0_var(--foreground)]">
+      <span className="block rounded-[1.1rem] border-[6px] border-panel bg-lead px-4 pt-1 font-wide text-5xl leading-none font-black tracking-tight text-foreground shadow-[3px_3px_0_0_var(--foreground)]">
         03
       </span>
     ),
@@ -214,7 +214,7 @@ export function DecalSheet({ decals }: { decals: Decal[] }) {
       {/* The big decal: vinyl letters with a white die-cut edge */}
       <h2
         id="crew-title"
-        className="relative z-10 text-center text-5xl leading-[0.95] font-black text-balance text-foreground font-wide [-webkit-text-stroke:10px_var(--panel)] [paint-order:stroke_fill] sm:text-6xl lg:absolute lg:inset-x-0 lg:top-1/2 lg:-translate-y-1/2 lg:text-7xl"
+        className="relative z-10 text-center font-wide text-5xl leading-[0.95] font-black text-balance text-foreground [-webkit-text-stroke:10px_var(--panel)] [paint-order:stroke_fill] sm:text-6xl lg:absolute lg:inset-x-0 lg:top-1/2 lg:-translate-y-1/2 lg:text-7xl"
       >
         Three of us.
         <br />

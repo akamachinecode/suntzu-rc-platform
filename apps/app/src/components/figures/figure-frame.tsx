@@ -34,7 +34,7 @@ export function FigureFrame({
   children: React.ReactNode;
 }) {
   const number = (
-    <span className="rounded-md border-2 border-foreground bg-primary px-2 py-0.5 text-xs leading-none font-black font-wide">
+    <span className="rounded-md border-2 border-foreground bg-primary px-2 py-0.5 font-wide text-xs leading-none font-black">
       {fig}
     </span>
   );

@@ -60,7 +60,7 @@ export default async function EventsPage({ searchParams }: PageProps<"/events">)
       </section>
       <section className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
         <div className="flex flex-col items-start gap-6 rounded-xl border-2 border-foreground bg-primary p-8 shadow-hard-lg sm:flex-row sm:items-center sm:justify-between sm:p-10">
-          <p className="max-w-[36ch] text-2xl leading-tight font-black font-wide sm:text-3xl">
+          <p className="max-w-[36ch] font-wide text-2xl leading-tight font-black sm:text-3xl">
             Running a race, a fly-in or a club open day?
           </p>
           <Button asChild size="lg" variant="outline">

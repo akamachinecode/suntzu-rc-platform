@@ -80,7 +80,7 @@ export function ReviewCard({ review }: { review: CrewReview }) {
   return (
     <article className="grid gap-5 rounded-xl border-2 border-foreground bg-panel p-5 shadow-hard sm:p-6">
       <header className="flex flex-wrap items-baseline justify-between gap-3">
-        <h3 className="text-xl font-black font-wide">
+        <h3 className="font-wide text-xl font-black">
           {KIND_TITLES[review.kind]}
           {review.fromMember ? (
             <span className="ml-2 rounded-md bg-sky px-2 py-0.5 align-middle text-xs font-semibold">

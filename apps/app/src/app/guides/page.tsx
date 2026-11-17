@@ -25,7 +25,7 @@ export default function GuidesPage() {
                 className={`group flex h-full flex-col justify-between gap-10 rounded-xl border-2 border-foreground p-8 shadow-hard-lg transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 motion-reduce:transform-none ${index === 0 ? "bg-primary" : "bg-panel"}`}
               >
                 <div>
-                  <h2 className="text-3xl leading-tight font-black text-balance font-wide sm:text-4xl">
+                  <h2 className="font-wide text-3xl leading-tight font-black text-balance sm:text-4xl">
                     {guide.title}
                   </h2>
                   <p className="mt-4 max-w-[52ch] text-lg text-pretty">{guide.dek}</p>

@@ -24,7 +24,7 @@ export default async function ClubDashboard({ params }: PageProps<"/organise/[ho
   if (!data) {
     return (
       <section className="mx-auto max-w-3xl px-5 py-24 sm:px-6">
-        <h1 className="text-5xl font-black font-wide">Not yet</h1>
+        <h1 className="font-wide text-5xl font-black">Not yet</h1>
         <p className="mt-4 text-lg">
           Only this club&apos;s verified organisers can open its dashboard.
         </p>
@@ -40,7 +40,7 @@ export default async function ClubDashboard({ params }: PageProps<"/organise/[ho
     <>
       <header className="mx-auto max-w-7xl px-5 pt-16 pb-8 sm:px-6 sm:pt-20">
         <p className="text-sm font-semibold">Club dashboard</p>
-        <h1 className="mt-2 text-5xl leading-[0.92] font-black tracking-tight font-wide sm:text-6xl">
+        <h1 className="mt-2 font-wide text-5xl leading-[0.92] font-black tracking-tight sm:text-6xl">
           {data.host.name}
         </h1>
         <ul className="mt-6 flex flex-wrap gap-3 text-sm font-semibold">
@@ -63,7 +63,7 @@ export default async function ClubDashboard({ params }: PageProps<"/organise/[ho
 
       <section aria-labelledby="publish-title" className="bg-cutting-mat text-mat-foreground">
         <div className="mx-auto max-w-4xl px-5 py-16 sm:px-6">
-          <h2 id="publish-title" className="text-3xl font-black font-wide">
+          <h2 id="publish-title" className="font-wide text-3xl font-black">
             Publish an event
           </h2>
           <p className="mt-2 max-w-[60ch] text-pretty">
@@ -77,7 +77,7 @@ export default async function ClubDashboard({ params }: PageProps<"/organise/[ho
       </section>
 
       <section aria-labelledby="events-title" className="mx-auto max-w-7xl px-5 py-16 sm:px-6">
-        <h2 id="events-title" className="text-3xl font-black font-wide">
+        <h2 id="events-title" className="font-wide text-3xl font-black">
           Your events
         </h2>
         {data.events.length ? (
@@ -92,7 +92,7 @@ export default async function ClubDashboard({ params }: PageProps<"/organise/[ho
       </section>
 
       <section aria-labelledby="places-title" className="mx-auto max-w-7xl px-5 pb-16 sm:px-6">
-        <h2 id="places-title" className="text-3xl font-black font-wide">
+        <h2 id="places-title" className="font-wide text-3xl font-black">
           Your fields and tracks
         </h2>
         <p className="mt-2 max-w-[60ch] text-pretty">
@@ -152,7 +152,7 @@ export default async function ClubDashboard({ params }: PageProps<"/organise/[ho
       </section>
 
       <section aria-labelledby="widget-title" className="mx-auto max-w-7xl px-5 pb-16 sm:px-6">
-        <h2 id="widget-title" className="text-3xl font-black font-wide">
+        <h2 id="widget-title" className="font-wide text-3xl font-black">
           Your calendar on your website
         </h2>
         <p className="mt-2 max-w-[60ch] text-pretty">
@@ -174,7 +174,7 @@ export default async function ClubDashboard({ params }: PageProps<"/organise/[ho
       </section>
 
       <section aria-labelledby="club-title" className="mx-auto max-w-3xl px-5 pb-24 sm:px-6">
-        <h2 id="club-title" className="text-3xl font-black font-wide">
+        <h2 id="club-title" className="font-wide text-3xl font-black">
           The club&apos;s page
         </h2>
         <div className="mt-6 rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard sm:p-8">

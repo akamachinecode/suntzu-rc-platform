@@ -76,7 +76,7 @@ export function ManualCover({
         </div>
       </div>
       <div className="mt-auto px-4 pb-5">
-        <h3 className="text-2xl leading-tight font-black text-balance font-wide">{title}</h3>
+        <h3 className="font-wide text-2xl leading-tight font-black text-balance">{title}</h3>
         <span className="mt-3 inline-block text-sm font-bold underline underline-offset-4 group-hover:decoration-2">
           Read the guide
         </span>

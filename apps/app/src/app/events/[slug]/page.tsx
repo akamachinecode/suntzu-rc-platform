@@ -217,12 +217,12 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
             </li>
           ))}
         </ul>
-        <h1 className="mt-4 max-w-4xl text-5xl leading-[0.92] font-black tracking-tight text-balance font-wide sm:text-7xl">
+        <h1 className="mt-4 max-w-4xl font-wide text-5xl leading-[0.92] font-black tracking-tight text-balance sm:text-7xl">
           {event.name}
         </h1>
         <p
           className={cn(
-            "mt-5 text-2xl font-black font-wide sm:text-3xl",
+            "mt-5 font-wide text-2xl font-black sm:text-3xl",
             cancelled && "line-through",
           )}
         >
@@ -305,7 +305,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
               aria-labelledby="before-title"
               className="rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard"
             >
-              <h2 id="before-title" className="text-xl font-black font-wide">
+              <h2 id="before-title" className="font-wide text-xl font-black">
                 Before you go
               </h2>
               <ul className="mt-3 grid gap-2">
@@ -336,7 +336,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
               aria-labelledby="after-title"
               className="rounded-xl border-2 border-foreground bg-primary p-6 shadow-hard"
             >
-              <h2 id="after-title" className="text-xl font-black font-wide">
+              <h2 id="after-title" className="font-wide text-xl font-black">
                 {cancelled ? "This one didn't happen" : "That was it"}
               </h2>
               {next ? (
@@ -362,7 +362,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
               aria-labelledby="history-title"
               className="rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard"
             >
-              <h2 id="history-title" className="text-xl font-black font-wide">
+              <h2 id="history-title" className="font-wide text-xl font-black">
                 What changed
               </h2>
               <ol className="mt-4 grid gap-3 border-l-2 border-foreground pl-5">
@@ -385,7 +385,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
               aria-labelledby="editions-title"
               className="rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard"
             >
-              <h2 id="editions-title" className="text-xl font-black font-wide">
+              <h2 id="editions-title" className="font-wide text-xl font-black">
                 Other editions
               </h2>
               <ul className="mt-4 grid gap-2">
@@ -411,7 +411,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
             aria-labelledby="sources-title"
             className="rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard"
           >
-            <h2 id="sources-title" className="text-xl font-black font-wide">
+            <h2 id="sources-title" className="font-wide text-xl font-black">
               Where this comes from
             </h2>
             <ul className="mt-4 grid gap-4">
@@ -460,7 +460,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
         </div>
 
         <aside aria-labelledby="where-title" className="grid content-start gap-4">
-          <h2 id="where-title" className="text-xl font-black font-wide">
+          <h2 id="where-title" className="font-wide text-xl font-black">
             Where
           </h2>
           <div>

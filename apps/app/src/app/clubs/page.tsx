@@ -42,7 +42,7 @@ export default async function ClubsPage() {
           <div className="grid gap-12">
             {ordered.map(([county, list]) => (
               <div key={county}>
-                <h2 className="text-2xl font-black font-wide">{county}</h2>
+                <h2 className="font-wide text-2xl font-black">{county}</h2>
                 <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {list.map((host) => (
                     <li

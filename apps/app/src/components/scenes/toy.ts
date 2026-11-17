@@ -341,12 +341,26 @@ export type Build = (kit: Kit) => Diorama;
 const INK_PX = 2.6;
 
 /** Puts a diorama on a canvas. Returns controls to draw a frame, resize and clean up. */
-export function stage(canvas: HTMLCanvasElement, build: Build) {
+/**
+ * Lets the browser handle a tap or a key between the heavy steps of building a diorama, so a
+ * build that takes a few hundred milliseconds on a phone isn't one long task (modern web guidance,
+ * performance/break-up-long-tasks). `scheduler.yield()` keeps our place in the queue where it
+ * exists (Chrome, Firefox); elsewhere a zero timeout does the job.
+ */
+function yieldToMain(): Promise<void> {
+  const scheduler = (globalThis as { scheduler?: { yield?: () => Promise<void> } }).scheduler;
+  if (scheduler?.yield) return scheduler.yield();
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+export async function stage(canvas: HTMLCanvasElement, build: Build) {
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setClearColor(0x000000, 0);
+  await yieldToMain();
   const width = { value: 0.02 };
   const kit = createKit(readPalette(canvas), width);
   const diorama = build(kit);
+  await yieldToMain();
   const scene = new Scene();
   scene.add(diorama.root);
 
@@ -499,4 +513,4 @@ export const ease = (x: number) => {
   return c * c * (3 - 2 * c);
 };
 
-export type Stage = ReturnType<typeof stage>;
+export type Stage = Awaited<ReturnType<typeof stage>>;

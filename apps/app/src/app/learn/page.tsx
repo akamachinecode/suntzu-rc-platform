@@ -123,7 +123,7 @@ export default function LearnPage() {
     <>
       <header className="mx-auto grid max-w-7xl gap-12 px-5 pt-14 pb-20 sm:px-6 sm:pt-24 md:grid-cols-[1.2fr_1fr] md:items-center md:gap-16">
         <div>
-          <h1 className="text-5xl leading-[0.92] font-black tracking-tight text-balance font-wide sm:text-7xl">
+          <h1 className="font-wide text-5xl leading-[0.92] font-black tracking-tight text-balance sm:text-7xl">
             Learn RC with people who{" "}
             <Tag tone="primary" className="mt-2">
               still crash.
@@ -172,7 +172,7 @@ export default function LearnPage() {
                 >
                   <span
                     aria-hidden="true"
-                    className="grid size-10 shrink-0 place-items-center rounded-full border-2 border-foreground text-sm font-black font-wide"
+                    className="grid size-10 shrink-0 place-items-center rounded-full border-2 border-foreground font-wide text-sm font-black"
                   >
                     {String(index + 1).padStart(2, "0")}
                   </span>
@@ -205,7 +205,7 @@ export default function LearnPage() {
                 <p className="flex items-center gap-3">
                   <span
                     aria-hidden="true"
-                    className="grid size-12 place-items-center rounded-full border-2 border-foreground bg-panel text-lg font-black text-foreground font-wide"
+                    className="grid size-12 place-items-center rounded-full border-2 border-foreground bg-panel font-wide text-lg font-black text-foreground"
                   >
                     {String(index + 1).padStart(2, "0")}
                   </span>
@@ -215,7 +215,7 @@ export default function LearnPage() {
                 </p>
                 <h2
                   id={`${service.id}-title`}
-                  className="mt-7 text-4xl leading-[0.95] font-black text-balance font-wide sm:text-5xl"
+                  className="mt-7 font-wide text-4xl leading-[0.95] font-black text-balance sm:text-5xl"
                 >
                   {service.title}
                 </h2>
@@ -317,7 +317,7 @@ export default function LearnPage() {
       <section aria-labelledby="faq-title" className="mx-auto max-w-3xl px-5 py-24 sm:px-6">
         <h2
           id="faq-title"
-          className="text-center text-4xl leading-[0.95] font-black text-balance font-wide sm:text-5xl"
+          className="text-center font-wide text-4xl leading-[0.95] font-black text-balance sm:text-5xl"
         >
           Before your first lesson
         </h2>
@@ -356,7 +356,7 @@ export default function LearnPage() {
           <div>
             <h2
               id="ready-title"
-              className="max-w-[18ch] text-3xl leading-tight font-black text-balance font-wide sm:text-4xl"
+              className="max-w-[18ch] font-wide text-3xl leading-tight font-black text-balance sm:text-4xl"
             >
               Ready when you are.
             </h2>
