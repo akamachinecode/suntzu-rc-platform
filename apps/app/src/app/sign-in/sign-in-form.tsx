@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
+import { StepHeading } from "@/components/forms/feedback";
 import { authClient } from "@/lib/auth-client";
 
 // What the API answers when a code can't be used (Better Auth's email-otp plugin).
@@ -21,6 +22,8 @@ const CODE_ERRORS: Record<string, { message: string; spent: boolean }> = {
 export function SignInForm({ next, google }: { next: string; google: boolean }) {
   const [error, setError] = useState<string>();
   const [sentTo, setSentTo] = useState<string>();
+  // The last address typed, kept in the field after "Use another address".
+  const [typed, setTyped] = useState<string>();
   // Each email sent starts a fresh code screen (empty field, no old errors).
   const [sent, setSent] = useState(0);
   const [pending, setPending] = useState(false);
@@ -43,7 +46,9 @@ export function SignInForm({ next, google }: { next: string; google: boolean }) 
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    void sendEmail(String(new FormData(event.currentTarget).get("email")).trim());
+    const email = String(new FormData(event.currentTarget).get("email")).trim();
+    setTyped(email);
+    void sendEmail(email);
   }
 
   async function withGoogle() {
@@ -68,6 +73,8 @@ export function SignInForm({ next, google }: { next: string; google: boolean }) 
         onChangeEmail={() => {
           setError(undefined);
           setSentTo(undefined);
+          // Back to the address, instead of the top of the page.
+          requestAnimationFrame(() => document.getElementById("email")?.focus());
         }}
       />
     );
@@ -88,7 +95,16 @@ export function SignInForm({ next, google }: { next: string; google: boolean }) 
           <Label htmlFor="email" className="font-semibold">
             Email
           </Label>
-          <Input id="email" name="email" type="email" autoComplete="email" required />
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            spellCheck={false}
+            enterKeyHint="send"
+            required
+            defaultValue={typed}
+          />
         </div>
         {error && (
           <p role="alert" className="text-sm text-destructive">
@@ -150,10 +166,11 @@ function CheckEmail({
 
   return (
     <div className="grid gap-5 rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard">
-      <div role="status" className="grid gap-4">
+      <div className="grid gap-4">
         <MailCheckIcon aria-hidden="true" className="size-8" />
-        <p className="text-xl font-black font-wide">Check your email</p>
-        <p className="text-pretty">
+        {/* Takes the focus when the screen changes, so nobody is sent back to the top. */}
+        <StepHeading className="text-xl font-black font-wide">Check your email</StepHeading>
+        <p id="code-hint" className="text-pretty">
           We sent a sign-in link and a 6-digit code to <strong>{email}</strong>. Tap the link, or
           type the code here to sign in on this screen. Both work once, for 15 minutes.
         </p>
@@ -165,13 +182,16 @@ function CheckEmail({
         <Input
           id="code"
           name="code"
+          type="text"
           inputMode="numeric"
           autoComplete="one-time-code"
+          spellCheck={false}
+          enterKeyHint="done"
           maxLength={9}
           required
           disabled={spent}
           aria-invalid={error ? true : undefined}
-          aria-describedby={error ? "code-error" : undefined}
+          aria-describedby={error ? "code-hint code-error" : "code-hint"}
           className="font-mono text-2xl tracking-[0.3em]"
         />
         {error && (

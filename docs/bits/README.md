@@ -17,7 +17,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [events.calendar](./events.calendar.md)                 | Someone subscribes to the events calendar                                | read in code | `ics-writer.test.ts`                |
 | [events.event-calendar](./events.event-calendar.md)     | A visitor adds one event to their calendar                               | read in code | `ics-writer.test.ts`                |
 | [places.list](./places.list.md)                         | A visitor browses every field and track                                  | verified     | none yet                            |
-| [contact.send](./contact.send.md)                       | A visitor sends the contact form                                         | verified     | none yet                            |
+| [contact.send](./contact.send.md)                       | A visitor sends the contact form                                         | verified     | `forms.spec.ts` (e2e)               |
 | [community.share-build](./community.share-build.md)     | A visitor shares a build                                                 | read in code | none yet                            |
 | [engine.run](./engine.run.md)                           | The engine reads its sources                                             | verified     | engine tests                        |
 | [db.seed](./db.seed.md)                                 | The starting data is loaded                                              | read in code | none yet                            |
@@ -47,7 +47,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [organiser.publish](./organiser.publish.md)             | An organiser publishes or changes an event                               | verified     | none yet                            |
 | [organiser.widget](./organiser.widget.md)               | A club's website shows its SunTzu RC calendar                            | verified     | none yet                            |
 | [places.confirm](./places.confirm.md)                   | A steward confirms a place's details                                     | read in code | none yet                            |
-| [try.request](./try.request.md)                         | A newcomer asks to try RC                                                | verified     | none yet                            |
+| [try.request](./try.request.md)                         | A newcomer asks to try RC                                                | verified     | `forms.spec.ts` (e2e)               |
 | [notify.changes](./notify.changes.md)                   | Followers hear that an event moved or was cancelled                      | verified     | none yet                            |
 | [notify.digest](./notify.digest.md)                     | Members get "this weekend near you"                                      | read in code | none yet                            |
 | [notify.organiser-report](./notify.organiser-report.md) | Organisers get their club's monthly report                               | read in code | none yet                            |

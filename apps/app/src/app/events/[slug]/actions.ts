@@ -3,6 +3,7 @@
 import { correctionInput, feedbackInput } from "@workspace/shared";
 import { z } from "zod";
 import { getApi } from "@/lib/api";
+import { typedValues } from "@/lib/typed-values";
 
 const slugSchema = z.string().regex(/^[a-z0-9-]{1,120}$/);
 
@@ -23,6 +24,8 @@ export async function sendFeedback(
 }
 
 export type CorrectionState = {
+  /** What was typed, given back after an error so the form keeps it. */
+  values?: Partial<Record<string, string>>;
   status: "idle" | "sent" | "error" | "signed-out";
   message?: string;
   errors?: Partial<Record<string, string[]>>;
@@ -48,6 +51,7 @@ export async function suggestCorrection(
       status: "error",
       message: "Please fix the highlighted fields.",
       errors: z.flattenError(parsed.error).fieldErrors,
+      values: typedValues(formData),
     };
   }
   const api = await getApi();
@@ -56,6 +60,12 @@ export async function suggestCorrection(
     body: parsed.data,
   });
   if (response.status === 401) return { status: "signed-out" };
-  if (!response.ok) return { status: "error", message: "Could not send it. Try again." };
+  if (!response.ok) {
+    return {
+      status: "error",
+      message: "Could not send it. Try again.",
+      values: typedValues(formData),
+    };
+  }
   return { status: "sent", message: "Thanks! The crew will check it against the source." };
 }

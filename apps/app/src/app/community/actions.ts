@@ -2,13 +2,14 @@
 
 import { z } from "zod";
 import { getApi } from "@/lib/api";
+import { typedValues } from "@/lib/typed-values";
 
 const buildSchema = z.object({
   name: z.string().trim().min(1, "Please enter your name.").max(100),
   email: z.email("Please enter a valid email address."),
   model: z.string().trim().min(2, "What did you build or fly?").max(120),
   story: z.string().trim().min(20, "Tell us a bit more (at least 20 characters).").max(3000),
-  link: z.union([z.literal(""), z.url("Paste a full link, starting with https://")]),
+  link: z.union([z.literal(""), z.httpUrl("Paste a full link, starting with https://")]),
   consent: z.literal("on", "We need your OK to publish it."),
 });
 
@@ -16,6 +17,8 @@ export type BuildState = {
   status: "idle" | "success" | "error";
   message?: string;
   errors?: Partial<Record<keyof z.infer<typeof buildSchema>, string[]>>;
+  /** What was typed, given back after an error so the form keeps it. */
+  values?: Partial<Record<string, string>>;
 };
 
 /**
@@ -33,6 +36,7 @@ export async function submitBuild(_prev: BuildState, formData: FormData): Promis
       status: "error",
       message: "Please fix the highlighted fields.",
       errors: z.flattenError(parsed.error).fieldErrors,
+      values: typedValues(formData),
     };
   }
 
@@ -51,7 +55,11 @@ export async function submitBuild(_prev: BuildState, formData: FormData): Promis
     },
   });
   if (error) {
-    return { status: "error", message: "We couldn't send it. Try again in a minute." };
+    return {
+      status: "error",
+      message: "We couldn't send it. Try again in a minute.",
+      values: typedValues(formData),
+    };
   }
 
   return {

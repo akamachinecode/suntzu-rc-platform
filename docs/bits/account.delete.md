@@ -5,7 +5,7 @@
 - **Path:** `me/page.tsx` form → Server Action `deleteAccount` → `DELETE /me` → `MembersService.remove` → `delete from user` (cascades).
 - **Data:** deletes `user` and with it `session`, `account`, `members`, `follows`, `rsvps`, `host_members`, `notifications`; `submissions`, `messages`, `try_requests` and `reviews.submitted_by` lose the link to the person.
 - **Rules:** irreversible; contributions to the public catalogue stay without a name.
-- **Errors:** without the confirmation word nothing happens.
+- **Errors:** without the confirmation word nothing happens. The confirmation accepts "delete" or "Delete" (phones capitalise it), with no autocorrect.
 - **Test:** none yet
 - **Observe:** API log lines with `bit: "account.delete"`.
 - **Status:** read in code — 2026-10-27

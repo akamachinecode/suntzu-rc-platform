@@ -8,6 +8,7 @@ import { Label } from "@workspace/ui/components/label";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { DISCIPLINE_LABELS } from "@/lib/events";
 import { saveClub, type SimpleState } from "../actions";
+import { FormStatus } from "@/components/forms/feedback";
 
 export function ClubForm({ data }: { data: OrganiserHost }) {
   const [state, action, pending] = useActionState<SimpleState, FormData>(
@@ -70,11 +71,7 @@ export function ClubForm({ data }: { data: OrganiserHost }) {
         <Button type="submit" disabled={pending}>
           {pending ? "Saving…" : "Save"}
         </Button>
-        {state.message ? (
-          <p role="status" className="text-sm font-semibold">
-            {state.message}
-          </p>
-        ) : null}
+        <FormStatus message={state.message} error={state.status === "error"} />
       </div>
     </form>
   );

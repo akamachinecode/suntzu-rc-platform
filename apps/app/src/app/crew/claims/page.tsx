@@ -76,12 +76,12 @@ export default async function ClaimsPage() {
                 <div className="flex gap-2">
                   <form action={decideClaim.bind(null, claim.host.slug, claim.userId, true)}>
                     <Button type="submit" size="sm">
-                      Approve
+                      Approve<span className="sr-only"> {claim.host.name}</span>
                     </Button>
                   </form>
                   <form action={decideClaim.bind(null, claim.host.slug, claim.userId, false)}>
                     <Button type="submit" size="sm" variant="outline">
-                      Reject
+                      Reject<span className="sr-only"> {claim.host.name}</span>
                     </Button>
                   </form>
                 </div>
@@ -118,7 +118,7 @@ export default async function ClaimsPage() {
                 {request.message ? <p className="text-pretty">{request.message}</p> : null}
                 <form action={markTrySent.bind(null, request.id)}>
                   <Button type="submit" size="sm" variant="outline">
-                    Mark as sent
+                    Mark as sent<span className="sr-only">: {request.name}</span>
                   </Button>
                 </form>
               </li>

@@ -6,6 +6,7 @@ import type { ClaimStatus } from "@workspace/shared";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
+import { FormStatus } from "@/components/forms/feedback";
 import { checkWebsite, type ClaimState, enterCode } from "./actions";
 
 /** One claim: verified (open the dashboard) or the next step to prove it. */
@@ -37,22 +38,30 @@ export function VerifyPanel({ claim }: { claim: ClaimStatus }) {
             <Label htmlFor={`code-${claim.host.slug}`}>
               Code from the email to your {claim.domain ?? "club"} address
             </Label>
+            {/* One field for the whole code, so it can be pasted or filled in from the email
+                (modern web guidance, forms/sms-otp-form). */}
             <Input
               id={`code-${claim.host.slug}`}
               name="code"
+              type="text"
               inputMode="numeric"
-              maxLength={6}
+              autoComplete="one-time-code"
+              pattern="\s*\d{3}\s?\d{3}\s*"
+              title="The 6 digits from the email"
+              maxLength={7}
+              required
+              spellCheck={false}
+              enterKeyHint="done"
               className="max-w-40"
             />
           </div>
           <Button type="submit" disabled={codePending}>
             {codePending ? "Checking…" : "Verify"}
+            <span className="sr-only"> {claim.host.name}</span>
           </Button>
-          {codeState.message ? (
-            <p role="status" className="basis-full text-sm">
-              {codeState.message}
-            </p>
-          ) : null}
+          <div className="basis-full">
+            <FormStatus message={codeState.message} />
+          </div>
         </form>
       ) : claim.method === "website-code" ? (
         <div className="grid gap-3">
@@ -66,12 +75,9 @@ export function VerifyPanel({ claim }: { claim: ClaimStatus }) {
           <form action={siteAction} className="flex flex-wrap items-center gap-3">
             <Button type="submit" disabled={sitePending}>
               {sitePending ? "Checking…" : "Check my website"}
+              <span className="sr-only"> for {claim.host.name}</span>
             </Button>
-            {siteState.message ? (
-              <p role="status" className="text-sm">
-                {siteState.message}
-              </p>
-            ) : null}
+            <FormStatus message={siteState.message} />
           </form>
         </div>
       ) : (

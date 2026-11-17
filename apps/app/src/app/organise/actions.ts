@@ -11,6 +11,7 @@ import {
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getApi } from "@/lib/api";
+import { typedValues } from "@/lib/typed-values";
 import type { AddEventState } from "@/app/crew/actions";
 
 const slug = z.string().regex(/^[a-z0-9-]{1,120}$/);
@@ -18,6 +19,8 @@ const slug = z.string().regex(/^[a-z0-9-]{1,120}$/);
 export type ClaimState = {
   status: "idle" | "error" | "sent" | "verified" | "pending";
   message?: string;
+  /** What was typed, given back after an error so the form keeps it. */
+  values?: Partial<Record<string, string>>;
 };
 
 async function errorText(response: Response, fallback: string): Promise<string> {
@@ -38,12 +41,22 @@ export async function startClaim(_prev: ClaimState, formData: FormData): Promise
     ...(method === "domain-email" && { email: String(formData.get("email") ?? "").trim() }),
     ...(method === "crew" && { note: String(formData.get("note") ?? "").trim() }),
   });
-  if (!parsed.success)
-    return { status: "error", message: "Pick your club and fill in the fields." };
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: "Pick your club and fill in the fields.",
+      values: typedValues(formData),
+    };
+  }
   const api = await getApi();
   const { data, response } = await api.POST("/organise/claims", { body: parsed.data });
-  if (!data)
-    return { status: "error", message: await errorText(response, "Could not start the claim.") };
+  if (!data) {
+    return {
+      status: "error",
+      message: await errorText(response, "Could not start the claim."),
+      values: typedValues(formData),
+    };
+  }
   revalidatePath("/organise");
   return {
     status: method === "domain-email" ? "sent" : "pending",
@@ -61,7 +74,9 @@ export async function enterCode(
   _prev: ClaimState,
   formData: FormData,
 ): Promise<ClaimState> {
-  const parsed = claimVerify.safeParse({ code: String(formData.get("code") ?? "") });
+  // "123 456" works too, as on the sign-in screen.
+  const code = String(formData.get("code") ?? "").replace(/\s/g, "");
+  const parsed = claimVerify.safeParse({ code });
   if (!slug.safeParse(host).success || !parsed.success) {
     return { status: "error", message: "Enter the 6-digit code from the email." };
   }
@@ -113,6 +128,7 @@ export async function publishEvent(
       status: "error",
       message: "Please fix the highlighted fields.",
       errors: z.flattenError(parsed.error).fieldErrors,
+      values: typedValues(formData),
     };
   }
   const api = await getApi();
@@ -120,8 +136,13 @@ export async function publishEvent(
     params: { path: { host } },
     body: parsed.data,
   });
-  if (!data)
-    return { status: "error", message: await errorText(response, "Could not publish it.") };
+  if (!data) {
+    return {
+      status: "error",
+      message: await errorText(response, "Could not publish it."),
+      values: typedValues(formData),
+    };
+  }
   revalidatePath(`/organise/${host}`);
   return { status: "done", message: "Published.", slug: data.slug };
 }

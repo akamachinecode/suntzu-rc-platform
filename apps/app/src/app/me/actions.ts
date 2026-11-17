@@ -5,11 +5,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getApi } from "@/lib/api";
+import { typedValues } from "@/lib/typed-values";
 
 export type ProfileState = {
   status: "idle" | "success" | "error";
   message?: string;
   errors?: Partial<Record<string, string[]>>;
+  /** What was chosen, given back after an error so the form keeps it. */
+  values?: Partial<Record<string, string>>;
 };
 
 export async function updateProfile(
@@ -29,11 +32,18 @@ export async function updateProfile(
       status: "error",
       message: "Please fix the highlighted fields.",
       errors: z.flattenError(parsed.error).fieldErrors,
+      values: typedValues(formData),
     };
   }
   const api = await getApi();
   const { error } = await api.PATCH("/me", { body: parsed.data });
-  if (error) return { status: "error", message: "Could not save. Try again." };
+  if (error) {
+    return {
+      status: "error",
+      message: "Could not save. Try again.",
+      values: typedValues(formData),
+    };
+  }
   revalidatePath("/me");
   return { status: "success", message: "Saved." };
 }
@@ -47,7 +57,13 @@ export async function unfollow(key: FollowKey): Promise<void> {
 }
 
 export async function deleteAccount(formData: FormData): Promise<void> {
-  if (formData.get("confirm") !== "delete") return;
+  // "Delete" counts too: phones capitalise the first letter.
+  if (
+    String(formData.get("confirm") ?? "")
+      .trim()
+      .toLowerCase() !== "delete"
+  )
+    return;
   const api = await getApi();
   const { response } = await api.DELETE("/me");
   // Say it's gone only when it is.

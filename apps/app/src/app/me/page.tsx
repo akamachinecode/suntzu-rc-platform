@@ -169,11 +169,18 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
         <form action={deleteAccount} className="mt-5 flex flex-wrap items-end gap-3">
           <label className="grid gap-1 text-sm font-semibold">
             Type &ldquo;delete&rdquo; to confirm
+            {/* A confirmation word, not prose: no capital, correction or spelling marks on phones
+                (modern web guidance, forms/forms). "Delete" is accepted too. */}
             <input
               name="confirm"
               required
-              pattern="delete"
+              pattern="\s*[Dd][Ee][Ll][Ee][Tt][Ee]\s*"
+              title="Type the word delete"
               autoComplete="off"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              enterKeyHint="done"
               className="h-11 rounded-md border-2 border-foreground bg-background px-3"
             />
           </label>
