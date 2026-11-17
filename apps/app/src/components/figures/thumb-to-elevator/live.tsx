@@ -3,7 +3,8 @@
 import * as React from "react";
 import type { Flat, SolidPaths, Tone } from "@/components/iso/iso-kit";
 import { IsoFigure } from "@/components/iso/react/draw";
-import { asksForStillness, useInView, useReadout } from "@/components/iso/react/live";
+import { useFigurePause } from "@/components/figures/figure-pause";
+import { useInView, useReadout } from "@/components/iso/react/live";
 import { KNURL_LEVELS, frameOf, type Frame } from "./frame";
 import { REST, clamp, readoutOf, spokenOf, stepServo, type State } from "./model";
 import { HEIGHT, WIDTH } from "./view";
@@ -179,6 +180,8 @@ export function ThumbToElevatorLive(props: Props) {
   // One ref for the whole figure: the readout anchor, the in-view watch and the node lookup.
   const { anchor: root, say } = useReadout<HTMLDivElement>();
   const visible = useInView(root);
+  // Pause (in the frame) or reduced motion: no tour, and the drawing settles.
+  const { paused, still } = useFigurePause();
   const nodes = React.useRef<Nodes | null>(null);
   const state = React.useRef<State>({ ...REST });
   const target = React.useRef(0);
@@ -215,7 +218,7 @@ export function ThumbToElevatorLive(props: Props) {
     const tick = (now: number) => {
       const dt = last.current ? Math.min((now - last.current) / 1000, LONGEST_FRAME) : 1 / 60;
       last.current = now;
-      const calm = asksForStillness();
+      const calm = still();
       if (touring.current) {
         clock.current += dt;
         target.current = tourAt(clock.current);
@@ -230,7 +233,7 @@ export function ThumbToElevatorLive(props: Props) {
       frame.current = done ? 0 : requestAnimationFrame(tick);
     };
     frame.current = requestAnimationFrame(tick);
-  }, [draw]);
+  }, [draw, still]);
 
   const steer = React.useCallback(
     (stick: number) => {
@@ -256,7 +259,7 @@ export function ThumbToElevatorLive(props: Props) {
       stop();
       return;
     }
-    if (idle && !engaged && !asksForStillness()) {
+    if (idle && !engaged && !still() && !paused) {
       const timer = window.setTimeout(() => {
         clock.current = 0;
         touring.current = true;
@@ -269,7 +272,7 @@ export function ThumbToElevatorLive(props: Props) {
     }
     touring.current = false;
     run();
-  }, [visible, idle, engaged, run, stop]);
+  }, [visible, idle, engaged, paused, still, run, stop]);
 
   const stickAt = (clientX: number) => {
     const box = root.current?.querySelector("svg")?.getBoundingClientRect();

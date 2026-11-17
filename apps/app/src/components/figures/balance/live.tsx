@@ -3,7 +3,8 @@
 import * as React from "react";
 import type { SolidPaths, Tone } from "@/components/iso/iso-kit";
 import { IsoFigure } from "@/components/iso/react/draw";
-import { asksForStillness, useInView, useReadout } from "@/components/iso/react/live";
+import { useFigurePause } from "@/components/figures/figure-pause";
+import { useInView, useReadout } from "@/components/iso/react/live";
 import { beamOf, type BeamFrame } from "./geometry";
 import { BALANCED_AT, SLIDE, STOP_DEG, cgOf, leanOf, readoutOf, spokenOf } from "./model";
 import { HEIGHT, WIDTH } from "./view";
@@ -111,6 +112,8 @@ const START = beamOf(0, BALANCED_AT);
 export function BalanceLive({ label, back }: { label: string; back: React.ReactNode }) {
   const { anchor: root, say } = useReadout<HTMLDivElement>();
   const visible = useInView(root);
+  // Pause (in the frame) or reduced motion: no tour, and the drawing settles.
+  const { paused, still } = useFigurePause();
   const battery = React.useRef(BALANCED_AT);
   const target = React.useRef(BALANCED_AT);
   const lean = React.useRef(0);
@@ -147,7 +150,7 @@ export function BalanceLive({ label, back }: { label: string; back: React.ReactN
     const tick = (now: number) => {
       const dt = last.current ? Math.min((now - last.current) / 1000, LONGEST_FRAME) : 1 / 60;
       last.current = now;
-      const calm = asksForStillness();
+      const calm = still();
       if (touring.current) {
         clock.current += dt;
         target.current = tourAt(clock.current);
@@ -184,7 +187,7 @@ export function BalanceLive({ label, back }: { label: string; back: React.ReactN
       frame.current = !touring.current && settled ? 0 : requestAnimationFrame(tick);
     };
     frame.current = requestAnimationFrame(tick);
-  }, [draw]);
+  }, [draw, still]);
 
   const steer = React.useCallback(
     (mm: number) => {
@@ -209,7 +212,7 @@ export function BalanceLive({ label, back }: { label: string; back: React.ReactN
       stop();
       return;
     }
-    if (idle && !engaged && !asksForStillness()) {
+    if (idle && !engaged && !still() && !paused) {
       const timer = window.setTimeout(() => {
         clock.current = 0;
         touring.current = true;
@@ -222,7 +225,7 @@ export function BalanceLive({ label, back }: { label: string; back: React.ReactN
     }
     touring.current = false;
     run();
-  }, [visible, idle, engaged, run, stop]);
+  }, [visible, idle, engaged, paused, still, run, stop]);
 
   const mmAt = (clientX: number) => {
     const box = root.current?.querySelector("svg")?.getBoundingClientRect();

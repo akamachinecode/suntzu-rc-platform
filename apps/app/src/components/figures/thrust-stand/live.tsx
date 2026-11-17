@@ -3,7 +3,8 @@
 import * as React from "react";
 import type { SolidPaths } from "@/components/iso/iso-kit";
 import { IsoFigure } from "@/components/iso/react/draw";
-import { asksForStillness, useInView, useReadout } from "@/components/iso/react/live";
+import { useFigurePause } from "@/components/figures/figure-pause";
+import { useInView, useReadout } from "@/components/iso/react/live";
 import { frameOf } from "./frame";
 import { operatingAt, readoutOf, spokenOf } from "./model";
 import { HEIGHT, WIDTH } from "./view";
@@ -100,6 +101,8 @@ const REST = frameOf(0, 0);
 export function ThrustStandLive(props: Props) {
   const { anchor: root, say } = useReadout<HTMLDivElement>();
   const visible = useInView(root);
+  // Pause (in the frame) or reduced motion: no tour, and the drawing settles.
+  const { paused, still } = useFigurePause();
   const throttle = React.useRef(0);
   const target = React.useRef(0);
   const phase = React.useRef(0);
@@ -153,7 +156,7 @@ export function ThrustStandLive(props: Props) {
     const tick = (now: number) => {
       const dt = last.current ? Math.min((now - last.current) / 1000, LONGEST_FRAME) : 1 / 60;
       last.current = now;
-      const calm = asksForStillness();
+      const calm = still();
       if (touring.current) {
         clock.current += dt;
         target.current = tourAt(clock.current);
@@ -173,7 +176,7 @@ export function ThrustStandLive(props: Props) {
           : requestAnimationFrame(tick);
     };
     frame.current = requestAnimationFrame(tick);
-  }, [draw]);
+  }, [draw, still]);
 
   const steer = React.useCallback(
     (value: number) => {
@@ -198,7 +201,7 @@ export function ThrustStandLive(props: Props) {
       stop();
       return;
     }
-    if (idle && !engaged && !asksForStillness()) {
+    if (idle && !engaged && !still() && !paused) {
       const timer = window.setTimeout(() => {
         clock.current = 0;
         touring.current = true;
@@ -211,7 +214,7 @@ export function ThrustStandLive(props: Props) {
     }
     touring.current = false;
     run();
-  }, [visible, idle, engaged, run, stop]);
+  }, [visible, idle, engaged, paused, still, run, stop]);
 
   const throttleAt = (clientX: number) => {
     const box = root.current?.querySelector("svg")?.getBoundingClientRect();

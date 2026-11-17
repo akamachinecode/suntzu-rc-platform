@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { PauseIcon, PlayIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useStillness } from "@/components/iso/react/live";
 import {
   nextRatio,
   PHONE_FRAME_MS,
@@ -85,6 +87,12 @@ export function ToyStage({
 }) {
   const box = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
+  // Pause (WCAG 2.2.2): the scene loops for as long as it's on screen, so it can be stopped.
+  const [paused, setPaused] = useState(false);
+  const pausedNow = useRef(false);
+  const restart = useRef<() => void>(() => undefined);
+  const [built, setBuilt] = useState(false);
+  const calm = useStillness();
 
   useEffect(() => {
     const element = box.current;
@@ -125,6 +133,8 @@ export function ToyStage({
       if (!controls) return;
       if (still.matches) {
         controls.draw(controls.still);
+      } else if (pausedNow.current) {
+        controls.draw(clock); // stays where it was paused
       } else if (visible) {
         intervals = [];
         last = performance.now();
@@ -154,8 +164,10 @@ export function ToyStage({
       controls = built;
       clock = controls.still;
       controls.draw(clock);
+      setBuilt(true);
       run();
     };
+    restart.current = run;
     whenIdle(load);
 
     const near = new IntersectionObserver(
@@ -194,11 +206,32 @@ export function ToyStage({
   }, [scene]);
 
   return (
-    <div ref={box} role="img" aria-label={label} className={cn("relative", className)}>
-      <canvas
-        ref={canvas}
-        className="absolute inset-0 size-full drop-shadow-[6px_6px_0_var(--foreground)]"
-      />
+    <div className={cn("relative", className)}>
+      <div ref={box} role="img" aria-label={label} className="absolute inset-0">
+        <canvas
+          ref={canvas}
+          className="absolute inset-0 size-full drop-shadow-[6px_6px_0_var(--foreground)]"
+        />
+      </div>
+      {built && !calm ? (
+        <button
+          type="button"
+          onClick={() => {
+            pausedNow.current = !paused;
+            setPaused(!paused);
+            restart.current();
+          }}
+          className="absolute right-2 bottom-2 tap inline-flex min-h-8 items-center gap-1.5 rounded-full border-2 border-foreground bg-panel px-3 py-1 text-sm font-semibold shadow-hard-sm"
+        >
+          {paused ? (
+            <PlayIcon aria-hidden="true" className="size-3.5" />
+          ) : (
+            <PauseIcon aria-hidden="true" className="size-3.5" />
+          )}
+          {paused ? "Play" : "Pause"}
+          <span className="sr-only"> the 3D scene</span>
+        </button>
+      ) : null}
     </div>
   );
 }
