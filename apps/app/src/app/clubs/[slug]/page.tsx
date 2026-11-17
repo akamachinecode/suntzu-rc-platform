@@ -68,7 +68,7 @@ export default async function ClubPage({ params }: PageProps<"/clubs/[slug]">) {
             <ShieldCheck aria-hidden className="size-4" /> Verified: its organisers publish here
           </p>
         ) : null}
-        <h1 className="mt-4 max-w-4xl font-wide text-5xl leading-[0.92] font-black tracking-tight text-balance sm:text-7xl">
+        <h1 className="mt-4 max-w-4xl font-wide text-display leading-[0.92] font-black tracking-tight text-balance">
           {host.name}
         </h1>
         {host.summary ? (

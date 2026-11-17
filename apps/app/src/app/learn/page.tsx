@@ -123,7 +123,7 @@ export default function LearnPage() {
     <>
       <header className="mx-auto grid max-w-7xl gap-12 px-5 pt-14 pb-20 sm:px-6 sm:pt-24 md:grid-cols-[1.2fr_1fr] md:items-center md:gap-16">
         <div>
-          <h1 className="font-wide text-5xl leading-[0.92] font-black tracking-tight text-balance sm:text-7xl">
+          <h1 className="font-wide text-display leading-[0.92] font-black tracking-tight text-balance">
             Learn RC with people who{" "}
             <Tag tone="primary" className="mt-2">
               still crash.

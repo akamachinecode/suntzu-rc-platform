@@ -108,7 +108,7 @@ export default function HomePage() {
           drift word's own top padding equals the top padding. */}
       <section
         aria-labelledby="crew-title"
-        className="overflow-hidden px-5 pt-20 pb-10 sm:px-6 sm:pt-28 sm:pb-18"
+        className="overflow-x-clip px-5 pt-20 pb-10 sm:px-6 sm:pt-28 sm:pb-18"
       >
         <DecalSheet decals={SERVICES.map(({ id, short, tag }) => ({ id, short, tag }))} />
       </section>

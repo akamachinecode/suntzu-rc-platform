@@ -14,7 +14,7 @@ export function PageHeader({
 }) {
   return (
     <header className={cn("mx-auto max-w-7xl px-5 pt-16 pb-12 sm:px-6 sm:pt-24", className)}>
-      <h1 className="max-w-4xl font-wide text-5xl leading-[0.92] font-black tracking-tight text-balance sm:text-7xl">
+      <h1 className="max-w-4xl font-wide text-display leading-[0.92] font-black tracking-tight text-balance">
         {title}
       </h1>
       <p className="mt-6 max-w-[56ch] text-lg text-pretty sm:text-xl">{lead}</p>

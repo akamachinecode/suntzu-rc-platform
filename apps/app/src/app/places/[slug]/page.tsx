@@ -89,7 +89,7 @@ export default async function PlacePage({ params }: PageProps<"/places/[slug]">)
             </li>
           ) : null}
         </ul>
-        <h1 className="mt-4 max-w-4xl font-wide text-5xl leading-[0.92] font-black tracking-tight text-balance sm:text-7xl">
+        <h1 className="mt-4 max-w-4xl font-wide text-display leading-[0.92] font-black tracking-tight text-balance">
           {place.name}
         </h1>
         <p className="mt-4 text-xl">

@@ -29,7 +29,7 @@ export default async function MePage({ searchParams }: PageProps<"/me">) {
   return (
     <>
       <header className="mx-auto max-w-7xl px-5 pt-16 pb-10 sm:px-6 sm:pt-24">
-        <h1 className="font-wide text-5xl leading-[0.92] font-black tracking-tight sm:text-7xl">
+        <h1 className="font-wide text-display leading-[0.92] font-black tracking-tight">
           {me.name ? `Hi, ${me.name.split(" ")[0]}.` : "My SunTzu RC"}
         </h1>
         <p className="mt-6 max-w-[56ch] text-lg text-pretty">
