@@ -82,7 +82,7 @@ Everything works fully in the last two years of Safari (iOS and Mac), Chrome, Fi
 ## Slices
 
 - [x] 1. Security and dates: sign-in redirect, events' time zones (event page, crew dates, Panhandle on Central time), the widget escapes links, event links must be `http(s)` (blocked by: —)
-- [ ] 2. Checking tools: Playwright + axe-core `pnpm test:a11y` locally and in CI, `.claude/launch.json` attaches to dekit, the browser rule in `AGENTS.md` (blocked by: 1)
+- [x] 2. Checking tools: Playwright + axe-core `pnpm test:a11y` locally and in CI, `.claude/launch.json` attaches to dekit, the browser rule in `AGENTS.md` (blocked by: 1)
 - [ ] 3. Forms: keep values, linked errors, focus on the first error and on each new step, announced status, the organiser code field, the delete confirmation, required marks, clear names for repeated buttons (blocked by: 2)
 - [ ] 4. Site-wide accessibility: skip link, focus rings in high contrast, menu and search return focus, current page in the desktop menu, anchors clear the header, reduced motion for dialogs and placeholders, the copy button, `color-scheme`, "Near me" explains itself (blocked by: 3)
 - [ ] 5. Pause buttons on the moving figures and 3D scenes (blocked by: 4)

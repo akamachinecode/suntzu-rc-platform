@@ -77,6 +77,8 @@ A **bit** is the smallest piece of behaviour someone can trigger and check end t
 - **Read `docs/EVENTS-ENGINE.md`** before working on events, sources or ingestion. The plan: an engine that monitors the web for RC events (Florida first), merges duplicates, verifies them and publishes them; the worker that runs it will live in `apps/api`. **`docs/ROADMAP.md`** is the approved build order (what we index, the community ladder, tracks and milestones): tick items off there as they land.
 - **Content** is typed data in `apps/app/src/content/` (services, rules, history, guides). Events and places live in the database now (the engine, the census, the crew and organisers). Every factual item carries a source link; keep it that way and re-check dates before editing.
 - **Anatomy figures**: use the project skill in `.claude/skills/anatomy` (read its `SKILL.md`). The kit is vendored in `apps/app/src/components/iso/`; figures live in `apps/app/src/components/figures/<name>/` following `references/react.md`. Light theme only, XT60 yellow is the single lit accent (see `.servo-figure` in `apps/app/src/app/globals.css`). Run the line check before shipping a figure.
+- **Browser support:** everything works fully in the last two years of Safari (iOS and Mac), Chrome, Firefox and Edge: Baseline "Widely available" features. Newer features are only extras that quietly do nothing where they're missing (feature-detect, `@supports`); no polyfills (`docs/DECISIONS.md`, 2026-11-17, spec 0010).
+- **Accessibility:** WCAG 2.2 AA. A page change must keep `pnpm test:a11y` green (run it with the site running; CI runs it in four browsers). An axe finding is fixed in the page; only a checked false positive goes into `ACCEPTED` in `apps/app/e2e/a11y.spec.ts`, with its reason.
 - **Versions:** always the latest stable release of every dependency, runtime and service. Apply security and important-fix releases promptly; release candidates and betas don't count. Major upgrades get an entry in `docs/DECISIONS.md` (see 2026-10-22).
 - **Forms** (`/contact`, builds on `/community`, `/try`, `/submit`) deliver to the crew's inbox at `/crew` (and by email to `CREW_INBOX`); public ones check Cloudflare Turnstile in production.
 - **Accounts** have no passwords: one email with a link and a 6-digit code (spec 0006), or Google. The crew is whoever `CREW_EMAILS` lists. Locally, emails are printed in the API's console (`MAIL_TRANSPORT=log`).
@@ -95,6 +97,7 @@ A **bit** is the smallest piece of behaviour someone can trigger and check end t
 | `pnpm lint`      | ESLint                                                            |
 | `pnpm typecheck` | TypeScript type checking                                          |
 | `pnpm test`      | Unit tests (Vitest)                                               |
+| `pnpm test:a11y` | Accessibility check of every public page (Playwright + axe-core)  |
 | `pnpm db:seed`   | Load the events engine's starting data into the local database    |
 | `pnpm engine`    | Run the events engine once (`pnpm engine <source>` for one)       |
 | `pnpm census`    | Load the FAA registers and ZIP codes (`pnpm census fria` for one) |

@@ -10,7 +10,8 @@ import {
   Popup,
   setWorkerUrl,
 } from "maplibre-gl";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { canDrawMaps, MAP_UNAVAILABLE, MapUnavailable } from "@/components/map-unavailable";
 import { DISCIPLINE_COLORS, formatWhen, formatWhere } from "@/lib/events";
 
 // MapLibre draws tiles in a web worker it finds next to its own file, which a bundler moves.
@@ -61,25 +62,33 @@ export function EventsMap({
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<MapLibre | null>(null);
   const markers = useRef<Marker[]>([]);
+  // Checked once: the map is only ever drawn in the browser (next/dynamic with ssr: false).
+  const [drawable] = useState(canDrawMaps);
 
   useEffect(() => {
-    if (!container.current) return;
-    const instance = new MapLibre({
-      container: container.current,
-      style: STYLE,
-      center: FLORIDA,
-      zoom: 5.4,
-      // Two fingers to move on phones, Ctrl/⌘ + scroll on computers: the page keeps scrolling.
-      cooperativeGestures: true,
-      attributionControl: { compact: true },
-    });
+    if (!container.current || !drawable) return;
+    let instance: MapLibre;
+    try {
+      instance = new MapLibre({
+        container: container.current,
+        style: STYLE,
+        center: FLORIDA,
+        zoom: 5.4,
+        // Two fingers to move on phones, Ctrl/⌘ + scroll on computers: the page keeps scrolling.
+        cooperativeGestures: true,
+        attributionControl: { compact: true },
+      });
+    } catch {
+      container.current.textContent = MAP_UNAVAILABLE;
+      return;
+    }
     instance.addControl(new NavigationControl({ showCompass: false }), "top-right");
     map.current = instance;
     return () => {
       instance.remove();
       map.current = null;
     };
-  }, []);
+  }, [drawable]);
 
   useEffect(() => {
     const instance = map.current;
@@ -147,6 +156,8 @@ export function EventsMap({
       instance.fitBounds(bounds, { padding: 60, maxZoom: 10, duration: 600 });
     }
   }, [events, places, origin]);
+
+  if (!drawable) return <MapUnavailable />;
 
   return (
     <div

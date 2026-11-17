@@ -19,6 +19,10 @@ tfplan
 *.tfplan
 crash.log
 
+# Playwright results and reports (pnpm test:a11y)
+test-results/
+playwright-report/
+
 # events engine snapshots (pnpm engine)
 .snapshots/
 

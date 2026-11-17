@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
+    "test:a11y": "playwright test --project=chromium --project=phone",
     "covers": "UPDATE_COVERS=1 vitest run src/components/home/covers src/components/learn/plates"
   },
   "dependencies": {
@@ -42,6 +43,8 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.65.1",
     "@tailwindcss/turbopack": "4.3.3",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",

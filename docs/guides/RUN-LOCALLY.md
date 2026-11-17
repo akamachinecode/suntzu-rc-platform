@@ -69,7 +69,7 @@ pnpm dev
 pnpm check
 ```
 
-It runs everything CI runs: formatting, lint, types, tests and a full build. `pnpm format` fixes the formatting by itself. Then follow [Your first contribution](./FIRST-CONTRIBUTION.md).
+It runs formatting, lint, types, tests and a full build. `pnpm format` fixes the formatting by itself. CI also checks every public page for accessibility in four browsers; with `pnpm dev` running, `pnpm test:a11y` does the same in Chromium and a phone (the first time, `pnpm --filter @workspace/app exec playwright install chromium`). Then follow [Your first contribution](./FIRST-CONTRIBUTION.md).
 
 ## When something goes wrong
 
