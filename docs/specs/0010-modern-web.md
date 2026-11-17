@@ -1,6 +1,6 @@
 # 0010 — Modern web: safe, accessible and fast for everyone
 
-- **Status:** Approved 2026-11-17
+- **Status:** Approved 2026-11-17 · Done 2026-11-17 (pull requests #39–#47, merged by the owner's request)
 - **Requested by:** the owner (Alejandro), 2026-11-17
 - **Approved by:** the owner, 2026-11-17 ("yes to all, go ahead")
 
@@ -91,7 +91,7 @@ Everything works fully in the last two years of Safari (iOS and Mac), Chrome, Fi
 - [x] 8. Security headers and clean traces: report-only Content-Security-Policy, COOP, HSTS on subdomains, no location or token in traces (blocked by: 7)
 - [x] 9. Installable site: manifest and app icons, drawn from the wordmark and approved by the owner (blocked by: 8)
 
-Each slice's pull request is stacked on the one before, so the owner merges them in order.
+Each slice's pull request was stacked on the one before and merged in order on 2026-11-17, after the Next.js 16.4.5 security update (#38).
 
 ## Open questions
 
