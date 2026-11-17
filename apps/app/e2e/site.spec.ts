@@ -55,8 +55,23 @@ test("closing search returns the focus to the Search link", async ({ page, isMob
 });
 
 test("a link to a section leaves its heading clear of the sticky header", async ({ page }) => {
-  await page.goto("/learn#rules");
-  await page.waitForTimeout(800);
+  await page.goto("/learn");
+  await page.evaluate(() => document.fonts.ready);
+  // An in-page link, as the footer's "Rules and permits, sorted" is on this page.
+  await page.evaluate(() => {
+    location.hash = "rules";
+  });
+  // In-page links glide: wait until the page stops moving.
+  await expect
+    .poll(
+      async () => {
+        const before = await page.evaluate(() => scrollY);
+        await page.waitForTimeout(150);
+        return (await page.evaluate(() => scrollY)) === before;
+      },
+      { timeout: 5_000 },
+    )
+    .toBe(true);
   const header = await page.locator("body > header").boundingBox();
   const target = await page.locator("#rules").boundingBox();
   expect(target!.y).toBeGreaterThanOrEqual(header!.y + header!.height - 1);
