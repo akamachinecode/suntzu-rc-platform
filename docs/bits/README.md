@@ -13,7 +13,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [notes.create](./notes.create.md)                       | A user adds a note (example)                                             | read in code | none yet                            |
 | [notes.delete](./notes.delete.md)                       | A user deletes one of their notes (example)                              | read in code | none yet                            |
 | [events.list](./events.list.md)                         | A visitor finds events                                                   | verified     | none yet                            |
-| [events.get](./events.get.md)                           | A visitor opens an event's page                                          | verified     | none yet                            |
+| [events.get](./events.get.md)                           | A visitor opens an event's page                                          | verified     | `events.test.ts`                    |
 | [events.calendar](./events.calendar.md)                 | Someone subscribes to the events calendar                                | read in code | `ics-writer.test.ts`                |
 | [events.event-calendar](./events.event-calendar.md)     | A visitor adds one event to their calendar                               | read in code | `ics-writer.test.ts`                |
 | [places.list](./places.list.md)                         | A visitor browses every field and track                                  | verified     | none yet                            |
@@ -23,7 +23,7 @@ A system is its catalog of bits. Reading this catalog is the fastest way to know
 | [db.seed](./db.seed.md)                                 | The starting data is loaded                                              | read in code | none yet                            |
 | [engine.resolve](./engine.resolve.md)                   | What the sources say becomes events                                      | verified     | `match.test.ts`                     |
 | [auth.email-link](./auth.email-link.md)                 | Someone signs in with a link by email                                    | verified     | `sign-in-code.test.ts`              |
-| [auth.email-code](./auth.email-code.md)                 | Someone signs in by typing the code from the email                       | verified     | `sign-in-code.test.ts`              |
+| [auth.email-code](./auth.email-code.md)                 | Someone signs in by typing the code from the email                       | verified     | `sign-in-code.test.ts`, `safe-next` |
 | [auth.google](./auth.google.md)                         | Someone signs in with Google                                             | not verified | none yet (needs Google credentials) |
 | [account.get](./account.get.md)                         | A member opens My SunTzu RC                                              | verified     | none yet                            |
 | [account.update](./account.update.md)                   | A member changes their settings                                          | verified     | none yet                            |

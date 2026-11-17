@@ -13,9 +13,12 @@ export async function GET(_request: Request, { params }: RouteContext<"/embed/cl
   if (!/^[a-z0-9-]{1,120}$/.test(slug)) return new Response("Not found", { status: 404 });
   const { data: host } = await getPublicApi().GET("/hosts/{slug}", { params: { path: { slug } } });
   if (!host) return new Response("Not found", { status: 404 });
-  const page = (path: string) => new URL(path, SITE.url).toString();
+  // Every link is built from our own URL and escaped, even though slugs are ours too.
+  const page = (path: string) => escape(new URL(path, SITE.url).toString());
   const items = host.events.slice(0, 8).map(
-    (event) => `<li><a href="${page(`/events/${event.slug}`)}" target="_blank" rel="noopener">
+    (
+      event,
+    ) => `<li><a href="${page(`/events/${encodeURIComponent(event.slug)}`)}" target="_blank" rel="noopener">
       <span class="when${event.status === "cancelled" ? " off" : ""}">${escape(formatWhen(event))}</span>
       <span class="name">${escape(event.name)}${event.status === "cancelled" ? " · Cancelled" : ""}</span>
       <span class="where">${escape(formatWhere(event))}</span></a></li>`,
@@ -30,7 +33,7 @@ li a{display:grid;gap:2px;padding:12px 14px;border-bottom:1px solid #00000022;te
 .when{font-weight:800;font-size:14px}.off{text-decoration:line-through}.name{font-size:15px}.where{font-size:13px;color:#555}
 footer{padding:10px 14px;font-size:12px}.empty{padding:14px}
 </style></head><body>
-<header><h1>${escape(host.name)}: upcoming</h1><a href="${page(`/clubs/${host.slug}`)}" target="_blank" rel="noopener" style="font-size:13px;font-weight:700">Follow on SunTzu RC</a></header>
+<header><h1>${escape(host.name)}: upcoming</h1><a href="${page(`/clubs/${encodeURIComponent(host.slug)}`)}" target="_blank" rel="noopener" style="font-size:13px;font-weight:700">Follow on SunTzu RC</a></header>
 ${items.length ? `<ul>${items.join("")}</ul>` : `<p class="empty">No upcoming events yet.</p>`}
 <footer>Calendar by <a href="${page("/")}" target="_blank" rel="noopener">SunTzu RC</a>, free for RC clubs in Florida.</footer>
 </body></html>`;
@@ -38,8 +41,9 @@ ${items.length ? `<ul>${items.join("")}</ul>` : `<p class="empty">No upcoming ev
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "public, max-age=300",
-      // Meant to be framed by the club's own site.
-      "Content-Security-Policy": "frame-ancestors *",
+      // Meant to be framed by the club's own site. Plain HTML: no scripts, no requests, no forms.
+      "Content-Security-Policy":
+        "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors *",
     },
   });
 }

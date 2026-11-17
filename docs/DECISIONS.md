@@ -12,6 +12,21 @@ Format:
 - **Impact:** new env vars, services, costs, risks, follow-ups for engineering.
 ```
 
+## 2026-11-17 — Modern web guidance: safe, accessible and fast for everyone (spec 0010)
+
+- **What:** the owner installed Google Chrome's [modern web guidance](https://github.com/GoogleChrome/modern-web-guidance) for Claude Code and asked for an audit of the whole site against it, then approved fixing everything it found (`docs/specs/0010-modern-web.md`), in nine stacked pull requests. Decisions the spec records:
+  - **Browser support:** everything works fully in the last two years of Safari (iOS and Mac), Chrome, Firefox and Edge (Baseline "Widely available"); newer features only as extras that quietly do nothing where missing; no polyfills. Written in `AGENTS.md` in slice 2.
+  - **Visible changes approved:** a "Skip to content" link for keyboard users, a Pause button on every moving figure and 3D scene, one line next to "Near me" saying the location stays on the phone, radio buttons instead of four-option dropdowns, and an app icon drawn from the wordmark for the owner to approve.
+  - **Tools:** Playwright and axe-core as dev dependencies for `pnpm test:a11y`, run in CI (`.github/workflows/ci.yml` edited at the owner's request).
+  - **Out of scope:** native `<dialog>`/`popover` instead of Radix, view transitions, passkeys, dark mode, CloudWatch RUM, enforcing the Content-Security-Policy.
+- **Slice 1 (security and dates):**
+  - **Sign-in only lands on this site.** `/sign-in?next=` was checked with `startsWith("/") && !startsWith("//")`, but browsers read `/\evil.com` and `/\t/evil.com` as `//evil.com`: after typing the code, `window.location.assign` would have taken the member to another site (the email link and Google were safe, Better Auth checks `trustedOrigins`). `safeNext` (`apps/app/src/lib/safe-next.ts`) parses `next` as a URL and keeps it only on our origin.
+  - **"Over" in the event's own time zone.** The event page compared the last day with the UTC date, so from 7–8 pm in Florida an event on its last day lost "Going" and "Add to calendar". `dateIn(timeZone)` (`apps/app/src/lib/events.ts`) gives today's date where the event happens (`event.timezone`; the Panhandle is on Central time). The crew inbox's dates use Florida time instead of the server's.
+  - **Links people type must be `http(s)`** (`z.httpUrl()` in `packages/shared`: corrections, messages, submissions, the crew's and organisers' event edits, a club's website). `z.url()` accepted `javascript:`; React blocks it in `href` today, this is defence in depth. The engine already kept only `http(s)` links, and the API's response shapes are unchanged.
+  - **The club widget** escapes its links too and sends its own strict policy (`default-src 'none'`, inline styles, no forms, any site may frame it).
+- **Why:** the audit (2026-11-17) found these against the guides `security/validate-origins`, `js/coordinate-global-events` and `security/security`.
+- **Impact:** no new dependencies or variables in slice 1. **Itaca engineering:** the redirect check is in `apps/app`, nothing in `apps/api/src/auth` changed. The owner approved, as engineer, the tracing clean-up and the Content-Security-Policy of later slices.
+
 ## 2026-11-17 — Grafana Cloud reads CloudWatch through a read-only role
 
 - **What:** one operations dashboard in Grafana Cloud (stack `alejandroelbaz.grafana.net`, free plan) that reads this account's CloudWatch: metrics, alarm history, the project's logs and its traces (spec `docs/specs/0009-grafana-dashboard.md`). The first piece is the IAM role `rc-landing-grafana-read-only` in `infra/bootstrap/grafana.tf`, applied on 2026-11-17:

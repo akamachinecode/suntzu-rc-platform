@@ -111,12 +111,27 @@ export function runsBetween(
 
 /** Today's date in Florida as YYYY-MM-DD, the same in every browser and on the server. */
 export function floridaDate(now = new Date()): string {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(now);
+  return dateIn("America/New_York", now);
+}
+
+/**
+ * Today's date as YYYY-MM-DD where an event happens (its IANA time zone: the Panhandle is on
+ * Central time), so "is it over?" turns at midnight there, not at midnight UTC. An unknown zone
+ * falls back to Florida's.
+ */
+export function dateIn(timeZone: string, now = new Date()): string {
+  let format: Intl.DateTimeFormat;
+  try {
+    format = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  } catch {
+    return floridaDate(now);
+  }
+  const parts = format.formatToParts(now);
   const part = (type: string) => parts.find((item) => item.type === type)?.value ?? "";
   return `${part("year")}-${part("month")}-${part("day")}`;
 }

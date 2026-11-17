@@ -12,6 +12,7 @@ import { getPublicApi } from "@/lib/api";
 import {
   DISCIPLINE_COLORS,
   DISCIPLINE_LABELS,
+  dateIn,
   formatDate,
   formatWhen,
   formatWhere,
@@ -153,7 +154,8 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
   if (!event) notFound();
 
   const page = new URL(`/events/${event.slug}`, SITE.url).toString();
-  const today = new Date().toISOString().slice(0, 10);
+  // "Over" turns at midnight where the event happens, not at midnight UTC (8 pm in Florida).
+  const today = dateIn(event.timezone);
   const past = event.status === "held" || (exactLastDay(event) ?? "9999") < today;
   const history = historyLines(event.history);
   const next = event.editions.find((edition) => edition.startDate > event.startDate);

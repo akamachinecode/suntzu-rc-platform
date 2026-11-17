@@ -23,10 +23,10 @@ export const eventPatch = z
     datePrecision,
     dateText: z.string().trim().max(80).nullable(),
     status: eventStatus,
-    url: z.url().nullable(),
+    url: z.httpUrl().nullable(),
     entryFee: z.string().trim().max(120).nullable(),
-    entryUrl: z.url().nullable(),
-    resultsUrl: z.url().nullable(),
+    entryUrl: z.httpUrl().nullable(),
+    resultsUrl: z.httpUrl().nullable(),
     summary: z.string().trim().max(600),
     sanctions: z.array(z.string().trim().min(1).max(40)).max(12),
     classes: z.array(z.string().trim().min(1).max(60)).max(40),
@@ -115,7 +115,9 @@ export const manualEvent = z
     placeText: z.string().trim().max(200).optional(),
     // The crew can name the host; organisers always publish as their own club.
     host: z.string().trim().max(120).optional(),
-    url: z.union([z.literal(""), z.url("Paste a full link, starting with https://")]).optional(),
+    url: z
+      .union([z.literal(""), z.httpUrl("Paste a full link, starting with https://")])
+      .optional(),
     entryFee: z.string().trim().max(120).optional(),
     summary: z.string().trim().max(600).optional(),
     beginnerFriendly: z.boolean().optional(),
