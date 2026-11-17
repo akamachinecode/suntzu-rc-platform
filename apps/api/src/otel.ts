@@ -34,6 +34,7 @@ import {
   TracerProvider,
 } from "@opentelemetry/sdk-trace";
 import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
+import { ScrubUrls } from "./common/scrub-urls.js";
 
 if (process.env.OTEL_SDK_DISABLED !== "true") {
   // Express, NestJS and pg are CommonJS packages imported from this ES module project: this hook
@@ -51,8 +52,12 @@ if (process.env.OTEL_SDK_DISABLED !== "true") {
     sampler: new ParentBasedSampler({
       root: new TraceIdRatioBasedSampler(ratio >= 0 && ratio <= 1 ? ratio : 1),
     }),
-    // OTEL_EXPORTER_OTLP_ENDPOINT, default http://localhost:4318.
-    spanProcessors: [new BatchSpanProcessor({ exporter: new OTLPTraceExporter() })],
+    // OTEL_EXPORTER_OTLP_ENDPOINT, default http://localhost:4318. URLs are cleaned first (query
+    // values, calendar secrets): the Collector drops query strings too, but not secrets in a path.
+    spanProcessors: [
+      new ScrubUrls(),
+      new BatchSpanProcessor({ exporter: new OTLPTraceExporter() }),
+    ],
   });
 
   context.setGlobalContextManager(new AsyncLocalStorageContextManager());

@@ -97,10 +97,22 @@ aws cloudwatch set-alarm-state --alarm-name rc-landing-production-api-5xx --stat
 
 `apps/app` and `apps/api` record traces with OpenTelemetry (`apps/app/src/instrumentation.ts`, `apps/api/src/otel.ts`) and send them to an OpenTelemetry Collector that runs next to each one. The Collector removes query strings, IP addresses, email addresses and tokens, then sends the traces to CloudWatch, signed with the service's role (no keys).
 
+- **Cleaned before they leave the app, too:** both apps run `ScrubUrls` before their exporter (`apps/app/src/lib/scrub-urls.ts`, `apps/api/src/common/scrub-urls.ts`). It replaces query values with `[redacted]` (the names stay) and a calendar feed's secret with `[secret]`. The Collector drops query strings but not secrets in a path, which is how a member's `/calendar/<secret>.ics` reached CloudWatch until 2026-11-17 (spec 0010).
+
 - **Every request is traced**, except health checks. When traffic grows, keep a share instead: `"trace_sample_ratio": 0.1` in `alerts` keeps 10% of new traces (a request from the app always follows the app's decision into the API). Errors stay in the logs either way.
 - **Locally** tracing is off (`OTEL_SDK_DISABLED=true` in `.env`).
 - **Once per AWS account:** `infra/bootstrap` turns on Transaction Search (`traces.tf`). Then set how long spans are kept: `aws logs put-retention-policy --log-group-name aws/spans --retention-in-days 30`.
 - **A copy for another tool** (Grafana Cloud, Honeycomb, any OTLP/HTTP backend) is a decision for Itaca engineering, written in `docs/DECISIONS.md`, because the data leaves this account. It is set per service with `telemetry.remote` in `infra/main.tf`.
+
+### Content-Security-Policy reports
+
+Every page carries a `Content-Security-Policy-Report-Only` header (`apps/app/next.config.ts`, production builds only): browsers report what it would block to `/api/csp-report` and block nothing. Each report is one log line of the app, `level: "warn"`, so the error alarm doesn't count it. To read them, in CloudWatch Logs Insights on the app's log group:
+
+```text
+filter msg = "csp-violation" | stats count(*) by directive, blocked, page | sort count(*) desc
+```
+
+A report from our own pages means the policy misses something the site uses: add the origin to the policy. Reports for origins nobody recognises (browser extensions add their own) can be ignored. Once a few weeks pass with nothing new, the policy can be enforced (spec 0010, open question for the owner).
 
 ### Grafana
 
