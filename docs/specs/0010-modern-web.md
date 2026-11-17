@@ -89,7 +89,7 @@ Everything works fully in the last two years of Safari (iOS and Mac), Chrome, Fi
 - [x] 6. Speed: headline before data (Suspense), wide-heading font fallback, 3D scenes yield while building, maps load near view, measured before and after (blocked by: 5)
 - [x] 7. Layout polish: event cards by container, footer wordmark, fluid headings, CSS clean-ups (blocked by: 6)
 - [x] 8. Security headers and clean traces: report-only Content-Security-Policy, COOP, HSTS on subdomains, no location or token in traces (blocked by: 7)
-- [ ] 9. Installable site: manifest and app icons, drawn from the wordmark and approved by the owner (blocked by: 8)
+- [x] 9. Installable site: manifest and app icons, drawn from the wordmark and approved by the owner (blocked by: 8)
 
 Each slice's pull request is stacked on the one before, so the owner merges them in order.
 

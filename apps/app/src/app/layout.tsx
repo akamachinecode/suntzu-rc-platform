@@ -26,6 +26,8 @@ export const viewport: Viewport = {
   viewportFit: "cover",
   // The design is light only: browsers draw their own controls light and don't darken the page.
   colorScheme: "only light",
+  // The browser's bar in the page's primer gray (--background), on phones and installed.
+  themeColor: "#e4e4df",
 };
 
 export const metadata: Metadata = {
@@ -35,6 +37,11 @@ export const metadata: Metadata = {
     template: `%s · ${SITE.name}`,
   },
   description: SITE.description,
+  // The installable app's icons (app/manifest.ts); the favicon is app/favicon.ico.
+  icons: {
+    icon: [{ url: "/icons/app-192.png", type: "image/png", sizes: "192x192" }],
+    apple: [{ url: "/icons/apple-touch-180.png", sizes: "180x180" }],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
