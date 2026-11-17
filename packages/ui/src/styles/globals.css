@@ -66,6 +66,8 @@
 }
 
 :root {
+  /* Light only, by design: browsers draw their controls light and don't darken the page. */
+  color-scheme: only light;
   /* SunTzu RC brand. Primer grey shell, ink, XT60 connector yellow, cutting-mat green. */
   --background: #e4e4df;
   --foreground: #000000;

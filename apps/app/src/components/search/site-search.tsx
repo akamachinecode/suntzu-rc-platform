@@ -4,7 +4,7 @@ import type { SearchResponse } from "@workspace/shared";
 import { ArrowRight, History, type LucideIcon, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
@@ -63,7 +63,16 @@ export function SiteSearch() {
   const [active, setActive] = useState(-1);
   const [recent, setRecent] = useState<string[]>([]);
 
+  // Where the focus goes back when search closes. Radix sends it to a Dialog.Trigger, and search
+  // has none (it opens from a link, the phone menu or a shortcut), so it fell to the page.
+  const returnTo = useRef<HTMLElement | null>(null);
+  const button = useRef<HTMLAnchorElement>(null);
+
   function show() {
+    returnTo.current =
+      document.activeElement instanceof HTMLElement && document.activeElement !== document.body
+        ? document.activeElement
+        : null;
     setQuery("");
     setResponse(null);
     setStatus("idle");
@@ -228,6 +237,7 @@ export function SiteSearch() {
     <>
       <Button asChild variant="outline" className="max-sm:size-11 max-sm:px-0">
         <Link
+          ref={button}
           href="/search"
           onClick={(event) => {
             event.preventDefault();
@@ -249,6 +259,11 @@ export function SiteSearch() {
       <Dialog open={open} onOpenChange={(next) => (next ? show() : close())}>
         <DialogContent
           showCloseButton={false}
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            const target = returnTo.current?.isConnected ? returnTo.current : button.current;
+            target?.focus();
+          }}
           className="top-0 left-0 flex h-dvh max-w-none translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-foreground bg-background p-0 ring-0 sm:top-[10vh] sm:left-1/2 sm:h-auto sm:max-h-[80vh] sm:max-w-2xl sm:-translate-x-1/2 sm:rounded-xl sm:border-2 sm:bg-panel sm:shadow-hard-lg"
         >
           <DialogTitle className="sr-only">Search SunTzu RC</DialogTitle>

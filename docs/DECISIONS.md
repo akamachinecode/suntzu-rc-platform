@@ -38,7 +38,19 @@ Format:
   - **Phones:** email and link fields don't spellcheck; the organiser's code field is one field with `autocomplete="one-time-code"` and takes "123 456"; the account deletion accepts "delete" or "Delete" with no autocorrect; search ignores Enter while an Asian keyboard is still composing (Safari's `keyCode` 229).
   - **Buttons that repeat in a list** (crew, organisers, notes) carry the item's name in hidden text, so a screen reader can tell "Approve Ace of Aces" from the next one.
   - **Tests:** `apps/app/e2e/forms.spec.ts` (contact, try, sign-in, correction), run with `pnpm test:a11y` and in CI.
-- **Why:** the audit (2026-11-17) found these against the guides `security/validate-origins`, `js/coordinate-global-events` and `security/security`; slice 3 against `forms/forms`, `accessibility/accessible-error-announcement`, `forms/required-field-feedback`, `forms/sms-otp-form` and `forms/ime-safe-enter-submit`.
+- **Slice 4 (site-wide accessibility):**
+  - **"Skip to content"** is the first stop for keyboard users on every page (hidden above the screen until focused); `<main id="content">` takes the focus.
+  - **Focus goes back where it was:** Escape closes the phone menu and returns to its button; search returns the focus to what opened it. Radix sends it to a `Dialog.Trigger`, and search has none, so until now the focus fell to the top of the page on every close, on computers too.
+  - **Focus rings in Windows high contrast:** text fields drew their focus with a shadow that forced colours remove; they now add a transparent outline (`focus-visible:outline-hidden`), which high contrast paints.
+  - **The current page** is marked in the desktop menu (`aria-current`, underlined), as the phone menu already did (`components/main-nav.tsx`).
+  - **Links to a section** stop below the sticky header (`scroll-padding-top` on `<html>`).
+  - **Reduced motion:** dialogs and the filter sheet fade without zooming or sliding, loading placeholders don't pulse; the plane figure keeps its colour fade (colour isn't movement).
+  - **Light only, for the browser too:** `color-scheme: only light` (CSS and `<meta>`), so native controls draw light and browsers don't auto-darken the page.
+  - **"Near me"** says why it asks before the browser does; the "couldn't get your location" status is always in the page so it's announced.
+  - **The copy button** says when the browser refuses the clipboard, and announces outside itself.
+  - **Heading outline:** the event and place lists have a (hidden) heading, so their cards' h3 don't follow the page's h1 directly.
+  - **Tests:** `apps/app/e2e/site.spec.ts`.
+- **Why:** the audit (2026-11-17) found these against the guides `security/validate-origins`, `js/coordinate-global-events` and `security/security`; slice 4 against `accessibility/accessibility`, `ui-components/navbar`, `ui-components/dialog`, `ui-behaviors/motion`, `ui-components/copy-button`, `visual-design/dark-mode` and `privacy/privacy`; slice 3 against `forms/forms`, `accessibility/accessible-error-announcement`, `forms/required-field-feedback`, `forms/sms-otp-form` and `forms/ime-safe-enter-submit`.
 - **Impact:** no new dependencies or variables in slice 1. **Itaca engineering:** the redirect check is in `apps/app`, nothing in `apps/api/src/auth` changed. The owner approved, as engineer, the tracing clean-up and the Content-Security-Policy of later slices.
 
 ## 2026-11-17 — Grafana Cloud reads CloudWatch through a read-only role

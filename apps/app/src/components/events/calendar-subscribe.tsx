@@ -2,7 +2,7 @@
 
 import type { Discipline } from "@workspace/shared";
 import { CalendarPlus, Check, Copy } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { DISCIPLINE_LABELS } from "@/lib/events";
 import { SITE } from "@/lib/site";
 
@@ -28,7 +28,9 @@ export function CalendarSubscribe({
   lead?: string;
 }) {
   const [discipline, setDiscipline] = useState<Discipline | "all">("all");
-  const [copied, setCopied] = useState(false);
+  // "Copy link": done, or refused (the browser can deny the clipboard). Shown for 2 seconds.
+  const [copied, setCopied] = useState<"done" | "failed" | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const feed = new URL(fixedFeed ?? "/events/calendar.ics", SITE.url);
   if (!fixedFeed && discipline !== "all") feed.searchParams.set("discipline", discipline);
@@ -36,9 +38,14 @@ export function CalendarSubscribe({
   const google = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcal)}`;
 
   async function copy() {
-    await navigator.clipboard.writeText(feed.toString());
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    clearTimeout(timer.current);
+    try {
+      await navigator.clipboard.writeText(feed.toString());
+      setCopied("done");
+    } catch {
+      setCopied("failed");
+    }
+    timer.current = setTimeout(() => setCopied(null), 2000);
   }
 
   const button =
@@ -77,13 +84,22 @@ export function CalendarSubscribe({
           <span className="sr-only"> (opens in a new tab)</span>
         </a>
         <button type="button" onClick={copy} className={`${button} bg-panel`}>
-          {copied ? (
+          {copied === "done" ? (
             <Check aria-hidden className="size-4" />
           ) : (
             <Copy aria-hidden className="size-4" />
           )}
-          <span aria-live="polite">{copied ? "Link copied" : "Copy link"}</span>
+          {copied === "done" ? "Link copied" : copied === "failed" ? "Couldn't copy" : "Copy link"}
         </button>
+        {/* Outside the button: a button's content isn't announced reliably when it changes
+            (modern web guidance, ui-components/copy-button). */}
+        <p role="status" className="sr-only">
+          {copied === "done"
+            ? "Link copied"
+            : copied === "failed"
+              ? `Couldn't copy. The link is ${feed.toString()}`
+              : ""}
+        </p>
       </div>
     </section>
   );

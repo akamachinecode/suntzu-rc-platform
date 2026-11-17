@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 const EventsMap = dynamic(() => import("@/components/events/events-map").then((m) => m.EventsMap), {
   ssr: false,
   loading: () => (
-    <div className="h-[26rem] w-full animate-pulse rounded-xl border-2 border-foreground bg-muted" />
+    <div className="h-[26rem] w-full rounded-xl border-2 border-foreground bg-muted motion-safe:animate-pulse" />
   ),
 });
 
@@ -173,6 +173,7 @@ export function EventsExplorer({
       type="button"
       onClick={locate}
       aria-pressed={!!origin}
+      aria-describedby="near-me-why"
       className="inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-foreground bg-panel px-4 py-2 text-sm font-semibold shadow-hard-sm"
     >
       <LocateFixed aria-hidden className="size-4" />
@@ -301,6 +302,13 @@ export function EventsExplorer({
         </div>
       </div>
 
+      {/* Why "Near me" asks for the location, before the browser does (modern web guidance,
+          privacy: "provide a clear reason and context before requesting powerful permissions"). */}
+      <p id="near-me-why" className="mt-3 text-sm text-pretty text-muted-foreground">
+        &ldquo;Near me&rdquo; asks your browser for your location once, to sort by distance. It
+        stays on this device: SunTzu RC never receives it.
+      </p>
+
       <div role="group" aria-label="View" className="mt-6 flex gap-3 md:hidden">
         {views}
       </div>
@@ -320,11 +328,12 @@ export function EventsExplorer({
           <div className="max-md:hidden">{nearMe}</div>
         </div>
       </div>
-      {located === "denied" ? (
-        <p className="mt-2 text-sm" role="status">
-          We couldn&apos;t get your location. Allow it in your browser to sort events by distance.
-        </p>
-      ) : null}
+      {/* Always in the page, so the message is announced when it appears. */}
+      <p className="mt-2 text-sm" role="status">
+        {located === "denied"
+          ? "We couldn't get your location. Allow it in your browser to sort events by distance."
+          : ""}
+      </p>
 
       <div role="group" aria-label="View" className="mt-10 hidden gap-3 md:flex">
         {views}
@@ -336,6 +345,8 @@ export function EventsExplorer({
         </div>
       ) : null}
 
+      {/* The cards' titles are h3: this keeps the outline in order under the page's h1. */}
+      <h2 className="sr-only">{origin ? "Events, closest first" : "Events, soonest first"}</h2>
       <ol
         hidden={view === "month"}
         className={cn("mt-6 grid gap-6", view === "map" && "max-md:hidden")}

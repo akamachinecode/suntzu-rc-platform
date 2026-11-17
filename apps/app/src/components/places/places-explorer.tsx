@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 const PlacesMap = dynamic(() => import("./places-map").then((m) => m.PlacesMap), {
   ssr: false,
   loading: () => (
-    <div className="h-[28rem] w-full animate-pulse rounded-xl border-2 border-foreground bg-muted" />
+    <div className="h-[28rem] w-full rounded-xl border-2 border-foreground bg-muted motion-safe:animate-pulse" />
   ),
 });
 
@@ -105,6 +105,7 @@ export function PlacesExplorer({ places, nearMe }: { places: Place[]; nearMe?: b
       type="button"
       onClick={locate}
       aria-pressed={!!origin}
+      aria-describedby="near-me-why"
       className="inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-foreground bg-panel px-4 text-sm font-semibold shadow-hard-sm md:text-base"
     >
       <LocateFixed aria-hidden className="size-4" />
@@ -189,6 +190,13 @@ export function PlacesExplorer({ places, nearMe }: { places: Place[]; nearMe?: b
         ) : null}
       </div>
 
+      {/* Why "Near me" asks for the location, before the browser does (modern web guidance,
+          privacy: "provide a clear reason and context before requesting powerful permissions"). */}
+      <p id="near-me-why" className="mt-3 text-sm text-pretty text-muted-foreground">
+        &ldquo;Near me&rdquo; asks your browser for your location once, to sort by distance. It
+        stays on this device: SunTzu RC never receives it.
+      </p>
+
       <div role="group" aria-label="View" className="mt-6 flex gap-3 md:hidden">
         <Chip
           pressed={view === "list"}
@@ -218,6 +226,8 @@ export function PlacesExplorer({ places, nearMe }: { places: Place[]; nearMe?: b
         </p>
       </div>
 
+      {/* The cards' titles are h3: this keeps the outline in order under the page's h1. */}
+      <h2 className="sr-only">{origin ? "Places, closest first" : "Places"}</h2>
       <ul
         className={cn(
           "mt-6 grid gap-4 sm:grid-cols-2 md:mt-10 lg:grid-cols-3",

@@ -45,7 +45,7 @@ export function FilterSheet({
       </DialogTrigger>
       <DialogContent
         showCloseButton={false}
-        className="top-auto bottom-0 left-0 flex max-h-[85dvh] w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-t-2xl rounded-b-none border-2 border-b-0 border-foreground bg-background p-0 text-base text-foreground ring-0 sm:max-w-none data-open:zoom-in-100 data-open:slide-in-from-bottom-8 data-closed:zoom-out-100 data-closed:slide-out-to-bottom-8"
+        className="top-auto bottom-0 left-0 flex max-h-[85dvh] w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-t-2xl rounded-b-none border-2 border-b-0 border-foreground bg-background p-0 text-base text-foreground ring-0 sm:max-w-none data-open:zoom-in-100 motion-safe:data-open:slide-in-from-bottom-8 data-closed:zoom-out-100 motion-safe:data-closed:slide-out-to-bottom-8"
       >
         <div className="flex items-center justify-between gap-4 border-b-2 border-foreground px-5 py-3">
           <DialogTitle className="text-xl font-black font-wide">Filters</DialogTitle>

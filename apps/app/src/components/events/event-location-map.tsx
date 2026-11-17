@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 const EventsMap = dynamic(() => import("@/components/events/events-map").then((m) => m.EventsMap), {
   ssr: false,
   loading: () => (
-    <div className="h-72 w-full animate-pulse rounded-xl border-2 border-foreground bg-muted" />
+    <div className="h-72 w-full rounded-xl border-2 border-foreground bg-muted motion-safe:animate-pulse" />
   ),
 });
 

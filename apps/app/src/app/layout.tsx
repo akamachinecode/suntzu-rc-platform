@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Archivo } from "next/font/google";
 import Link from "next/link";
 import { AccountButton } from "@/components/account/account-button";
+import { MainNav } from "@/components/main-nav";
 import { MobileNav } from "@/components/mobile-nav";
 import { PageEnd } from "@/components/page-end";
 import { SiteSearch } from "@/components/search/site-search";
@@ -23,6 +24,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  // The design is light only: browsers draw their own controls light and don't darken the page.
+  colorScheme: "only light",
 };
 
 export const metadata: Metadata = {
@@ -38,12 +41,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // Native scrolling (no scroll library, see docs/DECISIONS.md, 2026-11-10). In-page links glide
     // unless the visitor asks for reduced motion; data-scroll-behavior keeps page changes instant.
+    // scroll-padding keeps a section's heading clear of the sticky header when a link jumps to it.
     <html
       lang={SITE.lang}
       data-scroll-behavior="smooth"
-      className={`${archivo.variable} scroll-smooth antialiased motion-reduce:scroll-auto`}
+      className={`${archivo.variable} scroll-pt-[var(--header)] scroll-smooth antialiased motion-reduce:scroll-auto`}
     >
       <body className="flex min-h-dvh flex-col pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)]">
+        {/* The first stop for keyboard users: past the header to the page itself. */}
+        <a
+          href="#content"
+          className="fixed top-[calc(env(safe-area-inset-top)+0.5rem)] left-[calc(env(safe-area-inset-left)+0.5rem)] z-[60] -translate-y-[calc(100%+2rem+env(safe-area-inset-top))] rounded-md border-2 border-foreground bg-primary px-4 py-3 font-semibold shadow-hard-sm focus:translate-y-0"
+        >
+          Skip to content
+        </a>
         <header className="sticky top-0 z-50 bg-background pt-[env(safe-area-inset-top)] pb-[var(--header-air)]">
           <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-5 sm:px-6">
             <Link
@@ -53,17 +64,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             >
               <Wordmark />
             </Link>
-            <nav aria-label="Main" className="hidden gap-5 md:flex xl:gap-7">
-              {SITE.nav.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="text-sm font-semibold whitespace-nowrap underline-offset-4 hover:underline"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+            <MainNav />
             <div className="flex items-center gap-3">
               <SiteSearch />
               <AccountButton />
@@ -74,7 +75,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </div>
           </div>
         </header>
-        <main className="flex-1">{children}</main>
+        <main id="content" tabIndex={-1} className="flex-1 focus:outline-none">
+          {children}
+        </main>
         <SiteFooter />
         <PageEnd />
       </body>
