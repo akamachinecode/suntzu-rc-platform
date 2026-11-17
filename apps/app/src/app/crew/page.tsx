@@ -157,7 +157,7 @@ export default async function CrewPage() {
                 {!message.handled ? (
                   <form action={handleMessage.bind(null, message.id)}>
                     <Button type="submit" variant="outline" size="sm">
-                      Mark as handled
+                      Mark as handled<span className="sr-only">: {message.name}</span>
                     </Button>
                   </form>
                 ) : null}
@@ -196,7 +196,7 @@ export default async function CrewPage() {
                 </p>
                 <form action={seeFeedback.bind(null, item.id)}>
                   <Button type="submit" variant="outline" size="sm">
-                    Seen
+                    Seen<span className="sr-only">: {item.event.name}</span>
                   </Button>
                 </form>
               </li>

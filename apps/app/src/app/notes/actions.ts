@@ -4,11 +4,14 @@ import { noteInput } from "@workspace/shared";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getApi } from "@/lib/api";
+import { typedValues } from "@/lib/typed-values";
 
 export type NoteFormState = {
   status: "idle" | "success" | "error";
   message?: string;
   errors?: Partial<Record<keyof z.infer<typeof noteInput>, string[]>>;
+  /** What was typed, given back after an error: React 19 resets the form after its action. */
+  values?: Partial<Record<string, string>>;
 };
 
 /**
@@ -18,11 +21,22 @@ export type NoteFormState = {
 export async function createNote(_prev: NoteFormState, formData: FormData): Promise<NoteFormState> {
   const parsed = noteInput.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
-    return { status: "error", errors: z.flattenError(parsed.error).fieldErrors };
+    return {
+      status: "error",
+      message: "Please fix the highlighted field.",
+      errors: z.flattenError(parsed.error).fieldErrors,
+      values: typedValues(formData),
+    };
   }
   const api = await getApi();
   const { error } = await api.POST("/notes", { body: parsed.data });
-  if (error) return { status: "error", message: "Could not save the note. Try again." };
+  if (error) {
+    return {
+      status: "error",
+      message: "Could not save the note. Try again.",
+      values: typedValues(formData),
+    };
+  }
   revalidatePath("/notes");
   return { status: "success", message: "Note saved." };
 }

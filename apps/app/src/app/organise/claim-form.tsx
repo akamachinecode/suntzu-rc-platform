@@ -6,6 +6,7 @@ import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { Textarea } from "@workspace/ui/components/textarea";
+import { FormStatus } from "@/components/forms/feedback";
 import { type ClaimState, startClaim } from "./actions";
 
 const select = "h-11 w-full min-w-0 rounded-md border-2 border-foreground bg-background px-3";
@@ -16,6 +17,8 @@ export function ClaimForm({ hosts, preselected }: { hosts: Host[]; preselected?:
   const [state, action, pending] = useActionState<ClaimState, FormData>(startClaim, {
     status: "idle",
   });
+  // React only reads a select's defaultValue when it mounts: the key brings back the choice.
+  const host = state.values?.host ?? preselected ?? "";
 
   return (
     <form action={action} className="grid gap-5">
@@ -24,10 +27,11 @@ export function ClaimForm({ hosts, preselected }: { hosts: Host[]; preselected?:
           Your club or track
         </Label>
         <select
+          key={host}
           id="claim-host"
           name="host"
           required
-          defaultValue={preselected ?? ""}
+          defaultValue={host}
           className={select}
         >
           <option value="" disabled>
@@ -96,8 +100,11 @@ export function ClaimForm({ hosts, preselected }: { hosts: Host[]; preselected?:
             id="claim-email"
             name="email"
             type="email"
+            autoComplete="email"
+            spellCheck={false}
             required
             placeholder="secretary@yourclub.org"
+            defaultValue={state.values?.email}
           />
         </div>
       ) : null}
@@ -112,6 +119,7 @@ export function ClaimForm({ hosts, preselected }: { hosts: Host[]; preselected?:
             rows={3}
             required
             placeholder="I'm the club president; our Facebook page is…"
+            defaultValue={state.values?.note}
           />
         </div>
       ) : null}
@@ -119,16 +127,7 @@ export function ClaimForm({ hosts, preselected }: { hosts: Host[]; preselected?:
         <Button type="submit" size="lg" disabled={pending}>
           {pending ? "Sending…" : "Claim it"}
         </Button>
-        {state.message ? (
-          <p
-            role="status"
-            className={
-              state.status === "error" ? "text-sm text-destructive" : "text-sm font-semibold"
-            }
-          >
-            {state.message}
-          </p>
-        ) : null}
+        <FormStatus message={state.message} error={state.status === "error"} />
       </div>
     </form>
   );

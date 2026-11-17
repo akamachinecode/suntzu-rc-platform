@@ -42,7 +42,7 @@ export function EventRow({ host, event }: { host: string; event: Event }) {
             start(() => quickEdit(host, event.slug, { beginnerFriendly: !event.beginnerFriendly }))
           }
         >
-          Beginners welcome
+          Beginners welcome<span className="sr-only"> at {event.name}</span>
         </Button>
         <Button
           type="button"
@@ -56,6 +56,7 @@ export function EventRow({ host, event }: { host: string; event: Event }) {
           }
         >
           {cancelled ? "Not cancelled after all" : "Cancel it"}
+          <span className="sr-only">: {event.name}</span>
         </Button>
         <form
           className="flex flex-wrap items-center gap-2"
@@ -73,7 +74,7 @@ export function EventRow({ host, event }: { host: string; event: Event }) {
             className="h-9 w-64"
           />
           <Button type="submit" size="sm" variant="outline" disabled={pending}>
-            Save
+            Save<span className="sr-only"> the results link for {event.name}</span>
           </Button>
         </form>
       </div>

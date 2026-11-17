@@ -4,6 +4,7 @@ import { crewDecision, eventPatch, manualEvent } from "@workspace/shared";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getApi } from "@/lib/api";
+import { typedValues } from "@/lib/typed-values";
 
 // The crew's decisions. The API checks the crew role on every call; these only shape the input.
 
@@ -64,6 +65,8 @@ export type AddEventState = {
   message?: string;
   slug?: string;
   errors?: Partial<Record<string, string[]>>;
+  /** What was typed, given back after an error so the form keeps it. */
+  values?: Partial<Record<string, string>>;
 };
 
 export async function addEvent(_prev: AddEventState, formData: FormData): Promise<AddEventState> {
@@ -86,11 +89,14 @@ export async function addEvent(_prev: AddEventState, formData: FormData): Promis
       status: "error",
       message: "Please fix the highlighted fields.",
       errors: z.flattenError(parsed.error).fieldErrors,
+      values: typedValues(formData),
     };
   }
   const api = await getApi();
   const { data, error } = await api.POST("/crew/events", { body: parsed.data });
-  if (error || !data) return { status: "error", message: "Could not add the event." };
+  if (error || !data) {
+    return { status: "error", message: "Could not add the event.", values: typedValues(formData) };
+  }
   revalidatePath("/crew");
   return { status: "done", message: "Published.", slug: data.slug };
 }

@@ -3,6 +3,7 @@
 import { tryInput } from "@workspace/shared";
 import { z } from "zod";
 import { getApi } from "@/lib/api";
+import { typedValues } from "@/lib/typed-values";
 
 export type TryState = {
   status: "idle" | "error" | "done";
@@ -10,6 +11,8 @@ export type TryState = {
   sentTo?: string[];
   toCrew?: boolean;
   errors?: Partial<Record<string, string[]>>;
+  /** What was typed, given back after an error so the form keeps it. */
+  values?: Partial<Record<string, string>>;
 };
 
 export async function askToTry(_prev: TryState, formData: FormData): Promise<TryState> {
@@ -28,6 +31,7 @@ export async function askToTry(_prev: TryState, formData: FormData): Promise<Try
       status: "error",
       message: "Please fix the highlighted fields.",
       errors: z.flattenError(parsed.error).fieldErrors,
+      values: typedValues(formData),
     };
   }
   const api = await getApi();
@@ -40,6 +44,7 @@ export async function askToTry(_prev: TryState, formData: FormData): Promise<Try
         response.status === 400 && body.message
           ? body.message
           : "We couldn't send it. Try again in a minute.",
+      values: typedValues(formData),
     };
   }
   return { status: "done", sentTo: data.sentTo, toCrew: data.toCrew };

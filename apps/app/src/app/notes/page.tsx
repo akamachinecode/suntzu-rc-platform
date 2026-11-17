@@ -42,7 +42,7 @@ export default async function NotesPage() {
                 </div>
                 <form action={deleteNote.bind(null, note.id)}>
                   <Button type="submit" variant="ghost" size="sm">
-                    Delete
+                    Delete<span className="sr-only"> “{note.title}”</span>
                   </Button>
                 </form>
               </CardHeader>

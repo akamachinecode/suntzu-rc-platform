@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { TOPICS } from "@workspace/shared";
 import { getApi } from "@/lib/api";
+import { typedValues } from "@/lib/typed-values";
 
 const topicValues = TOPICS.map((topic) => topic.value) as [string, ...string[]];
 
@@ -17,6 +18,8 @@ export type ContactState = {
   status: "idle" | "success" | "error";
   message?: string;
   errors?: Partial<Record<keyof z.infer<typeof contactSchema>, string[]>>;
+  /** What was typed, given back after an error so the form keeps it. */
+  values?: Partial<Record<string, string>>;
 };
 
 /**
@@ -36,6 +39,7 @@ export async function submitContact(
       status: "error",
       message: "Please fix the highlighted fields.",
       errors: z.flattenError(parsed.error).fieldErrors,
+      values: typedValues(formData),
     };
   }
 
@@ -53,7 +57,11 @@ export async function submitContact(
     },
   });
   if (error) {
-    return { status: "error", message: "We couldn't send it. Try again in a minute." };
+    return {
+      status: "error",
+      message: "We couldn't send it. Try again in a minute.",
+      values: typedValues(formData),
+    };
   }
 
   return { status: "success", message: "Got it. One of us will reply within a couple of days." };

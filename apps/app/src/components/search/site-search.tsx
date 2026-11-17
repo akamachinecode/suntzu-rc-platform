@@ -201,7 +201,13 @@ export function SiteSearch() {
     } else if (event.key === "ArrowUp" && options.length) {
       event.preventDefault();
       move(active <= 0 ? options.length - 1 : active - 1);
-    } else if (event.key === "Enter" && !event.nativeEvent.isComposing) {
+    } else if (
+      event.key === "Enter" &&
+      // Not while a Japanese, Chinese or Korean keyboard is still composing a word; Safari
+      // reports that with keyCode 229 (modern web guidance, forms/ime-safe-enter-submit).
+      !event.nativeEvent.isComposing &&
+      event.nativeEvent.keyCode !== 229
+    ) {
       event.preventDefault();
       const option = options[active];
       if (option) choose(option);

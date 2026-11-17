@@ -1,10 +1,11 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { Textarea } from "@workspace/ui/components/textarea";
+import { FieldError, FormStatus, useFormFeedback } from "@/components/forms/feedback";
 import { Turnstile } from "@/components/turnstile";
 import { TOPICS, type Topic } from "@workspace/shared";
 import { type ContactState, submitContact } from "./actions";
@@ -13,37 +14,52 @@ const initialState: ContactState = { status: "idle" };
 
 export function ContactForm({ topic }: { topic?: Topic }) {
   const [state, formAction, pending] = useActionState(submitContact, initialState);
+  const formRef = useRef<HTMLFormElement>(null);
+  const form = useFormFeedback(state, formRef);
 
   return (
-    <form action={formAction} className="grid gap-6" noValidate>
+    <form
+      ref={formRef}
+      action={formAction}
+      onInput={form.onInput}
+      className="grid gap-6"
+      noValidate
+    >
+      <p className="text-sm text-muted-foreground">Every field is needed.</p>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <Field label="Name" name="name" errors={state.errors?.name}>
+        <Field label="Name" name="name" errors={form.errors("name")}>
           <Input
             id="name"
             name="name"
             autoComplete="name"
             required
-            aria-invalid={!!state.errors?.name}
+            defaultValue={form.value("name")}
+            {...form.aria("name")}
           />
         </Field>
-        <Field label="Email" name="email" errors={state.errors?.email}>
+        <Field label="Email" name="email" errors={form.errors("email")}>
           <Input
             id="email"
             name="email"
             type="email"
             autoComplete="email"
+            spellCheck={false}
             required
-            aria-invalid={!!state.errors?.email}
+            defaultValue={form.value("email")}
+            {...form.aria("email")}
           />
         </Field>
       </div>
-      <Field label="What can we help with?" name="topic" errors={state.errors?.topic}>
+      <Field label="What can we help with?" name="topic" errors={form.errors("topic")}>
         <select
+          // React only reads a select's defaultValue when it mounts: a new key brings back the
+          // choice after an error.
+          key={form.value("topic") ?? "first"}
           id="topic"
           name="topic"
           required
-          defaultValue={topic ?? ""}
-          aria-invalid={!!state.errors?.topic}
+          defaultValue={form.value("topic") ?? topic ?? ""}
+          {...form.aria("topic")}
           className="h-11 rounded-md border-2 border-foreground bg-background px-3 text-base focus-visible:shadow-hard-sm"
         >
           <option value="" disabled>
@@ -56,14 +72,15 @@ export function ContactForm({ topic }: { topic?: Topic }) {
           ))}
         </select>
       </Field>
-      <Field label="Tell us a bit about you" name="message" errors={state.errors?.message}>
+      <Field label="Tell us a bit about you" name="message" errors={form.errors("message")}>
         <Textarea
           id="message"
           name="message"
           rows={6}
           required
           placeholder="What you fly or drive (if anything yet), where you are, and what you'd like to do."
-          aria-invalid={!!state.errors?.message}
+          defaultValue={form.value("message")}
+          {...form.aria("message")}
         />
       </Field>
       <Turnstile />
@@ -71,16 +88,7 @@ export function ContactForm({ topic }: { topic?: Topic }) {
         <Button type="submit" size="lg" disabled={pending}>
           {pending ? "Sending…" : "Send message"}
         </Button>
-        {state.message && (
-          <p
-            role="status"
-            className={
-              state.status === "error" ? "text-sm text-destructive" : "text-sm font-semibold"
-            }
-          >
-            {state.message}
-          </p>
-        )}
+        <FormStatus message={state.message} error={state.status === "error"} />
       </div>
     </form>
   );
@@ -103,11 +111,7 @@ function Field({
         {label}
       </Label>
       {children}
-      {errors?.map((error) => (
-        <p key={error} className="text-sm text-destructive">
-          {error}
-        </p>
-      ))}
+      <FieldError id={name} errors={errors} />
     </div>
   );
 }

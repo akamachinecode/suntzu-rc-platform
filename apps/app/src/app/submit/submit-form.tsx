@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { Textarea } from "@workspace/ui/components/textarea";
+import { FieldError, FormStatus, StepHeading, useFormFeedback } from "@/components/forms/feedback";
 import { formatWhen } from "@/lib/events";
 import { sendEvent, type SubmitState } from "./actions";
 
@@ -13,6 +14,8 @@ export function SubmitForm() {
   const [state, action, pending] = useActionState<SubmitState, FormData>(sendEvent, {
     status: "idle",
   });
+  const formRef = useRef<HTMLFormElement>(null);
+  const form = useFormFeedback(state, formRef);
 
   if (state.status === "signed-out") {
     return (
@@ -27,14 +30,14 @@ export function SubmitForm() {
   if (state.status === "done" && state.result) {
     const { outcome, events } = state.result;
     return (
-      <div role="status" className="grid gap-4">
-        <p className="text-2xl font-black font-wide">
+      <div className="grid gap-4">
+        <StepHeading className="text-2xl font-black font-wide">
           {outcome === "known"
             ? "We have it already."
             : outcome === "queued"
               ? "Got it, thanks!"
               : "Thanks, a person will read it."}
-        </p>
+        </StepHeading>
         <p className="text-pretty">
           {outcome === "known"
             ? "It's on the calendar: your link counts as one more source that agrees."
@@ -80,7 +83,7 @@ export function SubmitForm() {
     );
   }
   return (
-    <form action={action} className="grid gap-5">
+    <form ref={formRef} action={action} onInput={form.onInput} className="grid gap-5">
       <div className="grid gap-2">
         <Label htmlFor="submit-url" className="font-semibold">
           Link to the event
@@ -89,14 +92,12 @@ export function SubmitForm() {
           id="submit-url"
           name="url"
           type="url"
+          spellCheck={false}
           placeholder="https://yourclub.org/events/fun-fly"
-          aria-invalid={!!state.errors?.url}
+          defaultValue={form.value("url")}
+          {...form.aria("url", { id: "submit-url" })}
         />
-        {state.errors?.url?.map((error) => (
-          <p key={error} className="text-sm text-destructive">
-            {error}
-          </p>
-        ))}
+        <FieldError id="submit-url" errors={form.errors("url")} />
       </div>
       <p className="text-center text-sm font-semibold">or</p>
       <div className="grid gap-2">
@@ -109,27 +110,20 @@ export function SubmitForm() {
           rows={8}
           maxLength={8000}
           placeholder="Copy the text of the flyer, the Facebook post or the email: name, dates, place, fee…"
-          aria-invalid={!!state.errors?.text}
+          defaultValue={form.value("text")}
+          {...form.aria("text", { id: "submit-text", hint: "submit-text-hint" })}
         />
-        <p className="text-sm text-muted-foreground">
+        <p id="submit-text-hint" className="text-sm text-muted-foreground">
           We keep the facts (name, dates, place, fee, link) and never personal phone numbers or
           emails.
         </p>
-        {state.errors?.text?.map((error) => (
-          <p key={error} className="text-sm text-destructive">
-            {error}
-          </p>
-        ))}
+        <FieldError id="submit-text" errors={form.errors("text")} />
       </div>
       <div className="flex flex-wrap items-center gap-4">
         <Button type="submit" size="lg" disabled={pending}>
           {pending ? "Reading it…" : "Send the event"}
         </Button>
-        {state.message ? (
-          <p role="status" className="text-sm text-destructive">
-            {state.message}
-          </p>
-        ) : null}
+        <FormStatus message={state.message} error />
       </div>
     </form>
   );
