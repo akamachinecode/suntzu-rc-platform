@@ -7,12 +7,14 @@ import { Label } from "@workspace/ui/components/label";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { FieldError, FormStatus, useFormFeedback } from "@/components/forms/feedback";
 import { Turnstile } from "@/components/turnstile";
-import { TOPICS, type Topic } from "@workspace/shared";
+// Types only: a value from @workspace/shared would bring every Zod schema into the browser (and Zod
+// probes eval, which the Content-Security-Policy reports). The page passes the topics in.
+import type { Topic, TOPICS } from "@workspace/shared";
 import { type ContactState, submitContact } from "./actions";
 
 const initialState: ContactState = { status: "idle" };
 
-export function ContactForm({ topic }: { topic?: Topic }) {
+export function ContactForm({ topics, topic }: { topics: typeof TOPICS; topic?: Topic }) {
   const [state, formAction, pending] = useActionState(submitContact, initialState);
   const formRef = useRef<HTMLFormElement>(null);
   const form = useFormFeedback(state, formRef);
@@ -65,7 +67,7 @@ export function ContactForm({ topic }: { topic?: Topic }) {
           <option value="" disabled>
             Choose one
           </option>
-          {TOPICS.map((option) => (
+          {topics.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>

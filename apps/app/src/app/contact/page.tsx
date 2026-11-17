@@ -21,7 +21,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
       />
       <section className="mx-auto max-w-7xl px-5 pb-24 sm:px-6">
         <div className="max-w-2xl rounded-xl border-2 border-foreground bg-panel p-6 shadow-hard-lg sm:p-10">
-          <ContactForm topic={isTopic(topic) ? topic : undefined} />
+          <ContactForm topics={TOPICS} topic={isTopic(topic) ? topic : undefined} />
         </div>
       </section>
     </>

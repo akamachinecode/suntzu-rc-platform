@@ -7,5 +7,5 @@
 - **Rules:** followed and going events, plus upcoming events of followed clubs, places and disciplines; only announced dates.
 - **Errors:** unknown token → 404.
 - **Test:** none yet
-- **Observe:** API log lines with `bit: "me.calendar"` (the route pattern is logged, not the token).
+- **Observe:** API log lines with `bit: "me.calendar"` (the route pattern is logged, not the token). Traces show `/calendar/[secret].ics` (`ScrubUrls` in the app and the API, spec 0010); before 2026-11-17 the secret reached CloudWatch in span URLs.
 - **Status:** verified — 2026-10-27

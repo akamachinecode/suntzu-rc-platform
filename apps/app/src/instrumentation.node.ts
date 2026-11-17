@@ -28,6 +28,7 @@ import {
   TracerProvider,
 } from "@opentelemetry/sdk-trace";
 import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
+import { ScrubUrls } from "./lib/scrub-urls";
 
 // Share of new traces to keep, from 0 to 1 (OTEL_TRACES_SAMPLER_ARG). Default: all of them.
 const ratio = Number(process.env.OTEL_TRACES_SAMPLER_ARG ?? "1");
@@ -54,8 +55,9 @@ const provider = new TracerProvider({
     .merge(resourceFromAttributes({ [ATTR_SERVICE_NAME]: "app" }))
     .merge(detectResources({ detectors: [envDetector] })),
   sampler: requestsOnly,
-  // OTEL_EXPORTER_OTLP_ENDPOINT, default http://localhost:4318.
-  spanProcessors: [new BatchSpanProcessor({ exporter: new OTLPTraceExporter() })],
+  // OTEL_EXPORTER_OTLP_ENDPOINT, default http://localhost:4318. URLs are cleaned first (query
+  // values, calendar secrets): the Collector drops query strings too, but not secrets in a path.
+  spanProcessors: [new ScrubUrls(), new BatchSpanProcessor({ exporter: new OTLPTraceExporter() })],
 });
 
 context.setGlobalContextManager(new AsyncLocalStorageContextManager());
