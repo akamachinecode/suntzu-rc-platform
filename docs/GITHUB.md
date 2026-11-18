@@ -30,7 +30,7 @@ gh api -X POST repos/akamachinecode/suntzu-rc-platform/rulesets --input - <<'JSO
 JSON
 ```
 
-**After spec 0011 (create-itaca 0.5.1) is merged**, the existing ruleset (ID `26865524`) should also require "End-to-end tests" and "Static analysis", as above. That's a repository setting, so it's the owner's step: the same JSON with `gh api -X PUT repos/akamachinecode/suntzu-rc-platform/rulesets/26865524 --input -`. Consider "Accessibility (axe in four browsers)" too.
+The ruleset (ID `26865524`) requires "End-to-end tests" and "Static analysis" too since 2026-11-18, after spec 0011 (create-itaca 0.5.1) was merged, at the owner's request. To change it, send the same JSON with `gh api -X PUT repos/akamachinecode/suntzu-rc-platform/rulesets/26865524 --input -`. Consider "Accessibility (axe in four browsers)" too.
 
 Raise `required_approving_review_count` to `1` once an Itaca engineer is assigned to the project.
 
