@@ -12,6 +12,6 @@
   - Past announced or confirmed events become `held`; each series whose last edition is over gets next year's edition as `expected` ("Usually November").
   - Confidence: each independent source adds its weight (organiser 0.9, sanctioning body 0.85, aggregator 0.6, community 0.4).
 - **Errors:** one entry failing is reported and skipped; the run goes on.
-- **Test:** `apps/api/src/events/engine/match.test.ts`.
+- **Test:** `apps/api/src/events/engine/match.test.ts` (same event or not: names, dates, next year's edition, confidence); `apps/api/src/events/engine/resolve.test.ts` (what the organiser's page changes, read from the saved AMPS pages: dates, an expected edition becoming confirmed or announced, cancellations and who can undo them, fees, a held event untouched). Not covered: `resolve()` itself (linking, reviews, held, next editions), which needs a database.
 - **Observe:** the `resolve:` lines printed by `pnpm engine`.
-- **Status:** verified — 2026-10-27 (AeroFest published from the AMPS site; "JOM 2026" linked to Jets Over Miami; a second run changes nothing)
+- **Status:** verified — 2026-11-18 (unit tests on saved pages)

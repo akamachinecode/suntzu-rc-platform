@@ -1,9 +1,13 @@
+import { randomUUID } from "node:crypto";
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
 import { Logger } from "@nestjs/common";
 import { env } from "../env.js";
 
 // Every email SunTzu RC sends goes through here: Amazon SES in production, the console locally
-// (MAIL_TRANSPORT=log), so sign-in links and alerts can be followed without sending anything.
+// (MAIL_TRANSPORT=log), so sign-in links and alerts can be followed without sending anything. The
+// end-to-end tests use MAIL_TRANSPORT=file: one JSON file per email in MAIL_DIR, read by e2e/mail.ts.
 
 export interface Mail {
   to: string;
@@ -21,6 +25,12 @@ export async function sendMail(mail: Mail): Promise<void> {
   if (env.MAIL_TRANSPORT === "log") {
     // Local only: the text may hold a sign-in link. The address isn't logged (personal data).
     logger.log(`"${mail.subject}"\n${mail.text}`);
+    return;
+  }
+  if (env.MAIL_TRANSPORT === "file") {
+    await mkdir(env.MAIL_DIR, { recursive: true });
+    const file = `${Date.now()}-${randomUUID()}.json`;
+    await writeFile(path.join(env.MAIL_DIR, file), JSON.stringify({ ...mail, sentAt: new Date() }));
     return;
   }
   ses ??= new SESv2Client({ region: env.AWS_REGION });

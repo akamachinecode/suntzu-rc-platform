@@ -10,6 +10,8 @@ import {
   writtenByCensus,
 } from "./sites.js";
 
+// census.import (docs/bits/census.import.md): a register record becomes a place and a host.
+
 describe("descriptors", () => {
   it("tells roads from names", () => {
     for (const road of [

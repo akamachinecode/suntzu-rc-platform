@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { queryAll, queryUrl } from "./arcgis.js";
 import { CensusHttp } from "./http.js";
 
+// census.import (docs/bits/census.import.md): paging through the FAA's ArcGIS services.
+
 function fakeHttp(pages: unknown[]) {
   const urls: string[] = [];
   const responses = [...pages];

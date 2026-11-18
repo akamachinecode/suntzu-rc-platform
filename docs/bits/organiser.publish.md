@@ -1,11 +1,11 @@
 # organiser.publish — An organiser publishes or changes an event
 
-- **Trigger:** "Publish event" or the quick changes (beginners welcome, cancel, results link) on `/organise/<club>`.
+- **Trigger:** "Publish event" or the quick changes (Beginners welcome, Cancel it / Not cancelled after all, the results link) on `/organise/<club>`.
 - **Who:** the club's verified organisers.
-- **Path:** `organise/[host]/page.tsx` → `publishEvent` / `quickEdit` → `POST /organise/{host}/events`, `PATCH /organise/{host}/events/{slug}` → `publishManual` with the club's own `organiser-<club>` source, or `applyPatch` by `organiser`.
-- **Data:** writes `events`, `sightings`, `event_sightings`, `changes`, `series`; the dashboard reads followers and going per event (`bit: "organiser.dashboard"`).
-- **Rules:** published at once with organiser trust; organisers change only their own club's events; changes reach followers' alerts.
-- **Errors:** 403 for anyone else. After an error the form keeps what was typed, the cursor goes to the first field with an error, each error is read with its field, and the answer is announced (`components/forms/feedback.tsx`, spec 0010).
-- **Test:** none yet
+- **Path:** `organise/[host]/page.tsx` → `publishEvent` / `quickEdit` (`organise/[host]/actions.ts`, `event-row.tsx`) → `POST /organise/{host}/events`, `PATCH /organise/{host}/events/{slug}` → `publishManual` with the club's own `organiser-<club>` source, or `applyPatch` by `organiser`.
+- **Data:** writes `events`, `sightings`, `event_sightings`, `changes`, `series`; the dashboard reads followers and going per event ([organiser.dashboard](./organiser.dashboard.md)).
+- **Rules:** published at once, `confirmed`, as the club, with organiser trust; organisers change only their own club's events, and never the name (the API ignores it, so the slug and links stay); an event at another club's field keeps that field's name in words, not linked to it; changes reach followers' alerts ([notify.changes](./notify.changes.md)).
+- **Errors:** 403 for anyone who isn't a verified organiser of the club, an unverified claimant included (their dashboard says "Not yet" with a link to claim it); 404 for another club's event through one's own club; 401 signed out. After an error the form keeps what was typed, the cursor goes to the first field with an error, each error is read with its field, and the answer is announced (`components/forms/feedback.tsx`, spec 0010). The event's page names the club under "Where this comes from" (organiser trust); until 2026-11-18 it said "Checked by the SunTzu RC crew", because organiser sources are manual like the crew's. A refused publish shows the API's reason (`apiErrorText`, see [hosts.claim](./hosts.claim.md)).
+- **Test:** `e2e/organiser.publish.e2e.ts` (a verified organiser publishes from the dashboard at the club's field: in "Your events", on the event page hosted by the club, on the club page, `confirmed`; its source reads as the club; Beginners welcome, results link, Cancel it and undo, shown on the event page; the name stays; another club's field in words; another club's events 404 and 403; an unverified claimant 403 and "Not yet"; signed out 401)
 - **Observe:** API log lines with `bit: "organiser.publish"`.
-- **Status:** verified — 2026-10-27
+- **Status:** verified — 2026-11-18 (end-to-end test)

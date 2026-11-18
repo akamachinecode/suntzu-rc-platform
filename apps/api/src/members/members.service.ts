@@ -81,6 +81,9 @@ export class MembersService {
   async follow(userId: string, key: FollowKey, on: boolean): Promise<ViewerState> {
     const id = await this.resolveTarget(key);
     if (on) {
+      // Alerts go to members with settings (change alerts on by default): someone who follows
+      // before ever opening My SunTzu RC must get them too.
+      await this.ensure(userId);
       await this.db
         .insert(follows)
         .values({ userId, target: key.target, targetId: id })
@@ -98,6 +101,7 @@ export class MembersService {
   async going(userId: string, slug: string, on: boolean): Promise<ViewerState> {
     const id = await this.resolveTarget({ target: "event", id: slug });
     if (on) {
+      await this.ensure(userId);
       await this.db.insert(rsvps).values({ userId, eventId: id }).onConflictDoNothing();
       // Going means following: changes to the event reach them.
       await this.db

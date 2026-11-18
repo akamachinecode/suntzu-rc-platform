@@ -228,13 +228,18 @@ export async function runSearch(
   };
 }
 
-/** Corrects each word to the closest word on the site; the last one may be unfinished. */
+/**
+ * Corrects each word to the closest word on the site; the last one may be unfinished. A word that
+ * a document already holds stays as typed, even before `search_words` is refreshed (every few
+ * minutes): a new event's name is found at once, not "corrected" to an older word (2026-11-18).
+ */
 async function correct(db: Database, words: string[]): Promise<string[]> {
   const { rows } = await db.execute<{ word: string }>(sql`
     select coalesce(
       (select t.word where length(t.word) < 3
         or exists (select 1 from search_words where word = t.word)
-        or (t.n = ${words.length} and exists (select 1 from search_words where word like t.word || '%'))),
+        or (t.n = ${words.length} and exists (select 1 from search_words where word like t.word || '%'))
+        or exists (select 1 from search_documents d where d.tsv @@ plainto_tsquery('english', t.word))),
       (select w.word from search_words w where w.word % t.word
         order by similarity(w.word, t.word) desc, levenshtein(w.word, t.word), w.ndoc desc, w.word limit 1),
       t.word) as word

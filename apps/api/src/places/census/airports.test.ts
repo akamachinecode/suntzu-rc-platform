@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import { readAirport } from "./airports.js";
 import type { RawFeature } from "./arcgis.js";
 
+// census.import (docs/bits/census.import.md): the FAA airports reader, on saved records.
+
 // airports.json: five Florida records of the FAA's US_Airport layer (read 2026-10-27).
 const fixture = JSON.parse(
   readFileSync(new URL("./fixtures/airports.json", import.meta.url), "utf8"),

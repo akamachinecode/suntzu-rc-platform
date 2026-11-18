@@ -7,6 +7,10 @@
     "next-devtools": {
       "command": "pnpm",
       "args": ["dlx", "next-devtools-mcp@latest"]
+    },
+    "playwright": {
+      "command": "pnpm",
+      "args": ["dlx", "@playwright/mcp@0.0.85"]
     }
   }
 }

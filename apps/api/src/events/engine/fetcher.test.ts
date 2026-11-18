@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { PoliteFetcher } from "./fetcher.js";
 
+// engine.run (docs/bits/engine.run.md): the polite fetcher (robots.txt, pauses, conditional requests, bot walls).
+
 /** A fake web: robots.txt and pages by URL, and a log of every request with its headers. */
 function fakeWeb(
   pages: Record<string, { status?: number; body?: string; headers?: Record<string, string> }>,

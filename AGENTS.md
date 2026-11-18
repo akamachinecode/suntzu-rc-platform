@@ -80,7 +80,7 @@ A **bit** is the smallest piece of behaviour someone can trigger and check end t
 - **Browser support:** everything works fully in the last two years of Safari (iOS and Mac), Chrome, Firefox and Edge: Baseline "Widely available" features. Newer features are only extras that quietly do nothing where they're missing (feature-detect, `@supports`); no polyfills (`docs/DECISIONS.md`, 2026-11-17, spec 0010).
 - **Accessibility:** WCAG 2.2 AA. A page change must keep `pnpm test:a11y` green (run it with the site running; CI runs it in four browsers). An axe finding is fixed in the page; only a checked false positive goes into `ACCEPTED` in `apps/app/e2e/a11y.spec.ts`, with its reason.
 - **Versions:** always the latest stable release of every dependency, runtime and service. Apply security and important-fix releases promptly; release candidates and betas don't count. Major upgrades get an entry in `docs/DECISIONS.md` (see 2026-10-22).
-- **Forms** (`/contact`, builds on `/community`, `/try`, `/submit`) deliver to the crew's inbox at `/crew` (and by email to `CREW_INBOX`); public ones check Cloudflare Turnstile in production.
+- **Forms** (`/contact`, builds on `/community`, `/try`, `/submit`, an event's feedback) deliver to the crew's inbox at `/crew`; messages, "try it" requests no club can take and claims the crew must check are also emailed to `CREW_INBOX`. Public ones check Cloudflare Turnstile in production.
 - **Accounts** have no passwords: one email with a link and a 6-digit code (spec 0006), or Google. The crew is whoever `CREW_EMAILS` lists. Locally, emails are printed in the API's console (`MAIL_TRANSPORT=log`).
 - **Search** (`docs/specs/0005-search.md`): all of it lives in `apps/api/src/search/` (PostgreSQL, no extra service), the screens in `apps/app/src/components/search/` and `/search`. A ranking change must keep the golden searches in `golden.test.ts` at 36 of 36; add a pinned answer in `query.ts` rather than bending the ranking for one search.
 - **Open source** (spec 0007): code under MIT (`LICENSE`), guides and figures under CC BY 4.0, the name and logo reserved (README, "Licence"). Outside pull requests are welcome: keep `CONTRIBUTING.md` true when commands, CI or the local setup change.
@@ -88,19 +88,32 @@ A **bit** is the smallest piece of behaviour someone can trigger and check end t
 
 ## Commands
 
-| Command          | What it does                                                      |
-| ---------------- | ----------------------------------------------------------------- |
-| `pnpm dev`       | Local development server                                          |
-| `pnpm build`     | Production build                                                  |
-| `pnpm check`     | Format check + lint + typecheck + tests + build. Must pass        |
-| `pnpm format`    | Auto-format every file (Prettier)                                 |
-| `pnpm lint`      | ESLint                                                            |
-| `pnpm typecheck` | TypeScript type checking                                          |
-| `pnpm test`      | Unit tests (Vitest)                                               |
-| `pnpm test:a11y` | Accessibility check of every public page (Playwright + axe-core)  |
-| `pnpm db:seed`   | Load the events engine's starting data into the local database    |
-| `pnpm engine`    | Run the events engine once (`pnpm engine <source>` for one)       |
-| `pnpm census`    | Load the FAA registers and ZIP codes (`pnpm census fria` for one) |
+| Command           | What it does                                                                                                                                     |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm dev`        | Local development server                                                                                                                         |
+| `pnpm build`      | Production build                                                                                                                                 |
+| `pnpm check`      | Format check + lint + typecheck + bits check + unit tests + build. Must pass                                                                     |
+| `pnpm check:fast` | The same without the build                                                                                                                       |
+| `pnpm check:bits` | Every bit has a doc, a catalog row and a test                                                                                                    |
+| `pnpm format`     | Auto-format every file (Prettier)                                                                                                                |
+| `pnpm lint`       | ESLint                                                                                                                                           |
+| `pnpm typecheck`  | TypeScript type checking                                                                                                                         |
+| `pnpm test`       | Unit tests (Vitest), next to the code: `*.test.ts`                                                                                               |
+| `pnpm test:e2e`   | End-to-end tests (Playwright), one per bit in `e2e/`. One bit: `pnpm test:e2e --grep <bit>`. First time: `pnpm exec playwright install chromium` |
+| `pnpm test:a11y`  | Accessibility check of every public page (Playwright + axe-core)                                                                                 |
+| `pnpm db:seed`    | Load the events engine's starting data into the local database                                                                                   |
+| `pnpm engine`     | Run the events engine once (`pnpm engine <source>` for one)                                                                                      |
+| `pnpm census`     | Load the FAA registers and ZIP codes (`pnpm census fria` for one)                                                                                |
+
+## Tests
+
+- **End-to-end, one file per bit:** `e2e/<area>.<action>.e2e.ts`, inside `test.describe("<area>.<action>", …)`. Do what the person does and check what they see: find things by role and label (`getByRole("button", { name: "Send message" })`, `getByLabel("Email")`), never by CSS classes, and never with fixed waits.
+- **How they run:** `pnpm test:e2e` builds everything, then starts both apps as production builds against a database of their own (`e2e`, emptied, migrated and seeded at every start by `e2e/database.ts`), with test settings: emails land in `e2e/.mail` (`MAIL_TRANSPORT=file`, read with `e2e/mail.ts`) and `crew@example.test` is the crew, signed in once by `e2e/global-setup.ts`. Stop the dev servers first (same ports). To run them again and again without rebuilding, the owner's dekit has `suntzu-rc/e2e-api` and `suntzu-rc/e2e-app`, and then `pnpm exec playwright test --config e2e/playwright.config.ts --grep <bit>`.
+- **People and data:** sign people in as a person does, with the code from their email (`signIn`, `signedIn` in `e2e/people.ts`); every test uses its own new address. The crew adds events by hand (`addEvent`), members become organisers (`becomeOrganiser`) and jobs run against the test database (`runJob`), all in `e2e/data.ts`. Tests never call the internet: the readers of the web (the engine, the census) are proved by their unit tests on saved pages.
+- **Someone's data:** add the cases "another member can't see or change it" and "signed out can't". They're the most valuable tests in the project.
+- **Unit tests** go next to the code (`*.test.ts`, Vitest) for rules and calculations. When a rule must hold for any input (reading back what you saved gives the same thing, a date range never ends before it starts), write a **property test** with `fast-check` (see `packages/shared/src/rules.test.ts`).
+- Tests use made-up data only (`@example.test` addresses), never real people's data or production.
+- `pnpm test:a11y` is separate: accessibility, motion and speed checks of every public page, against the running site (`apps/app/e2e`).
 
 ## Stack: product platform with a Next.js site (`app-platform`)
 
@@ -129,6 +142,7 @@ packages/ui/          shared shadcn/ui components + theme (brand colors, radius)
 3. **API:** add a module in `apps/api/src/<domain>/` (controller + service), copying `apps/api/src/notes/`. Data that anyone may see (a public listing) uses `@Public()` on its route; everything else needs a signed-in user.
 4. **Client:** `pnpm build` regenerates `apps/api/openapi.json` and the typed client. Commit both with the change.
 5. **Screen:** add the page in `apps/app/src/app/(app)/` (private, copying `(app)/notes/`) or `apps/app/src/app/(site)/` (public).
+6. **Tests:** the bit's doc in `docs/bits/` and its end-to-end test in `e2e/<bit>.e2e.ts`, through the screen and, for the rules, straight against the API; copy `e2e/notes.get.e2e.ts` for the "another member gets 404" and "signed out gets 401" cases.
 
 ### Monorepo rules
 

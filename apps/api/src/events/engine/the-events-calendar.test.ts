@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { readTheEventsCalendar } from "./the-events-calendar.js";
 
+// engine.run (docs/bits/engine.run.md): The Events Calendar's REST API reader, on a saved response.
+
 // imperial-rc-events.json: Imperial R/C Club's REST API (/wp-json/tribe/events/v1/events,
 // 2026 events, read 2026-10-27), trimmed to five events. Descriptions and organisers removed:
 // they named the contest directors with their emails.

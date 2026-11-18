@@ -31,7 +31,7 @@ export const memberProfile = z.object({
 });
 
 export const memberUpdate = z.object({
-  name: z.string().trim().max(80).optional(),
+  name: z.string().trim().max(80, "Keep your name under 80 characters.").optional(),
   // "" clears it.
   zip: z.union([z.literal(""), zip]).optional(),
   radiusMiles: z.number().int().min(5).max(300).optional(),

@@ -20,8 +20,10 @@ const schema = z.object({
   // Events engine: where the raw pages and feeds it reads are kept: a folder (local runs) or an
   // S3 bucket once deployed ("s3://<bucket>").
   ENGINE_SNAPSHOT_DIR: z.string().default(".snapshots"),
-  // Email: "log" prints each message to the console (local), "ses" sends it with Amazon SES.
-  MAIL_TRANSPORT: z.enum(["log", "ses"]).default("log"),
+  // Email: "log" prints each message to the console (local), "ses" sends it with Amazon SES,
+  // "file" writes each one as JSON into MAIL_DIR (the end-to-end tests read them; never in production).
+  MAIL_TRANSPORT: z.enum(["log", "ses", "file"]).default("log"),
+  MAIL_DIR: z.string().default(".mail"),
   MAIL_FROM: z.string().default("SunTzu RC <hello@suntzurc.com>"),
   // The AWS project's region (SES, S3, Bedrock).
   AWS_REGION: z.string().default("us-east-2"),
@@ -48,5 +50,10 @@ const schema = z.object({
   TURNSTILE_SECRET_KEY: z.string().optional(),
 });
 
-export const env = schema.parse(process.env);
+export const env = schema
+  .refine((value) => !(value.NODE_ENV === "production" && value.MAIL_TRANSPORT === "file"), {
+    message: "MAIL_TRANSPORT=file is for tests only: production sends email with SES.",
+    path: ["MAIL_TRANSPORT"],
+  })
+  .parse(process.env);
 export type Env = typeof env;

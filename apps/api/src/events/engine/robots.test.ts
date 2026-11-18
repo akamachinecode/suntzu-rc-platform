@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { parseRobots } from "./robots.js";
 
+// engine.run (docs/bits/engine.run.md): robots.txt rules, Crawl-delay and Request-rate.
+
 const agent = "SunTzuRCBot/0.1 (+https://example.test)";
 
 describe("parseRobots", () => {

@@ -42,14 +42,15 @@ export async function publishEvent(
     };
   }
   const api = await getApi();
-  const { data, response } = await api.POST("/organise/{host}/events", {
+  const result = await api.POST("/organise/{host}/events", {
     params: { path: { host } },
     body: parsed.data,
   });
+  const { data } = result;
   if (!data) {
     return {
       status: "error",
-      message: await apiErrorText(response, "Could not publish it."),
+      message: apiErrorText(result, "Could not publish it."),
       values: typedValues(formData),
     };
   }
@@ -74,26 +75,41 @@ export async function quickEdit(
 
 export type SimpleState = { status: "idle" | "done" | "error"; message?: string };
 
+export type ClubState = SimpleState & {
+  errors?: Partial<Record<string, string[]>>;
+  /** What was typed, given back after an error so the form keeps it (spec 0010). */
+  values?: Partial<Record<string, string>>;
+};
+
 export async function saveClub(
   host: string,
-  _prev: SimpleState,
+  _prev: ClubState,
   formData: FormData,
-): Promise<SimpleState> {
+): Promise<ClubState> {
   const parsed = hostUpdate.safeParse({
     summary: String(formData.get("summary") ?? "").trim(),
     url: String(formData.get("url") ?? "").trim(),
     disciplines: formData.getAll("disciplines").map(String),
     acceptsNewcomers: formData.get("acceptsNewcomers") === "on",
   });
-  if (!slug.safeParse(host).success || !parsed.success) {
-    return { status: "error", message: "Check the website link." };
+  if (!slug.safeParse(host).success) return { status: "error", message: "Could not save." };
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: "Check the website link.",
+      // Only the website can be wrong here (the summary has a maxLength, the boxes fixed values).
+      errors: { url: ["Paste a full link, starting with https://"] },
+      values: typedValues(formData),
+    };
   }
   const api = await getApi();
   const { response } = await api.PATCH("/organise/{host}", {
     params: { path: { host } },
     body: parsed.data,
   });
-  if (!response.ok) return { status: "error", message: "Could not save." };
+  if (!response.ok) {
+    return { status: "error", message: "Could not save.", values: typedValues(formData) };
+  }
   revalidatePath(`/organise/${host}`);
   return { status: "done", message: "Saved." };
 }

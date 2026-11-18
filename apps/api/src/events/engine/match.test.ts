@@ -10,6 +10,8 @@ import {
   type MatchCandidate,
 } from "./match.js";
 
+// engine.resolve (docs/bits/engine.resolve.md): same event or not (names, dates, verdicts) and confidence.
+
 const day = (start: string, end: string | null = null) => ({
   start,
   end,

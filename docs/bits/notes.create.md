@@ -8,6 +8,6 @@ Example bit that ships with the template: copy its shape for real features, then
 - **Data:** writes one row in `notes` with `owner_id` set to the caller.
 - **Rules:** title required (up to 120 characters), body up to 5000; the owner always comes from the session, never from the request.
 - **Errors:** invalid input shows a message next to the field (checked in the app and again in the API); an API failure shows "Could not save the note". After an error the form keeps what was typed, the cursor goes to the first field with an error, each error is read with its field, and the answer is announced (`components/forms/feedback.tsx`, spec 0010).
-- **Test:** none yet.
+- **Test:** `e2e/notes.create.e2e.ts` (a member adds a note and sees it, kept after a reload; no title → "Give the note a title" at the field, focused, what was typed kept; the owner comes from the session even if the request names another; the API refuses an empty or over-120-character title; signed out 401)
 - **Observe:** API log lines with `bit: "notes.create"`.
-- **Status:** read in code — 2026-10-27
+- **Status:** verified — 2026-11-18 (end-to-end test)
