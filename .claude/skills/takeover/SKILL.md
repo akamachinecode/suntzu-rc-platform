@@ -14,7 +14,9 @@ Finish the original goal, not necessarily the original code, and keep the origin
    - **Rework:** the goal still matters but the approach no longer fits. Explain the smallest rewrite and ask before doing it.
    - **Close:** it's no longer needed. Show the evidence and ask; never close someone else's work without permission.
 4. **Keep the credit.** Continue on a new branch built from the original commits, preserving their authors. Mention and link the original work in the pull request, with a `Co-authored-by:` line for each original author.
-5. **Finish and prove it** inside the rules of `AGENTS.md`, then deliver with `/ship`.
+5. **Finish and prove it** inside the rules of `AGENTS.md` with `/verify`, then deliver with `/ship`.
+
+**Replacing an old system** (a PHP site, a spreadsheet, a previous app): the old system is the reference. Before switching, run the same inputs through both and compare: the same pages, the same form submissions, the same API calls, ideally a sample of real (anonymised) traffic. Ignore differences that don't matter (whitespace, dates, IDs), and list the intended ones in the spec under "Approved differences". Any other difference is a bug or a breaking change to discuss. For an inherited codebase, also ask Itaca engineering for a full security audit before it goes live.
 
 Never force-push or rewrite someone else's branch, and never merge.
 

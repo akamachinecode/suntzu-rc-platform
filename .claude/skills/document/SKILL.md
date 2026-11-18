@@ -18,7 +18,7 @@ Describe what the system really does, and say how sure you are of each part.
 1. **Inventory.** Languages, frameworks, package manager, entry points, pages and routes, API endpoints, scheduled jobs, webhooks, integrations (from SDKs and environment variable names), infrastructure files (IaC, Dockerfiles, CI) and environments.
 2. **Map.** Write `docs/SYSTEM.md`: the pieces, where each one runs, how they connect (a small text diagram), integrations, data stores and environments.
 3. **Bits.** List the bits from routes, forms, endpoints, jobs and webhooks. For each one, follow its path through the code and write `docs/bits/<area>.<action>.md` from `docs/bits/_template.md`, then add its row to `docs/bits/README.md`. Set its status:
-   - `verified`: you ran it and saw the result.
+   - `verified`: its end-to-end test passes, or you ran it and saw the result (say how in the doc). A bit without a test gets `Test: manual: <steps>` until someone writes one: `pnpm check:bits` needs the field.
    - `read in code`: you followed it in the code but didn't run it.
    - `not verified`: you couldn't follow it completely.
 4. **Operations.** Fill in `docs/OPERATIONS.md`: running locally, deploying, rolling back, who has access, backups, secret names, monitoring, and known risks.
