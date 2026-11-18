@@ -32,11 +32,12 @@ export async function startClaim(_prev: ClaimState, formData: FormData): Promise
     };
   }
   const api = await getApi();
-  const { data, response } = await api.POST("/organise/claims", { body: parsed.data });
+  const result = await api.POST("/organise/claims", { body: parsed.data });
+  const { data } = result;
   if (!data) {
     return {
       status: "error",
-      message: await apiErrorText(response, "Could not start the claim."),
+      message: apiErrorText(result, "Could not start the claim."),
       values: typedValues(formData),
     };
   }
@@ -64,14 +65,15 @@ export async function enterCode(
     return { status: "error", message: "Enter the 6-digit code from the email." };
   }
   const api = await getApi();
-  const { data, response } = await api.POST("/organise/claims/{host}/code", {
+  const result = await api.POST("/organise/claims/{host}/code", {
     params: { path: { host } },
     body: parsed.data,
   });
+  const { data } = result;
   if (!data)
     return {
       status: "error",
-      message: await apiErrorText(response, "That didn't work. Try again."),
+      message: apiErrorText(result, "That didn't work. Try again."),
     };
   revalidatePath("/organise");
   return { status: "verified", message: "Verified. Welcome aboard." };
@@ -80,11 +82,11 @@ export async function enterCode(
 export async function checkWebsite(host: string): Promise<ClaimState> {
   if (!slug.safeParse(host).success) return { status: "error" };
   const api = await getApi();
-  const { data, response } = await api.POST("/organise/claims/{host}/website", {
+  const result = await api.POST("/organise/claims/{host}/website", {
     params: { path: { host } },
   });
-  if (!data)
-    return { status: "error", message: await apiErrorText(response, "We couldn't check it.") };
+  const { data } = result;
+  if (!data) return { status: "error", message: apiErrorText(result, "We couldn't check it.") };
   revalidatePath("/organise");
   return { status: "verified", message: "Found it. You're verified." };
 }

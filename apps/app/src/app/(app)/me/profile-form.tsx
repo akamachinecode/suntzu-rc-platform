@@ -36,7 +36,9 @@ export function ProfileForm({ profile }: { profile: MemberProfile }) {
             name="name"
             defaultValue={typed?.name ?? profile.name}
             autoComplete="name"
+            {...form.aria("name")}
           />
+          <FieldError id="name" errors={form.errors("name")} />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="zip" className="font-semibold">

@@ -1,24 +1,29 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import type { OrganiserHost } from "@workspace/shared";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { Textarea } from "@workspace/ui/components/textarea";
+import { FieldError, FormStatus, useFormFeedback } from "@/components/forms/feedback";
 import { DISCIPLINE_LABELS } from "@/lib/events";
-import { saveClub, type SimpleState } from "./actions";
-import { FormStatus } from "@/components/forms/feedback";
+import { type ClubState, saveClub } from "./actions";
 
 export function ClubForm({ data }: { data: OrganiserHost }) {
-  const [state, action, pending] = useActionState<SimpleState, FormData>(
+  const [state, action, pending] = useActionState<ClubState, FormData>(
     saveClub.bind(null, data.host.slug),
-    {
-      status: "idle",
-    },
+    { status: "idle" },
   );
+  const ref = useRef<HTMLFormElement>(null);
+  const form = useFormFeedback(state, ref);
+  // After a failed save the fields start from what was typed (spec 0010), else from the club.
+  const typed = state.values;
+  const disciplines = typed
+    ? (typed.disciplines ?? "").split("\n")
+    : (data.host.disciplines as string[]);
   return (
-    <form action={action} className="grid gap-5">
+    <form ref={ref} action={action} onInput={form.onInput} noValidate className="grid gap-5">
       <div className="grid gap-2">
         <Label htmlFor="club-summary" className="font-semibold">
           About the club, in a line or two
@@ -28,14 +33,24 @@ export function ClubForm({ data }: { data: OrganiserHost }) {
           name="summary"
           rows={3}
           maxLength={600}
-          defaultValue={data.host.summary}
+          defaultValue={typed ? (typed.summary ?? "") : data.host.summary}
         />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="club-url" className="font-semibold">
           Website
         </Label>
-        <Input id="club-url" name="url" type="url" defaultValue={data.host.url ?? ""} />
+        <Input
+          id="club-url"
+          name="url"
+          type="url"
+          inputMode="url"
+          autoComplete="url"
+          spellCheck={false}
+          defaultValue={typed ? (typed.url ?? "") : (data.host.url ?? "")}
+          {...form.aria("url", { id: "club-url" })}
+        />
+        <FieldError id="club-url" errors={form.errors("url")} />
       </div>
       <fieldset className="flex flex-wrap gap-3">
         <legend className="mb-2 font-semibold">What you fly or drive</legend>
@@ -48,7 +63,7 @@ export function ClubForm({ data }: { data: OrganiserHost }) {
               type="checkbox"
               name="disciplines"
               value={value}
-              defaultChecked={data.host.disciplines.includes(value as never)}
+              defaultChecked={disciplines.includes(value)}
               className="size-4 accent-foreground"
             />
             {label}
@@ -59,7 +74,7 @@ export function ClubForm({ data }: { data: OrganiserHost }) {
         <input
           type="checkbox"
           name="acceptsNewcomers"
-          defaultChecked={data.host.acceptsNewcomers}
+          defaultChecked={typed ? typed.acceptsNewcomers === "on" : data.host.acceptsNewcomers}
           className="mt-1 size-4 accent-foreground"
         />
         <span>

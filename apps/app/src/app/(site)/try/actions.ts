@@ -3,6 +3,7 @@
 import { tryInput } from "@workspace/shared";
 import { z } from "zod";
 import { getApi } from "@/lib/api";
+import { apiErrorText } from "@/lib/api-error";
 import { typedValues } from "@/lib/typed-values";
 
 export type TryState = {
@@ -35,15 +36,14 @@ export async function askToTry(_prev: TryState, formData: FormData): Promise<Try
     };
   }
   const api = await getApi();
-  const { data, response } = await api.POST("/try", { body: parsed.data });
+  const result = await api.POST("/try", { body: parsed.data });
+  const { data } = result;
   if (!data) {
-    const body = (await response.json().catch(() => ({}))) as { message?: string };
+    // The API's reason when it refused what was typed ("Is it in Florida?"), else a generic one.
+    const fallback = "We couldn't send it. Try again in a minute.";
     return {
       status: "error",
-      message:
-        response.status === 400 && body.message
-          ? body.message
-          : "We couldn't send it. Try again in a minute.",
+      message: result.response.status === 400 ? apiErrorText(result, fallback) : fallback,
       values: typedValues(formData),
     };
   }

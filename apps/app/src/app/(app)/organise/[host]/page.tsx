@@ -116,7 +116,10 @@ export default async function ClubDashboard({ params }: PageProps<"/organise/[ho
               >
                 <label className="grid gap-1 text-sm font-semibold">
                   Who can use it
+                  {/* React reads a select's default only when it mounts: the key remounts it with
+                      the saved answer after "Confirm details", which resets the form. */}
                   <select
+                    key={place.access}
                     name="access"
                     defaultValue={place.access === "unknown" ? "permission" : place.access}
                     className="h-10 rounded-md border-2 border-foreground bg-background px-2"
