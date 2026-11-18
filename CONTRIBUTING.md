@@ -63,7 +63,7 @@ The repository is set up for Claude Code, Cursor, GitHub Copilot, Codex and othe
 
 ### What happens next
 
-- **CI** runs on your pull request: `pnpm check`, the accessibility check and a secret scan must pass before merging, and a dependency audit runs alongside. Pull requests from forks run without any of the project's secrets, so CI never touches our servers.
+- **CI** runs on your pull request: `pnpm check`, the end-to-end tests, static analysis (Semgrep), the accessibility check and a secret scan must pass before merging; a dependency audit runs alongside, and a summary lists how each commit was verified (agents add a `Verified-by:` trailer, `AGENTS.md`; people don't have to). Reviewers follow [`REVIEW.md`](./REVIEW.md). Pull requests from forks run without any of the project's secrets, so CI never touches our servers.
 - A maintainer is asked to review automatically (see `.github/CODEOWNERS`). We may ask for changes; that's normal and not a judgement on you.
 - Once approved, a maintainer merges it. Merging to `main` is what deploys to production, so only maintainers merge, and production deploys need the owner's approval.
 

@@ -27,6 +27,8 @@ Stop asking when you can describe what "done" looks like in a few sentences the 
 
 Walk the checklist in `docs/specs/README.md`. Mark what this feature needs. Anything on the "When to stop" list in `AGENTS.md` (payments, personal data, permissions, infrastructure, integrations) goes under "Needs Itaca engineering" and is not built until an engineer agrees.
 
+If the feature touches sign-in, users, permissions, personal data, payments, files, external services or AI, run `/security` in **design** mode: the controls that apply and two to five ways someone could abuse it ("a customer changes the order ID and sees someone else's order"). They go in the spec's "Security" section and become tests.
+
 ## 4. Write the specification
 
 Copy `docs/specs/_template.md` to `docs/specs/NNNN-short-name.md` (next free number) and fill it in:
@@ -34,8 +36,8 @@ Copy `docs/specs/_template.md` to `docs/specs/NNNN-short-name.md` (next free num
 - Problem, goals and what's out of scope.
 - User stories, most important first.
 - Capabilities touched (from step 3) and bits created or changed (`docs/bits/`).
-- Acceptance criteria in plain "When… then…" sentences that someone can check.
-- Slices: each one small enough for a single pull request, useful on its own when possible, with what it's blocked by.
+- Acceptance criteria in plain "When… then…" sentences that someone can check. Each one becomes a step of a bit's end-to-end test ("How we'll verify").
+- Slices: each one small enough for a single pull request, useful on its own when possible, with what it's blocked by. Each slice includes the tests of the bits it creates or changes.
 - Open questions, each with who should answer it.
 
 ## 5. Get approval
@@ -48,8 +50,8 @@ For each slice, in order:
 
 1. Create a branch `feat/<short-name>-<slice number>`.
 2. Build it, inside the rules of `AGENTS.md`.
-3. Create or update the bit files it touches in `docs/bits/`.
-4. Tick the slice in the spec and deliver it with `/ship`.
+3. Create or update the bit files it touches in `docs/bits/` and their end-to-end tests in `e2e/`, from the acceptance criteria.
+4. Check it with `/verify`, tick the slice in the spec and deliver it with `/ship`.
 
 When the last slice is merged, set `Status: Done`. If something new changes the plan, update the spec first, tell the person and get their OK before continuing.
 

@@ -18,6 +18,7 @@ test.describe("events.share-image", () => {
     expect(page.status()).toBe(200);
     const head = (await page.text()).split("</head>")[0]!;
     const meta = (key: string) =>
+      // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- test code: the pattern is built from the test's own data.
       head.match(new RegExp(`<meta (?:property|name)="${key}" content="([^"]*)"`))?.[1];
     expect(meta("og:image:alt")).toBe("Event pass from SunTzu RC");
     expect(meta("og:image:width")).toBe("1200");
@@ -26,6 +27,7 @@ test.describe("events.share-image", () => {
     expect(image, `no og:image in the <head> of /events/${slug}`).toBeTruthy();
     expect(meta("twitter:image")).toBe(image);
     const url = new URL(image!.replace(/&amp;/g, "&"));
+    // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- test code: the pattern is built from the test's own data.
     expect(url.pathname).toMatch(new RegExp(`^/events/${slug}/opengraph-image`));
 
     const response = await request.get(`${url.pathname}${url.search}`, { headers: PREVIEW_BOT });

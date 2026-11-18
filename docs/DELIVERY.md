@@ -29,13 +29,16 @@ How a change travels from a pull request to the live site, and who does what on 
 
 ## 1. Checks on every pull request (CI)
 
-[`ci.yml`](../.github/workflows/ci.yml) runs four jobs at the same time, in about two minutes (the accessibility job takes about eight):
+[`ci.yml`](../.github/workflows/ci.yml) runs seven jobs at the same time, in about two minutes (the end-to-end tests take about five, the accessibility job about eight):
 
 | Job                            | What it does                                                                                                                                                                             | Blocks the merge |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
-| Format, lint, typecheck, build | `pnpm check`: formatting, lint, TypeScript, every test and a full build of the API, the site and the portal                                                                              | yes              |
+| Format, lint, typecheck, build | `pnpm check`: formatting, lint, TypeScript, the bits check, every unit test and a full build of the API, the site and the portal                                                         | yes              |
+| End-to-end tests               | `pnpm test:e2e`: one Playwright test per bit (`e2e/`), both apps as production builds against a database of their own, in Chromium                                                       | yes              |
 | Accessibility                  | `pnpm test:a11y` in Chromium, a phone, WebKit and Firefox: axe-core checks every public page against WCAG 2.2 AA, with both apps running on a throwaway PostgreSQL and the starting data | yes              |
 | Secret scan                    | TruffleHog looks for passwords or keys committed by mistake, in the whole history                                                                                                        | yes              |
+| Static analysis                | Semgrep CE reads our code for security mistakes; a false positive is marked on its line with the reason (`.semgrepignore` only lists what isn't our code)                                | yes              |
+| Verification stamps            | Lists how each commit of the pull request was verified (its `Verified-by:` trailer, `AGENTS.md`) in the run summary; never fails                                                         | no               |
 | Dependency audit               | `pnpm audit`: are any of the libraries we use known to be vulnerable? (it reads published advisories, not our code)                                                                      | no               |
 
 [`infra.yml`](../.github/workflows/infra.yml) adds one more job when a pull request touches `infra/`: `terraform fmt` and `terraform validate`, without any access to AWS.
@@ -45,7 +48,7 @@ GitHub also runs, on its own and outside these files:
 - **CodeQL** analyses our code for security flaws, on every pull request and once a week.
 - **Dependabot** watches our libraries ([`.github/dependabot.yml`](../.github/dependabot.yml)): it opens pull requests with updates (npm weekly, GitHub Actions monthly, Terraform weekly, never versions younger than 7 days) and alerts when one is vulnerable.
 
-`main` only accepts changes through pull requests, and the two blocking checks must be green ([`GITHUB.md`](./GITHUB.md), step 2). Pull requests from forks run CI without any of the project's secrets, so outside code never touches our servers.
+`main` only accepts changes through pull requests, and the blocking checks must be green ([`GITHUB.md`](./GITHUB.md), step 2). Pull requests from forks run CI without any of the project's secrets, so outside code never touches our servers.
 
 ## 2. The deploy (CD)
 

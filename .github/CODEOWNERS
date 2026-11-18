@@ -1,2 +1,15 @@
 # Who is asked to review each pull request automatically. Add maintainers here as they join.
 * @akamachinecode
+
+# The files that judge or deploy every change: the agents' skills and hooks, the review guide, the
+# checks list, CI and the infrastructure. A change can't loosen its own checks. In the template
+# these belong to @ITACA-TECHNOLOGIES/engineering; this repository lives in the owner's personal
+# account (docs/DECISIONS.md, 2026-10-29), where that team doesn't exist, so the owner reviews them.
+# Only enforced when the branch ruleset requires code owner review (docs/GITHUB.md).
+/.claude/            @akamachinecode
+/REVIEW.md           @akamachinecode
+/docs/CHECKS.md      @akamachinecode
+/.github/            @akamachinecode
+/infra/              @akamachinecode
+/pnpm-workspace.yaml @akamachinecode
+/.semgrepignore      @akamachinecode

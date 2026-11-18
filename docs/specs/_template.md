@@ -29,9 +29,21 @@ From the checklist in `README.md`: only the areas this feature needs, and what i
 - New: `area.action` — …
 - Changed: `area.action` — …
 
+## Security
+
+From `/security` (design mode), when the feature touches sign-in, users, permissions, personal data, payments, files, external services or AI. Otherwise "Not needed".
+
+- Controls that apply: `P0-02` …
+- Abuse cases: "A … changes … and …" (each one becomes an end-to-end test).
+
 ## Acceptance criteria
 
 - When …, then …
+
+## How we'll verify
+
+- Bit `area.action`: `e2e/area.action.e2e.ts` covers the criteria above (and the abuse cases).
+- What can only be checked by hand, and how.
 
 ## Slices
 

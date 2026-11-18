@@ -47,6 +47,13 @@ Plus the security release in between (`0.4.1`): Next.js 16.4.6.
 - Changed: every bit gets its test (`docs/bits/`).
 - New: none.
 
+## Security
+
+From `/security`, sign-off of the three slices (2026-11-18; the verdict is in the third pull request).
+
+- Controls that apply: `P0-02` and `P0-03` (pages move between route groups; the organisers' actions are split; the API stays the gate), `P0-05` (the API's messages shown to people, the JSON-LD tags), `P0-08` (the event feedback's Turnstile token), `P0-11` (the test mailbox), `P0-15` (authorization cases in the end-to-end tests), `P0-16` (versions, the picomatch exception), `P1-01`, `P1-02` and `P1-10` (code owners, Semgrep, the new CI jobs).
+- Abuse cases: "someone sets `MAIL_TRANSPORT=file` in production to read sign-in codes from disk" (refused at start, `apps/api/src/env.test.ts`); "a member changes a club's slug in a request to manage a club they don't run" (404/403, `e2e/organiser.publish.e2e.ts`, `e2e/organiser.update-club.e2e.ts`); "a member reads another member's note or calendar" (404, `e2e/notes.get.e2e.ts`, `e2e/me.calendar.e2e.ts`).
+
 ## Acceptance criteria
 
 - When someone opens any page that worked before, then it works at the same URL, with the same header and footer.
@@ -65,7 +72,7 @@ Plus the security release in between (`0.4.1`): Next.js 16.4.6.
 
 - [x] 1. The stack: `app-platform`, route groups, versions, infra catch-up, docs (blocked by: —)
 - [x] 2. A test per bit: `e2e/`, `pnpm check:bits`, `pnpm test:e2e`, the mailbox, every bit tested (blocked by: 1)
-- [ ] 3. The checks: `/verify`, `/security`, hooks, `docs/CHECKS.md`, `REVIEW.md`, CI, code owners (blocked by: 2)
+- [x] 3. The checks: `/verify`, `/security`, hooks, `docs/CHECKS.md`, `REVIEW.md`, CI, code owners (blocked by: 2)
 
 ## Open questions
 

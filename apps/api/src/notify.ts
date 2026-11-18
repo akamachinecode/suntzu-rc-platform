@@ -16,6 +16,7 @@ async function step(name: string, run: () => Promise<number>): Promise<number> {
   try {
     return await run();
   } catch (error) {
+    // nosemgrep: javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring -- `name` is one of this file's own step labels, not input.
     console.error(`notify: ${name} failed`, error);
     process.exitCode = 1;
     return 0;

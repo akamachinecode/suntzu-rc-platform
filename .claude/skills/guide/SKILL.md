@@ -14,12 +14,15 @@ The person may not be technical. Help them find the right way of working, in the
    | ------------------------------------ | ----------- | ----------------------------------------------------------------------------- |
    | Build something new                  | `/plan`     | A few business questions, a one-page plan to approve, then it's built in parts |
    | Fix something that's broken          | `/fix`      | Reproduce it, find the cause, fix it and show it works                        |
+   | Check that something works           | `/verify`   | The checks and tests run, and the change is tried in the app like a person would |
+   | Know if it's secure, before publishing | `/security` | A clear verdict (BLOCK, PASS WITH ISSUES, PASS) with the evidence for each point |
    | Understand how something works       | `/document` | The project (or a part of it) gets documented in plain language               |
    | Deliver finished work                | `/ship`     | A pull request with proof, ready for someone to review and approve            |
    | Continue someone else's work         | `/takeover` | Their work is brought up to date and finished, keeping their credit           |
 
 3. Set expectations:
    - You propose and they decide. Nothing reaches production without a pull request that a person approves.
+   - Every change is tried before it's delivered, and they're told how it was checked and what wasn't.
    - Payments, personal data, permissions and infrastructure need Itaca engineering (the "When to stop" list in `AGENTS.md`).
    - Questions are welcome at any time; no skill is needed to ask how something works.
 4. Ask what they would like to do, and continue with the skill that fits.

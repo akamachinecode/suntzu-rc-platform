@@ -51,6 +51,9 @@ resource "random_password" "database" {
   special = false
 }
 
+# Semgrep: no PostgreSQL log export to CloudWatch yet; the API logs every query's trace and errors.
+# Itaca engineering decides per project whether to enable `enabled_cloudwatch_logs_exports` (cost).
+# nosemgrep: terraform.aws.security.aws-db-instance-no-logging.aws-db-instance-no-logging
 resource "aws_db_instance" "database" {
   identifier_prefix          = "${substr(var.name, 0, 36)}-"
   engine                     = "postgres"

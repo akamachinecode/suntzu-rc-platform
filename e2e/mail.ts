@@ -63,6 +63,7 @@ export function codeIn(mail: Mail): string {
 /** The first link in an email's text that starts with `prefix`. */
 export function linkIn(mail: Mail, prefix: string): string {
   const link = mail.text.match(
+    // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- test code: the pattern is built from the test's own data.
     new RegExp(`${prefix.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\S*`),
   )?.[0];
   expect(link, `no link to ${prefix} in "${mail.subject}"`).toBeTruthy();

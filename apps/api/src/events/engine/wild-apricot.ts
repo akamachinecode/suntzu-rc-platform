@@ -16,6 +16,7 @@ import {
 
 /** The first <tag>…</tag> of an XML fragment, as the source wrote it and as text. */
 function element(xml: string, tag: string): { raw: string; value: string } | undefined {
+  // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- `tag` is one of this file's own constants ("title", "link", "pubDate").
   const match = new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>`, "i").exec(xml);
   if (!match) return undefined;
   const inner = match[1]!.replace(/^\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*$/, "$1");

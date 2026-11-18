@@ -24,16 +24,18 @@ The person prompting you may not be a developer (sales, operations, a client). S
 
 Before acting on a request, decide what kind it is. If a skill fits, suggest it in one plain sentence (what will happen and why) and wait for a yes. You propose, you don't block: if the person says "just do it", do it and note that in the pull request. Skills live in `.claude/skills/<name>/SKILL.md`; if your tool doesn't load skills by itself, open that file and follow it.
 
-| The request is…                                                           | Do this                                                 |
-| ------------------------------------------------------------------------- | ------------------------------------------------------- |
-| A question, or "how does X work?"                                         | Answer it. Read `docs/SYSTEM.md` and `docs/bits/` first |
-| A small, clear change (a text, a colour, a link)                          | Make it, then `/ship`                                   |
-| Something new, or it touches data, users, payments or an external service | `/plan` first                                           |
-| Something is broken                                                       | `/fix`                                                  |
-| A part of the project nobody has documented, or docs that are out of date | `/document`                                             |
-| Someone else's pull request, branch or unfinished work                    | `/takeover`                                             |
-| Anything on the "When to stop" list below                                 | Stop and ask Itaca engineering                          |
-| The person doesn't know where to start, or asks what they can do          | `/guide`                                                |
+| The request is…                                                                      | Do this                                                 |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| A question, or "how does X work?"                                                    | Answer it. Read `docs/SYSTEM.md` and `docs/bits/` first |
+| A small, clear change (a text, a colour, a link)                                     | Make it, `/verify`, then `/ship`                        |
+| Something new, or it touches data, users, payments or an external service            | `/plan` first                                           |
+| Something is broken                                                                  | `/fix`                                                  |
+| "Does it work?", "test it", or before any commit                                     | `/verify`                                               |
+| "Is it secure?", "can we publish this?", or a change to sign-in, data or permissions | `/security`                                             |
+| A part of the project nobody has documented, or docs that are out of date            | `/document`                                             |
+| Someone else's pull request, branch or unfinished work                               | `/takeover`                                             |
+| Anything on the "When to stop" list below                                            | Stop and ask Itaca engineering                          |
+| The person doesn't know where to start, or asks what they can do                     | `/guide`                                                |
 
 Example: "This is a new feature and it touches user data, so I suggest doing it with /plan: I'll ask a few questions, show you the plan on one page and build it in parts once you approve it. Shall we?"
 
@@ -44,6 +46,8 @@ Every Itaca project keeps the same documents, so anyone (a person or an agent) c
 | File                                                     | What it holds                                                      |
 | -------------------------------------------------------- | ------------------------------------------------------------------ |
 | `README.md`                                              | What the project is and how to start it                            |
+| `docs/CHECKS.md`                                         | Checks that a change triggers (read by `/verify` from `main`)      |
+| `REVIEW.md`                                              | What reviewers look for in a pull request                          |
 | `docs/README.md`                                         | The docs portal's home page: where to start                        |
 | `docs/SYSTEM.md`                                         | The map: pieces, where they run, integrations and environments     |
 | `docs/DELIVERY.md`                                       | From code to production: CI, deploys, Docker, OIDC, scheduled jobs |
@@ -67,8 +71,29 @@ A **bit** is the smallest piece of behaviour someone can trigger and check end t
 6. **Dependencies are a decision.** Prefer what the stack already includes and the "standard choices" below. Every new package must be justified in `docs/DECISIONS.md`. Packages published less than a day ago and install scripts are blocked on purpose — don't work around it.
 7. **Don't touch infrastructure** — deployment files (listed under "Deployment") and `.github/` — unless the user explicitly asks. Those changes affect production.
 8. **Accessible and indexable by default:** semantic HTML, one `<h1>` per page, `alt` on images, a `<label>` for every input, keyboard-usable controls, a page `title` and `description`.
-9. **Finish every task with `pnpm check`** (format, lint, types, build) and fix what fails. Run `pnpm format` for formatting. Never disable lint rules or type checks to make it pass.
+9. **Finished means verified.** Follow "Definition of done" below before you say a task is done. Run `pnpm format` for formatting. Never disable lint rules, type checks or tests to make something pass.
 10. **Read and record decisions.** `docs/DECISIONS.md` is the project's memory: read it before starting a task. New dependency, environment variable, external service, data model or route structure change → add a dated entry to it. Itaca engineers read it when they take over.
+
+## Definition of done
+
+A change is done when you have **seen it work**, not when the code looks right. `/verify` does all of this and records it:
+
+1. `pnpm check` passes (format, lint, types, bits, unit tests, build).
+2. Every bit the change creates or touches has its doc in `docs/bits/` and an end-to-end test in `e2e/`, and those tests pass (`pnpm test:e2e --grep <bit>`). For someone's data, the test includes "another member can't".
+3. You ran the app and used the change like a person would. A page change also keeps `pnpm test:a11y` green.
+4. The checks in `docs/CHECKS.md` whose trigger matches the diff are done.
+5. If the change touches sign-in, users, permissions, personal data, payments, files, secrets, CI or infrastructure, `/security` gave no `BLOCK`.
+6. Each commit says how it was verified, with a trailer: `git commit -m "…" --trailer "Verified-by: verify"` (`check` when only `pnpm check` applied, as for a text change). When you truly couldn't verify, use `Verified-by: none` and add a line `Unverified: <reason>` to the message. CI lists every commit's stamp in the pull request.
+
+Then tell the person, in plain words, what you checked and how they can see it. Say clearly what you could not check.
+
+## When a check fails
+
+- **Fix the code, not the check.** Never `.skip`, `.only`, add retries or `sleep`, lower a limit, disable a rule or delete a test to get green.
+- A test that sometimes fails is a bug: find the cause. If you can't, delete it, say so in the pull request and add an entry to `docs/DECISIONS.md`.
+- **Three rounds, then stop.** If checks still fail after three attempts, stop changing things. Explain to the person what fails, what you tried and the likely cause, and suggest Itaca engineering.
+- **A change never edits its own checks.** `docs/CHECKS.md`, `REVIEW.md`, `.claude/` and `.github/` change only in their own pull request, reviewed by their code owners (`.github/CODEOWNERS`).
+- In Claude Code, hooks help: when you finish a turn with changed files, the fast checks run (`pnpm check:fast`) and send you back if they fail; a commit of files that weren't verified, or without its `Verified-by:` trailer, is stopped (`.claude/hooks/verification.ts`, mode in `.claude/verification.json`). With other tools, follow the same rules yourself.
 
 ## SunTzu RC project notes
 
@@ -172,6 +197,7 @@ packages/ui/          shared shadcn/ui components + theme (brand colors, radius)
 - Payments, personal or sensitive data, user roles and permissions, regulated data (HIPAA, PCI DSS, GDPR, SOC 2 scope).
 - Integrations with other company systems (ERP, CRM, identity providers, internal APIs).
 - Changes to infrastructure, DNS, domains, AWS or Cloudflare settings.
+- Before the first launch to real users, and once a year: a full security audit by Itaca engineering (recorded in `docs/OPERATIONS.md`, "Security reviews"). `/security` is a checklist for each change; it doesn't replace it.
 
 - **Database structure changes that delete or rename data** (dropping columns or tables, changing types) and anything touching user accounts, sessions or permissions in `apps/api/src/auth`.
 - **Background jobs, queues, scheduled tasks, websockets or file uploads:** they need new AWS pieces in `infra/` (Terraform) — ask Itaca engineering.

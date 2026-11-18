@@ -1,0 +1,27 @@
+# Paths Semgrep doesn't scan (CI job "Static analysis"). A finding in our own code is never excluded
+# here: it gets `nosemgrep: <rule>` on its line with the reason (docs/DECISIONS.md, 2026-11-18).
+
+# Semgrep's own defaults, kept because this file replaces them.
+:include .gitignore
+node_modules/
+build/
+dist/
+vendor/
+.env/
+.venv/
+.tox/
+*.min.js
+.npm/
+.yarn/
+test/
+tests/
+*_test.go
+.semgrep
+.semgrep_logs/
+
+# Not our code. Saved copies of organisers' pages and public data files that the engine's and the
+# census's tests read: changing them would change what they prove.
+apps/api/src/**/fixtures/
+# The Anatomy figure tool (a Claude Code skill that runs on an author's computer and never ships).
+# The figure kit the site does ship, apps/app/src/components/iso/, is scanned.
+.claude/skills/anatomy/

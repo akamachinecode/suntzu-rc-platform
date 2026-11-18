@@ -86,6 +86,79 @@ jobs:
           path: apps/app/test-results/
           retention-days: 7
 
+  # One end-to-end test per bit (e2e/, spec 0011): builds everything, starts the local database with
+  # Docker Compose (the runner has it), and both apps as production builds against a database of
+  # their own, with test-only settings (e2e/playwright.config.ts). No secrets.
+  e2e:
+    name: End-to-end tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      # Next.js build cache: faster CI builds, and no "No build cache found" warning.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ github.workspace }}/apps/app/.next/cache
+          key: nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('apps/app/src/**', 'packages/*/src/**') }}
+          restore-keys: nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
+      - run: pnpm install --frozen-lockfile
+      # Only Chromium, with the system libraries it needs. Same version as @playwright/test.
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-report
+          path: |
+            e2e/test-results/
+            playwright-report/
+          retention-days: 7
+
+  stamps:
+    name: Verification stamps
+    # Lists how each commit of the pull request was verified (its Verified-by: trailer, see AGENTS.md).
+    # Informative: it never fails. Commits without a stamp show "none".
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          {
+            echo "### How each commit was verified"
+            echo
+            git log --reverse --format='%h%x09%(trailers:key=Verified-by,valueonly,separator=%x2C )%x09%s' "$BASE..$HEAD" |
+              awk -F'\t' '{ printf "- `%s` **%s** %s\n", $1, ($2 == "" ? "none" : $2), $3 }'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  sast:
+    name: Static analysis
+    # Semgrep CE with its default rules. A false positive gets `nosemgrep: <rule>` on that line with the
+    # reason, never a blanket exclusion (.semgrepignore only lists what isn't our code). Pinned by
+    # digest: check the release at each dependency refresh.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: semgrep/semgrep@sha256:cc1b68266f267878b39739373ea9985b9a78e5d64497dd875c8de100b22695ed # 1.184.0
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: semgrep scan --config p/default --error --metrics=off
+
   audit:
     name: Dependency audit
     runs-on: ubuntu-latest

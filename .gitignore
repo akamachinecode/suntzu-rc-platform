@@ -55,3 +55,6 @@ bun.lockb
 
 # agent worktrees (Claude Code)
 .claude/worktrees/
+
+# local agent state (verification records, hook counters)
+.claude/state/

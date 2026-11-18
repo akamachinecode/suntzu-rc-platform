@@ -92,6 +92,7 @@ test.describe("search.query", () => {
     await page.keyboard.press("/");
     const input = box.getByRole("combobox", { name: "Search SunTzu RC" });
     await input.fill(find);
+    // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- test code: the pattern is built from the test's own data.
     const option = box.getByRole("option", { name: new RegExp(event.name) });
     await expect(option).toBeVisible();
     await expect(box.getByRole("option", { name: `All results for “${find}”` })).toBeVisible();

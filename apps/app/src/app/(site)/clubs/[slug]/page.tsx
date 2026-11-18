@@ -39,6 +39,7 @@ export default async function ClubPage({ params }: PageProps<"/clubs/[slug]">) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
+          // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- JSON-LD; "<" is escaped below, so no text can close the tag.
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "SportsClub",

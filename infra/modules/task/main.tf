@@ -23,6 +23,9 @@ locals {
   family = "${var.name}-${var.task}"
 }
 
+# Semgrep: CloudWatch Logs are always encrypted at rest with an AWS-managed key; a customer KMS key
+# (extra cost and key management) is only needed when a client's compliance asks for it.
+# nosemgrep: terraform.aws.security.aws-cloudwatch-log-group-unencrypted.aws-cloudwatch-log-group-unencrypted
 resource "aws_cloudwatch_log_group" "task" {
   name              = "/ecs/${var.name}/${var.task}"
   retention_in_days = 30

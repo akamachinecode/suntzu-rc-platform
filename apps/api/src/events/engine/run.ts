@@ -35,6 +35,7 @@ export const PLATFORM_READERS: Record<string, { adapter: "api" | "html"; read: R
 
 const pattern = z.string().refine((value) => {
   try {
+    // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- checks that a config pattern written by the crew compiles; nothing from requests.
     return Boolean(new RegExp(value));
   } catch {
     return false;
@@ -103,6 +104,7 @@ export async function runSource(
     timezone: config.data.timezone,
     ...(config.data.discipline && { discipline: config.data.discipline }),
   };
+  // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- `onlyPlaces` comes from the source's config, written by the crew (seed data), never from a request.
   const area = config.data.onlyPlaces ? new RegExp(config.data.onlyPlaces) : undefined;
 
   /** Fetches one URL, records it, keeps a snapshot. Undefined when there is nothing to read. */
@@ -240,6 +242,7 @@ export async function runSource(
     const listing = await load(source.url, false);
     if (listing) {
       await store(readJsonLd(listing.page.body, listing.page.url, context), listing.fetchId);
+      // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- `followLinks` comes from the source's config, written by the crew (seed data), never from a request.
       const pattern = config.data.followLinks && new RegExp(config.data.followLinks);
       const links = pattern ? findLinks(listing.page.body, listing.page.url, pattern) : [];
       for (const link of links.slice(0, config.data.maxPages)) {

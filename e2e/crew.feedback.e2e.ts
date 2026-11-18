@@ -50,6 +50,7 @@ test.describe("crew.feedback", () => {
     );
 
     // "Seen: <event>" for screen readers; the button takes the feedback off the list.
+    // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- test code: the pattern is built from the test's own data.
     await wrongItem.getByRole("button", { name: new RegExp(`^Seen\\W+${event.name}$`) }).click();
     await expect(wrongItem).toHaveCount(0);
     await expect(rightItem).toBeVisible();
