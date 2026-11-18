@@ -1,6 +1,6 @@
 # 0011 — The Itaca standard `create-itaca@0.5.1`: the `app-platform` stack, a test per bit, verified changes
 
-- **Status:** Approved 2026-11-18
+- **Status:** Done 2026-11-18 (#49, #50, #51)
 - **Requested by:** the owner (Alejandro), 2026-11-18: "update the stack and migrate the whole site to it, on your own, without me"
 - **Approved by:** the owner, 2026-11-18 (the request itself: no decisions to be asked back; the agent acts as Itaca engineering until the first version is done)
 
@@ -25,7 +25,7 @@ Plus the security release in between (`0.4.1`): Next.js 16.4.6.
 ## Out of scope
 
 - **Deploying.** Going live stays with the owner (`docs/LAUNCH.md`); nothing here is applied to AWS.
-- **The GitHub ruleset.** Requiring the new checks and code owner review is a repository setting: `docs/GITHUB.md` has the command for the owner to run after merging.
+- **Code owner review.** It stays off on purpose (`docs/GITHUB.md`). The new checks became required after merging, at the owner's request.
 - **Changing what the site does or looks like.** The private area keeps the site's header and footer (see "Decisions").
 - **TypeScript 7 and `@types/node` 26** (Dependabot #9 and #10): still outside the template.
 
