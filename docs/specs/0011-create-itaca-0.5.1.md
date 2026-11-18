@@ -64,7 +64,7 @@ Plus the security release in between (`0.4.1`): Next.js 16.4.6.
 ## Slices
 
 - [x] 1. The stack: `app-platform`, route groups, versions, infra catch-up, docs (blocked by: —)
-- [ ] 2. A test per bit: `e2e/`, `pnpm check:bits`, `pnpm test:e2e`, the mailbox, every bit tested (blocked by: 1)
+- [x] 2. A test per bit: `e2e/`, `pnpm check:bits`, `pnpm test:e2e`, the mailbox, every bit tested (blocked by: 1)
 - [ ] 3. The checks: `/verify`, `/security`, hooks, `docs/CHECKS.md`, `REVIEW.md`, CI, code owners (blocked by: 2)
 
 ## Open questions

@@ -57,7 +57,7 @@ The repository is set up for Claude Code, Cursor, GitHub Copilot, Codex and othe
 
 1. Fork the repository and create a branch: `feat/short-name` for something new, `fix/short-name` for a bug, `docs/short-name` for documentation.
 2. Make the change, and update the docs it affects in the same pull request: the bit in `docs/bits/` if behaviour changed, `docs/DECISIONS.md` for a new dependency or design choice.
-3. Run **`pnpm check`** (formatting, lint, types, tests and build) and fix what fails. `pnpm format` fixes formatting. If you changed a page, also run **`pnpm test:a11y`** with the site running (`pnpm dev`): it checks every public page for accessibility problems in a browser (the first time, `pnpm --filter @workspace/app exec playwright install chromium`).
+3. Run **`pnpm check`** (formatting, lint, types, the bits check, unit tests and build) and fix what fails. `pnpm format` fixes formatting. If you changed what something does, update or add its end-to-end test in `e2e/` and run **`pnpm test:e2e --grep <bit>`** (with the dev servers stopped: it starts its own, with a database of its own; the first time, `pnpm exec playwright install chromium`). If you changed a page, also run **`pnpm test:a11y`** with the site running (`pnpm dev`): it checks every public page for accessibility problems in a browser.
 4. Commit with [Conventional Commits](https://www.conventionalcommits.org/): `feat: add a map filter for tracks`, `fix: broken calendar link`.
 5. Open the pull request against `main` and fill in the template: what changed and how to check it.
 
