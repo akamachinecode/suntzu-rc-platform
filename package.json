@@ -28,7 +28,7 @@
     "notify": "pnpm build:packages && pnpm --filter @workspace/api build && pnpm --filter @workspace/api notify"
   },
   "devDependencies": {
-    "prettier": "3.9.10",
+    "prettier": "3.10.1",
     "prettier-plugin-tailwindcss": "0.8.1",
     "typescript": "5.9.3"
   },

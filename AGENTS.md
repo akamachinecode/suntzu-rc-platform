@@ -5,10 +5,10 @@ Instructions for AI coding agents (Claude Code, Cursor, GitHub Copilot, Codex, G
 ## Project
 
 - **Name:** SunTzu RC, at **suntzurc.com** (chosen by the owner on 2026-11-03; it was "Servo" until then, see `docs/DECISIONS.md`)
-- **Stack:** `platform` — Itaca Technologies standard stack (details below)
+- **Stack:** `app-platform` — Itaca Technologies standard stack (details below)
 - **Hosting:** AWS (`terraform`) with Cloudflare in front (DNS, CDN, WAF)
 - **Code:** GitHub `akamachinecode/suntzu-rc-platform` (public since 2026-11-09, renamed from `rc-landing`; the owner's personal account, not the Itaca organisation: see `docs/DECISIONS.md`, 2026-10-29)
-- **Created with:** `create-itaca@0.1.0` (`web-app`) on 2026-10-20, moved to the `platform` stack (create-itaca 0.2.0, unreleased branch) on 2026-10-21 refreshed to `create-itaca@0.2.3` on 2026-10-27 and migrated to `create-itaca@0.3.0` (SST → Terraform) on 2026-10-29 (see `itaca.json` and `docs/DECISIONS.md`)
+- **Created with:** `create-itaca@0.1.0` (`web-app`) on 2026-10-20, moved to the `platform` stack (create-itaca 0.2.0, unreleased branch) on 2026-10-21, refreshed to `create-itaca@0.2.3` on 2026-10-27, migrated to `create-itaca@0.3.0` (SST → Terraform) on 2026-10-29 and moved to the new `app-platform` stack with `create-itaca@0.5.1` on 2026-11-18 (see `itaca.json`, `docs/DECISIONS.md` and `docs/specs/0011-create-itaca-0.5.1.md`)
 
 This project follows the Itaca standard so that any Itaca engineer can take it over without surprises. Staying inside the standard matters more than any single feature.
 
@@ -102,12 +102,12 @@ A **bit** is the smallest piece of behaviour someone can trigger and check end t
 | `pnpm engine`    | Run the events engine once (`pnpm engine <source>` for one)       |
 | `pnpm census`    | Load the FAA registers and ZIP codes (`pnpm census fria` for one) |
 
-## Stack: product platform (`platform`)
+## Stack: product platform with a Next.js site (`app-platform`)
 
-A pnpm monorepo: one Next.js app (the public site and the signed-in screens) on top of one API, ready for a mobile app. Unlike the standard `platform` stack there is no Astro site (`apps/web`): SunTzu RC's public pages are the product (dynamic events, SEO per event, interactive figures), so they live in `apps/app`. Each app and package has its own `AGENTS.md` with its stack, structure and recipes — **read it before changing files there.**
+A pnpm monorepo: one Next.js app that is both the public website and the private area, on top of one API, ready for a mobile app. SunTzu RC's public pages are the product (dynamic events, SEO per event, interactive figures), which is what `app-platform` is for. Each app and package has its own `AGENTS.md` with its stack, structure and recipes — **read it before changing files there.**
 
 ```text
-apps/app/             public site + web app: Next.js 16 (App Router), UI only    → https://www.suntzurc.com
+apps/app/             website and application: Next.js 16 (App Router), UI only  → https://www.suntzurc.com
 apps/api/             backend: NestJS — auth, business rules, data            → https://api.suntzurc.com
 apps/docs/            docs portal: Fumadocs, built from docs/ (static, GitHub Pages)
 packages/db/          database schema and migrations (PostgreSQL + Drizzle), used only by apps/api
@@ -119,16 +119,16 @@ packages/ui/          shared shadcn/ui components + theme (brand colors, radius)
 ### Which app?
 
 - **`apps/api`** — every business rule and every piece of data: who can see what, what happens when something is created, payments, emails, scheduled work. A future mobile app will use the same API, so nothing that matters may live only in the web app.
-- **`apps/app`** — every screen: the public site (home, guides, events, community) and the signed-in screens (logins, crew console, forms). It reads and writes data only through the API (`getApi()` in `apps/app/src/lib/api.ts`).
-- When unsure, ask the user: "Should this also work in a mobile app or for another system?" Yes → the rule goes in `apps/api` and the screen in `apps/app`.
+- **`apps/app`** — every screen, public or private. Public pages (home, guides, events, places, clubs, community, sign-in, legal) go in `apps/app/src/app/(site)/`; pages for signed-in members (My SunTzu RC, the crew console, an organiser's club) go in `apps/app/src/app/(app)/` and in `src/proxy.ts`. It reads and writes data only through the API (`getApi()` in `apps/app/src/lib/api.ts`).
+- When unsure, ask the user: "Can anyone see this without signing in?" Yes → `(site)`. No → `(app)`. And: "Should this also work in a mobile app or for another system?" Yes → the rule goes in `apps/api`.
 
 ### How a feature is built (end to end)
 
 1. **Schema:** add or change tables in `packages/db/src/schema/`, then `pnpm db:generate` (writes a SQL migration) and `pnpm db:migrate`.
 2. **Contract:** add the request/response schemas to `packages/shared`.
-3. **API:** add a module in `apps/api/src/<domain>/` (controller + service), copying `apps/api/src/notes/`.
+3. **API:** add a module in `apps/api/src/<domain>/` (controller + service), copying `apps/api/src/notes/`. Data that anyone may see (a public listing) uses `@Public()` on its route; everything else needs a signed-in user.
 4. **Client:** `pnpm build` regenerates `apps/api/openapi.json` and the typed client. Commit both with the change.
-5. **Screen:** add the page in `apps/app/src/app/`, copying `apps/app/src/app/notes/`.
+5. **Screen:** add the page in `apps/app/src/app/(app)/` (private, copying `(app)/notes/`) or `apps/app/src/app/(site)/` (public).
 
 ### Monorepo rules
 

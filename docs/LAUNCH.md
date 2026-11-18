@@ -131,6 +131,6 @@ Everything runs in us-east-2 (there is no CloudFront, so no certificate in us-ea
 
 ## 8. Before you announce it
 
-- Have someone read [`/privacy`](../apps/app/src/app/privacy/page.tsx) and [`/terms`](../apps/app/src/app/terms/page.tsx), ideally a lawyer: they were written in plain language for launch, without legal review.
+- Have someone read [`/privacy`](<../apps/app/src/app/(site)/privacy/page.tsx>) and [`/terms`](<../apps/app/src/app/(site)/terms/page.tsx>), ideally a lawyer: they were written in plain language for launch, without legal review.
 - Write to the first clubs (AMPS, Markham Park Pilots, Palm Beach RC, the Sarasota clubs): their pages exist already, and claiming them takes a minute (`/organise`).
 - Ask DeLand RC and the other Google Calendar clubs for their feeds (C6), and Horizon Hobby and MultiGP for permission to read their calendars (`DECISIONS.md`).

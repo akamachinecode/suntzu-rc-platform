@@ -4,7 +4,7 @@ import { ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import { useState, useTransition } from "react";
 import { Button } from "@workspace/ui/components/button";
 import { Textarea } from "@workspace/ui/components/textarea";
-import { sendFeedback } from "@/app/events/[slug]/actions";
+import { sendFeedback } from "@/app/(site)/events/[slug]/actions";
 
 /** After an event: "Was this information right?" Anonymous; the answer reaches the crew. */
 export function EventFeedback({ slug }: { slug: string }) {

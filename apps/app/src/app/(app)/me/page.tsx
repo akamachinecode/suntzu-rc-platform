@@ -4,7 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { FollowKey } from "@workspace/shared";
 import { Button } from "@workspace/ui/components/button";
-import { SignOutButton } from "@/app/notes/sign-out-button";
+import { SignOutButton } from "../sign-out-button";
 import { EventCard } from "@/components/events/event-card";
 import { CalendarSubscribe } from "@/components/events/calendar-subscribe";
 import { getApi } from "@/lib/api";

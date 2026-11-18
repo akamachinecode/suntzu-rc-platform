@@ -1,12 +1,12 @@
 {
   "name": "SunTzu RC",
-  "stack": "platform",
+  "stack": "app-platform",
   "deploy": "terraform",
   "domain": "suntzurc.com",
   "awsRegion": "us-east-2",
   "github": "akamachinecode/suntzu-rc-platform",
   "createdWith": "create-itaca@0.2.0 (unreleased platform branch, commit f4d3b9e), migrated from web-app 0.1.0",
-  "refreshedWith": "create-itaca@0.3.1 (2026-11-03)",
+  "refreshedWith": "create-itaca@0.5.1 (2026-11-18), app-platform stack",
   "createdAt": "2026-10-20",
-  "exampleOf": "create-itaca@0.3.1 (platform stack, terraform deploy)"
+  "exampleOf": "create-itaca@0.5.1 (app-platform stack, terraform deploy)"
 }

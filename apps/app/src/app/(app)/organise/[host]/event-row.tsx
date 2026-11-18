@@ -6,7 +6,7 @@ import type { OrganiserHost } from "@workspace/shared";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { formatWhen } from "@/lib/events";
-import { quickEdit } from "../actions";
+import { quickEdit } from "./actions";
 
 type Event = OrganiserHost["events"][number];
 

@@ -1,14 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo } from "next/font/google";
-import Link from "next/link";
-import { AccountButton } from "@/components/account/account-button";
-import { MainNav } from "@/components/main-nav";
-import { MobileNav } from "@/components/mobile-nav";
-import { PageEnd } from "@/components/page-end";
-import { SiteSearch } from "@/components/search/site-search";
-import { SiteFooter } from "@/components/site-footer";
-import { Button } from "@workspace/ui/components/button";
-import { Wordmark } from "@/components/wordmark";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -44,6 +35,8 @@ export const metadata: Metadata = {
   },
 };
 
+// Root layout: <html>, fonts and metadata. The header and footer are in components/site-frame.tsx,
+// used by (site)/layout.tsx (public pages), (app)/layout.tsx (private area) and not-found.tsx.
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // Native scrolling (no scroll library, see docs/DECISIONS.md, 2026-11-10). In-page links glide
@@ -55,38 +48,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${archivo.variable} scroll-pt-[var(--header)] scroll-smooth antialiased motion-reduce:scroll-auto`}
     >
       <body className="flex min-h-dvh flex-col pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)]">
-        {/* The first stop for keyboard users: past the header to the page itself. */}
-        <a
-          href="#content"
-          className="fixed top-[calc(env(safe-area-inset-top)+0.5rem)] left-[calc(env(safe-area-inset-left)+0.5rem)] z-[60] -translate-y-[calc(100%+2rem+env(safe-area-inset-top))] rounded-md border-2 border-foreground bg-primary px-4 py-3 font-semibold shadow-hard-sm focus:translate-y-0"
-        >
-          Skip to content
-        </a>
-        <header className="sticky top-0 z-50 bg-background pt-[env(safe-area-inset-top)] pb-[var(--header-air)]">
-          <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-5 sm:px-6">
-            <Link
-              href="/"
-              aria-label={`${SITE.name} home`}
-              className="flex h-11 shrink-0 items-center text-2xl xl:text-3xl"
-            >
-              <Wordmark />
-            </Link>
-            <MainNav />
-            <div className="flex items-center gap-3">
-              <SiteSearch />
-              <AccountButton />
-              <Button asChild className="max-lg:hidden">
-                <Link href={SITE.cta.href}>{SITE.cta.label}</Link>
-              </Button>
-              <MobileNav />
-            </div>
-          </div>
-        </header>
-        <main id="content" tabIndex={-1} className="flex-1 focus:outline-none">
-          {children}
-        </main>
-        <SiteFooter />
-        <PageEnd />
+        {children}
       </body>
     </html>
   );

@@ -2,7 +2,7 @@
 
 - **Trigger:** "Add to calendar" on an event page downloads `/events/<slug>/calendar.ics`.
 - **Who:** anyone.
-- **Path:** `apps/app/src/app/events/[slug]/calendar.ics/route.ts` → `GET /events/{slug}/calendar.ics` → `EventsService.eventCalendar` → `ics-writer.ts`.
+- **Path:** `apps/app/src/app/(site)/events/[slug]/calendar.ics/route.ts` → `GET /events/{slug}/calendar.ics` → `EventsService.eventCalendar` → `ics-writer.ts`.
 - **Data:** reads one published event.
 - **Rules:** only events with announced dates.
 - **Errors:** 404 for unknown or unpublished events.

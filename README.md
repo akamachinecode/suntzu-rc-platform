@@ -76,7 +76,7 @@ SunTzu RC runs on AWS behind Cloudflare, with infrastructure as code (Terraform)
 
 ## For developers
 
-SunTzu RC is a pnpm monorepo built on the **Itaca Technologies standard stack** (`platform`): one Next.js app for the public site and signed-in screens, and one API behind it, ready for a mobile app.
+SunTzu RC is a pnpm monorepo built on the **Itaca Technologies standard stack** (`app-platform`): one Next.js app that is both the public site (`src/app/(site)`) and the members' private area (`src/app/(app)`), and one API behind it, ready for a mobile app.
 
 | Folder                                         | What                                      | Built on                           | Dev URL               | Production                                                           |
 | ---------------------------------------------- | ----------------------------------------- | ---------------------------------- | --------------------- | -------------------------------------------------------------------- |
@@ -129,20 +129,20 @@ Open this folder in Claude Code, Cursor, GitHub Copilot or Codex: they read [`AG
 | `/ship`     | Deliver a finished change as a pull request, ready for review     |
 | `/takeover` | Pick up someone else's unfinished work                            |
 
-### Reference project for `create-itaca@0.3.1`
+### Reference project for `create-itaca@0.5.1`
 
-SunTzu RC is the reference project for the `platform` stack with the `terraform` deploy target: a real product built entirely inside the Itaca standard.
+SunTzu RC is the reference project for the `app-platform` stack with the `terraform` deploy target: a real product built entirely inside the Itaca standard.
 
 | To see…                                                                    | Look at                                                                                                       |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| A feature end to end (schema → contract → API → screen)                    | `packages/db/src/schema/`, `packages/shared/`, `apps/api/src/search/`, `apps/app/src/app/search/`             |
+| A feature end to end (schema → contract → API → screen)                    | `packages/db/src/schema/`, `packages/shared/`, `apps/api/src/search/`, `apps/app/src/app/(site)/search/`      |
 | Specs written with `/plan` and built slice by slice                        | [`docs/specs/`](./docs/specs)                                                                                 |
 | The catalog of bits, one per piece of behaviour                            | [`docs/bits/`](./docs/bits/README.md)                                                                         |
 | Terraform beyond the template: email, S3, scheduled jobs, optional secrets | [`infra/`](./infra) (`email.tf`, `storage.tf`, `jobs.tf`, `secrets.tf`), [`docs/DEPLOY.md`](./docs/DEPLOY.md) |
 | Running a job by hand from GitHub Actions                                  | [`.github/workflows/task.yml`](./.github/workflows/task.yml)                                                  |
 | Every deviation from the template, and why                                 | [`docs/DECISIONS.md`](./docs/DECISIONS.md) (search for "on purpose")                                          |
 
-Deviations on purpose: no `apps/web` (the public pages are the product, so they live in `apps/app` on `www`), PostgreSQL 18, Vitest, and AWS resources prefixed with the repository's former name (`rc-landing`). `itaca.json` records the version.
+Deviations on purpose: the private area keeps the site's header and footer (members move between both areas), PostgreSQL 18, a docs portal (`apps/docs`), and AWS resources prefixed with the repository's former name (`rc-landing`). `itaca.json` records the version.
 
 ### Documentation
 

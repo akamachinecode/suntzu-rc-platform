@@ -1,0 +1,18 @@
+import Link from "next/link";
+import { Button } from "@workspace/ui/components/button";
+
+/** What every 404 says, inside the site's frame (see app/not-found.tsx and the groups' copies). */
+export function NotFoundMessage() {
+  return (
+    <section className="mx-auto flex max-w-6xl flex-col items-start gap-4 px-5 py-32 sm:px-6">
+      <p className="font-mono text-sm text-muted-foreground">404</p>
+      <h1 className="font-heading text-4xl font-semibold tracking-tight">Page not found</h1>
+      <p className="text-muted-foreground">
+        The page you are looking for doesn&apos;t exist or has moved.
+      </p>
+      <Button asChild>
+        <Link href="/">Go home</Link>
+      </Button>
+    </section>
+  );
+}
