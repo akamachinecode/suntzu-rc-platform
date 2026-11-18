@@ -206,7 +206,9 @@ export class EventsService {
       .map(({ source, sighting }) => ({
         name: source.name,
         trust: source.trust,
-        byCrew: source.adapter === "manual",
+        // The crew's hand-checked calendar; organisers publish through manual sources of their own
+        // (organiserSource, trust "organiser"), which speak for their club, not for the crew.
+        byCrew: source.adapter === "manual" && source.trust !== "organiser",
         // The page that said it; never the crew's internal files.
         url: sighting.fields.url ?? (source.adapter === "manual" ? null : source.url),
         firstSeenAt: sighting.firstSeenAt.toISOString(),
