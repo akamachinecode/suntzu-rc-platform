@@ -61,6 +61,7 @@ test.describe("organiser.widget", () => {
     const link = widget.getByRole("link", { name: event.name });
     await expect(link).toBeVisible();
     await expect(link).toContainText("Largo, FL");
+    // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- test code: the pattern is built from the test's own data.
     await expect(link).toHaveAttribute("href", new RegExp(`^https?://[^/]+/events/${event.slug}$`));
     await expect(link).toHaveAttribute("target", "_blank");
     await expect(link).toHaveAttribute("rel", "noopener");

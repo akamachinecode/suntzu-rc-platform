@@ -22,6 +22,7 @@ function matches(pattern: string, path: string): boolean {
     .split("*")
     .map((part) => part.replace(/[.+?^${}()|[\]\\]/g, "\\$&"))
     .join(".*");
+  // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- a robots.txt rule, every character escaped except "*" and a final "$" (RFC 9309); paths are short.
   return new RegExp(`^${source}${anchored ? "$" : ""}`).test(path);
 }
 

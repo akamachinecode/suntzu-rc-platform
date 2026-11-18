@@ -186,6 +186,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
           type="application/ld+json"
           // JSON-LD can't contain "<": escaped so text from sources can never close the tag.
           dangerouslySetInnerHTML={{
+            // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- JSON-LD; "<" is escaped, so text from sources can never close the tag.
             __html: JSON.stringify(structuredData(event, page)).replace(/</g, "\\u003c"),
           }}
         />

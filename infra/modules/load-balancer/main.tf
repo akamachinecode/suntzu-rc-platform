@@ -49,6 +49,9 @@ resource "aws_security_group" "alb" {
   }
 }
 
+# Semgrep: no ALB access logs (they need an S3 bucket per project); requests are logged by Cloudflare
+# and, in the platform stacks, by the API with their trace. Enable them if a client requires it.
+# nosemgrep: terraform.aws.security.aws-elb-access-logs-not-enabled.aws-elb-access-logs-not-enabled
 resource "aws_lb" "main" {
   name                       = trimsuffix(substr(var.name, 0, 32), "-")
   load_balancer_type         = "application"

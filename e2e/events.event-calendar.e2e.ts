@@ -35,6 +35,7 @@ test.describe("events.event-calendar", () => {
     expect(entry).toContain("DTSTART;VALUE=DATE:20310509");
     expect(entry).toContain("DTEND;VALUE=DATE:20310511");
     expect(entry).toContain("LOCATION:Markham Park\\, 16001 W State Road 84\\, Sunrise\\, FL");
+    // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- test code: the pattern is built from the test's own data.
     expect(entry).toMatch(new RegExp(`\\nURL:https?://[^/]+/events/${event.slug}\\r?\\n`));
     expect(entry).toContain("Organiser: https://example.com/e2e-warbirds");
     expect(entry).not.toContain("STATUS:CANCELLED");

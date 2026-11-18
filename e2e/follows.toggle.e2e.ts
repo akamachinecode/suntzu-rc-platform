@@ -130,6 +130,7 @@ test.describe("follows.toggle", () => {
     const event = await addEvent(playwright, { kind: "fly-in" });
     await page.goto(`/events/${event.slug}`);
     await page.getByRole("link", { name: "Follow", exact: true }).click();
+    // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- test code: the pattern is built from the test's own data.
     await expect(page).toHaveURL(new RegExp(`/sign-in\\?next=%2Fevents%2F${event.slug}$`));
 
     const anyone = await signedOut(playwright);
