@@ -56,6 +56,12 @@ const stop = (token: string, what: "alerts" | "digest" | "report") =>
 const oneClick = (token: string, what: "alerts" | "digest" | "report") =>
   new URL(`/unsubscribe?token=${encodeURIComponent(token)}&what=${what}`, env.API_URL).toString();
 
+/** PostgreSQL's foreign key violation (23503), as Drizzle passes it on (the error or its cause). */
+function isMissingUser(error: unknown): boolean {
+  const code = (value: unknown) => (value as { code?: unknown } | null)?.code;
+  return code(error) === "23503" || code((error as { cause?: unknown } | null)?.cause) === "23503";
+}
+
 /**
  * Sends one email once: it's recorded in `notifications` first (so two runs can't both send it),
  * and the record is removed again if sending fails, so the next run retries it. One failure
@@ -68,11 +74,18 @@ async function deliver(
   key: string,
   mail: Parameters<typeof sendMail>[0],
 ): Promise<boolean> {
-  const rows = await db
-    .insert(notifications)
-    .values({ userId, kind, key })
-    .onConflictDoNothing()
-    .returning();
+  let rows: unknown[];
+  try {
+    rows = await db
+      .insert(notifications)
+      .values({ userId, kind, key })
+      .onConflictDoNothing()
+      .returning();
+  } catch (error) {
+    // The member deleted their account while this run was going: nobody to write to any more.
+    if (isMissingUser(error)) return false;
+    throw error;
+  }
   if (!rows.length) return false;
   try {
     await sendMail(mail);
