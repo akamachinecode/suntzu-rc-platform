@@ -36,6 +36,8 @@ const SECTIONS: Section[] = [
     files: {
       "CONTRIBUTING.md": "index",
       "AGENTS.md": "rules",
+      "REVIEW.md": "review",
+      "docs/CHECKS.md": "checks",
       "CODE_OF_CONDUCT.md": "code-of-conduct",
       "SECURITY.md": "security",
     },
@@ -81,6 +83,7 @@ const SECTIONS: Section[] = [
 const TITLES: Record<string, string> = {
   "README.md": "The repository",
   "AGENTS.md": "Rules for people and agents",
+  "REVIEW.md": "Review guide",
 };
 
 /** Page names can't contain dots: Fumadocs reads `name.xx.md` as a translation. */

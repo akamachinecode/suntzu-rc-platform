@@ -320,6 +320,14 @@ Measure first, change one thing, measure again with the same method. The numbers
 - **Scrolling in headless Chromium:** `Input.synthesizeScrollGesture` with `gestureSourceType: "touch"` doesn't scroll a page emulating a phone. `"mouse"` does, through the same compositor, so use it for flicks.
 - **`react-dom/server` can't run inside Next.js's server code** (pages and route handlers throw "react-dom/server is not supported in React Server Components"). Files drawn from React components are written by a Vitest test instead (`pnpm --filter @workspace/app covers`), which also fails when a figure changes and its file wasn't redrawn.
 
+## Security reviews
+
+Every change gets a `/security` checklist review when it touches sign-in, data, permissions, payments, files, secrets, CI or infrastructure. Before the first launch to real users, and then once a year, Itaca engineering runs a full audit (Cloudflare's `security-audit`, a penetration test, or both) and reviews who has access to AWS, Cloudflare and GitHub. Record each one here, newest first; findings become fixes, checks in `docs/CHECKS.md` or accepted risks in `docs/DECISIONS.md`.
+
+| Date | What (audit, access review, restore test) | By  | Result and follow-ups |
+| ---- | ----------------------------------------- | --- | --------------------- |
+| —    | Not done yet                              | —   | —                     |
+
 ## Known risks
 
 - The engine reads other people's websites. It must stay polite (robots.txt, rate limits, conditional requests) and must never store personal data from calendars or pages (see `DECISIONS.md`, 2026-10-22).

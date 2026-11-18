@@ -24,13 +24,17 @@ gh api -X POST repos/akamachinecode/suntzu-rc-platform/rulesets --input - <<'JSO
     { "type": "deletion" },
     { "type": "non_fast_forward" },
     { "type": "pull_request", "parameters": { "required_approving_review_count": 0, "dismiss_stale_reviews_on_push": true, "require_code_owner_review": false, "require_last_push_approval": false, "required_review_thread_resolution": false } },
-    { "type": "required_status_checks", "parameters": { "strict_required_status_checks_policy": false, "required_status_checks": [{ "context": "Format, lint, typecheck, build" }, { "context": "Secret scan" }] } }
+    { "type": "required_status_checks", "parameters": { "strict_required_status_checks_policy": false, "required_status_checks": [{ "context": "Format, lint, typecheck, build" }, { "context": "End-to-end tests" }, { "context": "Static analysis" }, { "context": "Secret scan" }] } }
   ]
 }
 JSON
 ```
 
+**After spec 0011 (create-itaca 0.5.1) is merged**, the existing ruleset (ID `26865524`) should also require "End-to-end tests" and "Static analysis", as above. That's a repository setting, so it's the owner's step: the same JSON with `gh api -X PUT repos/akamachinecode/suntzu-rc-platform/rulesets/26865524 --input -`. Consider "Accessibility (axe in four browsers)" too.
+
 Raise `required_approving_review_count` to `1` once an Itaca engineer is assigned to the project.
+
+**Code owners.** `.github/CODEOWNERS` names who reviews the files that judge or deploy every change: `.claude/` (the agents' skills and hooks), `REVIEW.md`, `docs/CHECKS.md`, `.github/`, `infra/`, `pnpm-workspace.yaml` and `.semgrepignore`. The template gives them to `@ITACA-TECHNOLOGIES/engineering`; this repository is in the owner's personal account, so they're the owner's. `require_code_owner_review` stays **off** on purpose: GitHub never counts the author's own approval, and the owner (or an agent working as the owner) opens most pull requests, so turning it on would block them. Turn it on when a second maintainer or an Itaca engineer joins (`docs/DECISIONS.md`, 2026-11-18).
 
 ## 3. Security features
 
@@ -68,8 +72,12 @@ Deploys use one GitHub environment per stage: `production` and `staging` (see [`
 
 `.github/workflows/ci.yml` runs on every Pull Request and push to `main`:
 
-| Job                            | Blocks merge | What it does                                      |
-| ------------------------------ | ------------ | ------------------------------------------------- |
-| Format, lint, typecheck, build | yes          | `pnpm install --frozen-lockfile` and `pnpm check` |
-| Secret scan                    | yes          | TruffleHog over the git history                   |
-| Dependency audit               | no           | `pnpm audit --prod --audit-level high`            |
+| Job                            | Blocks merge | What it does                                                                                                |
+| ------------------------------ | ------------ | ----------------------------------------------------------------------------------------------------------- |
+| Format, lint, typecheck, build | yes          | `pnpm install --frozen-lockfile` and `pnpm check` (also the bits check and unit tests)                      |
+| End-to-end tests               | yes          | `pnpm test:e2e`: one Playwright test per bit, in Chromium                                                   |
+| Accessibility                  | no (yet)     | `pnpm test:a11y` in four browsers                                                                           |
+| Secret scan                    | yes          | TruffleHog over the git history                                                                             |
+| Static analysis                | yes          | Semgrep CE (`p/default`); fix the finding, or mark a false positive with `nosemgrep: <rule>` and the reason |
+| Verification stamps            | no           | Lists each commit's `Verified-by:` trailer (how it was verified) in the run summary                         |
+| Dependency audit               | no           | `pnpm audit --prod --audit-level high`                                                                      |

@@ -126,6 +126,8 @@ Open this folder in Claude Code, Cursor, GitHub Copilot or Codex: they read [`AG
 | `/guide`    | See what you can ask for and where to start                       |
 | `/plan`     | Plan something new before building it (questions → spec → slices) |
 | `/fix`      | Fix something that's broken, with proof                           |
+| `/verify`   | Prove a change works before it's committed: checks, tests, use it |
+| `/security` | Check a change or the project against a security checklist        |
 | `/document` | Document the project or a part of it                              |
 | `/ship`     | Deliver a finished change as a pull request, ready for review     |
 | `/takeover` | Pick up someone else's unfinished work                            |
