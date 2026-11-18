@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { API } from "./env.ts";
 import { addEvent, inDays } from "./data.ts";
 import { AN_EVENT, editEvent, floridaDate, structuredData, word } from "./public.ts";
 
@@ -137,11 +138,20 @@ test.describe("events.get", () => {
     ).toHaveAttribute("href", `/events/${past.slug}`);
   });
 
-  test("an unknown event shows the 404 page, answers 404 and isn't indexed", async ({ page }) => {
-    const response = await page.goto(`/events/${word("no-such-event-").toLowerCase()}`);
+  test("an unknown event shows the 404 page and isn't indexed; the API answers 404", async ({
+    page,
+    request,
+  }) => {
+    const slug = word("no-such-event-").toLowerCase();
+    await page.goto(`/events/${slug}`);
     await expect(page.getByRole("heading", { level: 1, name: "Page not found" })).toBeVisible();
-    await expect(page.locator('head meta[name="robots"]')).toHaveAttribute("content", /noindex/);
-    // Search engines and link checkers read the status, not the page.
-    expect(response?.status()).toBe(404);
+    // The page streams behind its loading screen (spec 0010), so its status is already 200 when
+    // the API says there's no such event: Next.js marks it noindex instead (docs/DECISIONS.md,
+    // 2026-11-18). The API itself answers 404.
+    await expect(page.locator('head meta[name="robots"]').first()).toHaveAttribute(
+      "content",
+      /noindex/,
+    );
+    expect((await request.get(`${API}/events/${slug}`)).status()).toBe(404);
   });
 });

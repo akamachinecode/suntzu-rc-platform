@@ -84,11 +84,20 @@ test.describe("hosts.get", () => {
     await expect(page.getByRole("link", { name: event.name })).toHaveCount(0);
   });
 
-  test("an unknown club shows the 404 page, answers 404 and isn't indexed", async ({ page }) => {
-    const response = await page.goto(`/clubs/${word("no-such-club-").toLowerCase()}`);
+  test("an unknown club shows the 404 page and isn't indexed; the API answers 404", async ({
+    page,
+    request,
+  }) => {
+    const slug = word("no-such-club-").toLowerCase();
+    await page.goto(`/clubs/${slug}`);
     await expect(page.getByRole("heading", { level: 1, name: "Page not found" })).toBeVisible();
-    await expect(page.locator('head meta[name="robots"]')).toHaveAttribute("content", /noindex/);
-    // Search engines and link checkers read the status, not the page.
-    expect(response?.status()).toBe(404);
+    // The page streams behind its loading screen (spec 0010), so its status is already 200 when
+    // the API says there's no such club: Next.js marks it noindex instead (docs/DECISIONS.md,
+    // 2026-11-18). The API itself answers 404.
+    await expect(page.locator('head meta[name="robots"]').first()).toHaveAttribute(
+      "content",
+      /noindex/,
+    );
+    expect((await request.get(`${API}/hosts/${slug}`)).status()).toBe(404);
   });
 });
