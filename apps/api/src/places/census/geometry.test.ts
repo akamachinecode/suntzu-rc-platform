@@ -10,6 +10,8 @@ import {
   type Ring,
 } from "./geometry.js";
 
+// census.import (docs/bits/census.import.md): distances, areas and outline simplification.
+
 /** A circle drawn the Esri way (clockwise), like an FAA class D outline. */
 function circle(lng: number, lat: number, radiusMeters: number, points: number): Ring {
   const ring: Ring = [];

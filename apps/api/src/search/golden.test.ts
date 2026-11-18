@@ -275,6 +275,7 @@ describe.runIf(available)("golden searches", () => {
     expect((await runSearch(db, gazetteer, { q: "markam park" }, TODAY)).partial).toBe(false);
   });
 
+  // search.misses (docs/bits/search.misses.md): what is counted, what never is, and the clean-up.
   it("counts searches without results anonymously and forgets them after 90 days", async () => {
     expect(await recordMiss(db, gazetteer, "qwxzv jkqpl", TODAY)).toBe(true);
     expect(await recordMiss(db, gazetteer, "  QWXZV jkqpl! ", TODAY)).toBe(true);

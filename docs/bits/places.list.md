@@ -6,6 +6,6 @@
 - **Data:** reads `places` with their hosts (about 190 in Florida after the census).
 - **Rules:** near me is computed in the browser; nothing about the visitor is sent. Cached 5 minutes. "Near me" says, next to the button, that it asks the browser once and the location stays on the device; distances are worked out in the browser (spec 0010).
 - **Errors:** "The map is taking a break". A browser that can't draw maps (no WebGL2) sees a note in the map's place and the rest of the page as usual (`components/map-unavailable.tsx`, spec 0010); before, the whole page broke.
-- **Test:** none yet
+- **Test:** `e2e/places.list.e2e.ts` (as many places as the API has; the search finds one by name, town and club; the kind and FRIA filters; near me sorts the closest first and sends the location to neither the site nor the API)
 - **Observe:** API log lines with `bit: "places.list"`.
-- **Status:** verified — 2026-11-11 (phone filters and map view, in Chromium at 390 px)
+- **Status:** verified — 2026-11-18 (end-to-end test)

@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import { unzipEntry } from "./unzip.js";
 import { gazetteerUrl, isFloridaZip, readGazetteer } from "./zip-codes.js";
 
+// census.import (docs/bits/census.import.md): the Census Bureau's ZIP code Gazetteer, on a saved sample.
+
 // zcta-sample.zip: the header and six rows of the Census Bureau's 2026 Gazetteer ZCTA file
 // (public domain), zipped as the Bureau ships it.
 const archive = readFileSync(new URL("./fixtures/zcta-sample.zip", import.meta.url));

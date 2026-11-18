@@ -2,10 +2,10 @@
 
 - **Trigger:** "Find me a club" on `/try` (linked from the home page, clubs that welcome newcomers and the community page).
 - **Who:** anyone.
-- **Path:** `apps/app/src/app/(site)/try/try-form.tsx` → `askToTry` → `POST /try` (`tryInput`, Turnstile) → `NewcomersService.request` (`apps/api/src/newcomers/`) → emails to organisers, or to `CREW_INBOX`; the crew sees open ones at `/crew/claims` (`GET /crew/try`).
-- **Data:** reads `zip_codes`, `hosts`, `places`, `host_members`; writes `try_requests` (name, email, ZIP, discipline, message, who it went to). Deleted after 12 months.
-- **Rules:** up to three clubs within 60 miles that welcome newcomers, have a verified organiser and fly that discipline (or haven't said); only with the person's consent; otherwise it goes to the crew.
-- **Errors:** unknown ZIP → "Is it in Florida?". After an error the form keeps what was typed, the cursor goes to the first field with an error, each error is read with its field, and the answer is announced (`components/forms/feedback.tsx`, spec 0010).
-- **Test:** `apps/app/e2e/forms.spec.ts` (errors keep values and the radio choice)
+- **Path:** `apps/app/src/app/(site)/try/try-form.tsx` → `askToTry` (`try/actions.ts`) → `POST /try` (`tryInput`, Turnstile) → `NewcomersService.request` (`apps/api/src/newcomers/`) → emails to the clubs' verified organisers ("Someone near you wants to try …"), or to `CREW_INBOX` ("A newcomer wants to try … near <ZIP>"); the crew sees the open ones at `/crew/claims` ("Newcomers waiting for a club", `GET /crew/try`) and marks them sent (`POST /crew/try/{id}/sent`).
+- **Data:** reads `zip_codes` (Florida only, loaded by the census), `hosts`, `places`, `host_members`; writes `try_requests` (name, email, ZIP, discipline, message, who it went to). Deleted after 12 months.
+- **Rules:** up to three clubs within 60 miles of the ZIP code's centre (by their closest field) that welcome newcomers, have a verified organiser and fly that discipline (or haven't said), nearest first; every verified organiser of each gets the email; otherwise it goes to the crew. Only with the person's consent (400 without it), a 5-digit ZIP code and a known discipline.
+- **Errors:** unknown ZIP → the API answers 400 "We don't know that ZIP code. Is it in Florida?", but the form shows "We couldn't send it. Try again in a minute." instead (bug, 2026-11-18: `try/actions.ts:40` reads the response body that the API client has already read). After an error the form keeps what was typed, the cursor goes to the first field with an error, each error is read with its field, and the answer is announced (`components/forms/feedback.tsx`, spec 0010).
+- **Test:** `e2e/try.request.e2e.ts` (far from any club the crew gets it by email and on `/crew/claims` and marks it sent; near a club that welcomes newcomers its organiser gets it, not for a discipline the club doesn't fly; an unknown ZIP asks whether it's in Florida (fails: the bug above); no consent asks and the API answers 400). The tests add the ZIP codes they use (the census needs the internet). `apps/app/e2e/forms.spec.ts` (errors keep values and the radio choice)
 - **Observe:** API log lines with `bit: "try.request"`.
-- **Status:** verified — 2026-10-27
+- **Status:** broken — 2026-11-18 (end-to-end test: an unknown ZIP shows "We couldn't send it" instead of "Is it in Florida?")

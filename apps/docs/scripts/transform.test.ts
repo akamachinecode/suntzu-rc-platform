@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { plainText, rewriteLinks, serialize, toPage } from "./transform.ts";
 
+// docs.publish (docs/bits/docs.publish.md): how a document becomes a portal page.
+
 const pages: Record<string, string> = {
   "docs/DEPLOY.md": "../operations/deploy.md",
   "CONTRIBUTING.md": "../contributing/index.md",

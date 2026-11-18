@@ -91,6 +91,7 @@ describe("synonymsOf", () => {
   });
 });
 
+// search.misses (docs/bits/search.misses.md): searches that look personal are never counted.
 describe("looksPersonal", () => {
   it("catches emails, phone numbers and street addresses", () => {
     expect(looksPersonal("pilot@example.com")).toBe(true);

@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { classify } from "./classify.js";
 
+// engine.run (docs/bits/engine.run.md): notices, club business and repeating entries are skipped.
+
 // Real titles from the DeLand RC and Coral Springs RC Track calendars (2026-10-22).
 describe("classify", () => {
   it.each([

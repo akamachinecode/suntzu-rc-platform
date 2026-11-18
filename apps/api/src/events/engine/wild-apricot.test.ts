@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { readWildApricot } from "./wild-apricot.js";
 
+// engine.run (docs/bits/engine.run.md): the Wild Apricot feed reader, on a saved feed.
+
 // rcacf-events.rss: the events feed of the Remote Control Association of Central Florida
 // (Wild Apricot, read 2026-10-27), trimmed to three items; the work party's note removed.
 const rcacf = readFileSync(new URL("./fixtures/rcacf-events.rss", import.meta.url), "utf8");

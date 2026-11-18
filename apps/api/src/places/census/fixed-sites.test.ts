@@ -10,6 +10,8 @@ import {
 } from "./fixed-sites.js";
 import { placeName, type CensusSite } from "./sites.js";
 
+// census.import (docs/bits/census.import.md): the FAA Recreational Flyer Fixed Sites reader, on saved records.
+
 // fixed-sites.json: nine Florida records of the FAA's Recreational Flyer Fixed Sites layer
 // (read 2026-10-27), with only the fields the census asks for (no point of contact).
 const fixture = JSON.parse(

@@ -6,6 +6,6 @@
 - **Data:** reads one published event.
 - **Rules:** only events with announced dates.
 - **Errors:** 404 for unknown or unpublished events.
-- **Test:** `apps/api/src/events/ics-writer.test.ts`.
+- **Test:** `e2e/events.event-calendar.e2e.ts` ("Add to calendar" downloads `<slug>.ics` with the days, the end the day after the last, the place and the page; no file for an event known only by its month, or for an unknown one); the file format is unit-tested in apps/api/src/events/ics-writer.test.ts
 - **Observe:** API log lines with `bit: "events.event-calendar"`.
-- **Status:** read in code — 2026-10-27
+- **Status:** verified — 2026-11-18 (end-to-end test)

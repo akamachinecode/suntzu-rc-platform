@@ -3,6 +3,8 @@ import { expect, test } from "@playwright/test";
 // How forms answer people (spec 0010, slice 3): what was typed stays after an error, the cursor
 // goes to the first field with an error, the error is read with its field, the answer is
 // announced, and a new step takes the focus.
+// Bits (docs/bits/): contact.send, try.request, auth.email-code (the code step) and
+// corrections.create (opening the form).
 
 test("contact: an error keeps what was typed and puts the cursor on the field", async ({
   page,

@@ -1,3 +1,4 @@
+// Bit auth.email-code (docs/bits/): where the code lands after signing in.
 import { describe, expect, it } from "vitest";
 import { safeNext } from "./safe-next";
 

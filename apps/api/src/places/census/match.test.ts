@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { findHost, findPlace, type KnownHost, type KnownPlace } from "./match.js";
 import type { CensusSite, HostCandidate } from "./sites.js";
 
+// census.import (docs/bits/census.import.md): nothing twice: a record finds its place and its club.
+
 const place = (overrides: Partial<KnownPlace>): KnownPlace => ({
   id: "p",
   slug: "p",

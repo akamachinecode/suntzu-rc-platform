@@ -10,6 +10,8 @@ import {
   withoutCompanySuffix,
 } from "./names.js";
 
+// census.import (docs/bits/census.import.md): club names however spelled.
+
 describe("tidyName", () => {
   it("title-cases names the register writes in capitals, keeping acronyms", () => {
     expect(tidyName("TOHOPEKALIGA HIGH SCHOOL")).toBe("Tohopekaliga High School");

@@ -7,13 +7,16 @@
   "scripts": {
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "pnpm format:check && pnpm build:packages && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "check": "pnpm check:fast && pnpm build",
+    "check:fast": "pnpm format:check && pnpm build:packages && pnpm lint && pnpm typecheck && pnpm check:bits && pnpm test",
+    "check:bits": "node e2e/check-bits.ts",
     "dev": "pnpm build:packages && pnpm --recursive --parallel --filter \"./apps/*\" dev",
     "dev:app": "pnpm --filter @workspace/app dev",
     "build": "pnpm --recursive build",
     "lint": "pnpm --recursive lint",
-    "typecheck": "pnpm --recursive typecheck",
+    "typecheck": "pnpm --recursive typecheck && tsc -p e2e",
     "test": "pnpm --recursive run test",
+    "test:e2e": "pnpm db:up && pnpm build && playwright test --config e2e/playwright.config.ts",
     "test:a11y": "pnpm --filter @workspace/app test:a11y",
     "dev:api": "pnpm --filter @workspace/api dev",
     "dev:docs": "pnpm --filter @workspace/docs dev",
@@ -28,6 +31,8 @@
     "notify": "pnpm build:packages && pnpm --filter @workspace/api build && pnpm --filter @workspace/api notify"
   },
   "devDependencies": {
+    "@playwright/test": "1.65.1",
+    "@types/node": "24.19.2",
     "prettier": "3.10.1",
     "prettier-plugin-tailwindcss": "0.8.1",
     "typescript": "5.9.3"

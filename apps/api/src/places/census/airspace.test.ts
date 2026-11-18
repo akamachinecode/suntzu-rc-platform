@@ -3,6 +3,8 @@ import { airspaceQuery, readAirspace } from "./airspace.js";
 import type { RawFeature } from "./arcgis.js";
 import { ringArea, type Ring } from "./geometry.js";
 
+// census.import (docs/bits/census.import.md): the class airspace reader (surface areas, shelves, simplified outlines).
+
 /** A clockwise circle, the way the FAA's layer draws a class D area. */
 function circle(lng: number, lat: number, radiusMeters: number, points: number): Ring {
   const ring: Ring = [];

@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { type Extraction, verify } from "./ai.js";
 
+// submissions.create (docs/bits/submissions.create.md): what the AI reads from a member's text is
+// kept only where its quote is in the text word for word.
+
 const FLYER = `PALM BEACH RC presents the WINTER FUN FLY!
 Saturday January 16th & Sunday January 17th
 West Delray Regional Park flying field, 10875 W Atlantic Ave

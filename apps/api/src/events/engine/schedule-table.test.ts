@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import { onlyPlaces } from "./read.js";
 import { readScheduleTable, scheduleDates } from "./schedule-table.js";
 
+// engine.run (docs/bits/engine.run.md): the schedule-table reader and onlyPlaces, on a saved page.
+
 // extreme-flight-schedule.html: Extreme Flight's event schedule (2026-10-27), trimmed to the
 // table and to eight of its rows. No personal data on the page.
 const schedule = readFileSync(

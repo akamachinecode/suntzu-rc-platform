@@ -12,6 +12,8 @@ import {
 } from "./fria.js";
 import { placeName, type CensusSite } from "./sites.js";
 
+// census.import (docs/bits/census.import.md): the FAA FRIA reader, on saved records (no personal data).
+
 // fria.json: ten Florida-area records of the FAA's FRIA layer (read 2026-10-27), with only the
 // fields the census asks for. One title that starts with a person's name is replaced by a
 // placeholder; the census replaces it too.

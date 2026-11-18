@@ -12,6 +12,6 @@
 - **Data:** writes `fetches` and `sightings` (one per distinct content, with the quote behind each field); keeps raw responses in `ENGINE_SNAPSHOT_DIR`.
 - **Rules:** no personal data: descriptions and organisers are never read from calendars, APIs or feeds. Notices, club business and repeating entries are skipped; so are places outside `onlyPlaces` ("elsewhere").
 - **Errors:** each source's errors are listed in the run report (a bot wall shows as "answers with a DualRates region block"); one source failing doesn't stop the others.
-- **Test:** `apps/api/src/events/engine/*.test.ts`, against trimmed copies of real pages in `fixtures/`.
+- **Test:** unit tests on trimmed copies of real pages and feeds (`apps/api/src/events/engine/fixtures/`), never the internet: `apps/api/src/events/engine/ics.test.ts`, `apps/api/src/events/engine/json-ld.test.ts`, `apps/api/src/events/engine/the-events-calendar.test.ts`, `apps/api/src/events/engine/wild-apricot.test.ts`, `apps/api/src/events/engine/schedule-table.test.ts` (the readers, `onlyPlaces`), `apps/api/src/events/engine/classify.test.ts` (notices and club business skipped), `apps/api/src/events/engine/fetcher.test.ts` and `apps/api/src/events/engine/robots.test.ts` (robots.txt, pauses, conditional requests, bot walls). Not covered: the engine's run.ts itself (choosing sources, writing `fetches` and `sightings`, snapshots), which needs a database.
 - **Observe:** the run report printed by the command.
-- **Status:** verified — 2026-10-27
+- **Status:** verified — 2026-11-18 (unit tests on saved pages)

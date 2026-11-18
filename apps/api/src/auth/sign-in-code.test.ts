@@ -1,3 +1,4 @@
+// Bits auth.email-link and auth.email-code (docs/bits/).
 // The sign-in code next to the link (docs/specs/0006-sign-in-code.md), against a real PostgreSQL and
 // the real Better Auth setup. Needs the local database (`pnpm db:up`); skipped without one, as in
 // CI. It creates its own database, `suntzurc_auth_code`, and drops it at the end.

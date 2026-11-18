@@ -6,6 +6,6 @@
 - **Data:** writes `user`, `account` (provider id only), `session`.
 - **Rules:** enabled only when the API has `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. Same role sync as the email link.
 - **Errors:** Better Auth's error page.
-- **Test:** none yet
+- **Test:** manual: needs real Google OAuth credentials and a Google account, which tests can't hold. Steps: set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `apps/api/.env` and `NEXT_PUBLIC_GOOGLE_SIGN_IN=true` in `apps/app/.env`, open `/sign-in?next=/me`, press "Continue with Google", pick an account, and check `/me` says "Signed in as" that address.
 - **Observe:** API log lines with `bit: "auth.callback"`.
 - **Status:** not verified — 2026-10-27

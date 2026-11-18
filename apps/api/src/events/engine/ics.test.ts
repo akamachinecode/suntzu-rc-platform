@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { icsDate, parseIcs, readIcs, unescapeText } from "./ics.js";
 
+// engine.run (docs/bits/engine.run.md): the iCalendar reader, on a saved copy of a real feed.
+
 // deland-rc.ics: entries from DeLand RC's public Google Calendar (2026-10-22), trimmed to a
 // few cases, with organisers' names and emails removed.
 const delandRc = readFileSync(new URL("./fixtures/deland-rc.ics", import.meta.url), "utf8");

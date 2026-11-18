@@ -6,6 +6,6 @@
 - **Data:** what it reads and what it writes.
 - **Rules:** the business rules it applies.
 - **Errors:** how it can fail and what the person sees.
-- **Test:** the test that proves it, or "none yet".
+- **Test:** the end-to-end test that proves it, `e2e/area.action.e2e.ts` (plus any unit test file), or `manual: <why it can't be automated, and the steps>`. `pnpm check` fails without one.
 - **Observe:** how to find it in the logs, or "no request logs yet".
 - **Status:** verified · read in code · not verified · broken — YYYY-MM-DD

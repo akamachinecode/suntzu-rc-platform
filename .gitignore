@@ -19,9 +19,14 @@ tfplan
 *.tfplan
 crash.log
 
-# Playwright results and reports (pnpm test:a11y)
+# test output (Playwright, Vitest coverage) and the emails the end-to-end tests read
 test-results/
 playwright-report/
+blob-report/
+coverage/
+.vitest/
+.mail/
+e2e/.auth/
 
 # events engine snapshots (pnpm engine)
 .snapshots/

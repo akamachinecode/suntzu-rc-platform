@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { findEvents, findLinks, readJsonLd } from "./json-ld.js";
 
+// engine.run (docs/bits/engine.run.md): the schema.org (JSON-LD) reader, on saved copies of real pages.
+
 // Trimmed copies of the AMPS site (2026-10-22): its home page links, and the schema.org data of
 // two event pages exactly as published.
 const fixture = (name: string) =>

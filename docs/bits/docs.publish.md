@@ -6,6 +6,6 @@
 - **Data:** reads the repository's Markdown documents; writes nothing outside the published site. No secrets, no AWS or Cloudflare access.
 - **Rules:** every document needs a `# Title` first line; relative links go to other pages, or to the file on GitHub when it isn't a document; a file in `docs/` that `SECTIONS` doesn't place lands in "More".
 - **Errors:** a document that can't become a page fails the build (also in pull requests, through `pnpm check`), and the previous version stays online. The run shows red in **Actions → Docs portal**.
-- **Test:** `apps/docs/scripts/transform.test.ts` (links, titles, descriptions); the build itself checks that every page renders.
+- **Test:** `e2e/docs.publish.e2e.ts` (the folder the workflow uploads, `apps/docs/out`, served as GitHub Pages serves it: the home page and its sections, a link between documents leading to the other page, a link to code going to GitHub, every page reachable from the home page and no broken link); `apps/docs/scripts/transform.test.ts` (links, titles, descriptions). The upload to GitHub Pages itself can't run in a test: after a merge, check **Actions → Docs portal** and open the site.
 - **Observe:** the workflow's runs in Actions, and the deployments of the `github-pages` environment. No request logs (GitHub Pages).
-- **Status:** read in code — 2026-11-10 (verified once the first publish runs from `main`)
+- **Status:** verified — 2026-11-18 (end-to-end test of the built portal; the GitHub Pages upload hasn't run from `main` yet)
