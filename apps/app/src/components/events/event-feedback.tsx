@@ -5,8 +5,13 @@ import { useState, useTransition } from "react";
 import { Button } from "@workspace/ui/components/button";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { sendFeedback } from "@/app/(site)/events/[slug]/actions";
+import { Turnstile } from "@/components/turnstile";
 
-/** After an event: "Was this information right?" Anonymous; the answer reaches the crew. */
+/**
+ * After an event: "Was this information right?" Anonymous; the answer reaches the crew. Public, so
+ * in production it carries a Turnstile token like every other public form (the API refuses it
+ * without one once TURNSTILE_SECRET_KEY is set).
+ */
 export function EventFeedback({ slug }: { slug: string }) {
   const [answer, setAnswer] = useState<boolean | undefined>();
   const [note, setNote] = useState("");
@@ -45,7 +50,23 @@ export function EventFeedback({ slug }: { slug: string }) {
         </Button>
       </div>
       {answer !== undefined ? (
-        <div className="grid gap-3">
+        <form
+          className="grid gap-3"
+          onSubmit={(event) => {
+            event.preventDefault();
+            const token = new FormData(event.currentTarget).get("cf-turnstile-response");
+            startTransition(async () =>
+              setResult(
+                await sendFeedback(
+                  slug,
+                  answer,
+                  note,
+                  typeof token === "string" ? token : undefined,
+                ),
+              ),
+            );
+          }}
+        >
           <label htmlFor="feedback-note" className="text-sm font-semibold">
             {answer ? "Anything to add? (optional)" : "What was off? (optional)"}
           </label>
@@ -56,14 +77,8 @@ export function EventFeedback({ slug }: { slug: string }) {
             value={note}
             onChange={(event) => setNote(event.target.value)}
           />
-          <Button
-            type="button"
-            className="justify-self-start"
-            disabled={pending}
-            onClick={() =>
-              startTransition(async () => setResult(await sendFeedback(slug, answer, note)))
-            }
-          >
+          <Turnstile />
+          <Button type="submit" className="justify-self-start" disabled={pending}>
             {pending ? "Sending…" : "Send"}
           </Button>
           {result === "error" ? (
@@ -71,7 +86,7 @@ export function EventFeedback({ slug }: { slug: string }) {
               Could not send. Try again in a minute.
             </p>
           ) : null}
-        </div>
+        </form>
       ) : null}
     </div>
   );
