@@ -7,7 +7,7 @@ import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { DISCIPLINE_LABELS } from "@/lib/events";
-import { saveClub, type SimpleState } from "../actions";
+import { saveClub, type SimpleState } from "./actions";
 import { FormStatus } from "@/components/forms/feedback";
 
 export function ClubForm({ data }: { data: OrganiserHost }) {

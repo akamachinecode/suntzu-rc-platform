@@ -6,7 +6,7 @@ import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { Textarea } from "@workspace/ui/components/textarea";
-import { type CorrectionState, suggestCorrection } from "@/app/events/[slug]/actions";
+import { type CorrectionState, suggestCorrection } from "@/app/(site)/events/[slug]/actions";
 import { FieldError, FormStatus, StepHeading, useFormFeedback } from "@/components/forms/feedback";
 
 /** Members suggest a correction; it waits for the crew next to the source. */

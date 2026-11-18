@@ -2,12 +2,15 @@
 
 The public site and web application of SunTzu RC (https://www.suntzurc.com). Read the root [`AGENTS.md`](../../AGENTS.md) first: its golden rules, monorepo rules and "When to stop" apply here too.
 
+- **Two areas, one app.** `src/app/(site)/` holds the public pages (home, guides, events, places, clubs, community, search, sign-in, legal); `src/app/(app)/` holds the private area for signed-in members (`/me`, `/crew`, `/organise/<club>`, the `/notes` example), which is never indexed. Both use the same frame (`src/components/site-frame.tsx`: header, footer, skip link), because members move between them all the time. The folder names in brackets don't appear in URLs: `(site)/events/page.tsx` is `/events`.
+- **Routes that aren't pages stay at the root of `src/app`:** `api/` (health, CSP reports), `calendar/` (a member's private feed), `embed/` (the clubs' widget, with its own HTML), `sitemap.ts`, `robots.ts`, `manifest.ts` and `not-found.tsx` (every 404, with the site's frame).
+- **Every private section is listed in `src/proxy.ts` `matcher`** (it sends signed-out visitors to `/sign-in`). The API still checks every request, so a forgotten entry never leaks data, but the visitor gets an error instead of the sign-in page.
 - **This app is the screens only.** Data and business rules live in `apps/api`. Read and write through `getApi()` (`src/lib/api.ts`), a typed client that forwards the signed-in user's session; never connect to the database or add server-side business logic here.
-- Sign-in, sign-up and sign-out use `authClient` from `src/lib/auth-client.ts` (Better Auth, served by the API). Private pages are listed in `src/proxy.ts` `matcher`; the API still checks every request.
+- **Public pages with data** (events, places, clubs): Server Components that read through `getPublicApi()` against API routes marked `@Public()`. Never show on a public page anything the API only returns to signed-in members. Add the page to `src/app/sitemap.ts`.
+- Sign-in, sign-up and sign-out use `authClient` from `src/lib/auth-client.ts` (Better Auth, served by the API).
 - Validate forms with the schemas from `@workspace/shared` (the API validates again).
 - UI components come from `packages/ui`: `import { Button } from "@workspace/ui/components/button"`.
 - Add dependencies to this app only: `pnpm --filter @workspace/app add <pkg>`.
-- Public pages (home, guides, events, community) live here too: SunTzu RC has no separate Astro site. Keep them Server Components and indexable.
 - SunTzu RC specifics (content, Anatomy figures, forms): see "SunTzu RC project notes" in the root `AGENTS.md`.
 - **Errors and traces are automatic:** `src/instrumentation.ts` records every server error (page, Server Action, route handler) in the request's trace and as a JSON log line with `level: "error"`, which the error alarm counts; `src/instrumentation.node.ts` sends the traces (docs/OPERATIONS.md, "Monitoring"). Don't catch errors just to hide them, and never put personal data (emails, names, tokens) in error messages or logs.
 
@@ -33,11 +36,13 @@ Useful guides in `node_modules/next/dist/docs/01-app/02-guides/`: `forms.md`, `s
 
 ```text
 src/
-  app/                 routes (App Router): app/about/page.tsx → /about
-  app/layout.tsx       root layout: <html>, header, footer, fonts, metadata
+  app/                 routes (App Router): app/(site)/learn/page.tsx → /learn
+  app/layout.tsx       root layout: <html>, fonts, metadata
+  app/(site)/          public pages (home, guides, events, places, sign-in…)
+  app/(app)/           private area for signed-in members (never indexed)
   app/<route>/actions.ts  Server Actions for that route ("use server")
   app/api/             Route Handlers — only for webhooks and external callers
-  components/          app components
+  components/          app components (site-frame.tsx: the header and footer of both areas)
   lib/site.ts          app name, description, navigation, public URL
   lib/env.ts           validated server environment variables
   lib/api.ts           typed API client for the server (forwards the user's session)
@@ -47,7 +52,7 @@ src/
 public/                static files served as-is
 ```
 
-`src/app/notes/` is the reference example: Server Component page that reads from the API + Client Component form + Server Action that validates with `@workspace/shared` and calls the API. Copy its pattern.
+`src/app/(app)/notes/` is the reference example: Server Component page that reads from the API + Client Component form + Server Action that validates with `@workspace/shared` and calls the API. Copy its pattern.
 
 ### Rules
 

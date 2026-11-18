@@ -15,7 +15,7 @@ What runs where, and how the pieces connect. Keep it current: a change to a piec
 | Theme and UI  | shadcn/ui components and SunTzu RC's brand tokens                                                                              | `packages/ui/`                             | —                                                                    |
 | Docs portal   | Every document of the repository as one website with search (Fumadocs, static), generated from `docs/` on each build           | `apps/docs/`                               | [GitHub Pages](https://akamachinecode.github.io/suntzu-rc-platform/) |
 
-SunTzu RC has no separate Astro site (`apps/web`): its public pages are the product, so they live in `apps/app` (see `DECISIONS.md`, 2026-10-21).
+SunTzu RC is an `app-platform` project (`create-itaca@0.5.1`): there is no separate Astro site, because its public pages are the product. `apps/app` has two areas: the public pages in `src/app/(site)/` and the members' private area in `src/app/(app)/` (`/me`, `/crew`, `/organise/<club>`), never indexed and listed in `src/proxy.ts`. Both share the same header and footer (see `DECISIONS.md`, 2026-10-21 and 2026-11-18).
 
 ```text
 Visitor ──► Cloudflare ──┬─► www: AWS (Next.js, apps/app) ──┐  x-request-id

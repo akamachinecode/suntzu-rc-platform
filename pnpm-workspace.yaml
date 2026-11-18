@@ -4,6 +4,9 @@
 
 # Only install versions published at least 1 day ago (minutes).
 # A malicious release is usually detected and pulled within hours.
+# (Semgrep suggests 7 days; we keep 1 so a security fix can be installed the day after it ships.
+# Template versions are already 7+ days old. See docs/STACK.md in create-itaca.)
+# nosemgrep: package_managers.pnpm.pnpm-missing-minimum-release-age.pnpm-minimum-release-age
 minimumReleaseAge: 1440
 
 # Refuse a version whose publishing trust (e.g. npm provenance) is weaker
@@ -50,3 +53,8 @@ audit:
     # come from users. Fixed only in minimatch 11, which those tools don't support yet, so an override
     # would break them. Remove when `pnpm why minimatch` shows no version below 11.0.1.
     - GHSA-g3hv-75wg-m249
+    # GHSA-fc5q-39xc-vjpf (high, ReDoS with crafted extglob patterns): picomatch <= 4.0.7, pulled in by
+    # build and development tooling only (ESLint plugins and the shadcn CLI), which matches
+    # patterns written in the project, never input from visitors. Next.js bundles its own copy.
+    # No fixed version exists yet. Remove when one is out and `pnpm why picomatch` shows no older version.
+    - GHSA-fc5q-39xc-vjpf

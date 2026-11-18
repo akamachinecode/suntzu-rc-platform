@@ -5,7 +5,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@workspace/ui/comp
 import { getApi } from "@/lib/api";
 import { deleteNote } from "./actions";
 import { NoteForm } from "./note-form";
-import { SignOutButton } from "./sign-out-button";
+import { SignOutButton } from "../sign-out-button";
 
 export const metadata: Metadata = {
   title: "Notes",

@@ -65,31 +65,6 @@ module "load_balancer" {
   alarms     = { critical = module.alerts.critical }
 }
 
-# The bare domain (and any other redirect) goes to the app, keeping the path and the query.
-resource "aws_lb_listener_rule" "redirect" {
-  count = length(var.redirects) > 0 ? 1 : 0
-
-  listener_arn = module.load_balancer.https_listener_arn
-  priority     = 5
-
-  action {
-    type = "redirect"
-
-    redirect {
-      host        = var.hosts.app
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-
-  condition {
-    host_header {
-      values = var.redirects
-    }
-  }
-}
-
 resource "aws_ecs_cluster" "main" {
   name = local.name
 }

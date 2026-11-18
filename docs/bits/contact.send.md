@@ -2,7 +2,7 @@
 
 - **Trigger:** a visitor submits the form on `/contact` (topics: lessons, event, correction…).
 - **Who:** anyone.
-- **Path:** `apps/app/src/app/contact/contact-form.tsx` → Server Action `submitContact` (`contact/actions.ts`, Zod) → `POST /messages` (see `messages.create`).
+- **Path:** `apps/app/src/app/(site)/contact/contact-form.tsx` → Server Action `submitContact` (`contact/actions.ts`, Zod) → `POST /messages` (see `messages.create`).
 - **Data:** writes a `messages` row for the crew's inbox (and emails `CREW_INBOX` when set).
 - **Rules:** name, email and message are validated.
 - **Errors:** invalid fields show a message next to them. After an error the form keeps what was typed, the cursor goes to the first field with an error, each error is read with its field, and the answer is announced (`components/forms/feedback.tsx`, spec 0010).

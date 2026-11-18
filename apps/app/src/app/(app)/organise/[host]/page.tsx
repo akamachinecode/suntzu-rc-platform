@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Button } from "@workspace/ui/components/button";
-import { AddEventForm } from "@/app/crew/add-event-form";
+import { AddEventForm } from "@/app/(app)/crew/add-event-form";
 import { getApi } from "@/lib/api";
 import { ACCESS_LABELS } from "@/lib/places";
 import { SITE } from "@/lib/site";
-import { confirmPlace, publishEvent } from "../actions";
+import { confirmPlace, publishEvent } from "./actions";
 import { ClubForm } from "./club-form";
 import { EventRow } from "./event-row";
 
